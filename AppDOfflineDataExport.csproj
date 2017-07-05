@@ -1,0 +1,133 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{0734F6D8-9E80-495D-A096-25668CB7D66C}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>AppDynamics.OfflineData</RootNamespace>
+    <AssemblyName>AppDOfflineDataExport</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
+      <HintPath>packages\CommandLineParser.1.9.71\lib\net45\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>packages\CsvHelper.2.16.3.0\lib\net45\CsvHelper.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ControllerApi\ControllerApi.cs" />
+    <Compile Include="DataObjects\AppDRESTBackend.cs" />
+    <Compile Include="DataObjects\AppDRESTBackendProperty.cs" />
+    <Compile Include="DataObjects\AppDRESTBusinessTransaction.cs" />
+    <Compile Include="DataObjects\AppDRESTMetricFolder.cs" />
+    <Compile Include="DataObjects\AppDRESTNode.cs" />
+    <Compile Include="DataObjects\AppDRESTTier.cs" />
+    <Compile Include="DataObjects\AppDRESTApplication.cs" />
+    <Compile Include="DataObjects\AppDRESTMetric.cs" />
+    <Compile Include="DataObjects\AppDRESTMetricValue.cs" />
+    <Compile Include="JobConfiguration\JobConfigurationHelper.cs" />
+    <Compile Include="JobConfiguration\JobStatus.cs" />
+    <Compile Include="JobConfiguration\JobTarget.cs" />
+    <Compile Include="JobConfiguration\JobOutput.cs" />
+    <Compile Include="JobConfiguration\JobInputSnapshotType.cs" />
+    <Compile Include="JobConfiguration\JobInput.cs" />
+    <Compile Include="JobConfiguration\JobConfiguration.cs" />
+    <Compile Include="JobConfiguration\JobTargetStatus.cs" />
+    <Compile Include="JobConfiguration\JobTimeRange.cs" />
+    <Compile Include="Logging\EventId.cs" />
+    <Compile Include="Logging\LogHelper.cs" />
+    <Compile Include="PrepareJob.cs" />
+    <Compile Include="ProcessJob.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="ProgramOptions\ProgramOptions.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportObjects\ReportBusinessTransactionRow.cs" />
+    <Compile Include="ReportObjects\ReportNodeRow.cs" />
+    <Compile Include="ReportObjects\ReportBusinessTransactionRowMap.cs" />
+    <Compile Include="ReportObjects\ReportNodeRowMap.cs" />
+    <Compile Include="ReportObjects\ReportBackendRow.cs" />
+    <Compile Include="ReportObjects\ReportBackendRowMap.cs" />
+    <Compile Include="ReportObjects\ReportServiceEndpointRow.cs" />
+    <Compile Include="ReportObjects\ReportServiceEndpointMap.cs" />
+    <Compile Include="ReportObjects\ReportErrorRow.cs" />
+    <Compile Include="ReportObjects\ReportErrorRowMap.cs" />
+    <Compile Include="ReportObjects\ReportTierRowMap.cs" />
+    <Compile Include="ReportObjects\ReportTierRow.cs" />
+    <Compile Include="ReportObjects\ReportApplicationRow.cs" />
+    <Compile Include="ReportObjects\ReportApplicationRowMap.cs" />
+    <Compile Include="ReportObjects\ReportControllerRow.cs" />
+    <Compile Include="ReportObjects\ReportControllerRowMap.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

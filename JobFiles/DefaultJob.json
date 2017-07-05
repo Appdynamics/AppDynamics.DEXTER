@@ -1,0 +1,33 @@
+﻿{
+    "Input": {
+        "TimeRange" : {
+            "From": "2017-06-26T18:00:00",
+            "To": "2017-06-26T19:59:00"
+        },
+        "Flowmaps": true,
+        "Metrics": true,
+        "Snapshots": true,
+        "SnapshotTypes": {
+            "Normal": true,
+            "Slow": true,
+            "VerySlow": true,
+            "Stall": true,
+            "Error": true
+        }
+    },
+    "Output": {
+        "Flowmaps": true,
+        "Metrics": true,
+        "SnapshotsList": false,
+        "SnapshotsIndividual": true
+    },
+    "Target": [
+        {
+            "Controller": "http://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "yourpassword",
+            "Application": "YourApplication",
+            "NameRegex": false
+        }
+    ]
+}
