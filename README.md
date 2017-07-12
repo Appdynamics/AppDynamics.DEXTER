@@ -19,4 +19,3 @@ This project allows taking of AppDynamics data offline. This includes:
 - Snapshots
 
 It provides detailed report on the results in Excel and HTML format
-nice!

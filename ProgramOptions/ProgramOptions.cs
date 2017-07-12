@@ -19,6 +19,8 @@ namespace AppDynamics.OfflineData
 
         public string OutputJobFilePath { get; set; }
 
+        public string JobName { get; set; }
+
         [ParserState]
         public IParserState LastParserState { get; set; }
 
@@ -31,7 +33,7 @@ namespace AppDynamics.OfflineData
 
         public override string ToString()
         {
-            return String.Format("ProgramOptions:\nInputJobFilePath='{0}'\nRestartJobFromBeginning='{1}'\nOutputFolderPath='{2}'\nOutputJobFolderPath='{3}'\nOutputJobFilePath='{4}'", this.InputJobFilePath, this.RestartJobFromBeginning, this.OutputFolderPath, this.OutputJobFolderPath, this.OutputJobFilePath);
+            return String.Format("ProgramOptions:\r\nInputJobFilePath='{0}'\r\nRestartJobFromBeginning='{1}'\r\nOutputFolderPath='{2}'\r\nOutputJobFolderPath='{3}'\r\nOutputJobFilePath='{4}'", this.InputJobFilePath, this.RestartJobFromBeginning, this.OutputFolderPath, this.OutputJobFolderPath, this.OutputJobFilePath);
         }
     }
 }

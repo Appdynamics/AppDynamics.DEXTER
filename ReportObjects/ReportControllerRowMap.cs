@@ -11,6 +11,7 @@ namespace AppDynamics.OfflineData.ReportObjects
             Map(m => m.UserName).Index(i); i++;
             Map(m => m.Version).Index(i); i++;
             Map(m => m.NumApps).Index(i); i++;
+            Map(m => m.ControllerLink).Index(i); i++;
         }
     }
 }

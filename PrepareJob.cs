@@ -424,7 +424,7 @@ namespace AppDynamics.OfflineData
 
                     // Add status to each individual application
 
-                    jobTargetExpanded.Status = JobTargetStatus.ExtractApplications;
+                    jobTargetExpanded.Status = JobTargetStatus.Extract;
 
                     expandedJobTargets.Add(jobTargetExpanded);
 

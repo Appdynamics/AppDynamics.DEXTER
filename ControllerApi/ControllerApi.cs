@@ -12,7 +12,6 @@ namespace AppDynamics.OfflineData
 
         private HttpClient _httpClient;
         private CookieContainer _cookieContainer;
-        private Cookie _cookieXSRF;
 
         #endregion
 
@@ -73,6 +72,11 @@ namespace AppDynamics.OfflineData
         #endregion
 
         #region Metadata retrieval
+
+        public string GetControllerConfiguration()
+        {
+            return this.apiGET("controller/rest/configuration?output=json", "application/json", false);
+        }
 
         public string GetApplicationConfiguration(int applicationID)
         {

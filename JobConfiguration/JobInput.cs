@@ -10,6 +10,6 @@ namespace AppDynamics.OfflineData.JobParameters
         public bool Flowmaps { get; set; }
         public bool Metrics { get; set; }
         public bool Snapshots { get; set; }
-        public JobInputSnapshotType SnapshotTypes { get; set; }
+        public bool Configuration { get; set; }
     }
 }

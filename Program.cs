@@ -71,7 +71,8 @@ namespace AppDynamics.OfflineData
                 if (PrepareJob.validateOrCreateOutputFolder(programOptions) == false) return;
 
                 // Set up the output job folder and job file path
-                programOptions.OutputJobFolderPath = Path.Combine(programOptions.OutputFolderPath, Path.GetFileNameWithoutExtension(programOptions.InputJobFilePath));
+                programOptions.JobName = Path.GetFileNameWithoutExtension(programOptions.InputJobFilePath);
+                programOptions.OutputJobFolderPath = Path.Combine(programOptions.OutputFolderPath, programOptions.JobName);
                 programOptions.OutputJobFilePath = Path.Combine(programOptions.OutputJobFolderPath, "jobparameters.json");
 
                 LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
@@ -169,6 +170,10 @@ namespace AppDynamics.OfflineData
                     EventId.FUNCTION_DURATION_EVENT,
                     "Program.Main",
                     String.Format("Application execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(String.Format("Application execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
+                Console.ResetColor();
 
                 LogHelper.Instance.FlushAndCloseAll(); 
             }

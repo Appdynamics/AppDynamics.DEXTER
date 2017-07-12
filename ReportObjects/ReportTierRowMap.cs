@@ -15,6 +15,9 @@ namespace AppDynamics.OfflineData.ReportObjects
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.AgentType).Index(i); i++;
             Map(m => m.NumNodes).Index(i); i++;
+            Map(m => m.ControllerLink).Index(i); i++;
+            Map(m => m.ApplicationLink).Index(i); i++;
+            Map(m => m.TierLink).Index(i); i++;
         }
     }
 }

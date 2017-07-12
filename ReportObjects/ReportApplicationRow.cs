@@ -3,6 +3,8 @@
     public class ReportApplicationRow
     {
         public string Controller { get; set; }
+        public string ControllerLink { get; set; }
+        public string ApplicationLink { get; set; }
         public string ApplicationName { get; set; }
         public int ApplicationID { get; set; }
         public int NumBackends { get; set; }

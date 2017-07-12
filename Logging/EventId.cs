@@ -64,5 +64,7 @@
 
         public const int SNAPSHOT_RETRIEVAL = 2015;
 
+        public const int CSV_FILE_TO_EXCEL_RANGE = 2016;
+
     }
 }

@@ -2,10 +2,13 @@
 {
     public class ReportBackendRow
     {
+        public string ApplicationLink { get; set; }
         public string ApplicationName { get; set; }
         public int ApplicationID { get; set; }
         public string Controller { get; set; }
+        public string ControllerLink { get; set; }
         public int BackendID { get; set; }
+        public string BackendLink { get; set; }
         public string BackendName { get; set; }
         public string BackendType { get; set; }
         public int NodeID { get; set; }

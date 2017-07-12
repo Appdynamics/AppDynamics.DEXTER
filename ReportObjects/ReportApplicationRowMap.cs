@@ -18,6 +18,8 @@ namespace AppDynamics.OfflineData.ReportObjects
             Map(m => m.NumErrors).Index(i); i++;
             Map(m => m.NumHTTPDCs).Index(i); i++;
             Map(m => m.NumMIDCs).Index(i); i++;
+            Map(m => m.ControllerLink).Index(i); i++;
+            Map(m => m.ApplicationLink).Index(i); i++;
         }
     }
 }

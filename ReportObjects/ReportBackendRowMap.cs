@@ -26,6 +26,9 @@ namespace AppDynamics.OfflineData.ReportObjects
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.NodeName).Index(i); i++;
             Map(m => m.NodeID).Index(i); i++;
+            Map(m => m.ControllerLink).Index(i); i++;
+            Map(m => m.ApplicationLink).Index(i); i++;
+            Map(m => m.BackendLink).Index(i); i++;
         }
     }
 }
