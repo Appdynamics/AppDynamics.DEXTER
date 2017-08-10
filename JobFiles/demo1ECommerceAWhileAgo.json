@@ -1,0 +1,21 @@
+﻿{
+    "Input": {
+        "TimeRange" : {
+            "From": "2017-07-10T13:00:00",
+            "To": "2017-07-10T14:30:00"
+        },
+        "Flowmaps": true,
+        "Metrics": true,
+        "Snapshots": true,
+        "Configuration": true
+    },
+    "Target": [
+        {
+            "Controller": "http://demo1.appdynamics.com/",
+            "UserName": "demouser@customer1",
+            "UserPassword": "Ghed7ped0geN",
+            "Application": "ECommerce",
+			"NameRegex": false
+        }
+    ]
+}

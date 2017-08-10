@@ -60,10 +60,14 @@
       <HintPath>packages\EPPlus.4.1.0\lib\net40\EPPlus.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>packages\NLog.4.4.12\lib\net45\NLog.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Net.Http" />
@@ -71,45 +75,59 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControllerApi\ControllerApi.cs" />
-    <Compile Include="DataObjects\AppDRESTBackend.cs" />
-    <Compile Include="DataObjects\AppDRESTBackendProperty.cs" />
-    <Compile Include="DataObjects\AppDRESTBusinessTransaction.cs" />
-    <Compile Include="DataObjects\AppDRESTMetricFolder.cs" />
-    <Compile Include="DataObjects\AppDRESTNode.cs" />
-    <Compile Include="DataObjects\AppDRESTTier.cs" />
-    <Compile Include="DataObjects\AppDRESTApplication.cs" />
-    <Compile Include="DataObjects\AppDRESTMetric.cs" />
-    <Compile Include="DataObjects\AppDRESTMetricValue.cs" />
-    <Compile Include="JobConfiguration\JobConfigurationHelper.cs" />
-    <Compile Include="JobConfiguration\JobStatus.cs" />
-    <Compile Include="JobConfiguration\JobTarget.cs" />
-    <Compile Include="JobConfiguration\JobInput.cs" />
-    <Compile Include="JobConfiguration\JobConfiguration.cs" />
-    <Compile Include="JobConfiguration\JobTargetStatus.cs" />
-    <Compile Include="JobConfiguration\JobTimeRange.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTBackend.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTBackendProperty.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTBusinessTransaction.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTMetricFolder.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTNode.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTTier.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTApplication.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTMetric.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTMetricValue.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobConfigurationHelper.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobStatus.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobInput.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobConfiguration.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobTargetStatus.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobTimeRange.cs" />
+    <Compile Include="Helpers\IEnumerableExtensions.cs" />
     <Compile Include="Logging\EventId.cs" />
     <Compile Include="Logging\LogHelper.cs" />
     <Compile Include="PrepareJob.cs" />
     <Compile Include="ProcessJob.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProgramOptions\ProgramOptions.cs" />
+    <Compile Include="DataObjects\ProgramOptions\ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReportObjects\ReportBusinessTransactionRow.cs" />
-    <Compile Include="ReportObjects\ReportNodeRow.cs" />
-    <Compile Include="ReportObjects\ReportBusinessTransactionRowMap.cs" />
-    <Compile Include="ReportObjects\ReportNodeRowMap.cs" />
-    <Compile Include="ReportObjects\ReportBackendRow.cs" />
-    <Compile Include="ReportObjects\ReportBackendRowMap.cs" />
-    <Compile Include="ReportObjects\ReportServiceEndpointRow.cs" />
-    <Compile Include="ReportObjects\ReportServiceEndpointMap.cs" />
-    <Compile Include="ReportObjects\ReportErrorRow.cs" />
-    <Compile Include="ReportObjects\ReportErrorRowMap.cs" />
-    <Compile Include="ReportObjects\ReportTierRowMap.cs" />
-    <Compile Include="ReportObjects\ReportTierRow.cs" />
-    <Compile Include="ReportObjects\ReportApplicationRow.cs" />
-    <Compile Include="ReportObjects\ReportApplicationRowMap.cs" />
-    <Compile Include="ReportObjects\ReportControllerRow.cs" />
-    <Compile Include="ReportObjects\ReportControllerRowMap.cs" />
+    <Compile Include="ReportObjects\MetricSummary.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\MetricSummaryMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\ErrorMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\ServiceEndpointMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\BusinessTransactionMetricReportMap.cs" />
+    <Compile Include="ReportObjects\EntityBase.cs" />
+    <Compile Include="ReportObjects\MetricEnums.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\MetricValueMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricValue.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\BackendMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\NodeMetricReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\TierMetricReportMap.cs" />
+    <Compile Include="ReportObjects\EntityBusinessTransaction.cs" />
+    <Compile Include="ReportObjects\EntityNode.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\BusinessTransactionEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\NodeEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityBackend.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\BackendEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityServiceEndpoint.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\ServiceEndpointEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityError.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\ErrorEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\TierEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityTier.cs" />
+    <Compile Include="ReportObjects\EntityApplication.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\ApplicationEntityReportMap.cs" />
+    <Compile Include="ReportObjects\EntityController.cs" />
+    <Compile Include="ReportObjects\EntityReportMaps\ControllerEntityReportMap.cs" />
+    <Compile Include="ReportObjects\MetricReportMaps\ApplicationMetricReportMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

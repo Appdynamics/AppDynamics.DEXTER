@@ -1,0 +1,21 @@
+﻿{
+    "Input": {
+        "TimeRange" : {
+            "From": "2017-07-25T08:00:00",
+            "To": "2017-07-25T16:00:00"
+        },
+        "Flowmaps": false,
+        "Metrics": false,
+        "Snapshots": true,
+        "Configuration": true
+    },
+    "Target": [
+        {
+            "Controller": "https://dh-test.saas.appdynamics.com",
+            "UserName": "daniel.odievich@dh-test",
+            "UserPassword": "Daniel",
+            "Application": "DH-DLP-NLP-PT-Azure",
+			"NameRegex": false
+        }		
+    ]
+}

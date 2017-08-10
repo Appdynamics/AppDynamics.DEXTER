@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 namespace AppDynamics.OfflineData
 {
@@ -14,6 +15,7 @@ namespace AppDynamics.OfflineData
 
             try
             {
+
                 #region Set up main application logging
 
                 DateTime dateTimeNow = DateTime.Now; // UtcNow;
@@ -42,8 +44,9 @@ namespace AppDynamics.OfflineData
                     TraceEventType.Start,
                     EventId.APPLICATION_STARTED,
                     "Program.Main",
-                    String.Format("Starting. Parameters='{0}'", String.Join(" ", args)));
+                    String.Format("Starting. Version='{0}', Parameters='{1}'", Assembly.GetEntryAssembly().GetName().Version, String.Join(" ", args)));
 
+                Console.WriteLine("Version {0}", Assembly.GetEntryAssembly().GetName().Version);
                 Console.WriteLine("Log file='{0}'", logFilePath);
 
                 // Parse parameters
@@ -76,7 +79,7 @@ namespace AppDynamics.OfflineData
                 programOptions.OutputJobFilePath = Path.Combine(programOptions.OutputJobFolderPath, "jobparameters.json");
 
                 LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
+                    TraceEventType.Information,
                     EventId.JOBFILE_PARAMETERS,
                     "Program.Main",
                     String.Format("Now {0}", programOptions));
@@ -166,12 +169,12 @@ namespace AppDynamics.OfflineData
 
                 stopWatch.Stop();
                 LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
+                    TraceEventType.Information,
                     EventId.FUNCTION_DURATION_EVENT,
                     "Program.Main",
                     String.Format("Application execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(String.Format("Application execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
                 Console.ResetColor();
 
@@ -187,7 +190,7 @@ namespace AppDynamics.OfflineData
             {
 
                 LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Warning,
+                    TraceEventType.Error,
                     EventId.INVALID_PROGRAM_PARAMETERS,
                     "Program.Main",
                     String.Format("Could not parse command line arguments"));

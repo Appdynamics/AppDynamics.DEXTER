@@ -198,10 +198,6 @@ namespace AppDynamics.OfflineData
 
             #region Expand time ranges for metric retrieval
 
-            // Change times to local time zone
-            //jobConfiguration.Input.From = DateTime.SpecifyKind(jobConfiguration.Input.From, DateTimeKind.Local);
-            //jobConfiguration.Input.To = DateTime.SpecifyKind(jobConfiguration.Input.To, DateTimeKind.Local);
-
             // Expand the time ranges to the hour beginning and end
             JobTimeRange expandedTimeRange = new JobTimeRange();
             expandedTimeRange.From = jobConfiguration.Input.TimeRange.From.ToUniversalTime();
@@ -215,14 +211,17 @@ namespace AppDynamics.OfflineData
                 DateTimeKind.Utc);
 
             expandedTimeRange.To = jobConfiguration.Input.TimeRange.To.ToUniversalTime();
-            expandedTimeRange.To = new DateTime(
-                expandedTimeRange.To.Year,
-                expandedTimeRange.To.Month,
-                expandedTimeRange.To.Day,
-                expandedTimeRange.To.Hour,
-                59,
-                0,
-                DateTimeKind.Utc);
+            if (expandedTimeRange.To.Minute > 0 || expandedTimeRange.To.Second > 0)
+            {
+                expandedTimeRange.To = new DateTime(
+                    expandedTimeRange.To.Year,
+                    expandedTimeRange.To.Month,
+                    expandedTimeRange.To.Day,
+                    expandedTimeRange.To.Hour,
+                    0,
+                    0,
+                    DateTimeKind.Utc).AddHours(1);
+            }
 
             jobConfiguration.Input.ExpandedTimeRange = expandedTimeRange;
 
@@ -230,13 +229,15 @@ namespace AppDynamics.OfflineData
             jobConfiguration.Input.HourlyTimeRanges = new List<JobTimeRange>();
 
             DateTime intervalStartTime = expandedTimeRange.From;
-            DateTime intervalEndTime = intervalStartTime.AddMinutes(59);
+            //DateTime intervalEndTime = intervalStartTime.AddMinutes(59);
+            DateTime intervalEndTime = intervalStartTime.AddHours(1);
             while (intervalEndTime <= expandedTimeRange.To)
             {
                 jobConfiguration.Input.HourlyTimeRanges.Add(new JobTimeRange { From = intervalStartTime, To = intervalEndTime });
 
                 intervalStartTime = intervalStartTime.AddHours(1);
-                intervalEndTime = intervalStartTime.AddMinutes(59);
+                //intervalEndTime = intervalStartTime.AddMinutes(59);
+                intervalEndTime = intervalStartTime.AddHours(1);
             }
 
             #endregion
@@ -398,10 +399,10 @@ namespace AppDynamics.OfflineData
                         TraceEventType.Warning,
                         EventId.CONTROLLER_APPLICATION_DOES_NOT_EXIST,
                         "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target [{0}/{1}], controller '{2}' does not have '{3}'", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application));
+                        String.Format("Target [{0}/{1}], Controller='{2}' does not have Application='{3}'", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application));
 
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}/{1}], controller {2} does not have {3}", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application);
+                    Console.WriteLine("Target [{0}/{1}], Controller {2} does not have Application {3}", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application);
                     Console.ResetColor();
 
                     jobTarget.Status = JobTargetStatus.NoApplication;
@@ -424,12 +425,12 @@ namespace AppDynamics.OfflineData
 
                     // Add status to each individual application
 
-                    jobTargetExpanded.Status = JobTargetStatus.Extract;
+                    jobTargetExpanded.Status = JobTargetStatus.ConfigurationValid;
 
                     expandedJobTargets.Add(jobTargetExpanded);
 
                     LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Verbose,
+                        TraceEventType.Information,
                         EventId.TARGET_APPLICATION_EXPANDED,
                         "PrepareJob.validateAndExpandJobFileContents",
                         String.Format("Target [{0}/{1}] with Controller='{2}' and Application='{3}' resulted in Application='{4}'", i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application));
@@ -440,18 +441,16 @@ namespace AppDynamics.OfflineData
                 #endregion
             }
 
+            // Sort them to be pretty
+            expandedJobTargets = expandedJobTargets.OrderBy(o => o.Controller).ThenBy(o => o.Application).ToList();
+
             // Save expanded targets
             jobConfiguration.Target = expandedJobTargets;
 
             #endregion
 
-            #region Status for overall job
-
             // Add status to the overall job
-            //jobConfiguration.Status = JobStepStatusConstants.OVERALL_STEP_1_EXTRACT_DATA;
-            jobConfiguration.Status = JobStatus.Extract;
-
-            #endregion
+            jobConfiguration.Status = JobStatus.ExtractControllerApplicationsAndEntities;
 
             // Save the resulting JSON file to the job target folder
             if (JobConfigurationHelper.writeJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)

@@ -17,6 +17,7 @@
         public const int EXCEPTION_JSONREADEREXCEPTION = 5003;
         public const int EXCEPTION_JSONWRITEREXCEPTION = 5004;
         public const int EXCEPTION_XMLEXCEPTION = 5005;
+        public const int EXCEPTION_INVALID_OPERATION = 5006;
 
         public const int INVALID_PROGRAM_PARAMETERS = 5020;
         public const int FOLDER_DELETE_FAILED = 5021;
@@ -65,6 +66,8 @@
         public const int SNAPSHOT_RETRIEVAL = 2015;
 
         public const int CSV_FILE_TO_EXCEL_RANGE = 2016;
+
+        public const int ENTITY_METRICS_RETRIEVAL_FROM_FILE = 2017;
 
     }
 }

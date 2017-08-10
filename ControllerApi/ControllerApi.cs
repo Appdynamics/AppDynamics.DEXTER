@@ -3,6 +3,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 
 namespace AppDynamics.OfflineData
 {
@@ -12,6 +14,8 @@ namespace AppDynamics.OfflineData
 
         private HttpClient _httpClient;
         private CookieContainer _cookieContainer;
+
+        private System.Net.Security.RemoteCertificateValidationCallback ignoreBadCertificates = new System.Net.Security.RemoteCertificateValidationCallback(delegate { return true; });
 
         #endregion
 
@@ -43,6 +47,8 @@ namespace AppDynamics.OfflineData
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", this.UserName, this.Password))));
+            // If customer controller certificates are not in trusted store, let's not bail
+            ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
 
             this._httpClient = httpClient;
         }
@@ -113,19 +119,29 @@ namespace AppDynamics.OfflineData
             return this.apiGET(String.Format("controller/rest/applications/{0}/backends?output=JSON", applicationNameOrID), "application/json", false);
         }
 
-        public string GetListOfServiceEndpoints(int applicationID)
+        public string GetListOfServiceEndpoints(string applicationNameOrID)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Service Endpoints|*|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID), "application/json", false);
+        }
+
+        public string GetListOfServiceEndpointsWithDetail(int applicationID)
         {
             return this.apiGET(String.Format("controller/restui/serviceEndpoint/list2/{0}/{0}/APPLICATION?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }
 
-        public string GetListOfServiceEndpoints(string applicationName, string tierName)
+        public string GetListOfServiceEndpointsInTier(string applicationNameOrID, string tierName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Service Endpoints|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Service Endpoints|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID, WebUtility.UrlEncode(tierName)), "application/json", false);
         }
 
-        public string GetListOfErrors(string applicationName, string tierName)
+        public string GetListOfErrors(string applicationNameOrID)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Errors|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Errors|*|*|Errors per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID), "application/json", false);
+        }
+
+        public string GetListOfErrorsInTier(string applicationNameOrID, string tierName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Errors|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID, WebUtility.UrlEncode(tierName)), "application/json", false);
         }
 
         #endregion
@@ -211,7 +227,7 @@ namespace AppDynamics.OfflineData
 
         #region Snapshot retrieval
 
-        public string GetListOfSnapshots(int applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, long serverCursorId)
+        public string GetListOfSnapshots(int applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, string serverCursorIdName, long serverCursorId)
         {
             string requestJSONTemplate =
 @"{{
@@ -259,7 +275,7 @@ namespace AppDynamics.OfflineData
             string cursorJSONTemplate =
 @",
 	""serverCursor"": {{
-		""rsdScrollId"": {0}
+		""{0}"": {1}
 	}}
 ";
 
@@ -274,7 +290,7 @@ namespace AppDynamics.OfflineData
                 endTime.ToUniversalTime(),
                 durationBetweenTimes,
                 maxRows,
-                serverCursorId > 0 ? String.Format(cursorJSONTemplate, serverCursorId) : String.Empty);
+                serverCursorId > 0 ? String.Format(cursorJSONTemplate, serverCursorIdName, serverCursorId) : String.Empty);
 
             return this.apiPOST("controller/restui/snapshot/snapshotListDataWithFilterHandle", "application/json", requestBody, "application/json", true);
         }
@@ -371,16 +387,22 @@ namespace AppDynamics.OfflineData
             stopWatch.Start();
             try
             {
-                this._httpClient.DefaultRequestHeaders.Accept.Clear();
-                this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader));
-                this._httpClient.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
+                MediaTypeWithQualityHeaderValue accept = new MediaTypeWithQualityHeaderValue(acceptHeader);
+                if (this._httpClient.DefaultRequestHeaders.Accept.Contains(accept) == false)
+                {
+                    this._httpClient.DefaultRequestHeaders.Accept.Add(accept);
+                }
+                //this._httpClient.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
                 if (useXSRFHeader == true)
                 {
-                    // Add CSRF cookie if available
-                    Cookie cookieXSRF = this._cookieContainer.GetCookies(new Uri(this._httpClient.BaseAddress, "controller/auth"))["X-CSRF-TOKEN"];
-                    if (cookieXSRF != null)
+                    if (this._httpClient.DefaultRequestHeaders.Contains("X-CSRF-TOKEN") == false)
                     {
-                        this._httpClient.DefaultRequestHeaders.Add("X-CSRF-TOKEN", cookieXSRF.Value);
+                        // Add CSRF cookie if available
+                        Cookie cookieXSRF = this._cookieContainer.GetCookies(new Uri(this._httpClient.BaseAddress, "controller/auth"))["X-CSRF-TOKEN"];
+                        if (cookieXSRF != null)
+                        {
+                            this._httpClient.DefaultRequestHeaders.Add("X-CSRF-TOKEN", cookieXSRF.Value);
+                        }
                     }
                 }
 
@@ -439,16 +461,22 @@ namespace AppDynamics.OfflineData
             stopWatch.Start();
             try
             {
-                this._httpClient.DefaultRequestHeaders.Accept.Clear();
-                this._httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(acceptHeader));
-                this._httpClient.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
+                MediaTypeWithQualityHeaderValue accept = new MediaTypeWithQualityHeaderValue(acceptHeader);
+                if (this._httpClient.DefaultRequestHeaders.Accept.Contains(accept) == false)
+                {
+                    this._httpClient.DefaultRequestHeaders.Accept.Add(accept);
+                }
+                //this._httpClient.DefaultRequestHeaders.Remove("X-CSRF-TOKEN");
                 if (useXSRFHeader == true)
                 {
-                    // Add CSRF cookie if available
-                    Cookie cookieXSRF = this._cookieContainer.GetCookies(new Uri(this._httpClient.BaseAddress, "controller/auth"))["X-CSRF-TOKEN"];
-                    if (cookieXSRF != null)
+                    if (this._httpClient.DefaultRequestHeaders.Contains("X-CSRF-TOKEN") == false)
                     {
-                        this._httpClient.DefaultRequestHeaders.Add("X-CSRF-TOKEN", cookieXSRF.Value);
+                        // Add CSRF cookie if available
+                        Cookie cookieXSRF = this._cookieContainer.GetCookies(new Uri(this._httpClient.BaseAddress, "controller/auth"))["X-CSRF-TOKEN"];
+                        if (cookieXSRF != null)
+                        {
+                            this._httpClient.DefaultRequestHeaders.Add("X-CSRF-TOKEN", cookieXSRF.Value);
+                        }
                     }
                 }
                 StringContent content = new StringContent(requestBody);
