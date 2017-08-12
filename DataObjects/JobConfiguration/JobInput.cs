@@ -11,5 +11,6 @@ namespace AppDynamics.Dexter
         public bool Metrics { get; set; }
         public bool Snapshots { get; set; }
         public bool Configuration { get; set; }
+        public bool Events { get; set; }
     }
 }

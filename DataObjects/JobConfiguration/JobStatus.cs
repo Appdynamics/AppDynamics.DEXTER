@@ -1,4 +1,6 @@
-﻿namespace AppDynamics.Dexter
+﻿using System.Collections.Generic;
+
+namespace AppDynamics.Dexter
 {
     public enum JobStatus
     {
@@ -7,12 +9,14 @@
         ExtractApplicationAndEntityMetrics = 3,
         ExtractApplicationAndEntityFlowmaps = 4,
         ExtractSnapshots = 5,
+        ExtractEvents = 6,
 
         IndexControllersApplicationsAndEntities = 11,
         IndexControllerAndApplicationConfiguration = 12,
         IndexApplicationAndEntityMetrics = 13,
-        IndexApplicationAndEntityFlowmaps = 14,
-        IndexSnapshots = 15,
+        IndexSnapshots = 14,
+        IndexEvents = 15,
+        IndexApplicationAndEntityFlowmaps = 16,
 
         ReportControlerApplicationsAndEntities = 21,
         ReportControllerAndApplicationConfiguration = 22,

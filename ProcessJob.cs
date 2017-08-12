@@ -345,6 +345,36 @@ namespace AppDynamics.Dexter
                 return;
             }
 
+            List<JobStatus> jobSteps = new List<JobStatus>
+            {
+                JobStatus.ExtractControllerApplicationsAndEntities,
+                JobStatus.ExtractControllerAndApplicationConfiguration,
+                JobStatus.ExtractApplicationAndEntityMetrics,
+                JobStatus.ExtractApplicationAndEntityFlowmaps,
+                JobStatus.ExtractSnapshots,
+                JobStatus.ExtractEvents,
+
+                JobStatus.IndexControllersApplicationsAndEntities,
+                JobStatus.IndexControllerAndApplicationConfiguration,
+                JobStatus.IndexApplicationAndEntityMetrics,
+                JobStatus.IndexSnapshots,
+                JobStatus.IndexEvents,
+                JobStatus.IndexApplicationAndEntityFlowmaps,
+
+                JobStatus.ReportControlerApplicationsAndEntities,
+                JobStatus.ReportControllerAndApplicationConfiguration,
+                JobStatus.ReportApplicationAndEntityMetrics,
+                JobStatus.ReportApplicationAndEntityMetricDetails,
+                JobStatus.ReportApplicationAndEntityFlowmaps,
+                JobStatus.ReportSnapshots,
+                JobStatus.ReportFlameGraphs,
+
+                JobStatus.Done,
+
+                JobStatus.Error
+            };
+            LinkedList<JobStatus> jobStepsLinked = new LinkedList<JobStatus>(jobSteps);
+
             #region Output diagnostic parameters to log
 
             logger.Info("Job status='{0}' ({0:g})", jobConfiguration.Status);
@@ -365,7 +395,7 @@ namespace AppDynamics.Dexter
                     case JobStatus.ExtractControllerApplicationsAndEntities:
                         if (stepExtractControllerApplicationsAndEntities(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                         {
-                            jobConfiguration.Status = JobStatus.ExtractControllerAndApplicationConfiguration;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                         }
                         else
                         {
@@ -378,7 +408,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepExtractControllerAndApplicationConfiguration(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityMetrics;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -387,11 +417,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityMetrics;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping export of configuration");
                         }
-
                         break;
 
                     case JobStatus.ExtractApplicationAndEntityMetrics:
@@ -399,7 +428,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepExtractApplicationAndEntityMetrics(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityFlowmaps;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -408,11 +437,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityFlowmaps;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping export of entity metrics");
                         }
-
                         break;
 
                     case JobStatus.ExtractApplicationAndEntityFlowmaps:
@@ -420,7 +448,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepExtractApplicationAndEntityFlowmaps(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ExtractSnapshots;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -429,11 +457,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ExtractSnapshots;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping export of entity flowmaps");
                         }
-
                         break;
 
                     case JobStatus.ExtractSnapshots:
@@ -441,7 +468,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepExtractSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.IndexControllersApplicationsAndEntities;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -450,22 +477,42 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.IndexControllersApplicationsAndEntities;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping export of snapshots");
+                        }
+                        break;
+
+                    case JobStatus.ExtractEvents:
+                        if (jobConfiguration.Input.Events == true)
+                        {
+                            loggerConsole.Fatal("TODO JobStatus.ExtractEvents");
+                            //if (stepIndexEvents(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            //{
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            //}
+                        //else
+                        //{
+                        //        jobConfiguration.Status = JobStatus.Error;
+                        //    }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Warn("Skipping index of events");
                         }
                         break;
 
                     case JobStatus.IndexControllersApplicationsAndEntities:
                         if (stepIndexControllersApplicationsAndEntities(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                         {
-                            jobConfiguration.Status = JobStatus.IndexControllerAndApplicationConfiguration;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                         }
                         else
                         {
                             jobConfiguration.Status = JobStatus.Error;
                         }
-
                         break;
 
                     case JobStatus.IndexControllerAndApplicationConfiguration:
@@ -473,7 +520,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepIndexControllerAndApplicationConfiguration(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.IndexApplicationAndEntityMetrics;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -482,7 +529,7 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.IndexApplicationAndEntityMetrics;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping index of configuration");
                         }
@@ -493,7 +540,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepIndexApplicationAndEntityMetrics(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.IndexApplicationAndEntityFlowmaps;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -502,32 +549,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.IndexApplicationAndEntityFlowmaps;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping index of entity metrics");
-                        }
-                        
-                        break;
-
-                    case JobStatus.IndexApplicationAndEntityFlowmaps:
-                        if (jobConfiguration.Input.Flowmaps == true)
-                        {
-                            if (stepIndexApplicationAndEntityFlowmaps(programOptions, jobConfiguration, jobConfiguration.Status) == true)
-                            {
-                                jobConfiguration.Status = JobStatus.IndexSnapshots;
-                            }
-                            else
-                            {
-                                jobConfiguration.Status = JobStatus.Error;
-                            }
-                        }
-                        else
-                        {
-                            jobConfiguration.Status = JobStatus.IndexSnapshots;
-
-                            loggerConsole.Warn("Skipping index of entity flowmaps");
-                        }
-
+                        }                        
                         break;
 
                     case JobStatus.IndexSnapshots:
@@ -535,7 +560,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepIndexSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ReportControlerApplicationsAndEntities;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -544,23 +569,58 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ReportControlerApplicationsAndEntities;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping index of snapshots");
                         }
-                        
+                        break;
+
+                    case JobStatus.IndexEvents:
+                        if (jobConfiguration.Input.Events == true)
+                        {
+                            loggerConsole.Fatal("TODO JobStatus.IndexEvents");
+                            //if (stepIndexEvents(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            //{
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            //}
+                        //else
+                        //{
+                        //        jobConfiguration.Status = JobStatus.Error;
+                        //    }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Warn("Skipping index of events");
+                        }
+                        break;
+
+                    case JobStatus.IndexApplicationAndEntityFlowmaps:
+                        if (jobConfiguration.Input.Flowmaps == true)
+                        {
+                            if (stepIndexApplicationAndEntityFlowmaps(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Warn("Skipping index of entity flowmaps");
+                        }
                         break;
 
                     case JobStatus.ReportControlerApplicationsAndEntities:
                         if (stepReportControlerApplicationsAndEntities(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                         {
-                            jobConfiguration.Status = JobStatus.ReportControllerAndApplicationConfiguration;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                         }
-                        else
-                        {
-                            jobConfiguration.Status = JobStatus.Error;
-                        }
-
                         break;
 
                     case JobStatus.ReportControllerAndApplicationConfiguration:
@@ -568,7 +628,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepReportControllerAndApplicationConfiguration(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ReportApplicationAndEntityMetrics;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -577,11 +637,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ReportApplicationAndEntityMetrics;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping report of configuration");
                         }
-
                         break;
 
                     case JobStatus.ReportApplicationAndEntityMetrics:
@@ -589,7 +648,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepReportApplicationAndEntityMetrics(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ReportApplicationAndEntityFlowmaps;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -598,11 +657,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ReportApplicationAndEntityFlowmaps;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping report of entity metrics");
                         }
-
                         break;
 
                     case JobStatus.ReportApplicationAndEntityFlowmaps:
@@ -610,7 +668,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepReportApplicationAndEntityFlowmaps(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.ReportSnapshots;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -619,11 +677,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.ReportSnapshots;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping report of entity flowmaps");
                         }
-
                         break;
 
                     case JobStatus.ReportSnapshots:
@@ -631,7 +688,7 @@ namespace AppDynamics.Dexter
                         {
                             if (stepReportSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
-                                jobConfiguration.Status = JobStatus.Done;
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
                             else
                             {
@@ -640,11 +697,10 @@ namespace AppDynamics.Dexter
                         }
                         else
                         {
-                            jobConfiguration.Status = JobStatus.Done;
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Warn("Skipping report of snapshots");
                         }
-
                         break;
 
                     default:
