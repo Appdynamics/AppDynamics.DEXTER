@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AppDynamics.OfflineData.ReportObjects
+namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityBase
     {

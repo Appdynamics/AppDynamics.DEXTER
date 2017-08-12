@@ -1,4 +1,4 @@
-﻿namespace AppDynamics.OfflineData.ReportObjects
+﻿namespace AppDynamics.Dexter.DataObjects
 {
     /// <summary>
     /// What type of the entity

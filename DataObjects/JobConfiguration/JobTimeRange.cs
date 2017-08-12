@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AppDynamics.OfflineData.JobParameters
+namespace AppDynamics.Dexter
 {
     public class JobTimeRange
     {

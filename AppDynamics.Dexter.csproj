@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{0734F6D8-9E80-495D-A096-25668CB7D66C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>AppDynamics.OfflineData</RootNamespace>
-    <AssemblyName>AppDOfflineDataExport</AssemblyName>
+    <RootNamespace>AppDynamics.Dexter</RootNamespace>
+    <AssemblyName>AppDynamics.Dexter</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -84,16 +84,14 @@
     <Compile Include="DataObjects\RestApi\AppDRESTApplication.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTMetric.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTMetricValue.cs" />
-    <Compile Include="DataObjects\JobConfiguration\JobConfigurationHelper.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobStatus.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobInput.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobConfiguration.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTargetStatus.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTimeRange.cs" />
+    <Compile Include="Helpers\FileIOHelper.cs" />
     <Compile Include="Helpers\IEnumerableExtensions.cs" />
-    <Compile Include="Logging\EventId.cs" />
-    <Compile Include="Logging\LogHelper.cs" />
     <Compile Include="PrepareJob.cs" />
     <Compile Include="ProcessJob.cs" />
     <Compile Include="Program.cs" />
@@ -131,7 +129,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

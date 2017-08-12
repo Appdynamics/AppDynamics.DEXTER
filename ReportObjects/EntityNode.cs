@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AppDynamics.OfflineData.ReportObjects
+namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityNode : EntityBase
     {

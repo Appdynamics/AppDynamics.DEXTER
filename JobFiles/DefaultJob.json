@@ -6,7 +6,8 @@
         },
         "Flowmaps": true,
         "Metrics": true,
-        "Snapshots": true
+        "Snapshots": true,
+        "Configuration": true
     },
     "Target": [
         {

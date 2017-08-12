@@ -1,15 +1,16 @@
-﻿using System;
+﻿using NLog;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 
-namespace AppDynamics.OfflineData
+namespace AppDynamics.Dexter
 {
     public class ControllerApi
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         #region Private variables
 
         private HttpClient _httpClient;
@@ -47,7 +48,8 @@ namespace AppDynamics.OfflineData
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", this.UserName, this.Password))));
-            // If customer controller certificates are not in trusted store, let's not bail
+            
+            // If customer controller certificates are not in trusted store, let's not fail
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
 
             this._httpClient = httpClient;
@@ -413,38 +415,22 @@ namespace AppDynamics.OfflineData
                 }
                 else
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.CONTROLLER_REST_API_ERROR,
-                        "ControllerApi.apiGET",
-                        String.Format("{0}/{1} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase));
+                    logger.Error("{0}/{1} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+
                     return String.Empty;
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.CONTROLLER_REST_API_ERROR,
-                    "ControllerApi.apiGET",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.CONTROLLER_REST_API_ERROR,
-                    "ControllerApi.apiGET",
-                    String.Format("{0}/{1} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source));
+                logger.Error("{0}/{1} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
+                logger.Error(ex);
 
                 return String.Empty;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ControllerApi.apiGET",
-                    String.Format("{0}/{1} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds));
+                logger.Trace("{0}/{1} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -489,42 +475,25 @@ namespace AppDynamics.OfflineData
                 }
                 else
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.CONTROLLER_REST_API_ERROR,
-                        "ControllerApi.apiPOST",
-                        String.Format("{0}/{1} with {5} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase, requestBody));
+                    logger.Error("{0}/{1} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+
                     return String.Empty;
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.CONTROLLER_REST_API_ERROR,
-                    "ControllerApi.apiPOST",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.CONTROLLER_REST_API_ERROR,
-                    "ControllerApi.apiPOST",
-                    String.Format("{0}/{1} with {5} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source, requestBody));
+                logger.Error("{0}/{1} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
+                logger.Error(ex);
 
                 return String.Empty;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ControllerApi.apiPOST",
-                    String.Format("{0}/{1} with {5} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds, requestBody));
+                logger.Trace("{0}/{1} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
             }
         }
 
         #endregion
-
     }
 }

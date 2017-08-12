@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace AppDynamics.OfflineData.DataObjects
+namespace AppDynamics.Dexter.DataObjects
 {
     /// <summary>
     ///[

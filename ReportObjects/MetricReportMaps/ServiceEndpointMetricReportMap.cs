@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace AppDynamics.OfflineData.ReportObjects
+namespace AppDynamics.Dexter.DataObjects
 {
     public class ServiceEndpointMetricReportMap : CsvClassMap<EntityServiceEndpoint>
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AppDynamics.OfflineData.DataObjects
+namespace AppDynamics.Dexter.DataObjects
 {
     /// <summary>
     ///  {

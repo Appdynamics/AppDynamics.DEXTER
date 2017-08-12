@@ -1,5 +1,5 @@
-﻿using AppDynamics.OfflineData.JobParameters;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,10 +8,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace AppDynamics.OfflineData
+namespace AppDynamics.Dexter
 {
     public class PrepareJob
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger loggerConsole = LogManager.GetLogger("AppDynamics.Dexter.Console");
+
         internal static bool validateJobFileExists(ProgramOptions programOptions)
         {
             // Get job file
@@ -20,59 +23,43 @@ namespace AppDynamics.OfflineData
             // Validate that job file exists
             if (File.Exists(programOptions.InputJobFilePath) == false)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROGRAM_PARAMETERS,
-                    "PrepareJob.Main",
-                    String.Format("Job file='{0}' does not exist", programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Job file {0} does not exist", programOptions.InputJobFilePath);
-                Console.ResetColor();
+                logger.Error("Job file {0} does not exist", programOptions.InputJobFilePath);
+                loggerConsole.Error("Job file {0} does not exist", programOptions.InputJobFilePath);
 
                 return false;
             }
-
-            return true;
+            else
+            {
+                return true;
+            }
         }
 
         internal static bool validateOrCreateOutputFolder(ProgramOptions programOptions)
         {
             try
             {
+                // If output folder isn't specified, assume output folder to be a child of local folder
                 if (programOptions.OutputFolderPath == null || programOptions.OutputFolderPath.Length == 0)
                 {
-                    // Assume output folder to be a child of local folder
                     programOptions.OutputFolderPath = "out";
                 }
+                // Expand the output folder to valid path
                 programOptions.OutputFolderPath = Path.GetFullPath(programOptions.OutputFolderPath);
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_ARGUMENT,
-                    "PrepareJob.validateOrCreateOutputFolder",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROGRAM_PARAMETERS,
-                    "PrepareJob.validateOrCreateOutputFolder",
-                    String.Format("Invalid output folder='{0}'", programOptions.OutputFolderPath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Invalid output folder={0}", programOptions.OutputFolderPath);
-                Console.ResetColor();
+                // The output folder was messed up
+                logger.Error("Invalid output folder {0}", programOptions.OutputFolderPath);
+                logger.Error(ex);
+                loggerConsole.Error("Invalid output folder {0}", programOptions.OutputFolderPath);
 
                 return false;
             }
 
-            if (createFolder(programOptions.OutputFolderPath) == false)
+            if (FileIOHelper.createFolder(programOptions.OutputFolderPath) == false)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Unable to create output folder={0}", programOptions.OutputFolderPath);
-                Console.ResetColor();
+                logger.Error("Unable to create output folder={0}", programOptions.OutputFolderPath);
+                loggerConsole.Error("Unable to create output folder={0}", programOptions.OutputFolderPath);
 
                 return false;
             }
@@ -85,11 +72,10 @@ namespace AppDynamics.OfflineData
             // Clear out the job output folder if requested and exists
             if (programOptions.RestartJobFromBeginning)
             {
-                if (deleteFolder(programOptions.OutputJobFolderPath) == false)
+                if (FileIOHelper.deleteFolder(programOptions.OutputJobFolderPath) == false)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unable to clear job folder={0} ", programOptions.OutputJobFolderPath);
-                    Console.ResetColor();
+                    logger.Error("Unable to clear job folder {0}", programOptions.OutputJobFolderPath);
+                    loggerConsole.Error("Unable to clear job folder {0}", programOptions.OutputJobFolderPath);
 
                     return false;
                 }
@@ -99,7 +85,7 @@ namespace AppDynamics.OfflineData
             }
 
             // Create it if it doesn't exist
-            return (createFolder(programOptions.OutputJobFolderPath));
+            return (FileIOHelper.createFolder(programOptions.OutputJobFolderPath));
         }
 
         internal static bool validateAndExpandJobFileContents(ProgramOptions programOptions)
@@ -108,12 +94,10 @@ namespace AppDynamics.OfflineData
             stopWatch.Start();
 
             // Load job configuration
-            JobConfiguration jobConfiguration = JobConfigurationHelper.readJobConfigurationFromFile(programOptions.InputJobFilePath);
+            JobConfiguration jobConfiguration = FileIOHelper.readJobConfigurationFromFile(programOptions.InputJobFilePath);
             if (jobConfiguration == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Unable to load job input file={0}", programOptions.InputJobFilePath);
-                Console.ResetColor();
+                loggerConsole.Error("Unable to load job input file {0}", programOptions.InputJobFilePath);
 
                 return false;
             }
@@ -121,78 +105,34 @@ namespace AppDynamics.OfflineData
             #region Validate Input 
 
             // Validate input time range selection
-
             if (jobConfiguration.Input.TimeRange == null || jobConfiguration.Input.TimeRange.From == null || jobConfiguration.Input.TimeRange.From == DateTime.MinValue)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROPERTY_IN_JSON_JOB_FILE,
-                    "PrepareJob.validateAndExpandJobFileContents",
-                    String.Format("Input.TimeRange.From is empty in input file='{0}'", programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Input.TimeRange.From is empty", programOptions.InputJobFilePath);
-                Console.ResetColor();
+                logger.Error("Input.TimeRange.From can not be empty");
+                loggerConsole.Error("Input.TimeRange.From can not be empty");
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange == null || jobConfiguration.Input.TimeRange.To == null || jobConfiguration.Input.TimeRange.To == DateTime.MinValue)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROPERTY_IN_JSON_JOB_FILE,
-                    "PrepareJob.validateAndExpandJobFileContents",
-                    String.Format("Input.TimeRange.To is empty in input file='{0}'", programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Input.TimeRange.To is empty", programOptions.InputJobFilePath);
-                Console.ResetColor();
+                logger.Error("Input.TimeRange.To can not be empty");
+                loggerConsole.Error("Input.TimeRange.To can not be empty");
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange.From >= jobConfiguration.Input.TimeRange.To)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROPERTY_IN_JSON_JOB_FILE,
-                    "PrepareJob.validateAndExpandJobFileContents",
-                    String.Format("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}' in input file='{2}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
-                Console.ResetColor();
+                logger.Error("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                loggerConsole.Error("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange.From > DateTime.Now)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_PROPERTY_IN_JSON_JOB_FILE,
-                    "PrepareJob.validateAndExpandJobFileContents",
-                    String.Format("Input.TimeRange.From='{0:u}' can not be in the future in input file='{1}'", jobConfiguration.Input.TimeRange.From, programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
-                Console.ResetColor();
+                logger.Error("Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
+                loggerConsole.Error("Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
 
                 return false;
             }
-            // Not sure about blocking this time, as long as it is > then from
-            //else if (jobConfiguration.Input.TimeRange.To > DateTime.Now)
-            //{
-            //    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-            //        TraceEventType.Error,
-            //        EventId.INVALID_PROPERTY_IN_JSON_JOB_FILE,
-            //        "PrepareJob.validateAndExpandJobFileContents",
-            //        String.Format("Input.TimeRange.To='{0:u}' can not be in the future in input file='{1}'", jobConfiguration.Input.TimeRange.To, programOptions.InputJobFilePath));
-
-            //    Console.ForegroundColor = ConsoleColor.Red;
-            //    Console.WriteLine("Input.TimeRange.To='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.To);
-            //    Console.ResetColor();
-
-            //    return false;
-            //}
 
             #endregion
 
@@ -242,26 +182,13 @@ namespace AppDynamics.OfflineData
 
             #endregion
 
-            #region Validate Output
-
-            // Validate output object selection
-
-            #endregion
-
             #region Validate list of targets
 
             // Validate list of targets
             if (jobConfiguration.Target == null || jobConfiguration.Target.Count == 0)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.NO_TARGETS_IN_JSON_JOB_FILE,
-                    "PrepareJob.validateAndExpandJobFileContents",
-                    String.Format("No targets to work on in job input file='{0}'", programOptions.InputJobFilePath));
-
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("No targets to work on in job input file={0}", programOptions.InputJobFilePath);
-                Console.ResetColor();
+                logger.Error("No targets to work on in job input file {0}", programOptions.InputJobFilePath);
+                loggerConsole.Error("No targets to work on in job input file {0}", programOptions.InputJobFilePath);
 
                 return false;
             }
@@ -283,57 +210,29 @@ namespace AppDynamics.OfflineData
                 bool isTargetValid = true;
                 if (jobTarget.Controller == null || jobTarget.Controller == string.Empty)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.INVALID_TARGET_IN_JSON_JOB_FILE,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target item [{0}] does not contain necessary property='{1}'", i, "Controller"));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}] property {1} is empty", i, "Controller");
-                    Console.ResetColor();
+                    logger.Warn("Target {0} property {1} is empty", i + 1, "Controller");
+                    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Controller");
 
                     isTargetValid = false;
                 }
                 if (jobTarget.UserName == null || jobTarget.UserName == string.Empty)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.INVALID_TARGET_IN_JSON_JOB_FILE,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target item [{0}] does not contain necessary property='{1}'", i, "UserName"));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}] property {1} is empty", i, "UserName");
-                    Console.ResetColor();
+                    logger.Warn("Target {0} property {1} is empty", i + 1, "UserName");
+                    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserName");
 
                     isTargetValid = false;
                 }
                 if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.INVALID_TARGET_IN_JSON_JOB_FILE,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target item [{0}] does not contain necessary property='{1}'", i, "UserPassword"));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}] property {1} is empty", i, "UserPassword");
-                    Console.ResetColor();
+                    logger.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
+                    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
 
                     isTargetValid = false;
                 }
                 if (jobTarget.Application == null || jobTarget.Application == string.Empty)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.INVALID_TARGET_IN_JSON_JOB_FILE,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target item [{0}] does not contain necessary property='{1}'", i, "Application"));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}] property {1} is empty", i, "Application");
-                    Console.ResetColor();
+                    logger.Warn("Target {0} property {1} is empty", i + 1, "Application");
+                    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Application");
 
                     isTargetValid = false;
                 }
@@ -355,15 +254,8 @@ namespace AppDynamics.OfflineData
                 ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, jobTarget.UserPassword);
                 if (controllerApi.IsControllerAccessible() == false)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.CONTROLLER_NOT_ACCESSIBLE,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target [{0}/{1}] not accessible: '{2}'", i + 1, jobConfiguration.Target.Count, controllerApi));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}/{1}] not accessible: {2}", i + 1, jobConfiguration.Target.Count, controllerApi);
-                    Console.ResetColor();
+                    logger.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
+                    loggerConsole.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
 
                     jobTarget.Status = JobTargetStatus.NoController;
 
@@ -395,15 +287,8 @@ namespace AppDynamics.OfflineData
 
                 if (applicationsMatchingCriteria.Count() == 0)
                 {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.CONTROLLER_APPLICATION_DOES_NOT_EXIST,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target [{0}/{1}], Controller='{2}' does not have Application='{3}'", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application));
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Target [{0}/{1}], Controller {2} does not have Application {3}", i + 1, jobConfiguration.Target.Count, controllerApi, jobTarget.Application);
-                    Console.ResetColor();
+                    logger.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+                    loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
 
                     jobTarget.Status = JobTargetStatus.NoApplication;
 
@@ -429,13 +314,8 @@ namespace AppDynamics.OfflineData
 
                     expandedJobTargets.Add(jobTargetExpanded);
 
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Information,
-                        EventId.TARGET_APPLICATION_EXPANDED,
-                        "PrepareJob.validateAndExpandJobFileContents",
-                        String.Format("Target [{0}/{1}] with Controller='{2}' and Application='{3}' resulted in Application='{4}'", i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application));
-
-                    Console.WriteLine("Target [{0}/{1}], Controller={2}, Application={3}=>{4}", i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application);
+                    logger.Info("Target [{0}] Controller {1} Application {2}=>{3}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application);
+                    loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application);
                 }
 
                 #endregion
@@ -453,97 +333,12 @@ namespace AppDynamics.OfflineData
             jobConfiguration.Status = JobStatus.ExtractControllerApplicationsAndEntities;
 
             // Save the resulting JSON file to the job target folder
-            if (JobConfigurationHelper.writeJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
+            if (FileIOHelper.writeJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Unable to write job input file={0} ", programOptions.OutputJobFilePath);
-                Console.ResetColor();
+                loggerConsole.Error("Unable to write job input file {0}", programOptions.OutputJobFilePath);
 
                 return false;
             }
-
-            return true;
-        }
-
-        internal static bool createFolder(string folderPath)
-        {
-            try
-            {
-                if (!Directory.Exists(folderPath))
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Verbose,
-                        EventId.FOLDER_CREATE,
-                        "PrepareJob.createFolder",
-                        String.Format("Creating folder='{0}'", folderPath));
-
-                    Directory.CreateDirectory(folderPath);
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "PrepareJob.createFolder",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.FOLDER_CREATE_FAILED,
-                    "PrepareJob.createFolder",
-                    String.Format("Unable to create folder='{0}'", folderPath));
-
-                return false;
-            }
-            return true;
-        }
-
-        internal static bool deleteFolder(string folderPath)
-        {
-            int tryNumber = 1;
-
-            do
-            {
-                try
-                {
-                    if (Directory.Exists(folderPath))
-                    {
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Verbose,
-                            EventId.FOLDER_DELETE,
-                            "PrepareJob.deleteFolder",
-                            String.Format("Deleting folder='{0}', try#='{1}'", folderPath, tryNumber));
-
-                        Directory.Delete(folderPath, true);
-                    }
-                    return true;
-                }
-                catch (IOException ex)
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.EXCEPTION_IO,
-                        "PrepareJob.deleteFolder",
-                        ex);
-
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.FOLDER_DELETE_FAILED,
-                        "PrepareJob.deleteFolder",
-                        String.Format("Unable to delete folder='{0}'", folderPath));
-
-                    if (ex.Message.StartsWith("The directory is not empty"))
-                    {
-                        tryNumber++;
-                        Thread.Sleep(3000);
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-            } while (tryNumber <= 3);
 
             return true;
         }

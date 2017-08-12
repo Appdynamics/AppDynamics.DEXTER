@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace AppDynamics.OfflineData.JobParameters
+namespace AppDynamics.Dexter
 {
     public class JobInput
     {

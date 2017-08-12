@@ -1,10 +1,10 @@
-﻿using AppDynamics.OfflineData.DataObjects;
-using AppDynamics.OfflineData.JobParameters;
-using AppDynamics.OfflineData.ReportObjects;
+﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.Extensions;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using NLog;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
@@ -23,10 +23,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 
-namespace AppDynamics.OfflineData
+namespace AppDynamics.Dexter
 {
     public class ProcessJob
     {
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger loggerConsole = LogManager.GetLogger("AppDynamics.Dexter.Console");
+
         #region Constants for metric retrieval
 
         private const string METRIC_TIME_MS = "Time (ms)";
@@ -317,7 +320,6 @@ namespace AppDynamics.OfflineData
         private const string DEEPLINK_METRIC_TIER_TARGET_METRIC_ID = "APPLICATION_COMPONENT.{0}.{1}";
         private const string DEEPLINK_METRIC_NODE_TARGET_METRIC_ID = "APPLICATION_COMPONENT_NODE.{0}.{1}";
 
-
         #endregion
 
         #region Constants for parallelization of processes
@@ -328,44 +330,29 @@ namespace AppDynamics.OfflineData
         private const int FLOWMAP_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 20;
         private const int FLOWMAP_EXTRACT_NUMBER_OF_THREADS = 5;
 
-        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 30;
+        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 50;
         private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS = 10;
 
         #endregion
 
         internal static void startOrContinueJob(ProgramOptions programOptions)
         {
-            JobConfiguration jobConfiguration = JobConfigurationHelper.readJobConfigurationFromFile(programOptions.OutputJobFilePath);
+            JobConfiguration jobConfiguration = FileIOHelper.readJobConfigurationFromFile(programOptions.OutputJobFilePath);
             if (jobConfiguration == null)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Unable to load job input file={0} ", programOptions.OutputJobFilePath);
-                Console.ResetColor();
+                loggerConsole.Error("Unable to load job input file {0}", programOptions.InputJobFilePath);
 
                 return;
             }
 
             #region Output diagnostic parameters to log
 
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Information,
-                EventId.JOB_STATUS_INFORMATION,
-                "ProcessJob.startOrContinueJob",
-                String.Format("Job status='{0}' ({0:g})", jobConfiguration.Status));
-
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Information,
-                EventId.JOB_INPUT_AND_OUTPUT_PARAMETERS,
-                "ProcessJob.startOrContinueJob",
-                String.Format("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', ExpandedTimeRange.From='{2:o}', ExpandedTimeRange.To='{3:o}', Time ranges='{4}', Flowmaps='{5}', Metrics='{6}', Snapshots='{7}', Configuration='{8}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration));
+            logger.Info("Job status='{0}' ({0:g})", jobConfiguration.Status);
+            logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', ExpandedTimeRange.From='{2:o}', ExpandedTimeRange.To='{3:o}', Time ranges='{4}', Flowmaps='{5}', Metrics='{6}', Snapshots='{7}', Configuration='{8}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration);
 
             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.JOB_INPUT_AND_OUTPUT_PARAMETERS,
-                    "ProcessJob.startOrContinueJob",
-                    String.Format("Expanded time ranges: From='{0:o}', To='{1:o}'", jobTimeRange.From, jobTimeRange.To));
+                logger.Info("Expanded time ranges: From='{0:o}', To='{1:o}'", jobTimeRange.From, jobTimeRange.To);
             }
 
             #endregion
@@ -402,15 +389,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityMetrics;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping export of configuration"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping export of configuration");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping export of configuration");
                         }
 
                         break;
@@ -431,15 +410,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ExtractApplicationAndEntityFlowmaps;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping export of entity metrics"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping export of entity metrics");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping export of entity metrics");
                         }
 
                         break;
@@ -460,15 +431,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ExtractSnapshots;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping export of entity flowmaps"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping export of entity flowmaps");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping export of entity flowmaps");
                         }
 
                         break;
@@ -489,15 +452,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.IndexControllersApplicationsAndEntities;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping export of snapshots"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping export of snapshots");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping export of snapshots");
                         }
                         break;
 
@@ -529,15 +484,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.IndexApplicationAndEntityMetrics;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping convert of configuration"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping convert of configuration");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping index of configuration");
                         }
                         break;
 
@@ -557,15 +504,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.IndexApplicationAndEntityFlowmaps;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping convert of entity metrics"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping convert of entity metrics");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping index of entity metrics");
                         }
                         
                         break;
@@ -586,15 +525,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.IndexSnapshots;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping convert of entity flowmaps"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping export of entity flowmaps");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping index of entity flowmaps");
                         }
 
                         break;
@@ -615,15 +546,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ReportControlerApplicationsAndEntities;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping convert of snapshots"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping convert of snapshots");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping index of snapshots");
                         }
                         
                         break;
@@ -656,15 +579,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ReportApplicationAndEntityMetrics;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping report of configuration"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping report of configuration");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping report of configuration");
                         }
 
                         break;
@@ -685,15 +600,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ReportApplicationAndEntityFlowmaps;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping report of entity metrics"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping report of entity metrics");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping report of entity metrics");
                         }
 
                         break;
@@ -714,15 +621,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.ReportSnapshots;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping report of entity flowmaps"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping report of entity flowmaps");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping report of entity flowmaps");
                         }
 
                         break;
@@ -743,15 +642,7 @@ namespace AppDynamics.OfflineData
                         {
                             jobConfiguration.Status = JobStatus.Done;
 
-                            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                TraceEventType.Warning,
-                                EventId.JOB_STATUS_INFORMATION,
-                                "ProcessJob.startOrContinueJob",
-                                String.Format("Skipping report of snapshots"));
-
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Skipping report of snapshots");
-                            Console.ResetColor();
+                            loggerConsole.Warn("Skipping report of snapshots");
                         }
 
                         break;
@@ -762,11 +653,9 @@ namespace AppDynamics.OfflineData
                 }
 
                 // Save the resulting JSON file to the job target folder
-                if (JobConfigurationHelper.writeJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
+                if (FileIOHelper.writeJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unable to write job input file={0} ", programOptions.OutputJobFilePath);
-                    Console.ResetColor();
+                    loggerConsole.Error("Unable to write job input file {0}", programOptions.OutputJobFilePath);
 
                     return;
                 }
@@ -792,15 +681,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepExtractControllerApplicationsAndEntities",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -808,9 +690,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -845,105 +725,92 @@ namespace AppDynamics.OfflineData
                         // Only do it once per controller, if processing multiple applications
                         if (File.Exists(applicationsFilePath) != true)
                         {
-                            Console.Write("Applications.");
+                            loggerConsole.Info("List of Applications");
 
                             string applicationsJSON = controllerApi.GetListOfApplications();
-                            if (applicationsJSON != String.Empty) saveFileToFolder(applicationsJSON, applicationsFilePath);
+                            if (applicationsJSON != String.Empty) FileIOHelper.saveFileToFolder(applicationsJSON, applicationsFilePath);
                         }
 
                         #endregion
 
                         #region Application
 
-                        Console.Write("Application.");
+                        loggerConsole.Info("This Application");
 
                         string applicationJSON = controllerApi.GetSingleApplication(jobTarget.Application);
-                        if (applicationJSON != String.Empty) saveFileToFolder(applicationJSON, applicationFilePath);
+                        if (applicationJSON != String.Empty) FileIOHelper.saveFileToFolder(applicationJSON, applicationFilePath);
 
                         #endregion
 
                         #region Tiers
 
-                        Console.Write("Tiers.");
+                        loggerConsole.Info("List of Tiers");
 
                         string tiersJSON = controllerApi.GetListOfTiers(jobTarget.Application);
-                        if (tiersJSON != String.Empty) saveFileToFolder(tiersJSON, tiersFilePath);
+                        if (tiersJSON != String.Empty) FileIOHelper.saveFileToFolder(tiersJSON, tiersFilePath);
 
                         #endregion
 
                         #region Nodes
 
-                        Console.Write("Nodes.");
+                        loggerConsole.Info("List of Nodes");
 
                         string nodesJSON = controllerApi.GetListOfNodes(jobTarget.Application);
-                        if (nodesJSON != String.Empty) saveFileToFolder(nodesJSON, nodesFilePath);
+                        if (nodesJSON != String.Empty) FileIOHelper.saveFileToFolder(nodesJSON, nodesFilePath);
 
                         #endregion
 
                         #region Backends
 
-                        Console.Write("Backends.");
+                        loggerConsole.Info("List of Backends");
 
                         string backendsJSON = controllerApi.GetListOfBackends(jobTarget.Application);
-                        if (backendsJSON != String.Empty) saveFileToFolder(backendsJSON, backendsFilePath);
+                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToFolder(backendsJSON, backendsFilePath);
 
                         #endregion
 
                         #region Business Transactions
 
-                        Console.Write("Business Transactions.");
+                        loggerConsole.Info("List of Business Transactions");
 
                         string businessTransactionsJSON = controllerApi.GetListOfBusinessTransactions(jobTarget.Application);
-                        if (businessTransactionsJSON != String.Empty) saveFileToFolder(businessTransactionsJSON, businessTransactionsFilePath);
+                        if (businessTransactionsJSON != String.Empty) FileIOHelper.saveFileToFolder(businessTransactionsJSON, businessTransactionsFilePath);
 
                         #endregion
 
                         #region Service Endpoints
 
-                        Console.Write("Service Endpoints.");
+                        loggerConsole.Info("List of Service Endpoints");
+
                         string serviceEndPointsJSON = controllerApi.GetListOfServiceEndpoints(jobTarget.Application);
-                        if (serviceEndPointsJSON != String.Empty) saveFileToFolder(serviceEndPointsJSON, serviceEndPointsFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(serviceEndPointsJSON, serviceEndPointsFilePath);
 
                         controllerApi.PrivateApiLogin();
                         serviceEndPointsJSON = controllerApi.GetListOfServiceEndpointsWithDetail(jobTarget.ApplicationID);
-                        if (serviceEndPointsJSON != String.Empty) saveFileToFolder(serviceEndPointsJSON, serviceEndPointsAllFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(serviceEndPointsJSON, serviceEndPointsAllFilePath);
 
                         #endregion
 
                         #region Errors
 
-                        Console.Write("Errors.");
+                        loggerConsole.Info("List of Errors");
+
                         string errorsJSON = controllerApi.GetListOfErrors(jobTarget.Application);
-                        if (errorsJSON != String.Empty) saveFileToFolder(errorsJSON, errorsFilePath);
+                        if (errorsJSON != String.Empty) FileIOHelper.saveFileToFolder(errorsJSON, errorsFilePath);
 
                         #endregion
-
-                        Console.WriteLine();
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepExtractControllerApplicationsAndEntities",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -951,30 +818,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepExtractControllerApplicationsAndEntities",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepExtractControllerApplicationsAndEntities",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -997,15 +851,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepExtractControllerAndApplicationConfiguration",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -1013,9 +860,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -1043,50 +888,35 @@ namespace AppDynamics.OfflineData
 
                         if (File.Exists(controllerSettingsFilePath) != true)
                         {
-                            Console.Write("Controller Configuration.");
+                            loggerConsole.Info("Controller Settings");
 
                             string controllerSettingsJSON = controllerApi.GetControllerConfiguration();
-                            if (controllerSettingsJSON != String.Empty) saveFileToFolder(controllerSettingsJSON, controllerSettingsFilePath);
+                            if (controllerSettingsJSON != String.Empty) FileIOHelper.saveFileToFolder(controllerSettingsJSON, controllerSettingsFilePath);
                         }
 
                         #endregion
 
                         #region Application
 
-                        Console.Write("Application Configuration.");
+                        loggerConsole.Info("Application Configuration");
 
                         // Application configuration
                         string applicationConfigXml = controllerApi.GetApplicationConfiguration(jobTarget.ApplicationID);
-                        if (applicationConfigXml != String.Empty) saveFileToFolder(applicationConfigXml, applicationConfigFilePath);
+                        if (applicationConfigXml != String.Empty) FileIOHelper.saveFileToFolder(applicationConfigXml, applicationConfigFilePath);
 
                         #endregion
-
-                        Console.WriteLine();
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepExtractControllerAndApplicationConfiguration",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -1094,30 +924,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepExtractControllerAndApplicationConfiguration",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepExtractControllerAndApplicationConfiguration",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -1140,15 +957,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepExtractApplicationAndEntityMetrics",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -1156,9 +966,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -1189,26 +997,18 @@ namespace AppDynamics.OfflineData
                         #region Application
 
                         // Application
-                        Console.WriteLine("Extract Metrics for Application ({0} entities * {1} time ranges * {2} metrics = {3})", 1, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5, 5 * 1 * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                        loggerConsole.Info("Extract Metrics for Application ({0} entities * {1} time ranges * {2} metrics)", 1, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
 
-                        string metricsEntityFolderPath = Path.Combine(metricsFolderPath, APPLICATION_FOLDER_NAME);
-
-                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_ART), jobConfiguration, metricsEntityFolderPath, METRIC_ART_FOLDER_NAME);
-                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM), jobConfiguration, metricsEntityFolderPath, METRIC_CPM_FOLDER_NAME);
-                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
-                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_EXCPM), jobConfiguration, metricsEntityFolderPath, METRIC_EXCPM_FOLDER_NAME);
-                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_HTTPEPM), jobConfiguration, metricsEntityFolderPath, METRIC_HTTPEPM_FOLDER_NAME);
-
-                        //Console.WriteLine();
+                        extractMetricsApplication(jobConfiguration, jobTarget, controllerApi, metricsFolderPath);
 
                         #endregion
 
                         #region Tiers
 
-                        List<AppDRESTTier> tiersList = loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
                         if (tiersList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Tiers ({0} entities * {1} time ranges * {2} metrics = {3})", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5, 5 * tiersList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Tiers ({0} entities * {1} time ranges * {2} metrics)", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
 
                             int j = 0;
 
@@ -1237,17 +1037,17 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsTiers(jobConfiguration, jobTarget, controllerApi, tiersList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesList = loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
+                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
                         if (nodesList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Nodes ({0} entities * {1} time ranges * {2} metrics = {3})", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5, 5 * nodesList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Nodes ({0} entities * {1} time ranges * {2} metrics)", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
 
                             int j = 0;
 
@@ -1276,17 +1076,17 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsNodes(jobConfiguration, jobTarget, controllerApi, nodesList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsList = loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
+                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
                         if (backendsList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Backends ({0} entities * {1} time ranges * {2} metrics = {3})", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3, 3 * backendsList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Backends ({0} entities * {1} time ranges * {2} metrics)", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3);
 
                             int j = 0;
 
@@ -1315,17 +1115,17 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsBackends(jobConfiguration, jobTarget, controllerApi, backendsList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
                         if (businessTransactionsList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Business Transactions ({0} entities * {1} time ranges * {2} metrics = {3})", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3, 3 * businessTransactionsList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Business Transactions ({0} entities * {1} time ranges * {2} metrics)", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3);
 
                             int j = 0;
 
@@ -1353,17 +1153,17 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Service Endpoints
 
-                        List<AppDRESTMetric> serviceEndpointsList = loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
+                        List<AppDRESTMetric> serviceEndpointsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
                         if (serviceEndpointsList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Service Endpoints ({0} entities * {1} time ranges * {2} metrics = {3})", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3, 3 * serviceEndpointsList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Service Endpoints ({0} entities * {1} time ranges * {2} metrics)", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 3);
 
                             int j = 0;
 
@@ -1392,17 +1192,17 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsServiceEndpoints(jobConfiguration, jobTarget, controllerApi, serviceEndpointsList, tiersList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Errors
 
-                        List<AppDRESTMetric> errorsList = loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
+                        List<AppDRESTMetric> errorsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
                         if (errorsList != null)
                         {
-                            Console.WriteLine("Extract Metrics for Errors ({0} entities * {1} time ranges * {2} metrics = {3})", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 1, 1 * errorsList.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Extract Metrics for Errors ({0} entities * {1} time ranges * {2} metrics)", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count, 1);
 
                             int j = 0;
 
@@ -1431,35 +1231,22 @@ namespace AppDynamics.OfflineData
                                 j = extractMetricsErrors(jobConfiguration, jobTarget, controllerApi, errorsList, tiersList, metricsFolderPath, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepExtractApplicationAndEntityMetrics",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -1467,30 +1254,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepExtractApplicationAndEntityMetrics",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepExtractControllerAndApplicationConfiguration",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -1513,15 +1287,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepExtractApplicationAndEntityFlowmaps",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -1529,9 +1296,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -1571,36 +1336,18 @@ namespace AppDynamics.OfflineData
 
                         #region Application
 
-                        Console.WriteLine("Extract Flowmap for Application");
+                        loggerConsole.Info("Extract Flowmap for Application");
 
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FLOWMAP_RETRIEVAL,
-                            "ProcessJob.extractData",
-                            String.Format("Retrieving flowmap for Application='{0}', From='{1:o}', To='{2:o}'", jobTarget.Application, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
-
-                        string flowmapDataFilePath = Path.Combine(
-                            metricsFolderPath,
-                            APPLICATION_FOLDER_NAME,
-                            METRIC_FLOWMAP_FOLDER_NAME,
-                            String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From.ToString("yyyyMMddHHmm"), jobConfiguration.Input.ExpandedTimeRange.To.ToString("yyyyMMddHHmm")));
-
-                        string flowmapJson = String.Empty;
-
-                        if (File.Exists(flowmapDataFilePath) == false)
-                        {
-                            flowmapJson = controllerApi.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (flowmapJson != String.Empty) saveFileToFolder(flowmapJson, flowmapDataFilePath);
-                        }
+                        extractFlowmapsApplication(jobConfiguration, jobTarget, controllerApi, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes);
 
                         #endregion
 
                         #region Tiers
 
-                        List<AppDRESTTier> tiersList = loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
                         if (tiersList != null)
                         {
-                            Console.WriteLine("Extract Flowmaps for Tiers ({0} entities)", tiersList.Count);
+                            loggerConsole.Info("Extract Flowmaps for Tiers ({0} entities)", tiersList.Count);
 
                             int j = 0;
 
@@ -1629,17 +1376,17 @@ namespace AppDynamics.OfflineData
                                 j = extractFlowmapsTiers(jobConfiguration, jobTarget, controllerApi, tiersList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesList = loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
+                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
                         if (nodesList != null)
                         {
-                            Console.WriteLine("Extract Flowmaps for Nodes ({0} entities)", nodesList.Count);
+                            loggerConsole.Info("Extract Flowmaps for Nodes ({0} entities)", nodesList.Count);
 
                             int j = 0;
 
@@ -1668,17 +1415,17 @@ namespace AppDynamics.OfflineData
                                 j = extractFlowmapsNodes(jobConfiguration, jobTarget, controllerApi, nodesList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsList = loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
+                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
                         if (backendsList != null)
                         {
-                            Console.WriteLine("Extract Flowmaps for Backends ({0} entities)", backendsList.Count);
+                            loggerConsole.Info("Extract Flowmaps for Backends ({0} entities)", backendsList.Count);
 
                             int j = 0;
 
@@ -1707,17 +1454,17 @@ namespace AppDynamics.OfflineData
                                 j = extractFlowmapsBackends(jobConfiguration, jobTarget, controllerApi, backendsList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
                         if (businessTransactionsList != null)
                         {
-                            Console.WriteLine("Extract Flowmaps for Business Transactions ({0} entities)", businessTransactionsList.Count);
+                            loggerConsole.Info("Extract Flowmaps for Business Transactions ({0} entities)", businessTransactionsList.Count);
 
                             int j = 0;
 
@@ -1745,37 +1492,22 @@ namespace AppDynamics.OfflineData
                                 j = extractFlowmapsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
                         }
 
                         #endregion
-
-                        Console.WriteLine();
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepExtractApplicationAndEntityFlowmaps",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -1783,30 +1515,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepExtractApplicationAndEntityFlowmaps",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepExtractApplicationAndEntityFlowmaps",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -1829,15 +1548,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepExtractSnapshots",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -1845,9 +1557,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -1876,13 +1586,13 @@ namespace AppDynamics.OfflineData
                         // Login into private API
                         controllerApi.PrivateApiLogin();
 
-                        Console.WriteLine("Extract List of Snapshots ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
+                        loggerConsole.Info("Extract List of Snapshots ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
 
                         // Get list of snapshots in each time range
                         int totalSnapshotsFound = 0;
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
-                            Console.Write("Extract List of Snapshots from {0:o} to {1:o}", jobTimeRange.From, jobTimeRange.To);
+                            loggerConsole.Info("Extract List of Snapshots from {0:o} to {1:o}", jobTimeRange.From, jobTimeRange.To);
 
                             string snapshotsFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From.ToString("yyyyMMddHHmm"), jobTimeRange.To.ToString("yyyyMMddHHmm")));
 
@@ -1940,37 +1650,37 @@ namespace AppDynamics.OfflineData
                                             Int64.TryParse(serverCursorIdObj.ToString(), out serverCursorId);
                                         }
 
-                                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                                            TraceEventType.Information,
-                                            EventId.SNAPSHOT_LIST_RETRIEVAL,
-                                            "ProcessJob.extractData",
-                                            String.Format("Controller='{0}', Application='{1}', From='{2:o}', To='{3:o}', Snapshots='{4}', CursorId='{5}'", jobTarget.Controller, jobTarget.Application, jobTimeRange.From, jobTimeRange.To, snapshots.Count, serverCursorId));
+                                        logger.Info("Retrieved snapshots from Controller {0}, Application {1}, From {2:o}, To {3:o}', number of snapshots {4}, continuation CursorId {5}", jobTarget.Controller, jobTarget.Application, jobTimeRange.From, jobTimeRange.To, snapshots.Count, serverCursorId);
 
                                         Console.Write("+{0}", listOfSnapshots.Count);
                                     }
                                 }
                                 while (serverCursorId > 0);
 
-                                Console.Write("={0} snapshots", listOfSnapshots.Count);
+                                Console.WriteLine();
+
+                                FileIOHelper.writeJArrayToFile(listOfSnapshots, snapshotsFilePath);
+
                                 totalSnapshotsFound = totalSnapshotsFound + listOfSnapshots.Count;
 
-                                writeJArrayToFile(listOfSnapshots, snapshotsFilePath);
+                                logger.Info("{0} snapshots from {1:o} to {2:o}", listOfSnapshots.Count, jobTimeRange.From, jobTimeRange.To);
+                                loggerConsole.Info("{0} snapshots from {1:o} to {2:o}", listOfSnapshots.Count, jobTimeRange.From, jobTimeRange.To);
                             }
-                            Console.WriteLine();
                         }
 
-                        Console.WriteLine("Found total {0} snapshots", totalSnapshotsFound);
+                        logger.Info("{0} snapshots in all time ranges", totalSnapshotsFound);
+                        loggerConsole.Info("{0} snapshots in all time ranges", totalSnapshotsFound);
 
                         #endregion
 
                         #region Individual Snapshots
 
                         // Extract individual snapshots
-                        Console.WriteLine("Extract Individual Snapshots");
+                        loggerConsole.Info("Extract Individual Snapshots");
 
                         // Load lookups for Tiers and Business Transactions
-                        List<AppDRESTTier> tiersList = loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
 
                         if (tiersList != null && businessTransactionsList != null)
                         {
@@ -1978,10 +1688,10 @@ namespace AppDynamics.OfflineData
                             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                             {
                                 string snapshotsFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From.ToString("yyyyMMddHHmm"), jobTimeRange.To.ToString("yyyyMMddHHmm")));
-                                JArray listOfSnapshotsInHour = loadArrayFromFile(snapshotsFilePath);
+                                JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsFilePath);
                                 if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                                 {
-                                    Console.WriteLine("Extract Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                    loggerConsole.Info("Extract Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
 
                                     int j = 0;
 
@@ -2010,7 +1720,7 @@ namespace AppDynamics.OfflineData
                                         j = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHour.ToList<JToken>(), tiersList, businessTransactionsList, snapshotsFolderPath, true);
                                     }
 
-                                    Console.WriteLine("{0} snapshots", j);
+                                    loggerConsole.Info("{0} snapshots", j);
                                 }
                             }
                         }
@@ -2019,28 +1729,15 @@ namespace AppDynamics.OfflineData
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepExtractSnapshots",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -2048,30 +1745,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepExtractSnapshots",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepExtractSnapshots",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -2094,15 +1778,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepIndexControllersApplicationsAndEntities",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -2110,9 +1787,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -2154,7 +1829,7 @@ namespace AppDynamics.OfflineData
 
                         #region Controller
 
-                        Console.WriteLine("Convert List of Controllers");
+                        loggerConsole.Info("Index List of Controllers");
 
                         // Create this row 
                         EntityController controllerRow = new EntityController();
@@ -2164,7 +1839,7 @@ namespace AppDynamics.OfflineData
 
                         // Lookup number of applications
                         // Load JSON file from the file system in case we are continuing the step after stopping
-                        List<AppDRESTApplication> applicationsList = loadListOfObjectsFromFile<AppDRESTApplication>(applicationsFilePath);
+                        List<AppDRESTApplication> applicationsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTApplication>(applicationsFilePath);
                         if (applicationsList != null)
                         {
                             controllerRow.NumApps = applicationsList.Count;
@@ -2172,7 +1847,7 @@ namespace AppDynamics.OfflineData
 
                         // Lookup version
                         // Load the configuration.xml from the child to parse the version
-                        XmlDocument configXml = loadXmlDocumentFromFile(applicationConfigFilePath);
+                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationConfigFilePath);
                         if (configXml != null)
                         {
                             string controllerVersion = configXml.SelectSingleNode("application").Attributes["controller-version"].Value;
@@ -2197,11 +1872,11 @@ namespace AppDynamics.OfflineData
                         controllerRows.Add(controllerRow);
                         if (File.Exists(controllerReportFilePath) == false)
                         {
-                            writeListToCSVFile(controllerRows, new ControllerEntityReportMap(), controllerReportFilePath);
+                            FileIOHelper.writeListToCSVFile(controllerRows, new ControllerEntityReportMap(), controllerReportFilePath);
                         }
 
                         // Now append this controller to the list of all controllers
-                        List<EntityController> controllersRows = readListFromCSVFile<EntityController>(controllersReportFilePath, new ControllerEntityReportMap());
+                        List<EntityController> controllersRows = FileIOHelper.readListFromCSVFile<EntityController>(controllersReportFilePath, new ControllerEntityReportMap());
                         if (controllersRows == null || controllersRows.Count == 0)
                         {
                             // First time, let's output these rows
@@ -2216,16 +1891,16 @@ namespace AppDynamics.OfflineData
                             }
                         }
                         controllersRows = controllersRows.OrderBy(o => o.Controller).ToList();
-                        writeListToCSVFile(controllersRows, new ControllerEntityReportMap(), controllersReportFilePath);
+                        FileIOHelper.writeListToCSVFile(controllersRows, new ControllerEntityReportMap(), controllersReportFilePath);
 
                         #endregion
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesList = loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
+                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
                         if (nodesList != null)
                         {
-                            Console.WriteLine("Convert List of Nodes ({0} entities)", nodesList.Count);
+                            loggerConsole.Info("Index List of Nodes ({0} entities)", nodesList.Count);
 
                             List<EntityNode> nodesRows = new List<EntityNode>(nodesList.Count);
 
@@ -2305,19 +1980,19 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             nodesRows = nodesRows.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ToList();
 
-                            writeListToCSVFile(nodesRows, new NodeEntityReportMap(), nodesReportFilePath);
+                            FileIOHelper.writeListToCSVFile(nodesRows, new NodeEntityReportMap(), nodesReportFilePath);
                         }
 
                         #endregion
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsList = loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
-                        List<AppDRESTTier> tiersList = loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
 
                         if (backendsList != null)
                         {
-                            Console.WriteLine("Convert List of Backends ({0} entities)", backendsList.Count);
+                            loggerConsole.Info("Index List of Backends ({0} entities)", backendsList.Count);
 
                             List<EntityBackend> backendsRows = new List<EntityBackend>(backendsList.Count);
 
@@ -2379,17 +2054,17 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             backendsRows = backendsRows.OrderBy(o => o.BackendType).ThenBy(o => o.BackendName).ToList();
 
-                            writeListToCSVFile(backendsRows, new BackendEntityReportMap(), backendsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(backendsRows, new BackendEntityReportMap(), backendsReportFilePath);
                         }
 
                         #endregion
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
                         if (businessTransactionsList != null)
                         {
-                            Console.WriteLine("Convert List of Business Transactions ({0} entities)", businessTransactionsList.Count);
+                            loggerConsole.Info("Index List of Business Transactions ({0} entities)", businessTransactionsList.Count);
 
                             List<EntityBusinessTransaction> businessTransactionRows = new List<EntityBusinessTransaction>(businessTransactionsList.Count);
 
@@ -2420,22 +2095,22 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             businessTransactionRows = businessTransactionRows.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ToList();
 
-                            writeListToCSVFile(businessTransactionRows, new BusinessTransactionEntityReportMap(), businessTransactionsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionRows, new BusinessTransactionEntityReportMap(), businessTransactionsReportFilePath);
                         }
 
                         #endregion
 
                         #region Service Endpoints
 
-                        List<AppDRESTMetric> serviceEndpointsList = loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
+                        List<AppDRESTMetric> serviceEndpointsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
                         List<EntityServiceEndpoint> serviceEndpointsRows = null;
                         if (serviceEndpointsList != null)
                         {
-                            Console.WriteLine("Convert List of Service Endpoints ({0} entities)", tiersList.Count);
+                            loggerConsole.Info("Index List of Service Endpoints ({0} entities)", tiersList.Count);
 
                             serviceEndpointsRows = new List<EntityServiceEndpoint>(serviceEndpointsList.Count);
 
-                            JObject serviceEndpointsAll = loadObjectFromFile(serviceEndPointsAllFilePath);
+                            JObject serviceEndpointsAll = FileIOHelper.loadJObjectFromFile(serviceEndPointsAllFilePath);
                             JArray serviceEndpointsDetail = null;
                             if (serviceEndpointsAll != null)
                             {
@@ -2489,18 +2164,18 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             serviceEndpointsRows = serviceEndpointsRows.OrderBy(o => o.TierName).ThenBy(o => o.SEPName).ToList();
 
-                            writeListToCSVFile(serviceEndpointsRows, new ServiceEndpointEntityReportMap(), serviceEndpointsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(serviceEndpointsRows, new ServiceEndpointEntityReportMap(), serviceEndpointsReportFilePath);
                         }
 
                         #endregion
 
                         #region Errors
 
-                        List<AppDRESTMetric> errorsList = loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
+                        List<AppDRESTMetric> errorsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
                         List<EntityError> errorRows = null;
                         if (errorsList != null)
                         {
-                            Console.WriteLine("Convert List of Errors ({0} entities)", errorsList.Count);
+                            loggerConsole.Info("Index List of Errors ({0} entities)", errorsList.Count);
 
                             errorRows = new List<EntityError>(errorsList.Count);
 
@@ -2593,7 +2268,7 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             errorRows = errorRows.OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ToList();
 
-                            writeListToCSVFile(errorRows, new ErrorEntityReportMap(), errorsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(errorRows, new ErrorEntityReportMap(), errorsReportFilePath);
                         }
 
                         #endregion
@@ -2602,7 +2277,7 @@ namespace AppDynamics.OfflineData
 
                         if (tiersList != null)
                         {
-                            Console.WriteLine("Convert List of Tiers ({0} entities)", tiersList.Count);
+                            loggerConsole.Info("Index List of Tiers ({0} entities)", tiersList.Count);
 
                             List<EntityTier> tiersRows = new List<EntityTier>(tiersList.Count);
 
@@ -2638,7 +2313,7 @@ namespace AppDynamics.OfflineData
                             // Sort them
                             tiersRows = tiersRows.OrderBy(o => o.TierName).ToList();
 
-                            writeListToCSVFile(tiersRows, new TierEntityReportMap(), tiersReportFilePath);
+                            FileIOHelper.writeListToCSVFile(tiersRows, new TierEntityReportMap(), tiersReportFilePath);
                         }
 
                         #endregion
@@ -2647,9 +2322,9 @@ namespace AppDynamics.OfflineData
 
                         if (applicationsList != null)
                         {
-                            Console.WriteLine("Convert List of Applications");
+                            loggerConsole.Info("Index List of Applications");
 
-                            List<EntityApplication> applicationsRows = readListFromCSVFile<EntityApplication>(applicationsReportFilePath, new ApplicationEntityReportMap());
+                            List<EntityApplication> applicationsRows = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationsReportFilePath, new ApplicationEntityReportMap());
 
                             if (applicationsRows == null || applicationsRows.Count == 0)
                             {
@@ -2683,13 +2358,13 @@ namespace AppDynamics.OfflineData
                                 applicationRows.Add(applicationRow);
 
                                 // Write just this row for this application
-                                writeListToCSVFile(applicationRows, new ApplicationEntityReportMap(), applicationReportFilePath);
+                                FileIOHelper.writeListToCSVFile(applicationRows, new ApplicationEntityReportMap(), applicationReportFilePath);
                             }
 
                             // Sort them
                             applicationsRows = applicationsRows.OrderBy(o => o.Controller).ThenBy(o => o.ApplicationName).ToList();
 
-                            writeListToCSVFile(applicationsRows, new ApplicationEntityReportMap(), applicationsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationsRows, new ApplicationEntityReportMap(), applicationsReportFilePath);
                         }
 
                         #endregion
@@ -2697,28 +2372,15 @@ namespace AppDynamics.OfflineData
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepIndexControllersApplicationsAndEntities",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -2726,30 +2388,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepIndexControllersApplicationsAndEntities",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepIndexControllersApplicationsAndEntities",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -2772,15 +2421,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepIndexControllerAndApplicationConfiguration",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -2788,9 +2430,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -2809,33 +2449,20 @@ namespace AppDynamics.OfflineData
 
                         // Error Detection configuration/error-configuration
 
-                        Console.WriteLine("TODO {0:g}", jobStatus);
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepIndexControllerAndApplicationConfiguration",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -2843,30 +2470,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepIndexControllerAndApplicationConfiguration",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepIndexControllerAndApplicationConfiguration",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -2889,15 +2503,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepIndexApplicationAndEntityMetrics",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -2905,9 +2512,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -2943,10 +2548,10 @@ namespace AppDynamics.OfflineData
 
                         #region Application
 
-                        List<EntityApplication> applicationRows = readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                        List<EntityApplication> applicationRows = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
                         if (applicationRows != null && applicationRows.Count > 0)
                         {
-                            Console.WriteLine("Convert Metrics for Application ({0} entities * {1} time ranges = {2})", applicationRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, applicationRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Application ({0} entities * {1} time ranges)", applicationRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityApplication> applicationFullRows = new List<EntityApplication>(1);
                             List<EntityApplication> applicationHourlyRows = new List<EntityApplication>(jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -2983,10 +2588,10 @@ namespace AppDynamics.OfflineData
                             #endregion
 
                             entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(applicationFullRows, new ApplicationMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationFullRows, new ApplicationMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(applicationHourlyRows, new ApplicationMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationHourlyRows, new ApplicationMetricReportMap(), entityHourlyRangeReportFilePath);
 
                             Console.WriteLine();
                         }
@@ -2995,10 +2600,10 @@ namespace AppDynamics.OfflineData
 
                         #region Tier
 
-                        List<EntityTier> tiersRows = readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                        List<EntityTier> tiersRows = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
                         if (tiersRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Tiers ({0} entities * {1} time ranges = {2})", tiersRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, tiersRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Tiers ({0} entities * {1} time ranges)", tiersRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityTier> tiersFullRows = new List<EntityTier>(tiersRows.Count);
                             List<EntityTier> tiersHourlyRows = new List<EntityTier>(tiersRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3047,10 +2652,10 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(tierFullRows, new TierMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(tierFullRows, new TierMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(tierHourlyRows, new TierMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(tierHourlyRows, new TierMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
                                 if (j % 10 == 0)
@@ -3058,26 +2663,26 @@ namespace AppDynamics.OfflineData
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             tiersHourlyRows = tiersHourlyRows.OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, TIERS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(tiersFullRows, new TierMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(tiersFullRows, new TierMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, TIERS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(tiersHourlyRows, new TierMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(tiersHourlyRows, new TierMetricReportMap(), entityHourlyRangeReportFilePath);
                         }
 
                         #endregion
 
                         #region Nodes
 
-                        List<EntityNode> nodesRows = readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+                        List<EntityNode> nodesRows = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
                         if (nodesRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Nodes ({0} entities * {1} time ranges = {2})", nodesRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, nodesRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Nodes ({0} entities * {1} time ranges)", nodesRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityNode> nodesFullRows = new List<EntityNode>(nodesRows.Count);
                             List<EntityNode> nodesHourlyRows = new List<EntityNode>(nodesRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3130,10 +2735,10 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(nodeFullRows, new NodeMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(nodeFullRows, new NodeMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(nodeHourlyRows, new NodeMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(nodeHourlyRows, new NodeMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
                                 if (j % 10 == 0)
@@ -3141,26 +2746,26 @@ namespace AppDynamics.OfflineData
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             nodesHourlyRows = nodesHourlyRows.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, NODES_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(nodesFullRows, new NodeMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(nodesFullRows, new NodeMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, NODES_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(nodesHourlyRows, new NodeMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(nodesHourlyRows, new NodeMetricReportMap(), entityHourlyRangeReportFilePath);
                         }
 
                         #endregion
 
                         #region Backends
 
-                        List<EntityBackend> backendsRows = readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                        List<EntityBackend> backendsRows = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
                         if (backendsRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Backends ({0} entities * {1} time ranges = {2})", backendsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, backendsRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Backends ({0} entities * {1} time ranges", backendsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityBackend> backendsFullRows = new List<EntityBackend>(backendsRows.Count);
                             List<EntityBackend> backendsHourlyRows = new List<EntityBackend>(backendsRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3209,10 +2814,10 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(backendFullRows, new BackendMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(backendFullRows, new BackendMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(backendHourlyRows, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(backendHourlyRows, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
                                 if (j % 10 == 0)
@@ -3220,16 +2825,16 @@ namespace AppDynamics.OfflineData
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             backendsHourlyRows = backendsHourlyRows.OrderBy(o => o.BackendType).ThenBy(o => o.BackendName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(backendsFullRows, new BackendMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(backendsFullRows, new BackendMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(backendsHourlyRows, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(backendsHourlyRows, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
 
                             Console.WriteLine();
                         }
@@ -3238,10 +2843,10 @@ namespace AppDynamics.OfflineData
 
                         #region Business Transactions
 
-                        List<EntityBusinessTransaction> businessTransactionsRows = readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+                        List<EntityBusinessTransaction> businessTransactionsRows = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
                         if (businessTransactionsRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Business Transactions ({0} entities * {1} time ranges = {2})", businessTransactionsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, businessTransactionsRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Business Transactions ({0} entities * {1} time ranges)", businessTransactionsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityBusinessTransaction> businessTransactionsFullRows = new List<EntityBusinessTransaction>(businessTransactionsRows.Count);
                             List<EntityBusinessTransaction> businessTransactionsHourlyRows = new List<EntityBusinessTransaction>(businessTransactionsRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3294,10 +2899,10 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(businessTransactionFullRows, new BusinessTransactionMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(businessTransactionFullRows, new BusinessTransactionMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(businessTransactionHourlyRows, new BusinessTransactionMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(businessTransactionHourlyRows, new BusinessTransactionMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
                                 if (j % 10 == 0)
@@ -3305,16 +2910,16 @@ namespace AppDynamics.OfflineData
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             businessTransactionsHourlyRows = businessTransactionsHourlyRows.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(businessTransactionsFullRows, new BusinessTransactionMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionsFullRows, new BusinessTransactionMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(businessTransactionsHourlyRows, new BusinessTransactionMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionsHourlyRows, new BusinessTransactionMetricReportMap(), entityHourlyRangeReportFilePath);
 
                             Console.WriteLine();
                         }
@@ -3323,10 +2928,10 @@ namespace AppDynamics.OfflineData
 
                         #region Service Endpoints
 
-                        List<EntityServiceEndpoint> serviceEndpointsRows = readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
+                        List<EntityServiceEndpoint> serviceEndpointsRows = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
                         if (serviceEndpointsRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Service Endpoints ({0} entities * {1} time ranges = {2})", serviceEndpointsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, serviceEndpointsRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Service Endpoints ({0} entities * {1} time ranges)", serviceEndpointsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityServiceEndpoint> serviceEndpointsFullRows = new List<EntityServiceEndpoint>(serviceEndpointsRows.Count);
                             List<EntityServiceEndpoint> serviceEndpointsHourlyRows = new List<EntityServiceEndpoint>(serviceEndpointsRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3376,10 +2981,10 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(serviceEndpointFullRows, new ServiceEndpointMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(serviceEndpointFullRows, new ServiceEndpointMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(serviceEndpointHourlyRows, new ServiceEndpointMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(serviceEndpointHourlyRows, new ServiceEndpointMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
                                 if (j % 10 == 0)
@@ -3387,26 +2992,26 @@ namespace AppDynamics.OfflineData
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             serviceEndpointsHourlyRows = serviceEndpointsHourlyRows.OrderBy(o => o.TierName).ThenBy(o => o.SEPName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(serviceEndpointsFullRows, new ServiceEndpointMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(serviceEndpointsFullRows, new ServiceEndpointMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(serviceEndpointsHourlyRows, new ServiceEndpointMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(serviceEndpointsHourlyRows, new ServiceEndpointMetricReportMap(), entityHourlyRangeReportFilePath);
                         }
 
                         #endregion
 
                         #region Errors
 
-                        List<EntityError> errorsRows = readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
+                        List<EntityError> errorsRows = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
                         if (errorsRows != null)
                         {
-                            Console.WriteLine("Convert Metrics for Errors, ({0} entities * {1} time ranges = {2})", errorsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, errorsRows.Count * (jobConfiguration.Input.HourlyTimeRanges.Count + 1));
+                            loggerConsole.Info("Convert Metrics for Errors, ({0} entities * {1} time ranges)", errorsRows.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                             List<EntityError> errorsFullRows = new List<EntityError>(errorsRows.Count);
                             List<EntityError> errorsHourlyRows = new List<EntityError>(errorsRows.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -3456,26 +3061,26 @@ namespace AppDynamics.OfflineData
                                 #endregion
 
                                 entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                writeListToCSVFile(errorFullRows, new ErrorMetricReportMap(), entityFullRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(errorFullRows, new ErrorMetricReportMap(), entityFullRangeReportFilePath);
 
                                 entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                                writeListToCSVFile(errorHourlyRows, new ErrorMetricReportMap(), entityHourlyRangeReportFilePath);
+                                FileIOHelper.writeListToCSVFile(errorHourlyRows, new ErrorMetricReportMap(), entityHourlyRangeReportFilePath);
                                 j++;
                                 if (j % 10 == 0)
                                 {
                                     Console.Write("[{0}]", j);
                                 }
                             }
-                            Console.WriteLine("{0} entities", j);
+                            loggerConsole.Info("{0} entities", j);
 
                             // Sort them
                             errorsHourlyRows = errorsHourlyRows.OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
 
                             entityFullRangeReportFilePath = Path.Combine(metricsFolderPath, ERRORS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                            writeListToCSVFile(errorsFullRows, new ErrorMetricReportMap(), entityFullRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(errorsFullRows, new ErrorMetricReportMap(), entityFullRangeReportFilePath);
 
                             entityHourlyRangeReportFilePath = Path.Combine(metricsFolderPath, ERRORS_FOLDER_NAME, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                            writeListToCSVFile(errorsHourlyRows, new ErrorMetricReportMap(), entityHourlyRangeReportFilePath);
+                            FileIOHelper.writeListToCSVFile(errorsHourlyRows, new ErrorMetricReportMap(), entityHourlyRangeReportFilePath);
                         }
 
                         #endregion
@@ -3483,28 +3088,15 @@ namespace AppDynamics.OfflineData
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepIndexApplicationAndEntityMetrics",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -3512,30 +3104,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepIndexApplicationAndEntityMetrics",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepIndexApplicationAndEntityMetrics",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -3558,15 +3137,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepIndexApplicationAndEntityFlowmaps",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -3574,42 +3146,27 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
 
                         #endregion
 
-                        Console.WriteLine("TODO {0:g}", jobStatus);
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepIndexApplicationAndEntityFlowmaps",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -3617,30 +3174,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepIndexApplicationAndEntityFlowmaps",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepIndexApplicationAndEntityFlowmaps",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -3663,15 +3207,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepIndexSnapshots",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -3679,42 +3216,27 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
 
                         #endregion
 
-                        Console.WriteLine("TODO {0:g}", jobStatus);
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepIndexSnapshots",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -3722,30 +3244,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepIndexSnapshots",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepIndexSnapshots",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -3756,7 +3265,7 @@ namespace AppDynamics.OfflineData
 
             try
             {
-                Console.WriteLine("Prepare Detected Entities Report File");
+                loggerConsole.Info("Prepare Detected Entities Report File");
 
                 #region Prepare the report package
 
@@ -4006,15 +3515,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepReportControlerApplicationsAndEntities",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -4022,9 +3524,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -4061,7 +3561,7 @@ namespace AppDynamics.OfflineData
                         {
                             listOfControllersAlreadyProcessed.Add(jobTarget.Controller);
 
-                            Console.Write("Controllers.");
+                            loggerConsole.Info("List of Controllers");
 
                             sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
                             if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4076,7 +3576,7 @@ namespace AppDynamics.OfflineData
                             }
                             readCSVFileIntoExcelRange(controllerReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                            Console.Write("Applications.");
+                            loggerConsole.Info("List of Applications");
 
                             sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST];
                             if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4096,7 +3596,7 @@ namespace AppDynamics.OfflineData
 
                         #region Tiers
 
-                        Console.WriteLine("Tiers.");
+                        loggerConsole.Info("List of Tiers");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4115,7 +3615,7 @@ namespace AppDynamics.OfflineData
 
                         #region Nodes
 
-                        Console.Write("Nodes.");
+                        loggerConsole.Info("List of Nodes");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODES_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4134,7 +3634,7 @@ namespace AppDynamics.OfflineData
 
                         #region Backends
 
-                        Console.Write("Backends.");
+                        loggerConsole.Info("List of Backends");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4153,7 +3653,7 @@ namespace AppDynamics.OfflineData
 
                         #region Business Transactions
 
-                        Console.Write("Business Transactions.");
+                        loggerConsole.Info("List of Business Transactions");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4172,7 +3672,7 @@ namespace AppDynamics.OfflineData
 
                         #region Service Endpoints
 
-                        Console.Write("Service Endpoints.");
+                        loggerConsole.Info("List of Service Endpoints");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4191,7 +3691,7 @@ namespace AppDynamics.OfflineData
 
                         #region Errors
 
-                        Console.Write("Errors.");
+                        loggerConsole.Info("List of Errors");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LIST];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -4207,44 +3707,28 @@ namespace AppDynamics.OfflineData
                         readCSVFileIntoExcelRange(errorsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
-
-                        Console.WriteLine();
-
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepReportControlerApplicationsAndEntities",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
-                Console.WriteLine("Finalize Detected Entities Report File");
+                loggerConsole.Info("Finalize Detected Entities Report File");
 
                 #region Controllers sheet
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
-                Console.WriteLine("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4265,7 +3749,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST];
-                Console.WriteLine("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4287,7 +3771,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST];
-                Console.WriteLine("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4332,7 +3816,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODES_LIST];
-                Console.WriteLine("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4410,7 +3894,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_LIST];
-                Console.WriteLine("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4482,7 +3966,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_LIST];
-                Console.WriteLine("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4552,7 +4036,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_LIST];
-                Console.WriteLine("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4622,7 +4106,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LIST];
-                Console.WriteLine("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -4730,7 +4214,7 @@ namespace AppDynamics.OfflineData
 
                 // Report files
                 string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, String.Format(REPORT_DETECTED_ENTITIES_FILE_NAME, programOptions.JobName, jobConfiguration.Input.ExpandedTimeRange.From.ToString("yyyyMMddHHmm"), jobConfiguration.Input.ExpandedTimeRange.To.ToString("yyyyMMddHHmm")));
-                Console.WriteLine("Saving Report {0}", reportFilePath);
+                loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 
                 try
                 {
@@ -4739,15 +4223,9 @@ namespace AppDynamics.OfflineData
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex);
-                    Console.ResetColor();
-
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.EXCEPTION_INVALID_OPERATION,
-                        "ProcessJob.stepReportControlerApplicationsAndEntities",
-                        ex);
+                    logger.Warn("Unable to save Excel file {0}", reportFilePath);
+                    logger.Warn(ex);
+                    loggerConsole.Warn("Unable to save Excel file {0}", reportFilePath);
 
                     return false;
                 }
@@ -4758,30 +4236,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepReportControlerApplicationsAndEntities",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepReportControlerApplicationsAndEntities",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -4804,15 +4269,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepReportControllerAndApplicationConfiguration",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -4820,42 +4278,28 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
 
                         #endregion
 
-                        Console.WriteLine("stepReportControllerAndApplicationConfiguration TODO");
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
 
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepReportControllerAndApplicationConfiguration",
-                            ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -4863,30 +4307,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepReportControllerAndApplicationConfiguration",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepReportControllerAndApplicationConfiguration",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -4897,7 +4328,7 @@ namespace AppDynamics.OfflineData
 
             try
             {
-                Console.WriteLine("Prepare Entity Metrics Report File");
+                loggerConsole.Info("Prepare Entity Metrics Report File");
 
                 #region Prepare the report package
 
@@ -5083,15 +4514,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepReportApplicationAndEntityMetrics",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -5099,9 +4523,7 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
@@ -5139,7 +4561,7 @@ namespace AppDynamics.OfflineData
                         {
                             listOfControllersAlreadyProcessed.Add(jobTarget.Controller);
 
-                            Console.Write("Controllers.");
+                            loggerConsole.Info("List of Controllers");
 
                             sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_CONTROLLERS_LIST];
                             if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5159,7 +4581,7 @@ namespace AppDynamics.OfflineData
 
                         #region Applications
 
-                        Console.Write("Applications.");
+                        loggerConsole.Info("List of Applications (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, APPLICATION_FOLDER_NAME);
 
@@ -5178,7 +4600,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Applications (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_APPLICATIONS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5198,7 +4620,7 @@ namespace AppDynamics.OfflineData
 
                         #region Tiers
 
-                        Console.Write("Tiers.");
+                        loggerConsole.Info("List of Tiers (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, TIERS_FOLDER_NAME);
 
@@ -5216,7 +4638,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Tiers (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_TIERS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5236,7 +4658,7 @@ namespace AppDynamics.OfflineData
 
                         #region Nodes
 
-                        Console.Write("Nodes.");
+                        loggerConsole.Info("List of Nodes (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, NODES_FOLDER_NAME);
 
@@ -5254,7 +4676,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Nodes (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_NODES_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5274,7 +4696,7 @@ namespace AppDynamics.OfflineData
 
                         #region Backends
 
-                        Console.Write("Backends.");
+                        loggerConsole.Info("List of Backends (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, BACKENDS_FOLDER_NAME);
 
@@ -5292,7 +4714,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Backends (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BACKENDS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5312,7 +4734,7 @@ namespace AppDynamics.OfflineData
 
                         #region Business Transactions
 
-                        Console.Write("Business Transactions.");
+                        loggerConsole.Info("List of Business Transactions (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_FOLDER_NAME);
 
@@ -5330,7 +4752,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Business Transactions (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BUSINESS_TRANSACTIONS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5350,7 +4772,7 @@ namespace AppDynamics.OfflineData
 
                         #region Service Endpoints
 
-                        Console.Write("Service Endpoints.");
+                        loggerConsole.Info("List of Service Endpoints (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_FOLDER_NAME);
 
@@ -5368,7 +4790,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Service Endpoints (Hourly)"); 
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_SERVICE_ENDPOINTS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5388,7 +4810,7 @@ namespace AppDynamics.OfflineData
 
                         #region Errors
 
-                        Console.Write("Errors.");
+                        loggerConsole.Info("List of Errors (Full)");
 
                         metricsEntityFolderPath = Path.Combine(metricsFolderPath, ERRORS_FOLDER_NAME);
 
@@ -5406,7 +4828,7 @@ namespace AppDynamics.OfflineData
                         entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
-                        Console.Write(".");
+                        loggerConsole.Info("List of Errors (Hourly)");
 
                         sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_ERRORS_HOURLY];
                         if (sheet.Dimension.Rows < REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
@@ -5423,43 +4845,28 @@ namespace AppDynamics.OfflineData
                         readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
-
-                        Console.WriteLine();
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepReportApplicationAndEntityMetrics",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
-                Console.WriteLine("Finalize Entity Metrics Report File");
+                loggerConsole.Info("Finalize Entity Metrics Report File");
 
                 #region Controllers sheet
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_CONTROLLERS_LIST];
-                Console.WriteLine("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5480,7 +4887,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_APPLICATIONS_FULL];
-                Console.WriteLine("Applications Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Applications Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5501,7 +4908,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_APPLICATIONS_HOURLY];
-                Console.WriteLine("Applications Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Applications Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5527,7 +4934,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_TIERS_FULL];
-                Console.WriteLine("Tiers Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Tiers Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5552,7 +4959,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_TIERS_HOURLY];
-                Console.WriteLine("Tiers Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Tiers Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5582,7 +4989,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_NODES_FULL];
-                Console.WriteLine("Nodes Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Nodes Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5608,7 +5015,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_NODES_HOURLY];
-                Console.WriteLine("Nodes Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Nodes Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5639,7 +5046,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BACKENDS_FULL];
-                Console.WriteLine("Backends Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Backends Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5663,7 +5070,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BACKENDS_HOURLY];
-                Console.WriteLine("Backends Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Backends Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5692,7 +5099,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BUSINESS_TRANSACTIONS_FULL];
-                Console.WriteLine("Business Transactions Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transactions Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5718,7 +5125,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_BUSINESS_TRANSACTIONS_HOURLY];
-                Console.WriteLine("Business Transactions Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transactions Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5749,7 +5156,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_SERVICE_ENDPOINTS_FULL];
-                Console.WriteLine("Service Endpoints Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Service Endpoints Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5775,7 +5182,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_SERVICE_ENDPOINTS_HOURLY];
-                Console.WriteLine("Service Endpoints Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Service Endpoints Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5806,7 +5213,7 @@ namespace AppDynamics.OfflineData
 
                 // Make table
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_ERRORS_FULL];
-                Console.WriteLine("Errors Sheet Full ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Errors Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5831,7 +5238,7 @@ namespace AppDynamics.OfflineData
                 }
 
                 sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_ENTITY_METRICS_SHEET_ERRORS_HOURLY];
-                Console.WriteLine("Errors Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Errors Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_ENTITY_METRICS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -5892,7 +5299,7 @@ namespace AppDynamics.OfflineData
 
                 // Report files
                 string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, String.Format(REPORT_ENTITY_METRICS_FILE_NAME, programOptions.JobName, jobConfiguration.Input.ExpandedTimeRange.From.ToString("yyyyMMddHHmm"), jobConfiguration.Input.ExpandedTimeRange.To.ToString("yyyyMMddHHmm")));
-                Console.WriteLine("Saving Report {0}", reportFilePath);
+                loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 
                 try
                 {
@@ -5901,15 +5308,9 @@ namespace AppDynamics.OfflineData
                 }
                 catch (InvalidOperationException ex)
                 {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(ex);
-                    Console.ResetColor();
-
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Error,
-                        EventId.EXCEPTION_INVALID_OPERATION,
-                        "ProcessJob.stepReportApplicationAndEntityMetrics",
-                        ex);
+                    logger.Warn("Unable to save Excel file {0}", reportFilePath);
+                    logger.Warn(ex);
+                    loggerConsole.Warn("Unable to save Excel file {0}", reportFilePath);
 
                     return false;
                 }
@@ -5920,30 +5321,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepReportApplicationAndEntityMetrics",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepReportApplicationAndEntityMetrics",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -5966,15 +5354,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepReportApplicationAndEntityFlowmaps",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -5982,42 +5363,27 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
 
                         #endregion
 
-                        Console.WriteLine("stepReportApplicationAndEntityFlowmaps TODO");
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepReportApplicationAndEntityFlowmaps",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -6025,30 +5391,17 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepReportApplicationAndEntityFlowmaps",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepReportApplicationAndEntityFlowmaps",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -6071,15 +5424,8 @@ namespace AppDynamics.OfflineData
                     {
                         #region Output status
 
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.TARGET_STATUS_INFORMATION,
-                            "ProcessJob.stepReportSnapshots",
-                            String.Format("Step='{0}', Controller='{1}', Application='{2}', Status='{3}'", jobStatus, jobTarget.Controller, jobTarget.Application, jobTarget.Status));
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application);
 
                         #endregion
 
@@ -6087,42 +5433,27 @@ namespace AppDynamics.OfflineData
 
                         if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
                         {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("Target in invalid state {0}, skipping", jobTarget.Status);
-                            Console.ResetColor();
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
 
                             continue;
                         }
 
                         #endregion
 
-                        Console.WriteLine("stepReportSnapshots TODO");
+                        loggerConsole.Fatal("TODO {0:g}", jobStatus);
 
                     }
                     catch (Exception ex)
                     {
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine(ex);
-                        Console.ResetColor();
-
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Error,
-                            EventId.EXCEPTION_GENERIC,
-                            "ProcessJob.stepReportSnapshots",
-                            ex);
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
                     }
                     finally
                     {
                         stopWatchTarget.Stop();
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.FUNCTION_DURATION_EVENT,
-                            String.Format("Step {0}: [{1}/{2}], {3} {4}", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application),
-                            String.Format("Execution took {0:c} ({1} ms)", stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
 
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        Console.WriteLine(String.Format("Step {0}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds));
-                        Console.ResetColor();
+                        logger.Info("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0:g}: [{1}/{2}], {3} {4} took {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
 
@@ -6130,34 +5461,36 @@ namespace AppDynamics.OfflineData
             }
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex);
-                Console.ResetColor();
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.stepReportSnapshots",
-                    ex);
+                logger.Error(ex);
+                loggerConsole.Error(ex);
 
                 return false;
             }
             finally
             {
                 stopWatch.Stop();
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FUNCTION_DURATION_EVENT,
-                    "ProcessJob.stepReportSnapshots",
-                    String.Format("Execution took {0:c} ({1} ms)", stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine(String.Format("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds));
-                Console.ResetColor();
+                logger.Info("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0:g} overall took {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
             }
         }
 
         #region Metric extraction functions
+
+        public static int extractMetricsApplication(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string metricsFolderPath)
+        {
+            string metricsEntityFolderPath = Path.Combine(
+                metricsFolderPath, 
+                APPLICATION_FOLDER_NAME);
+
+            getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_ART), jobConfiguration, metricsEntityFolderPath, METRIC_ART_FOLDER_NAME);
+            getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM), jobConfiguration, metricsEntityFolderPath, METRIC_CPM_FOLDER_NAME);
+            getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
+            getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_EXCPM), jobConfiguration, metricsEntityFolderPath, METRIC_EXCPM_FOLDER_NAME);
+            getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_APPLICATION, METRIC_HTTPEPM), jobConfiguration, metricsEntityFolderPath, METRIC_HTTPEPM_FOLDER_NAME);
+
+            return 1;
+        }
 
         public static int extractMetricsTiers(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTTier> entityList, string metricsFolderPath, bool progressToConsole)
         {
@@ -6176,7 +5509,7 @@ namespace AppDynamics.OfflineData
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_TIER, tier.name, METRIC_EXCPM), jobConfiguration, metricsEntityFolderPath, METRIC_EXCPM_FOLDER_NAME);
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_TIER, tier.name, METRIC_HTTPEPM), jobConfiguration, metricsEntityFolderPath, METRIC_HTTPEPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(tier, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(tier, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6209,7 +5542,7 @@ namespace AppDynamics.OfflineData
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_EXCPM), jobConfiguration, metricsEntityFolderPath, METRIC_EXCPM_FOLDER_NAME);
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_HTTPEPM), jobConfiguration, metricsEntityFolderPath, METRIC_HTTPEPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(node, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(node, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6239,7 +5572,7 @@ namespace AppDynamics.OfflineData
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_BACKEND, backend.name, METRIC_CPM), jobConfiguration, metricsEntityFolderPath, METRIC_CPM_FOLDER_NAME);
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_BACKEND, backend.name, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(backend, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(backend, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6270,7 +5603,7 @@ namespace AppDynamics.OfflineData
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransaction.tierName, businessTransaction.name, METRIC_CPM), jobConfiguration, metricsEntityFolderPath, METRIC_CPM_FOLDER_NAME);
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransaction.tierName, businessTransaction.name, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(businessTransaction, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(businessTransaction, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6327,7 +5660,7 @@ namespace AppDynamics.OfflineData
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointTierName, serviceEndpointName, METRIC_CPM), jobConfiguration, metricsEntityFolderPath, METRIC_CPM_FOLDER_NAME);
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointTierName, serviceEndpointName, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(serviceEndpoint, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(serviceEndpoint, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6382,7 +5715,7 @@ namespace AppDynamics.OfflineData
 
                 getMetricDataForMetricForAllRanges(controllerApi, jobTarget.Application, String.Format(METRIC_PATH_ERROR, errorTierName, errorName, METRIC_EPM), jobConfiguration, metricsEntityFolderPath, METRIC_EPM_FOLDER_NAME);
 
-                writeJSONObjectToFile(error, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                FileIOHelper.writeObjectToFile(error, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                 if (progressToConsole == true)
                 {
@@ -6402,13 +5735,7 @@ namespace AppDynamics.OfflineData
             // Get the full range
             JobTimeRange jobTimeRange = jobConfiguration.Input.ExpandedTimeRange;
 
-            //Console.Write(".");
-
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Information,
-                EventId.METRIC_RETRIEVAL,
-                "ProcessJob.getMetricDataForMetricForAllRanges",
-                String.Format("Retrieving metric for Application='{0}', Metric='{1}', From='{2:o}', To='{3:o}'", applicationNameOrID, metricPath, jobTimeRange.From, jobTimeRange.To));
+            logger.Info("Retrieving metric for Application {0}, Metric='{1}', From {2:o}, To {3:o}", applicationNameOrID, metricPath, jobTimeRange.From, jobTimeRange.To);
 
             string metricsJson = String.Empty;
             string metricsDataFilePath = String.Empty;
@@ -6424,7 +5751,7 @@ namespace AppDynamics.OfflineData
                     convertToUnixTimestamp(jobTimeRange.To),
                     true);
 
-                if (metricsJson != String.Empty) saveFileToFolder(metricsJson, metricsDataFilePath);
+                if (metricsJson != String.Empty) FileIOHelper.saveFileToFolder(metricsJson, metricsDataFilePath);
             }
 
             // Get the hourly time ranges
@@ -6432,13 +5759,7 @@ namespace AppDynamics.OfflineData
             {
                 jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
-                //Console.Write(".");
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.METRIC_RETRIEVAL,
-                    "ProcessJob.getMetricDataForMetricForAllRanges",
-                    String.Format("Retrieving metric for Application='{0}', Metric='{1}', From='{2:o}', To='{3:o}'", applicationNameOrID, metricPath, jobTimeRange.From, jobTimeRange.To));
+                logger.Info("Retrieving metric for Application {0}, Metric='{1}', From {2:o}, To {3:o}", applicationNameOrID, metricPath, jobTimeRange.From, jobTimeRange.To);
 
                 metricsDataFilePath = Path.Combine(metricsEntityFolderPath, metricEntitySubFolderName, String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From.ToString("yyyyMMddHHmm"), jobTimeRange.To.ToString("yyyyMMddHHmm")));
 
@@ -6452,7 +5773,7 @@ namespace AppDynamics.OfflineData
                         convertToUnixTimestamp(jobTimeRange.To),
                         false);
 
-                    if (metricsJson != String.Empty) saveFileToFolder(metricsJson, metricsDataFilePath);
+                    if (metricsJson != String.Empty) FileIOHelper.saveFileToFolder(metricsJson, metricsDataFilePath);
                 }
             }
         }
@@ -6461,17 +5782,34 @@ namespace AppDynamics.OfflineData
 
         #region Flowmap extraction functions
 
+        public static int extractFlowmapsApplication(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes)
+        {
+            logger.Info("Retrieving flowmap for Application {0}, From {1:o}, To {2:o}", jobTarget.Application, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
+
+            string flowmapDataFilePath = Path.Combine(
+                metricsFolderPath,
+                APPLICATION_FOLDER_NAME,
+                METRIC_FLOWMAP_FOLDER_NAME,
+                String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From.ToString("yyyyMMddHHmm"), jobConfiguration.Input.ExpandedTimeRange.To.ToString("yyyyMMddHHmm")));
+
+            string flowmapJson = String.Empty;
+
+            if (File.Exists(flowmapDataFilePath) == false)
+            {
+                flowmapJson = controllerApi.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+            }
+
+            return 1;
+        }
+
         public static int extractFlowmapsTiers(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTTier> entityList, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
         {
             int j = 0;
 
             foreach (AppDRESTTier tier in entityList)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FLOWMAP_RETRIEVAL,
-                    "ProcessJob.extractFlowmapsTiers",
-                    String.Format("Retrieving flowmap for Application='{0}', Tier='{1}', From='{2:o}', To='{3:o}'", jobTarget.Application, tier.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
+                logger.Info("Retrieving flowmap for Application {0}, Tier {1}, From {2:o}, To {3:o}", jobTarget.Application, tier.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
                     metricsFolderPath,
@@ -6483,7 +5821,7 @@ namespace AppDynamics.OfflineData
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapTier(tier.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -6505,11 +5843,7 @@ namespace AppDynamics.OfflineData
 
             foreach (AppDRESTNode node in entityList)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FLOWMAP_RETRIEVAL,
-                    "ProcessJob.extractFlowmapsNodes",
-                    String.Format("Retrieving flowmap for Application='{0}', Tier='{1}', Node='{2}', From='{3:o}', To='{4:o}'", jobTarget.Application, node.tierName, node.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
+                logger.Info("Retrieving flowmap for Application {0}, Tier {1}, Node {2}, From {3:o}, To {4:o}", jobTarget.Application, node.tierName, node.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
                     metricsFolderPath,
@@ -6522,7 +5856,7 @@ namespace AppDynamics.OfflineData
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapNode(node.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -6544,11 +5878,7 @@ namespace AppDynamics.OfflineData
 
             foreach (AppDRESTBackend backend in entityList)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FLOWMAP_RETRIEVAL,
-                    "ProcessJob.extractFlowmapsBackends",
-                    String.Format("Retrieving flowmap for Application='{0}', Backend='{1}', From='{2:o}', To='{3:o}'", jobTarget.Application, backend.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
+                logger.Info("Retrieving flowmap for Application {0}, Backend {1}, From {2:o}, To {3:o}", jobTarget.Application, backend.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
                     metricsFolderPath,
@@ -6560,7 +5890,7 @@ namespace AppDynamics.OfflineData
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapBackend(backend.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -6582,11 +5912,7 @@ namespace AppDynamics.OfflineData
 
             foreach (AppDRESTBusinessTransaction businessTransaction in entityList)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Information,
-                    EventId.FLOWMAP_RETRIEVAL,
-                    "ProcessJob.extractFlowmapsBusinessTransactions",
-                    String.Format("Retrieving flowmap for Application='{0}', Tier='{1}', Business Transaction='{2}', From='{3:o}', To='{4:o}'", jobTarget.Application, businessTransaction.tierName, businessTransaction.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
+                logger.Info("Retrieving flowmap for Application {0}, Tier {1}, Business Transaction {2}, From {3:o}, To {4:o}", jobTarget.Application, businessTransaction.tierName, businessTransaction.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
                     metricsFolderPath,
@@ -6599,7 +5925,7 @@ namespace AppDynamics.OfflineData
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapBusinessTransaction(jobTarget.ApplicationID, businessTransaction.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -6617,7 +5943,7 @@ namespace AppDynamics.OfflineData
 
         #endregion
 
-        #region Flowmap extraction functions
+        #region Snapshot extraction functions
 
         public static int extractSnapshots(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<JToken> entityList, List<AppDRESTTier> tiersList, List<AppDRESTBusinessTransaction> businessTransactionsList, string snapshotsFolderPath, bool progressToConsole)
         {
@@ -6625,15 +5951,8 @@ namespace AppDynamics.OfflineData
 
             foreach (JToken snapshot in entityList)
             {
-                if ((bool)snapshot["firstInChain"] == false)
-                {
-                    // Skipping this one
-                    if (progressToConsole == true)
-                    {
-                        Console.Write("-");
-                    }
-                }
-                else
+                // Only do first in chain
+                if ((bool)snapshot["firstInChain"] == true)
                 {
                     // Look up tiers and business transaction for this snapshot
                     AppDRESTTier tier = tiersList.Where<AppDRESTTier>(t => t.id == (int)snapshot["applicationComponentId"]).FirstOrDefault();
@@ -6641,29 +5960,28 @@ namespace AppDynamics.OfflineData
 
                     if (tier != null && businessTransaction != null)
                     {
-                        LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                            TraceEventType.Information,
-                            EventId.SNAPSHOT_RETRIEVAL,
-                            "ProcessJob.extractSnapshots",
-                            String.Format("Retrieving snapshot for Application='{0}', Tier='{1}', Business Transaction='{2}', RequestGUID='{3}'", jobTarget.Application, tier.name, businessTransaction.name, snapshot["requestGUID"]));
-
-                        if (progressToConsole == true)
-                        {
-                            Console.Write(".");
-                        }
+                        logger.Info("Retrieving snapshot for Application {0}, Tier {1}, Business Transaction {2}, RequestGUID {3}", jobTarget.Application, tier.name, businessTransaction.name, snapshot["requestGUID"]);
 
                         #region Prepare paths and variables
 
                         string snapshotTierFolderPath = Path.Combine(
                             snapshotsFolderPath,
                             getShortenedEntityNameForFileSystem(tier.name, tier.id));
-                        writeJSONObjectToFile(tier, Path.Combine(snapshotTierFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+                        FileIOHelper.writeObjectToFile(tier, Path.Combine(snapshotTierFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
 
                         string snapshotBusinessTransactionFolderPath = Path.Combine(
                             snapshotsFolderPath,
                             getShortenedEntityNameForFileSystem(tier.name, tier.id),
                             getShortenedEntityNameForFileSystem(businessTransaction.name.ToString(), businessTransaction.id));
-                        writeJSONObjectToFile(businessTransaction, Path.Combine(snapshotBusinessTransactionFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
+
+                        string businessTransactionNameFilePath = Path.Combine(
+                            snapshotBusinessTransactionFolderPath, 
+                            EXTRACT_ENTITY_NAME_FILE_NAME);
+
+                        if (File.Exists(businessTransactionNameFilePath) == false)
+                        {
+                            FileIOHelper.writeObjectToFile(businessTransaction, businessTransactionNameFilePath);
+                        }
 
                         DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
 
@@ -6687,22 +6005,18 @@ namespace AppDynamics.OfflineData
 
                         #region Get Snapshot Flowmap
 
-                        //Console.Write(".");
-
                         // Get snapshot flow map
                         string snapshotFlowmapDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME);
 
                         if (File.Exists(snapshotFlowmapDataFilePath) == false)
                         {
                             string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (snapshotFlowmapJson != String.Empty) saveFileToFolder(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
+                            if (snapshotFlowmapJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
                         }
 
                         #endregion
 
                         #region Get List of Segments
-
-                        //Console.Write(".");
 
                         // Get list of segments
                         string snapshotSegmentsDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_SEGMENT_LIST_NAME);
@@ -6710,56 +6024,50 @@ namespace AppDynamics.OfflineData
                         if (File.Exists(snapshotSegmentsDataFilePath) == false)
                         {
                             string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshot["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
-                            if (snapshotSegmentsJson != String.Empty) saveFileToFolder(snapshotSegmentsJson, snapshotSegmentsDataFilePath);
+                            if (snapshotSegmentsJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentsJson, snapshotSegmentsDataFilePath);
                         }
 
                         #endregion
 
                         #region Get Details for Each Segment
 
-                        JArray snapshotSegmentsList = loadArrayFromFile(snapshotSegmentsDataFilePath);
+                        JArray snapshotSegmentsList = FileIOHelper.loadJArrayFromFile(snapshotSegmentsDataFilePath);
 
                         if (snapshotSegmentsList != null)
                         {
                             // Get details for segment
                             foreach (JToken snapshotSegment in snapshotSegmentsList)
                             {
-                                //Console.Write(".");
-
                                 string snapshotSegmentDataFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME, snapshotSegment["id"]));
 
                                 if (File.Exists(snapshotSegmentDataFilePath) == false)
                                 {
                                     string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) saveFileToFolder(snapshotSegmentJson, snapshotSegmentDataFilePath);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentDataFilePath);
                                 }
                             }
 
                             // Get errors for segment
                             foreach (JToken snapshotSegment in snapshotSegmentsList)
                             {
-                                //Console.Write(".");
-
                                 string snapshotSegmentErrorFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegment["id"]));
 
                                 if (File.Exists(snapshotSegmentErrorFilePath) == false)
                                 {
                                     string snapshotSegmentJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) saveFileToFolder(snapshotSegmentJson, snapshotSegmentErrorFilePath);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentErrorFilePath);
                                 }
                             }
 
                             // Get call graphs for segment
                             foreach (JToken snapshotSegment in snapshotSegmentsList)
                             {
-                                //Console.Write(".");
-
                                 string snapshotSegmentCallGraphFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME, snapshotSegment["id"]));
 
                                 if (File.Exists(snapshotSegmentCallGraphFilePath) == false)
                                 {
                                     string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
                                 }
                             }
                         }
@@ -6789,11 +6097,7 @@ namespace AppDynamics.OfflineData
         {
             string fullRangeFileName = String.Format(EXTRACT_METRIC_FULL_FILE_NAME, jobTimeRange.From.ToString("yyyyMMddHHmm"), jobTimeRange.To.ToString("yyyyMMddHHmm"));
 
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Information,
-                EventId.ENTITY_METRICS_RETRIEVAL_FROM_FILE,
-                "ProcessJob.fillFullRangeMetricEntityRow",
-                String.Format("Retrieving full range metrics for Entity Type='{0}', Path='{1}', File='{2}', From='{3:o}', To='{4:o}'", entityRow.GetType().Name, metricsEntityFolderPath, fullRangeFileName, jobTimeRange.From, jobTimeRange.To));
+            logger.Info("Retrieving full range metrics for Entity Type {0} from path={1}, file {2}, From={3:o}, To={4:o}", entityRow.GetType().Name, metricsEntityFolderPath, fullRangeFileName, jobTimeRange.From, jobTimeRange.To);
 
             entityRow.Duration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;
             entityRow.From = jobTimeRange.From.ToLocalTime();
@@ -6810,7 +6114,7 @@ namespace AppDynamics.OfflineData
             string entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6822,7 +6126,7 @@ namespace AppDynamics.OfflineData
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
                         List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
-                        writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
+                        FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
@@ -6834,7 +6138,7 @@ namespace AppDynamics.OfflineData
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6846,7 +6150,7 @@ namespace AppDynamics.OfflineData
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
                         List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
-                        writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
+                        FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
@@ -6858,7 +6162,7 @@ namespace AppDynamics.OfflineData
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6872,7 +6176,7 @@ namespace AppDynamics.OfflineData
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
                         List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
-                        writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
+                        FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
@@ -6884,7 +6188,7 @@ namespace AppDynamics.OfflineData
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6896,7 +6200,7 @@ namespace AppDynamics.OfflineData
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
                         List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
-                        writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
+                        FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
@@ -6908,7 +6212,7 @@ namespace AppDynamics.OfflineData
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6920,7 +6224,7 @@ namespace AppDynamics.OfflineData
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
                         List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
-                        writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
+                        FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
@@ -6951,11 +6255,7 @@ namespace AppDynamics.OfflineData
         {
             string hourRangeFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From.ToString("yyyyMMddHHmm"), jobTimeRange.To.ToString("yyyyMMddHHmm"));
 
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Information,
-                EventId.ENTITY_METRICS_RETRIEVAL_FROM_FILE,
-                "ProcessJob.fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV",
-                String.Format("Retrieving hourly range metrics for Entity Type='{0}', Path='{1}', File='{2}', From='{3:o}', To='{4:o}'", entityRow.GetType().Name, metricsEntityFolderPath, hourRangeFileName, jobTimeRange.From, jobTimeRange.To));
+            logger.Info("Retrieving hourly range metrics for Entity Type {0} from path={1}, file {2}, From={3:o}, To={4:o}", entityRow.GetType().Name, metricsEntityFolderPath, hourRangeFileName, jobTimeRange.From, jobTimeRange.To);
 
             entityRow.Duration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;
             entityRow.From = jobTimeRange.From.ToLocalTime();
@@ -6972,7 +6272,7 @@ namespace AppDynamics.OfflineData
             string entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -6982,7 +6282,7 @@ namespace AppDynamics.OfflineData
                     }
 
                     List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
-                    writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
+                    FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
                 }
@@ -6993,7 +6293,7 @@ namespace AppDynamics.OfflineData
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -7003,7 +6303,7 @@ namespace AppDynamics.OfflineData
                     }
 
                     List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
-                    writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
+                    FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
                 }
@@ -7014,7 +6314,7 @@ namespace AppDynamics.OfflineData
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -7026,7 +6326,7 @@ namespace AppDynamics.OfflineData
                     }
 
                     List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
-                    writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
+                    FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
                 }
@@ -7037,7 +6337,7 @@ namespace AppDynamics.OfflineData
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -7047,7 +6347,7 @@ namespace AppDynamics.OfflineData
                     }
 
                     List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
-                    writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
+                    FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
                 }
@@ -7058,7 +6358,7 @@ namespace AppDynamics.OfflineData
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(metricsDataFilePath) == true)
             {
-                List<AppDRESTMetric> metricData = loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
                 if (metricData != null && metricData.Count > 0)
                 {
                     if (metricData[0].metricValues.Count > 0)
@@ -7068,7 +6368,7 @@ namespace AppDynamics.OfflineData
                     }
 
                     List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
-                    writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
+                    FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, true);
 
                     entityRow.MetricsIDs.Add(metricData[0].metricId);
                 }
@@ -7422,624 +6722,11 @@ namespace AppDynamics.OfflineData
 
         #endregion
 
-        #region Helper functions for saving and reading files
-
-        private static bool saveFileToFolder(string fileContents, string filePath)
-        {
-            string folderPath = Path.GetDirectoryName(filePath);
-
-            try
-            {
-                if (!Directory.Exists(folderPath))
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Verbose,
-                        EventId.FOLDER_CREATE,
-                        "ProcessJob.createFolder",
-                        String.Format("Creating folder='{0}'", folderPath));
-
-                    Directory.CreateDirectory(folderPath);
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.saveFileToFolder",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.FOLDER_CREATE_FAILED,
-                    "ProcessJob.saveFileToFolder",
-                    String.Format("Unable to create folder='{0}'", folderPath));
-
-                return false;
-            }
-
-            try
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FILE_WRITE,
-                    "ProcessJob.saveFileToFolder",
-                    String.Format("Writing string length='{0}' to file='{1}'", fileContents.Length, filePath));
-
-                File.WriteAllText(filePath, fileContents, Encoding.UTF8);
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.saveFileToFolder",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_WRITE_FILE,
-                    "ProcessJob.saveFileToFolder",
-                    String.Format("Unable to write to file='{0}'", filePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.saveFileToFolder",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_WRITE_FILE,
-                    "ProcessJob.saveFileToFolder",
-                    String.Format("Unable to write to file='{0}'", filePath));
-            }
-
-            return true;
-        }
-
-        private static JArray loadArrayFromFile(string jsonFilePath)
-        {
-            try
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FILE_READ,
-                    "ProcessJob.loadArrayFromFile",
-                    String.Format("Reading JSON from file='{0}'", jsonFilePath));
-
-                if (File.Exists(jsonFilePath) == false)
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.UNABLE_TO_READ_FILE,
-                        "ProcessJob.loadArrayFromFile",
-                        String.Format("Unable to find file='{0}'", jsonFilePath));
-                }
-                else
-                {
-                    return JArray.Parse(File.ReadAllText(jsonFilePath));
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.loadArrayFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.loadArrayFromFile",
-                    String.Format("Unable to read from JSON file='{0}'", jsonFilePath));
-            }
-            catch (JsonReaderException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_JSONREADEREXCEPTION,
-                    "ProcessJob.loadArrayFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadArrayFromFile",
-                    String.Format("Invalid JSON in JSON file='{0}'", jsonFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.loadArrayFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadArrayFromFile",
-                    String.Format("Unable to load JSON from JSON file='{0}'", jsonFilePath));
-            }
-
-            return null;
-        }
-
-        private static JObject loadObjectFromFile(string jsonFilePath)
-        {
-            try
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FILE_READ,
-                    "ProcessJob.loadObjectFromFile",
-                    String.Format("Reading JSON from file='{0}'", jsonFilePath));
-
-                if (File.Exists(jsonFilePath) == false)
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.UNABLE_TO_READ_FILE,
-                        "ProcessJob.loadObjectFromFile",
-                        String.Format("Unable to find file='{0}'", jsonFilePath));
-                }
-                else
-                {
-                    return JObject.Parse(File.ReadAllText(jsonFilePath));
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.loadObjectFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.loadObjectFromFile",
-                    String.Format("Unable to read from JSON file='{0}'", jsonFilePath));
-            }
-            catch (JsonReaderException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_JSONREADEREXCEPTION,
-                    "ProcessJob.loadObjectFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadObjectFromFile",
-                    String.Format("Invalid JSON in JSON file='{0}'", jsonFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.loadObjectFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadObjectFromFile",
-                    String.Format("Unable to load JSON from JSON file='{0}'", jsonFilePath));
-            }
-
-            return null;
-        }
-
-        internal static List<T> loadListOfObjectsFromFile<T>(string jsonFilePath)
-        {
-            try
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FILE_READ,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    String.Format("Reading JSON from file='{0}'", jsonFilePath));
-
-                if (File.Exists(jsonFilePath) == false)
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.UNABLE_TO_READ_FILE,
-                        "ProcessJob.loadListOfObjectsFromFile",
-                        String.Format("Unable to find file='{0}'", jsonFilePath));
-                }
-                else
-                {
-                    return JsonConvert.DeserializeObject<List<T>>(File.ReadAllText(jsonFilePath));
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    String.Format("Unable to read from file='{0}'", jsonFilePath));
-            }
-            catch (JsonReaderException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_JSONREADEREXCEPTION,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    String.Format("Invalid JSON in file='{0}'", jsonFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_JSON_FORMAT,
-                    "ProcessJob.loadListOfObjectsFromFile",
-                    String.Format("Unable to load JSON from file='{0}'", jsonFilePath));
-            }
-
-            return null;
-        }
-
-        private static XmlDocument loadXmlDocumentFromFile(string xmlFilePath)
-        {
-            try
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Verbose,
-                    EventId.FILE_READ,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    String.Format("Reading XML from file='{0}'", xmlFilePath));
-
-                if (File.Exists(xmlFilePath) == false)
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Warning,
-                        EventId.UNABLE_TO_READ_FILE,
-                        "ProcessJob.loadXmlDocumentFromFile",
-                        String.Format("Unable to find file='{0}'", xmlFilePath));
-                }
-                else
-                {
-                    XmlDocument doc = new XmlDocument();
-                    doc.Load(xmlFilePath);
-                    return doc;
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    String.Format("Unable to read from XML file='{0}'", xmlFilePath));
-            }
-            catch (XmlException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_XMLEXCEPTION,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_XML_FORMAT,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    String.Format("Invalid XML in XML file='{0}'", xmlFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.loadXmlDocumentFromFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.INVALID_XML_FORMAT,
-                    "ProcessJob.loadArrayFromFile",
-                    String.Format("Unable to load XML from XML file='{0}'", xmlFilePath));
-            }
-
-            return null;
-        }
-
-        private static bool writeJSONObjectToFile(object objectToWrite, string jsonFilePath)
-        {
-            string folderPath = Path.GetDirectoryName(jsonFilePath);
-
-            try
-            {
-
-                if (!Directory.Exists(folderPath))
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Verbose,
-                        EventId.FOLDER_CREATE,
-                        "ProcessJob.writeJSONObjectToFile",
-                        String.Format("Creating folder='{0}'", folderPath));
-
-                    Directory.CreateDirectory(folderPath);
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.writeJSONObjectToFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.FOLDER_CREATE_FAILED,
-                    "ProcessJob.writeJSONObjectToFile",
-                    String.Format("Unable to create folder='{0}'", folderPath));
-
-                return false;
-            }
-
-            try
-            {
-                using (StreamWriter sw = File.CreateText(jsonFilePath))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.NullValueHandling = NullValueHandling.Include;
-                    serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                    serializer.Serialize(sw, objectToWrite);
-                }
-
-                return true;
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.writeJSONObjectToFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_WRITE_FILE,
-                    "ProcessJob.writeJSONObjectToFile",
-                    String.Format("Unable to write to file='{0}'", jsonFilePath));
-            }
-            catch (JsonWriterException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_JSONWRITEREXCEPTION,
-                    "ProcessJob.writeJSONObjectToFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_RENDER_JSON,
-                    "ProcessJob.writeJSONObjectToFile",
-                    String.Format("Unable to serialize JSON to file='{0}'", jsonFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.writeJSONObjectToFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_RENDER_JSON,
-                    "ProcessJob.writeJSONObjectToFile",
-                    String.Format("Unable to write JSON to file='{0}'", jsonFilePath));
-            }
-
-            return false;
-        }
-
-        private static bool writeJArrayToFile(JArray array, string jsonFilePath)
-        {
-
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Verbose,
-                EventId.FILE_WRITE,
-                "ProcessJob.writeJArrayToFile",
-                String.Format("Writing JSON Array length='{0}' to file='{1}'", array.Count, jsonFilePath));
-
-            return writeJSONObjectToFile(array, jsonFilePath);
-        }
-
-        private static bool writeListToCSVFile<T>(List<T> listToWrite, CsvClassMap<T> classMap, string csvFilePath)
-        {
-            return writeListToCSVFile(listToWrite, classMap, csvFilePath, false);
-        }
-
-        private static bool writeListToCSVFile<T>(List<T> listToWrite, CsvClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
-        {
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Verbose,
-                EventId.FILE_WRITE,
-                "ProcessJob.writeListToCSVFile",
-                String.Format("Writing List elements='{0}', type='{1}', to file='{1}'", listToWrite.Count, typeof(T), csvFilePath));
-
-            string folderPath = Path.GetDirectoryName(csvFilePath);
-
-            try
-            {
-                if (!Directory.Exists(folderPath))
-                {
-                    LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                        TraceEventType.Verbose,
-                        EventId.FOLDER_CREATE,
-                        "ProcessJob.writeListToCSVFile",
-                        String.Format("Creating folder='{0}'", folderPath));
-
-                    Directory.CreateDirectory(folderPath);
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.writeListToCSVFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.FOLDER_CREATE_FAILED,
-                    "ProcessJob.writeListToCSVFile",
-                    String.Format("Unable to create folder='{0}'", folderPath));
-
-                return false;
-            }
-
-            try
-            {
-                if (appendToExistingFile == true && File.Exists(csvFilePath) == true)
-                {
-                    using (StreamWriter sw = File.AppendText(csvFilePath))
-                    {
-                        CsvWriter csvWriter = new CsvWriter(sw);
-                        csvWriter.Configuration.RegisterClassMap(classMap);
-                        csvWriter.Configuration.HasHeaderRecord = false;
-                        csvWriter.WriteRecords(listToWrite);
-                    }
-                }
-                else
-                {
-                    using (StreamWriter sw = File.CreateText(csvFilePath))
-                    {
-                        CsvWriter csvWriter = new CsvWriter(sw);
-                        csvWriter.Configuration.RegisterClassMap(classMap);
-                        csvWriter.WriteRecords(listToWrite);
-                    }
-                }
-
-                return true;
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.writeListToCSVFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_WRITE_FILE,
-                    "ProcessJob.writeListToCSVFile",
-                    String.Format("Unable to write to file='{0}'", csvFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.writeListToCSVFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_RENDER_CSV,
-                    "ProcessJob.writeListToCSVFile",
-                    String.Format("Unable to write CSV to file='{0}'", csvFilePath));
-            }
-
-            return false;
-        }
-
-        private static List<T> readListFromCSVFile<T>(string csvFilePath, CsvClassMap<T> classMap)
-        {
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Verbose,
-                EventId.FILE_READ,
-                "ProcessJob.readListFromCSVFile",
-                String.Format("Reading List, type='{0}', from file='{1}'", typeof(T), csvFilePath));
-
-            try
-            {
-                using (StreamReader sr = File.OpenText(csvFilePath))
-                {
-                    CsvReader csvReader = new CsvReader(sr);
-                    csvReader.Configuration.RegisterClassMap(classMap);
-                    return csvReader.GetRecords<T>().ToList();
-                }
-            }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.readListFromCSVFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.readListFromCSVFile",
-                    String.Format("Unable to read from file='{0}'", csvFilePath));
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.readListFromCSVFile",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_CSV,
-                    "ProcessJob.readListFromCSVFile",
-                    String.Format("Unable to read CSV from file='{0}'", csvFilePath));
-            }
-
-            return null;
-        }
+        #region Reading CSV into Excel worksheet
 
         private static ExcelRangeBase readCSVFileIntoExcelRange(string csvFilePath, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
         {
-            LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                TraceEventType.Verbose,
-                EventId.CSV_FILE_TO_EXCEL_RANGE,
-                "ProcessJob.readCSVFileIntoExcelRange",
-                String.Format("Reading CSV file={0} to Excel Worksheet={1} at (row={2}, column={3})", csvFilePath, sheet.Name, startRow, startColumn));
+            logger.Trace("Reading CSV file {0} to Excel Worksheet {1} at (row {2}, column {3})", csvFilePath, sheet.Name, startRow, startColumn);
 
             try
             {
@@ -8065,6 +6752,7 @@ namespace AppDynamics.OfflineData
                         if (csvRowIndex == 0)
                         {
                             headerRowValues = rowValues;
+                            numColumnsInCSV = headerRowValues.Length;
                         }
 
                         // Should we skip?
@@ -8076,7 +6764,6 @@ namespace AppDynamics.OfflineData
 
                         // Read row one field at a time
                         int csvFieldIndex = 0;
-                        numColumnsInCSV = rowValues.Length;
                         foreach (string fieldValue in rowValues)
                         {
                             ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
@@ -8132,33 +6819,10 @@ namespace AppDynamics.OfflineData
 
                 return sheet.Cells[startRow, startColumn, startRow + csvRowIndex , startColumn + numColumnsInCSV - 1];
             }
-            catch (IOException ex)
-            {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_IO,
-                    "ProcessJob.readCSVFileIntoExcelRange",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_FILE,
-                    "ProcessJob.readCSVFileIntoExcelRange",
-                    String.Format("Unable to read from file='{0}'", csvFilePath));
-            }
             catch (Exception ex)
             {
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.EXCEPTION_GENERIC,
-                    "ProcessJob.readCSVFileIntoExcelRange",
-                    ex);
-
-                LogHelper.Instance.Log(new string[] { LogHelper.OFFLINE_DATA_TRACE_SOURCE },
-                    TraceEventType.Error,
-                    EventId.UNABLE_TO_READ_CSV,
-                    "ProcessJob.readCSVFileIntoExcelRange",
-                    String.Format("Unable to read CSV from file='{0}'", csvFilePath));
+                logger.Error("Unable to read CSV from file {0}", csvFilePath);
+                logger.Error(ex);
             }
 
             return null;
@@ -8170,12 +6834,10 @@ namespace AppDynamics.OfflineData
 
         private static int getApplicationIdFromApplicationFile(string applicationFilePath)
         {
-            //JArray application = loadArrayFromFile(applicationFilePath);
-            List<AppDRESTApplication> applicationsList = loadListOfObjectsFromFile<AppDRESTApplication>(applicationFilePath);
+            List<AppDRESTApplication> applicationsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTApplication>(applicationFilePath);
             if (applicationsList != null && applicationsList.Count > 0)
             {
                 return applicationsList[0].id;
-                //Int32.TryParse(application.First["id"].ToString(), out appicationId);
             }
             else
             {
@@ -8193,14 +6855,12 @@ namespace AppDynamics.OfflineData
             // Second, shorten the string 
             if (entityName.Length > 25) entityName = entityName.Substring(0, 25);
 
-
+            // If ID isn't know, get it from hashcode
             if (entityID < 0)
             {
                 entityID = originalEntityName.GetHashCode();
             }
 
-            // Third, add hash
-            //return String.Format("{0}.{1}.{2:X}", entityName, entityID, originalEntityName.GetHashCode());
             return String.Format("{0}.{1}", entityName, entityID);
         }
 
