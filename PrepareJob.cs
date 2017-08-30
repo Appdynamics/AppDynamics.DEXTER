@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -100,6 +101,16 @@ namespace AppDynamics.Dexter
                 loggerConsole.Error("Unable to load job input file {0}", programOptions.InputJobFilePath);
 
                 return false;
+            }
+
+            // Load credential store
+            string credentialStoreFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "credentialStore.json");
+            CredentialStore credentialStore = FileIOHelper.readCredentialStoreFromFile(credentialStoreFilePath);
+            if (credentialStore == null)
+            {
+                loggerConsole.Trace("Unable to load credential store from {0}, will create new one", credentialStoreFilePath);
+                credentialStore = new CredentialStore();
+                credentialStore.Credentials = new List<ControllerCredential>();
             }
 
             #region Validate Input 
@@ -222,13 +233,13 @@ namespace AppDynamics.Dexter
 
                     isTargetValid = false;
                 }
-                if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
-                {
-                    logger.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
-                    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
+                //if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
+                //{
+                //    logger.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
+                //    loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
 
-                    isTargetValid = false;
-                }
+                //    isTargetValid = false;
+                //}
                 if (jobTarget.Application == null || jobTarget.Application == string.Empty)
                 {
                     logger.Warn("Target {0} property {1} is empty", i + 1, "Application");
@@ -248,10 +259,60 @@ namespace AppDynamics.Dexter
 
                 #endregion
 
+                #region Get credential or prompt for it
+
+                ControllerCredential controllerCredential = credentialStore.Credentials.Where(c => c.Controller == jobTarget.Controller && c.UserName == jobTarget.UserName).FirstOrDefault();
+                if (controllerCredential == null)
+                {
+                    logger.Info("Target [{0}] Controller {1} with username {2} is not known yet", i + 1, jobTarget.Controller, jobTarget.UserName);
+                    loggerConsole.Error("Target [{0}] Controller {1} with username {2} is not known yet", i + 1, jobTarget.Controller, jobTarget.UserName);
+
+                    controllerCredential = new ControllerCredential();
+                    controllerCredential.Controller = jobTarget.Controller.TrimEnd('/');
+                    controllerCredential.UserName = jobTarget.UserName;
+
+                    if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
+                    {
+                        loggerConsole.Info("Enter Password for user {0}:", jobTarget.UserName);
+
+                        String password = ReadPassword('*');
+                        Console.WriteLine();
+                        if (password.Length == 0)
+                        {
+                            logger.Warn("User specified empty password");
+                            loggerConsole.Warn("Password can not be empty");
+
+                            jobTarget.Status = JobTargetStatus.NoController;
+
+                            continue;
+                        }
+                        controllerCredential.UserPassword = AESEncryptionHelper.Encrypt(password);
+                    }
+                    else
+                    {
+                        logger.Info("Target {0} property {1} is not empty, going to assume this password", i + 1, "UserPassword");
+                        loggerConsole.Info("Target {0} property {1} is not empty, going to assume this password", i + 1, "UserPassword");
+
+                        controllerCredential.UserPassword = AESEncryptionHelper.Encrypt(jobTarget.UserPassword);
+                    }
+
+                    credentialStore.Credentials.Add(controllerCredential);
+                }
+                else
+                {
+                    if (AESEncryptionHelper.IsCipherText(controllerCredential.UserPassword) == false)
+                    {
+                        controllerCredential.UserPassword = AESEncryptionHelper.Encrypt(controllerCredential.UserPassword);
+                    }
+                }
+
+                #endregion
+
                 #region Validate target Controller is accessible
 
                 // If reached here, we have all the properties to go query for list of Applications
-                ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, jobTarget.UserPassword);
+                //ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, jobTarget.UserPassword);
+                ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(controllerCredential.UserPassword));
                 if (controllerApi.IsControllerAccessible() == false)
                 {
                     logger.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
@@ -304,7 +365,7 @@ namespace AppDynamics.Dexter
                     jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
 
                     jobTargetExpanded.UserName = jobTarget.UserName;
-                    jobTargetExpanded.UserPassword = jobTarget.UserPassword;
+                    //jobTargetExpanded.UserPassword = jobTarget.UserPassword;
                     jobTargetExpanded.Application = application["name"].ToString();
                     jobTargetExpanded.ApplicationID = (int)application["id"];
 
@@ -340,7 +401,53 @@ namespace AppDynamics.Dexter
                 return false;
             }
 
+            // Save the resulting JSON file to the credential store folder
+            if (FileIOHelper.writeJobConfigurationToFile(credentialStore, credentialStoreFilePath) == false)
+            {
+                loggerConsole.Error("Unable to write credential store file {0}", credentialStoreFilePath);
+
+                return false;
+            }
+
             return true;
         }
+
+        public static string ReadPassword(char mask)
+        {
+            const int ENTER = 13, BACKSP = 8, CTRLBACKSP = 127;
+            int[] FILTERED = { 0, 27, 9, 10 /*, 32 space, if you care */ }; // const
+
+            var pass = new Stack<char>();
+            char chr = (char)0;
+
+            while ((chr = System.Console.ReadKey(true).KeyChar) != ENTER)
+            {
+                if (chr == BACKSP)
+                {
+                    if (pass.Count > 0)
+                    {
+                        System.Console.Write("\b \b");
+                        pass.Pop();
+                    }
+                }
+                else if (chr == CTRLBACKSP)
+                {
+                    while (pass.Count > 0)
+                    {
+                        System.Console.Write("\b \b");
+                        pass.Pop();
+                    }
+                }
+                else if (FILTERED.Count(x => chr == x) > 0) { }
+                else
+                {
+                    pass.Push((char)chr);
+                    System.Console.Write(mask);
+                }
+            }
+
+            return new string(pass.Reverse().ToArray());
+        }
+
     }
 }

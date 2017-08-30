@@ -75,6 +75,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControllerApi\ControllerApi.cs" />
+    <Compile Include="DataObjects\ControllerCredential\ControllerCredentials.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBackend.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBackendProperty.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBusinessTransaction.cs" />
@@ -85,11 +87,12 @@
     <Compile Include="DataObjects\RestApi\AppDRESTMetric.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTMetricValue.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobStatus.cs" />
-    <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
+    <Compile Include="DataObjects\ControllerCredential\ControllerCredential.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobInput.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobConfiguration.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTargetStatus.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTimeRange.cs" />
+    <Compile Include="Helpers\AESEncryptionHelper.cs" />
     <Compile Include="Helpers\FileIOHelper.cs" />
     <Compile Include="Helpers\IEnumerableExtensions.cs" />
     <Compile Include="PrepareJob.cs" />

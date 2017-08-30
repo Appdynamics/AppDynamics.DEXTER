@@ -14,17 +14,16 @@ namespace AppDynamics.Dexter
         IndexControllersApplicationsAndEntities = 11,
         IndexControllerAndApplicationConfiguration = 12,
         IndexApplicationAndEntityMetrics = 13,
-        IndexSnapshots = 14,
-        IndexEvents = 15,
-        IndexApplicationAndEntityFlowmaps = 16,
+        IndexApplicationAndEntityFlowmaps = 14,
+        IndexSnapshots = 15,
+        IndexEvents = 16,
 
         ReportControlerApplicationsAndEntities = 21,
         ReportControllerAndApplicationConfiguration = 22,
         ReportApplicationAndEntityMetrics = 23,
-        ReportApplicationAndEntityMetricDetails = 24,
-        ReportApplicationAndEntityFlowmaps = 25,
-        ReportSnapshots = 26,
-        ReportFlameGraphs = 27,
+        ReportIndividualApplicationAndEntityDetails = 24,
+        ReportSnapshots = 25,
+        ReportFlameGraphs = 26,
 
         Done = 30,
 

@@ -48,5 +48,7 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumSnapsVerySlow { get; set; }
         public int NumSnapsStall { get; set; }
         public int NumSnapsError { get; set; }
+
+        public string DetailLink { get; set; }
     }
 }

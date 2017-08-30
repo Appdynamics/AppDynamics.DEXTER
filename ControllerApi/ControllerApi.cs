@@ -96,34 +96,74 @@ namespace AppDynamics.Dexter
             return this.apiGET("controller/rest/applications?output=JSON", "application/json", false);
         }
 
-        public string GetSingleApplication(string applicationNameOrID)
+        public string GetSingleApplication(string applicationName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}?output=JSON", applicationNameOrID), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfTiers(string applicationNameOrID)
+        public string GetSingleApplication(int applicationID)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/tiers?output=JSON", applicationNameOrID), "application/json", false);
+            return this.GetSingleApplication(applicationID.ToString());
         }
 
-        public string GetListOfNodes(string applicationNameOrID)
+        public string GetListOfTiers(string applicationName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/nodes?output=JSON", applicationNameOrID), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/tiers?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfBusinessTransactions(string applicationNameOrID)
+        public string GetListOfTiers(int applicationID)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/business-transactions?output=JSON", applicationNameOrID), "application/json", false);
+            return this.GetListOfTiers(applicationID.ToString());
         }
 
-        public string GetListOfBackends(string applicationNameOrID)
+        public string GetListOfNodes(string applicationName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/backends?output=JSON", applicationNameOrID), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/nodes?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfServiceEndpoints(string applicationNameOrID)
+        public string GetListOfNodes(int applicationID)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Service Endpoints|*|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID), "application/json", false);
+            return this.GetListOfNodes(applicationID.ToString());
+        }
+
+        public string GetListOfBusinessTransactions(string applicationName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/business-transactions?output=JSON", applicationName), "application/json", false);
+        }
+
+        public string GetListOfBusinessTransactions(int applicationID)
+        {
+            return this.GetListOfBusinessTransactions(applicationID.ToString());
+        }
+
+        public string GetListOfBackends(string applicationName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/backends?output=JSON", applicationName), "application/json", false);
+        }
+
+        public string GetListOfBackends(int applicationID)
+        {
+            return this.GetListOfBackends(applicationID.ToString());
+        }
+
+        public string GetListOfServiceEndpoints(string applicationName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Service Endpoints|*|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
+        }
+
+        public string GetListOfServiceEndpoints(int applicationID)
+        {
+            return this.GetListOfServiceEndpoints(applicationID.ToString());
+        }
+
+        public string GetListOfServiceEndpointsInTier(string applicationName, string tierName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Service Endpoints|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
+        }
+
+        public string GetListOfServiceEndpointsInTier(int applicationID, string tierName)
+        {
+            return this.GetListOfServiceEndpointsInTier(applicationID.ToString(), tierName);
         }
 
         public string GetListOfServiceEndpointsWithDetail(int applicationID)
@@ -131,19 +171,24 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/restui/serviceEndpoint/list2/{0}/{0}/APPLICATION?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }
 
-        public string GetListOfServiceEndpointsInTier(string applicationNameOrID, string tierName)
+        public string GetListOfErrors(string applicationName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Service Endpoints|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID, WebUtility.UrlEncode(tierName)), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Errors|*|*|Errors per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfErrors(string applicationNameOrID)
+        public string GetListOfErrors(int applicationID)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Errors|*|*|Errors per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID), "application/json", false);
+            return this.GetListOfErrors(applicationID.ToString());
         }
 
-        public string GetListOfErrorsInTier(string applicationNameOrID, string tierName)
+        public string GetListOfErrorsInTier(string applicationName, string tierName)
         {
-            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Errors|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationNameOrID, WebUtility.UrlEncode(tierName)), "application/json", false);
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Errors|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
+        }
+
+        public string GetListOfErrorsInTier(int applicationID, string tierName)
+        {
+            return this.GetListOfErrorsInTier(applicationID.ToString(), tierName);
         }
 
         #endregion
@@ -360,17 +405,50 @@ namespace AppDynamics.Dexter
 
         #region Metric retrieval
 
-        public string GetMetricData(string applicationNameOrID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
+        public string GetMetricData(string applicationName, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
         {
             return this.apiGET(
                 String.Format("controller/rest/applications/{0}/metric-data?metric-path={1}&time-range-type=BETWEEN_TIMES&start-time={2}&end-time={3}&rollup={4}&output=JSON",
-                    applicationNameOrID,
+                    applicationName,
                     WebUtility.UrlEncode(metricPath),
                     startTimeInUnixEpochFormat,
                     endTimeInUnixEpochFormat,
                     rollup),
                 "application/json",
                 false);
+        }
+
+        public string GetMetricData(int applicationID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
+        {
+            return this.GetMetricData(applicationID.ToString(), metricPath, startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, rollup);
+        }
+
+        #endregion
+
+        #region Event retrieval
+
+        public string GetHealthRuleViolations(int applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            return this.apiGET(
+                String.Format("controller/rest/applications/{0}/problems/healthrule-violations?time-range-type=BETWEEN_TIMES&start-time={1}&end-time={2}&output=JSON",
+                    applicationID,
+                    startTimeInUnixEpochFormat,
+                    endTimeInUnixEpochFormat),
+                "application/json",
+                true);
+        }
+
+        public string GetEvents(int applicationID, string eventType, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            
+            return this.apiGET(
+                String.Format("controller/rest/applications/{0}/events?event-types={1}&severities=INFO,WARN,ERROR&time-range-type=BETWEEN_TIMES&start-time={2}&end-time={3}&output=JSON",
+                    applicationID,
+                    eventType,
+                    startTimeInUnixEpochFormat,
+                    endTimeInUnixEpochFormat),
+                "application/json",
+                true);
         }
 
         #endregion
@@ -415,14 +493,14 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    logger.Error("{0}/{1} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+                    logger.Error("{0}/{1} GET as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
 
                     return String.Empty;
                 }
             }
             catch (Exception ex)
             {
-                logger.Error("{0}/{1} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
+                logger.Error("{0}/{1} GET as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
                 logger.Error(ex);
 
                 return String.Empty;
@@ -430,7 +508,7 @@ namespace AppDynamics.Dexter
             finally
             {
                 stopWatch.Stop();
-                logger.Trace("{0}/{1} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
+                logger.Trace("{0}/{1} GET as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
             }
         }
 
@@ -475,14 +553,14 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    logger.Error("{0}/{1} as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+                    logger.Error("{0}/{1} POST as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
 
                     return String.Empty;
                 }
             }
             catch (Exception ex)
             {
-                logger.Error("{0}/{1} as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
+                logger.Error("{0}/{1} POST as {2} threw {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, ex.Message, ex.Source);
                 logger.Error(ex);
 
                 return String.Empty;
@@ -490,7 +568,8 @@ namespace AppDynamics.Dexter
             finally
             {
                 stopWatch.Stop();
-                logger.Trace("{0}/{1} as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
+                logger.Trace("{0}/{1} POST as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
+                logger.Trace("POST body {0}", requestBody);
             }
         }
 

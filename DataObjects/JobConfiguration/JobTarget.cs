@@ -1,4 +1,6 @@
-﻿namespace AppDynamics.Dexter
+﻿using System;
+
+namespace AppDynamics.Dexter
 {
     public class JobTarget
     {
@@ -9,5 +11,10 @@
         public int ApplicationID { get; set; }
         public bool NameRegex { get; set; }
         public JobTargetStatus Status { get; set; }
+
+        public override string ToString()
+        {
+            return String.Format("JobTarget: {0}/{1}({2})", this.Controller, this.Application, this.ApplicationID);
+        }
     }
 }

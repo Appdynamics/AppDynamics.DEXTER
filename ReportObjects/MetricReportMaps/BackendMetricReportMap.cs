@@ -26,6 +26,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.Duration).Index(i); i++;
             Map(m => m.BackendID).Index(i); i++;
             Map(m => m.ApplicationID).Index(i); i++;
+            Map(m => m.DetailLink).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;
             Map(m => m.BackendLink).Index(i); i++;

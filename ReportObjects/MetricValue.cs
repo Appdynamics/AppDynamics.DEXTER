@@ -8,7 +8,8 @@ namespace AppDynamics.Dexter.DataObjects
         public int MetricID { get; set; }
 
         public DateTime EventTime { get; set; }
-        public DateTime EventTimeUtc { get; set; }
+        public DateTime EventTimeStamp { get; set; }
+        public DateTime EventTimeStampUtc { get; set; }
 
         public long Count { get; set; }
         public long Min { get; set; }
@@ -20,11 +21,11 @@ namespace AppDynamics.Dexter.DataObjects
         public override String ToString()
         {
             return String.Format(
-                "MetricValue: value={0}, count={1}, EventTime={2:o}, startTime={3:o}",
+                "MetricValue: Value={0}, Count={1}, EventTime={2:o}, EventTimeUtc={3:o}",
                 this.Value,
                 this.Count,
-                this.EventTime,
-                this.EventTimeUtc);
+                this.EventTimeStamp,
+                this.EventTimeStampUtc);
         }
     }
 }

@@ -7,8 +7,9 @@ namespace AppDynamics.Dexter.DataObjects
         public MetricValueMetricReportMap()
         {
             int i = 0;
+            Map(m => m.EventTimeStamp).Index(i); i++;
+            Map(m => m.EventTimeStampUtc).Index(i); i++;
             Map(m => m.EventTime).Index(i); i++;
-            Map(m => m.EventTimeUtc).Index(i); i++;
             Map(m => m.Value).Index(i); i++;
             Map(m => m.Count).Index(i); i++;
             Map(m => m.Min).Index(i); i++;

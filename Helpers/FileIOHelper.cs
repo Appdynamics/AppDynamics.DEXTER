@@ -16,6 +16,7 @@ namespace AppDynamics.Dexter
     public class FileIOHelper
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger loggerConsole = LogManager.GetLogger("AppDynamics.Dexter.Console");
 
         #region Basic file and folder reading and writing
 
@@ -220,12 +221,20 @@ namespace AppDynamics.Dexter
         {
             try
             {
-                logger.Trace("Reading JobConfiguration JSON from job file {0}", configurationFilePath);
+                if (File.Exists(configurationFilePath) == false)
+                {
+                    logger.Warn("Unable to find file {0}", configurationFilePath);
+                }
+                else
+                { 
+                    logger.Trace("Reading JobConfiguration JSON from job file {0}", configurationFilePath);
 
-                return JsonConvert.DeserializeObject<JobConfiguration>(File.ReadAllText(configurationFilePath));
+                    return JsonConvert.DeserializeObject<JobConfiguration>(File.ReadAllText(configurationFilePath));
+                }
             }
             catch (Exception ex)
             {
+                loggerConsole.Error(ex);
                 logger.Error("Unable to load JobConfiguration JSON from job file {0}", configurationFilePath);
                 logger.Error(ex);
             }
@@ -251,7 +260,59 @@ namespace AppDynamics.Dexter
             }
             catch (Exception ex)
             {
+                loggerConsole.Error(ex);
                 logger.Error("Unable to write JobConfiguration JSON to job file {0}", configurationFilePath);
+                logger.Error(ex);
+            }
+
+            return false;
+        }
+
+        public static CredentialStore readCredentialStoreFromFile(string credentialStorePath)
+        {
+            try
+            {
+                if (File.Exists(credentialStorePath) == false)
+                {
+                    logger.Warn("Unable to find file {0}", credentialStorePath);
+                }
+                else
+                {
+                    logger.Trace("Reading CredentialStore JSON from job file {0}", credentialStorePath);
+
+                    return JsonConvert.DeserializeObject<CredentialStore>(File.ReadAllText(credentialStorePath));
+                }
+            }
+            catch (Exception ex)
+            {
+                loggerConsole.Error(ex);
+                logger.Error("Unable to load CredentialStore JSON from job file {0}", credentialStorePath);
+                logger.Error(ex);
+            }
+
+            return null;
+        }
+
+        public static bool writeJobConfigurationToFile(CredentialStore credentialStore, string credentialStorePath)
+        {
+            try
+            {
+                logger.Trace("Writing CredentialStore JSON to job file {0}", credentialStorePath);
+
+                using (StreamWriter sw = File.CreateText(credentialStorePath))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    serializer.NullValueHandling = NullValueHandling.Include;
+                    serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    serializer.Serialize(sw, credentialStore);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                loggerConsole.Error(ex);
+                logger.Error("Unable to write CredentialStore JSON to job file {0}", credentialStorePath);
                 logger.Error(ex);
             }
 
@@ -347,11 +408,18 @@ namespace AppDynamics.Dexter
             {
                 logger.Trace("Reading List of type {0} from file {1}", typeof(T), csvFilePath);
 
-                using (StreamReader sr = File.OpenText(csvFilePath))
+                if (File.Exists(csvFilePath) == false)
                 {
-                    CsvReader csvReader = new CsvReader(sr);
-                    csvReader.Configuration.RegisterClassMap(classMap);
-                    return csvReader.GetRecords<T>().ToList();
+                    logger.Warn("File {0} does not exist", csvFilePath);
+                }
+                else
+                {
+                    using (StreamReader sr = File.OpenText(csvFilePath))
+                    {
+                        CsvReader csvReader = new CsvReader(sr);
+                        csvReader.Configuration.RegisterClassMap(classMap);
+                        return csvReader.GetRecords<T>().ToList();
+                    }
                 }
             }
             catch (Exception ex)
