@@ -4,7 +4,7 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityError: EntityBase
     {
-        public int ErrorID { get; set; }
+        public long ErrorID { get; set; }
         public int ErrorDepth { get; set; }
         public string ErrorLevel1 { get; set; }
         public string ErrorLevel2 { get; set; }

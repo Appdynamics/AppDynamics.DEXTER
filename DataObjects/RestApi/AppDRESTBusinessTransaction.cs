@@ -17,10 +17,10 @@ namespace AppDynamics.Dexter.DataObjects
     {
         public bool background { get; set; }
         public string entryPointType { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         public string internalName { get; set; }
         public string name { get; set; }
-        public int tierId { get; set; }
+        public long tierId { get; set; }
         public string tierName { get; set; }
 
         public override String ToString()

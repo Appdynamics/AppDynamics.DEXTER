@@ -8,20 +8,20 @@ namespace AppDynamics.Dexter.DataObjects
         public string Controller { get; set; }
         public string ControllerLink { get; set; }
 
-        public int ApplicationID { get; set; }
+        public long ApplicationID { get; set; }
         public string ApplicationLink { get; set; }
         public string ApplicationName { get; set; }
 
-        public int TierID { get; set; }
+        public long TierID { get; set; }
         public string TierLink { get; set; }
         public string TierName { get; set; }
 
-        public int NodeID { get; set; }
+        public long NodeID { get; set; }
         public string NodeLink { get; set; }
         public string NodeName { get; set; }
 
         public string MetricLink { get; set; }
-        public List<int> MetricsIDs { get; set; }
+        public List<long> MetricsIDs { get; set; }
 
         public int Duration { get; set; }
         public DateTime From { get; set; }

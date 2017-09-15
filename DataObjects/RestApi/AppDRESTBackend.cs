@@ -28,10 +28,10 @@ namespace AppDynamics.Dexter.DataObjects
     {
         public int applicationComponentNodeId { get; set; }
         public string exitPointType { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         public string name{ get; set; }
         public List<AppDRESTBackendProperty> properties { get; set; }
-        public int tierId { get; set; }
+        public long tierId { get; set; }
 
         public override String ToString()
         {

@@ -26,16 +26,16 @@ namespace AppDynamics.Dexter.DataObjects
         public string agentType { get; set; }
         public bool appAgentPresent { get; set; }
         public string appAgentVersion { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         //public string ipAddresses { get; set; }
         public bool machineAgentPresent { get; set; }
         public string machineAgentVersion { get; set; }
-        public int machineId { get; set; }
+        public long machineId { get; set; }
         public string machineName { get; set; }
         public string machineOSType { get; set; }
         public string name { get; set; }
         public string nodeUniqueLocalId { get; set; }
-        public int tierId { get; set; }
+        public long tierId { get; set; }
         public string tierName { get; set; }
         public string type { get; set; }
 

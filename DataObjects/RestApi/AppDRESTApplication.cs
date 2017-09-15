@@ -17,7 +17,7 @@ namespace AppDynamics.Dexter.DataObjects
     public class AppDRESTApplication
     {
         public string description { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         public string name { get; set; }
 
         public override String ToString()

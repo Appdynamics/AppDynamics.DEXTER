@@ -54,6 +54,18 @@ namespace AppDynamics.Dexter
                     return "";
                 }
             }
+            catch (FormatException ex)
+            {
+                if (ex.Message == "Invalid length for a Base-64 char array or string.")
+                { 
+                    // This is plaintext
+                    return cipherText;
+                }
+                else
+                {
+                    return "";
+                }
+            }
         }
 
         public static bool IsCipherText(string cipherText)

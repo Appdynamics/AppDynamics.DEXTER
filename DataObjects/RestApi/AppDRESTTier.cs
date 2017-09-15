@@ -24,7 +24,7 @@ namespace AppDynamics.Dexter.DataObjects
     {
         public string agentType { get; set; }
         public string description { get; set; }
-        public int id { get; set; }
+        public long id { get; set; }
         public string name { get; set; }
         public int numberOfNodes { get; set; }
         public string type { get; set; }

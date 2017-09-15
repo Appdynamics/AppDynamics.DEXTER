@@ -4,7 +4,7 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityServiceEndpoint: EntityBase
     {
-        public int SEPID { get; set; }
+        public long SEPID { get; set; }
         public string SEPLink { get; set; }
         public string SEPName { get; set; }
         public string SEPType { get; set; }

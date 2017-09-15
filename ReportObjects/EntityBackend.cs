@@ -4,7 +4,7 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityBackend : EntityBase
     {
-        public int BackendID { get; set; }
+        public long BackendID { get; set; }
         public string BackendLink { get; set; }
         public string BackendName { get; set; }
         public string BackendType { get; set; }

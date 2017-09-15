@@ -77,6 +77,35 @@ namespace AppDynamics.Dexter
             return true;
         }
 
+        public static bool deleteFile(string filePath)
+        {
+            int tryNumber = 1;
+
+            do
+            {
+                try
+                {
+                    if (File.Exists(filePath))
+                    {
+                        logger.Trace("Deleting file {0}, try #{1}", filePath, tryNumber);
+
+                        File.Delete(filePath);
+                    }
+                    return true;
+                }
+                catch (IOException ex)
+                {
+                    logger.Error(ex);
+                    logger.Error("Unable to delete file {0}", filePath);
+
+                    tryNumber++;
+                    Thread.Sleep(3000);
+                }
+            } while (tryNumber <= 3);
+
+            return true;
+        }
+
         public static bool saveFileToFolder(string fileContents, string filePath)
         {
             string folderPath = Path.GetDirectoryName(filePath);
@@ -262,57 +291,6 @@ namespace AppDynamics.Dexter
             {
                 loggerConsole.Error(ex);
                 logger.Error("Unable to write JobConfiguration JSON to job file {0}", configurationFilePath);
-                logger.Error(ex);
-            }
-
-            return false;
-        }
-
-        public static CredentialStore readCredentialStoreFromFile(string credentialStorePath)
-        {
-            try
-            {
-                if (File.Exists(credentialStorePath) == false)
-                {
-                    logger.Warn("Unable to find file {0}", credentialStorePath);
-                }
-                else
-                {
-                    logger.Trace("Reading CredentialStore JSON from job file {0}", credentialStorePath);
-
-                    return JsonConvert.DeserializeObject<CredentialStore>(File.ReadAllText(credentialStorePath));
-                }
-            }
-            catch (Exception ex)
-            {
-                loggerConsole.Error(ex);
-                logger.Error("Unable to load CredentialStore JSON from job file {0}", credentialStorePath);
-                logger.Error(ex);
-            }
-
-            return null;
-        }
-
-        public static bool writeJobConfigurationToFile(CredentialStore credentialStore, string credentialStorePath)
-        {
-            try
-            {
-                logger.Trace("Writing CredentialStore JSON to job file {0}", credentialStorePath);
-
-                using (StreamWriter sw = File.CreateText(credentialStorePath))
-                {
-                    JsonSerializer serializer = new JsonSerializer();
-                    serializer.NullValueHandling = NullValueHandling.Include;
-                    serializer.Formatting = Newtonsoft.Json.Formatting.Indented;
-                    serializer.Serialize(sw, credentialStore);
-                }
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                loggerConsole.Error(ex);
-                logger.Error("Unable to write CredentialStore JSON to job file {0}", credentialStorePath);
                 logger.Error(ex);
             }
 

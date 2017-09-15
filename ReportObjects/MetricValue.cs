@@ -5,7 +5,7 @@ namespace AppDynamics.Dexter.DataObjects
     public class MetricValue
     {
         public MetricResolution MetricResolution { get; set; }
-        public int MetricID { get; set; }
+        public long MetricID { get; set; }
 
         public DateTime EventTime { get; set; }
         public DateTime EventTimeStamp { get; set; }

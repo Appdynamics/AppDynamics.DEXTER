@@ -4,7 +4,7 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityBusinessTransaction: EntityBase
     {
-        public int BTID { get; set; }
+        public long BTID { get; set; }
         public string BTLink { get; set; }
         public string BTName { get; set; }
         public string BTType { get; set; }

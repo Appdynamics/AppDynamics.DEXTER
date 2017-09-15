@@ -14,7 +14,7 @@
         {
             "Controller": "http://your.controller.here",
             "UserName": "username@customer1",
-            "UserPassword": "yourpassword",
+            "UserPassword": "yourpassword or leave blank to be prompted",
             "Application": "YourApplication",
             "NameRegex": false
         }

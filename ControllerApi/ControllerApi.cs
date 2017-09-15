@@ -51,6 +51,8 @@ namespace AppDynamics.Dexter
             
             // If customer controller certificates are not in trusted store, let's not fail
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
+            // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 
             this._httpClient = httpClient;
         }
@@ -195,7 +197,7 @@ namespace AppDynamics.Dexter
 
         #region Flowmap retrieval
 
-        public string GetFlowmapApplication(int applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapApplication(long applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/applicationFlowMapUiService/application/{0}?time-range=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&mapId=-1&baselineId=-1",
@@ -207,7 +209,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetFlowmapTier(int tierID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapTier(long tierID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/componentFlowMapUiService/component/{0}?time-range=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&mapId=-1&baselineId=-1",
@@ -219,7 +221,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetFlowmapNode(int nodeID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapNode(long nodeID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/nodeFlowMapUiService/node/{0}?time-range=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&mapId=-1&baselineId=-1",
@@ -231,7 +233,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetFlowmapBusinessTransaction(int applicationID, int businessTransactionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapBusinessTransaction(long applicationID, long businessTransactionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/btFlowMapUiService/businessTransaction/{0}?applicationId={1}&time-range=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&mapId=-1&baselineId=-1",
@@ -244,7 +246,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetFlowmapBackend(int backendID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapBackend(long backendID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/backendFlowMapUiService/backend/{0}?time-range=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&mapId=-1&baselineId=-1",
@@ -256,7 +258,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetFlowmapSnapshot(int applicationID, int businessTransactionID, string requestGUID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        public string GetFlowmapSnapshot(long applicationID, long businessTransactionID, string requestGUID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             return this.apiGET(
                 String.Format("controller/restui/snapshotFlowmap/distributedSnapshotFlow?applicationId={0}&businessTransactionId={1}&requestGUID={2}&eventType=&timeRange=Custom_Time_Range.BETWEEN_TIMES.{3}.{4}.{5}&mapId=-1",
@@ -274,7 +276,7 @@ namespace AppDynamics.Dexter
 
         #region Snapshot retrieval
 
-        public string GetListOfSnapshots(int applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, string serverCursorIdName, long serverCursorId)
+        public string GetListOfSnapshots(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, string serverCursorIdName, long serverCursorId)
         {
             string requestJSONTemplate =
 @"{{

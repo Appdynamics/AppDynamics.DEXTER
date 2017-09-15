@@ -26,7 +26,7 @@ namespace AppDynamics.Dexter.DataObjects
     public class AppDRESTMetric
     {
         public string frequency { get; set; }
-        public int metricId { get; set; }
+        public long metricId { get; set; }
         public string metricName { get; set; }
         public string metricPath { get; set; }
         public List<AppDRESTMetricValue> metricValues { get; set; }

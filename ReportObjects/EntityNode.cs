@@ -12,7 +12,7 @@ namespace AppDynamics.Dexter.DataObjects
         public bool MachineAgentPresent { get; set; }
         public string MachineAgentVersion { get; set; }
         public string MachineAgentVersionRaw { get; set; }
-        public int MachineID { get; set; }
+        public long MachineID { get; set; }
         public string MachineName { get; set; }
         public string MachineOSType { get; set; }
         public string MachineType { get; set; }

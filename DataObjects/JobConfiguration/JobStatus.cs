@@ -20,10 +20,11 @@ namespace AppDynamics.Dexter
 
         ReportControlerApplicationsAndEntities = 21,
         ReportControllerAndApplicationConfiguration = 22,
-        ReportApplicationAndEntityMetrics = 23,
-        ReportIndividualApplicationAndEntityDetails = 24,
-        ReportSnapshots = 25,
-        ReportFlameGraphs = 26,
+        ReportEventsAndHealthRuleViolations = 23,
+        ReportApplicationAndEntityMetrics = 24,
+        ReportIndividualApplicationAndEntityDetails = 25,
+        ReportSnapshots = 26,
+        ReportFlameGraphs = 27,
 
         Done = 30,
 
