@@ -98,6 +98,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="DataObjects\ProgramOptions\ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportObjects\Segment.cs" />
+    <Compile Include="ReportObjects\Snapshot.cs" />
     <Compile Include="ReportObjects\EventReportMaps\HealthRuleViolationEventReportMap.cs" />
     <Compile Include="ReportObjects\HealthRuleViolationEvent.cs" />
     <Compile Include="ReportObjects\Event.cs" />
@@ -133,6 +135,8 @@
     <Compile Include="ReportObjects\EntityController.cs" />
     <Compile Include="ReportObjects\EntityReportMaps\ControllerEntityReportMap.cs" />
     <Compile Include="ReportObjects\MetricReportMaps\ApplicationMetricReportMap.cs" />
+    <Compile Include="ReportObjects\SnapshotReportMaps\SegmentReportMap.cs" />
+    <Compile Include="ReportObjects\SnapshotReportMaps\SnapshotReportMap.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
