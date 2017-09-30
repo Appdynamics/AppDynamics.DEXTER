@@ -1,14 +1,14 @@
 ﻿{
     "Input": {
         "TimeRange" : {
-            "From": "2017-06-26T18:00:00",
-            "To": "2017-06-26T19:59:00"
+            "From": "2017-10-01T18:00:00",
+            "To": "2017-10-02T19:00:00"
         },
         "Flowmaps": true,
         "Metrics": true,
         "Snapshots": true,
-        "Configuration": true,
-        "Events": true
+        "Events": true,
+        "Configuration": true
     },
     "Target": [
         {

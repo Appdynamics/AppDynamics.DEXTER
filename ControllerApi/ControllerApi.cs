@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Reflection;
 
 namespace AppDynamics.Dexter
 {
@@ -48,7 +49,8 @@ namespace AppDynamics.Dexter
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", this.UserName, this.Password))));
-            
+            httpClient.DefaultRequestHeaders.Add("x-requested-by", String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version));
+
             // If customer controller certificates are not in trusted store, let's not fail
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
@@ -148,6 +150,11 @@ namespace AppDynamics.Dexter
             return this.GetListOfBackends(applicationID.ToString());
         }
 
+        public string GetListOfBackendsAdditionalDetail(int applicationID)
+        {
+            return this.apiGET(String.Format("controller/restui/backendUiService/backendListViewData/{0}/false?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
+        }
+
         public string GetListOfServiceEndpoints(string applicationName)
         {
             return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Service Endpoints|*|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
@@ -168,7 +175,7 @@ namespace AppDynamics.Dexter
             return this.GetListOfServiceEndpointsInTier(applicationID.ToString(), tierName);
         }
 
-        public string GetListOfServiceEndpointsWithDetail(int applicationID)
+        public string GetListOfServiceEndpointsAdditionalDetail(int applicationID)
         {
             return this.apiGET(String.Format("controller/restui/serviceEndpoint/list2/{0}/{0}/APPLICATION?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }

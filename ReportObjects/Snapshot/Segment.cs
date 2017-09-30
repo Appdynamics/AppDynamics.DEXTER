@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace AppDynamics.Dexter.DataObjects
 {
@@ -53,22 +54,42 @@ namespace AppDynamics.Dexter.DataObjects
         public string ParentTierName { get; set; }
 
         public string CallGraphType { get; set; }
-        public bool HasErrors { get; set; }
         public bool IsArchived { get; set; }
         public bool IsAsync { get; set; }
         public bool IsFirstInChain { get; set; }
 
-        public int NumBackendCalls { get; set; }
-        public int NumTierCalls { get; set; }
-        public int NumApplicationCalls { get; set; }
+        public int NumCalledBackends { get; set; }
+        public int NumCalledTiers { get; set; }
+        public int NumCalledApplications { get; set; }
+
+        public int NumCallsToBackends { get; set; }
+        public int NumCallsToTiers { get; set; }
+        public int NumCallsToApplications { get; set; }
+
+        public bool HasErrors { get; set; }
         public int NumErrors { get; set; }
+
+        public int NumSEPs { get; set; }
+
         public int NumHTTPDCs { get; set; }
         public int NumMIDCs { get; set; }
 
-        public string CallChain { get; set; }
+        public string CallChains { get; set; }
         public string ExitTypes { get; set; }
 
-        public string DetailLink { get; set; }
         public string SegmentLink { get; set; }
+
+        public override String ToString()
+        {
+            return String.Format(
+                "Segment: {0}:{1} {2}/{3}/{4}/{5}/{6:o}",
+                this.RequestID,
+                this.SegmentID,
+                this.ApplicationName,
+                this.BTName,
+                this.TierName,
+                this.NodeName,
+                this.Occured);
+        }
     }
 }

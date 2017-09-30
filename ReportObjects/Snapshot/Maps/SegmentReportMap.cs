@@ -31,16 +31,18 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.E2ELatency).Index(i); i++;
 
             Map(m => m.URL).Index(i); i++;
-            Map(m => m.CallChain).Index(i); i++;
+            Map(m => m.CallChains).Index(i); i++;
             Map(m => m.ExitTypes).Index(i); i++;
             Map(m => m.UserPrincipal).Index(i); i++;
             Map(m => m.HTTPSessionID).Index(i); i++;
 
             Map(m => m.CallGraphType).Index(i); i++;
-            Map(m => m.HasErrors).Index(i); i++;
             Map(m => m.IsArchived).Index(i); i++;
             Map(m => m.IsAsync).Index(i); i++;
             Map(m => m.IsFirstInChain).Index(i); i++;
+
+            Map(m => m.HasErrors).Index(i); i++;
+            Map(m => m.NumErrors).Index(i); i++;
 
             Map(m => m.DiagSessionID).Index(i); i++;
             Map(m => m.TakenSummary).Index(i); i++;
@@ -50,10 +52,15 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.WarningThreshold).Index(i); i++;
             Map(m => m.CriticalThreshold).Index(i); i++;
 
-            Map(m => m.NumBackendCalls).Index(i); i++;
-            Map(m => m.NumTierCalls).Index(i); i++;
-            Map(m => m.NumApplicationCalls).Index(i); i++;
-            Map(m => m.NumErrors).Index(i); i++;
+            Map(m => m.NumCalledBackends).Index(i); i++;
+            Map(m => m.NumCalledTiers).Index(i); i++;
+            Map(m => m.NumCalledApplications).Index(i); i++;
+            Map(m => m.NumCallsToBackends).Index(i); i++;
+            Map(m => m.NumCallsToTiers).Index(i); i++;
+            Map(m => m.NumCallsToApplications).Index(i); i++;
+
+            Map(m => m.NumSEPs).Index(i); i++;
+            
             Map(m => m.NumHTTPDCs).Index(i); i++;
             Map(m => m.NumMIDCs).Index(i); i++;
 
@@ -62,8 +69,8 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.NodeID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
 
-            //Map(m => m.DetailLink).Index(i); i++;
             Map(m => m.SegmentLink).Index(i); i++;
+
             //Map(m => m.ControllerLink).Index(i); i++;
             //Map(m => m.ApplicationLink).Index(i); i++;
             //Map(m => m.TierLink).Index(i); i++;

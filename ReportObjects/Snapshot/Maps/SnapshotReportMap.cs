@@ -25,8 +25,10 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ExitTypes).Index(i); i++;
 
             Map(m => m.CallGraphType).Index(i); i++;
-            Map(m => m.HasErrors).Index(i); i++;
             Map(m => m.IsArchived).Index(i); i++;
+
+            Map(m => m.HasErrors).Index(i); i++;
+            Map(m => m.NumErrors).Index(i); i++;
 
             Map(m => m.DiagSessionID).Index(i); i++;
             Map(m => m.TakenSummary).Index(i); i++;
@@ -34,13 +36,15 @@ namespace AppDynamics.Dexter.DataObjects
 
             Map(m => m.NumSegments).Index(i); i++;
             Map(m => m.NumCallGraphs).Index(i); i++;
-            Map(m => m.NumBackends).Index(i); i++;
-            Map(m => m.NumTiers).Index(i); i++;
-            Map(m => m.NumApplications).Index(i); i++;
-            Map(m => m.NumBackendCalls).Index(i); i++;
-            Map(m => m.NumTierCalls).Index(i); i++;
-            Map(m => m.NumApplicationCalls).Index(i); i++;
-            Map(m => m.NumErrors).Index(i); i++;
+
+            Map(m => m.NumCalledBackends).Index(i); i++;
+            Map(m => m.NumCalledTiers).Index(i); i++;
+            Map(m => m.NumCalledApplications).Index(i); i++;
+            Map(m => m.NumCallsToBackends).Index(i); i++;
+            Map(m => m.NumCallsToTiers).Index(i); i++;
+            Map(m => m.NumCallsToApplications).Index(i); i++;
+
+            Map(m => m.NumSEPs).Index(i); i++;
             Map(m => m.NumHTTPDCs).Index(i); i++;
             Map(m => m.NumMIDCs).Index(i); i++;
 
@@ -51,6 +55,7 @@ namespace AppDynamics.Dexter.DataObjects
 
             Map(m => m.DetailLink).Index(i); i++;
             Map(m => m.SnapshotLink).Index(i); i++;
+
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;
             Map(m => m.TierLink).Index(i); i++;

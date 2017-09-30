@@ -39,7 +39,7 @@ namespace AppDynamics.Dexter.DataObjects
         public double ErrorsPercentage { get; set; }
 
         public string MetricLink { get; set; }
-        public List<int> MetricsIDs { get; set; }
+        public List<long> MetricsIDs { get; set; }
 
         public ActivityFlow Clone()
         {
