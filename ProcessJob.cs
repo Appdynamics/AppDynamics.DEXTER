@@ -91,7 +91,6 @@ namespace AppDynamics.Dexter
         private const string SNAPSHOTS_FOLDER_NAME = "SNAP";
         private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
         private const string EVENTS_FOLDER_NAME = "EVT";
-        private const string REPORTS_FOLDER_NAME = "RPT";
 
         // More folder names for entity types
         private const string APPLICATION_TYPE_SHORT = "APP";
@@ -275,11 +274,8 @@ namespace AppDynamics.Dexter
 
         // Events list
         private const string CONVERT_EVENTS_FILE_NAME = "events.csv";
-        private const string CONVERT_EVENTS_FILTERED_FILE_NAME = "events.{0}.csv";
-        private const string CONVERT_HEALTH_RULE_EVENTS_FILTERED_FILE_NAME = "hrviolationevents.{0}.csv";
         private const string CONVERT_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
 
-        // Snapshot list
         private const string CONVERT_SNAPSHOTS_FILE_NAME = "snapshots.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME = "snapshots.segments.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME = "snapshots.exits.csv";
@@ -294,13 +290,6 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshot.errors.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshot.businessdata.csv";
 
-        private const string CONVERT_SNAPSHOTS_FILTERED_FILE_NAME = "snapshots.{0}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_FILTERED_FILE_NAME = "snapshots.segments.{0}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILTERED_FILE_NAME = "snapshots.exits.{0}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILTERED_FILE_NAME = "snapshots.serviceendpoints.{0}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILTERED_FILE_NAME = "snapshots.errors.{0}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILTERED_FILE_NAME = "snapshots.businessdata.{0}.csv";
-
         //private const string CONVERT_SNAPSHOT_FLOWMAP_FILE_NAME = "flowmap.json";
         //private const string CONVERT_SNAPSHOT_SEGMENT_ERRORS_FILE_NAME = "snapshot.errors.csv";
         //private const string CONVERT_SNAPSHOT_SEGMENT_DATA_COLLECTORS_FILE_NAME = "snapshot.datacollectors.csv";
@@ -309,6 +298,10 @@ namespace AppDynamics.Dexter
         #endregion
 
         #region Constants for the folder and file names of data reports
+
+        private const string REPORTS_FOLDER_NAME = "Report";
+        private const string REPORTS_ENTITY_DETAILS_FOLDER_NAME = "ENT";
+        private const string REPORTS_SNAPSHOT_DETAILS_FOLDER_NAME = "SNAP";
 
         // Report file names
         private const string REPORT_DETECTED_ENTITIES_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.DetectedEntities.xlsx";
@@ -326,7 +319,7 @@ namespace AppDynamics.Dexter
         #region Constants for Common Reports sheets
 
         private const string REPORT_SHEET_PARAMETERS = "1.Parameters";
-        private const string REPORT_SHEET_TOC = "2.TOC";
+        private const string REPORT_SHEET_TOC = "2.Contents";
 
         #endregion
 
@@ -385,7 +378,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_FULL = "4.Applications";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_HOURLY = "4.Applications.Hourly";
-        private const string REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_FULL = "5.Tiers.Full";
+        private const string REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_FULL = "5.Tiers";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_HOURLY = "5.Tiers.Hourly";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_FULL = "6.Nodes";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_HOURLY = "6.Nodes.Hourly";
@@ -457,8 +450,8 @@ namespace AppDynamics.Dexter
         private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS = "8.Events";
         private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT = "8.Events.Type";
         // Health rule 
-        private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR = "9.HR Violations";
-        private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR_PIVOT = "9.HR Violations.Type";
+        private const string REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS = "9.HR Violations";
+        private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT = "9.HR Violations.Type";
         // Snapshots and segments
         private const string REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS = "10.Snapshots";
         private const string REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT = "10.Snapshots.Type";
@@ -469,8 +462,10 @@ namespace AppDynamics.Dexter
         private const string REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS = "12.Service Endpoint Calls";
         private const string REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS = "13.Errors";
         private const string REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT = "13.Errors.Type";
+        private const string REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA = "14.Business Data";
+        private const string REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA_PIVOT = "14.Business Data.Type";
         // Graphs, snapshots and events all lined up in timeline
-        private const string REPORT_ENTITY_DETAILS_SHEET_HOURLY_TIMELINE = "5.Timeline";
+        private const string REPORT_ENTITY_DETAILS_SHEET_TIMELINE = "5.Timeline";
 
         private const string REPORT_ENTITY_DETAILS_TABLE_TOC = "t_TOC";
         private const string REPORT_ENTITY_DETAILS_TABLE_CONTROLLERS = "t_Controllers";
@@ -504,6 +499,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_ENTITY_DETAILS_PIVOT_SNAPSHOTS = "p_Snapshots";
         private const string REPORT_ENTITY_DETAILS_PIVOT_SEGMENTS = "p_Segments";
         private const string REPORT_ENTITY_DETAILS_PIVOT_EXIT_CALLS = "p_ExitCalls";
+        private const string REPORT_ENTITY_DETAILS_CALLS_DETAILS_DURATION = "p_ExitCallsDetailsDuration";
         private const string REPORT_ENTITY_DETAILS_PIVOT_DETECTED_ERRORS = "p_DetectedErrors";
         private const string REPORT_ENTITY_DETAILS_PIVOT_BUSINESS_DATA = "p_BusinessData";
 
@@ -528,6 +524,7 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS = "6.Exit Calls";
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT = "6.Exit Calls.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT = "6.Exit Calls.Duration";
 
         private const string REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS = "7.Service Endpoint Calls";
 
@@ -547,8 +544,11 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS = "p_Snapshots";
         private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS = "p_Segments";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS = "p_ExitCalls";
+        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION = "p_ExitCallsDetailsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS = "p_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA = "p_BusinessData";
+
+        private const string REPORT_SNAPSHOTS_GRAPH_EXIT_CALLS_DETAILS_DURATION = "g_ExitCallsDetailsDuration";
 
         private const int REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT = 8;
@@ -2581,17 +2581,20 @@ namespace AppDynamics.Dexter
                                 }
 
                                 // Look up the type in the callInfo\metaInfo
-                                JObject backendDetail = (JObject)backendsDetails.Where(b => (long)b["id"] == backendRow.BackendID).FirstOrDefault();
-                                if (backendDetail != null)
+                                if (backendsDetails != null)
                                 {
-                                    JArray metaInfoArray = (JArray)backendDetail["callInfo"]["metaInfo"];
-                                    JToken metaInfoExitPoint = metaInfoArray.Where(m => m["name"].ToString() == "exit-point-type").FirstOrDefault();
-                                    if (metaInfoExitPoint != null)
+                                    JObject backendDetail = (JObject)backendsDetails.Where(b => (long)b["id"] == backendRow.BackendID).FirstOrDefault();
+                                    if (backendDetail != null)
                                     {
-                                        string betterBackendType = metaInfoExitPoint["value"].ToString();
-                                        if (betterBackendType != backendRow.BackendType)
+                                        JArray metaInfoArray = (JArray)backendDetail["callInfo"]["metaInfo"];
+                                        JToken metaInfoExitPoint = metaInfoArray.Where(m => m["name"].ToString() == "exit-point-type").FirstOrDefault();
+                                        if (metaInfoExitPoint != null)
                                         {
-                                            backendRow.BackendType = betterBackendType;
+                                            string betterBackendType = metaInfoExitPoint["value"].ToString();
+                                            if (betterBackendType != backendRow.BackendType)
+                                            {
+                                                backendRow.BackendType = betterBackendType;
+                                            }
                                         }
                                     }
                                 }
@@ -3930,12 +3933,12 @@ namespace AppDynamics.Dexter
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
                         List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
 
-                        int j = 0;
-
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
                             string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
                             JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
+
+                            int j = 0;
 
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
@@ -3978,22 +3981,38 @@ namespace AppDynamics.Dexter
 
                         loggerConsole.Info("Combine Snapshots");
 
-                        j = 0;
+                        List<Snapshot> allSnapshotList = null;
+                        List<Segment> allSegmentList = null;
+                        List<ExitCall> allExitCallsList = null;
+                        List<ServiceEndpointCall> allServiceEndpointCallsList = null;
+                        List<DetectedError> allDetectedErrorsList = null;
+                        List<BusinessData> allBusinessDataList = null;
 
-                        List<Snapshot> allSnapshotList = new List<Snapshot>();
-                        List<Segment> allSegmentList = new List<Segment>();
-                        List<ExitCall> allExitCallsList = new List<ExitCall>();
-                        List<ServiceEndpointCall> allServiceEndpointCallsList = new List<ServiceEndpointCall>();
-                        List<DetectedError> allDetectedErrorsList = new List<DetectedError>();
-                        List<BusinessData> allBusinessDataList = new List<BusinessData>();
+                        FileIOHelper.deleteFile(snapshotsFilePath);
+                        FileIOHelper.deleteFile(segmentsFilePath);
+                        FileIOHelper.deleteFile(callExitsFilePath);
+                        FileIOHelper.deleteFile(serviceEndpointCallsFilePath);
+                        FileIOHelper.deleteFile(detectedErrorsFilePath);
+                        FileIOHelper.deleteFile(businessDataFilePath);
 
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
+                            int j = 0;
+
                             string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
                             JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
 
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
+                                loggerConsole.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+
+                                allSnapshotList = new List<Snapshot>();
+                                allSegmentList = new List<Segment>();
+                                allExitCallsList = new List<ExitCall>();
+                                allServiceEndpointCallsList = new List<ServiceEndpointCall>();
+                                allDetectedErrorsList = new List<DetectedError>();
+                                allBusinessDataList = new List<BusinessData>();
+
                                 foreach (JToken snapshot in listOfSnapshotsInHour)
                                 {
                                     DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
@@ -4050,27 +4069,36 @@ namespace AppDynamics.Dexter
                                     {
                                         Console.Write("[{0}].", j);
                                     }
+                                    // Flush every 500 items
+                                    if (j % 500 == 0)
+                                    {
+                                        // Flush 
+                                        FileIOHelper.writeListToCSVFile(allSnapshotList, new SnapshotReportMap(), snapshotsFilePath, true);
+                                        FileIOHelper.writeListToCSVFile(allSegmentList, new SegmentReportMap(), segmentsFilePath, true);
+                                        FileIOHelper.writeListToCSVFile(allExitCallsList, new ExitCallReportMap(), callExitsFilePath, true);
+                                        FileIOHelper.writeListToCSVFile(allServiceEndpointCallsList, new ServiceEndpointCallReportMap(), serviceEndpointCallsFilePath, true);
+                                        FileIOHelper.writeListToCSVFile(allDetectedErrorsList, new DetectedErrorReportMap(), detectedErrorsFilePath, true);
+                                        FileIOHelper.writeListToCSVFile(allBusinessDataList, new BusinessDataReportMap(), businessDataFilePath, true);
+
+                                        allSnapshotList = new List<Snapshot>();
+                                        allSegmentList = new List<Segment>();
+                                        allExitCallsList = new List<ExitCall>();
+                                        allServiceEndpointCallsList = new List<ServiceEndpointCall>();
+                                        allDetectedErrorsList = new List<DetectedError>();
+                                        allBusinessDataList = new List<BusinessData>();
+                                    }
                                 }
+
+                                // Flush final block
+                                FileIOHelper.writeListToCSVFile(allSnapshotList, new SnapshotReportMap(), snapshotsFilePath, true);
+                                FileIOHelper.writeListToCSVFile(allSegmentList, new SegmentReportMap(), segmentsFilePath, true);
+                                FileIOHelper.writeListToCSVFile(allExitCallsList, new ExitCallReportMap(), callExitsFilePath, true);
+                                FileIOHelper.writeListToCSVFile(allServiceEndpointCallsList, new ServiceEndpointCallReportMap(), serviceEndpointCallsFilePath, true);
+                                FileIOHelper.writeListToCSVFile(allDetectedErrorsList, new DetectedErrorReportMap(), detectedErrorsFilePath, true);
+                                FileIOHelper.writeListToCSVFile(allBusinessDataList, new BusinessDataReportMap(), businessDataFilePath, true);
                             }
+                            loggerConsole.Info("{0} snapshots", j);
                         }
-                        loggerConsole.Info("{0} snapshots", j);
-
-                        // Note that occasionally the controller returns the same snapshot twice in the list. We process it into multiple records. 
-                        // I could filter them here but I don't want to bother
-                        allSnapshotList = allSnapshotList.OrderBy(s => s.Occured).ThenBy(s => s.TierID).ThenBy(s => s.BTID).ThenBy(s => s.UserExperience).ToList();
-                        allSegmentList = allSegmentList.OrderBy(s => s.Occured).ThenBy(s => s.TierID).ThenBy(s => s.BTID).ThenBy(s => s.UserExperience).ThenBy(s => s.RequestID).ToList();
-                        allExitCallsList = allExitCallsList.OrderBy(e => e.TierID).ThenBy(e => e.BTName).ThenBy(e => e.RequestID).ThenBy(e => e.SegmentID).ThenBy(e => e.ExitType).ToList();
-                        allServiceEndpointCallsList = allServiceEndpointCallsList.OrderBy(s => s.TierID).ThenBy(s => s.BTID).ThenBy(s => s.RequestID).ThenBy(s => s.SegmentID).ThenBy(s => s.SEPName).ToList();
-                        allDetectedErrorsList = allDetectedErrorsList.OrderBy(e => e.TierID).ThenBy(e => e.BTID).ThenBy(e => e.RequestID).ThenBy(e => e.SegmentID).ThenBy(e => e.ErrorName).ToList();
-                        allBusinessDataList = allBusinessDataList.OrderBy(b => b.TierID).ThenBy(b => b.BTID).ThenBy(b => b.RequestID).ThenBy(b => b.SegmentID).ThenBy(b => b.DataType).ThenBy(b => b.DataName).ToList();
-
-                        // Save final results
-                        FileIOHelper.writeListToCSVFile(allSnapshotList, new SnapshotReportMap(), snapshotsFilePath);
-                        FileIOHelper.writeListToCSVFile(allSegmentList, new SegmentReportMap(), segmentsFilePath);
-                        FileIOHelper.writeListToCSVFile(allExitCallsList, new ExitCallReportMap(), callExitsFilePath);
-                        FileIOHelper.writeListToCSVFile(allServiceEndpointCallsList, new ServiceEndpointCallReportMap(), serviceEndpointCallsFilePath);
-                        FileIOHelper.writeListToCSVFile(allDetectedErrorsList, new DetectedErrorReportMap(), detectedErrorsFilePath);
-                        FileIOHelper.writeListToCSVFile(allBusinessDataList, new BusinessDataReportMap(), businessDataFilePath);
 
                         #endregion
                     }
@@ -5320,7 +5348,13 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
 
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
@@ -6264,7 +6298,13 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
 
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
@@ -6423,7 +6463,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS);
-                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + 2, 9);
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + 2, 8);
 
                 sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -6618,12 +6658,6 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["TriggeredEntityType"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["TriggeredEntityName"].Position + 1).Width = 20;
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["TierLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["NodeLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["BTLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["EventLink"].Position + 1).AutoFit();
 
                     sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE);
@@ -6634,9 +6668,6 @@ namespace AppDynamics.Dexter
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["SubType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
@@ -6651,11 +6682,9 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["NodeName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    // Adding this in Excel produces days, hours and minutes subfields, very nice
-                    // Adding this in code produces dates formatted strings, not very good
-                    //ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Occured"]);
-                    //fieldC.Compact = false;
-                    //fieldC.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
                     fieldD.Function = DataFieldFunctions.Count;
                 }
@@ -6685,24 +6714,16 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["ToUtc"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EntityName"].Position + 1).Width = 20;
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["HealthRuleLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["EntityLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["EventLink"].Position + 1).AutoFit();
-
+        
                     sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["HealthRuleName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Status"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["HealthRuleName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
@@ -6714,6 +6735,9 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.ColumnFields.Add(pivot.Fields["EntityName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
                     fieldD.Function = DataFieldFunctions.Count;
                 }
@@ -6759,7 +6783,13 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
 
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
@@ -6777,339 +6807,6 @@ namespace AppDynamics.Dexter
                 }
 
                 #endregion
-
-                return true;
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex);
-                loggerConsole.Error(ex);
-
-                return false;
-            }
-            finally
-            {
-                stopWatch.Stop();
-
-                logger.Info("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
-                loggerConsole.Trace("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
-            }
-        }
-
-        private static bool stepReportIndividualApplicationAndEntityDetails(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
-        {
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-
-            try
-            {
-                // Process each target
-                for (int i = 0; i < jobConfiguration.Target.Count; i++)
-                {
-                    Stopwatch stopWatchTarget = new Stopwatch();
-                    stopWatchTarget.Start();
-
-                    JobTarget jobTarget = jobConfiguration.Target[i];
-
-                    try
-                    {
-                        #region Output status
-
-                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
-                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
-
-                        #endregion
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
-
-                        #region Target step variables
-
-                        // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        //string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
-
-                        // Report files
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-
-                        #endregion
-
-                        #region Application
-
-                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
-                        if (applicationList != null && applicationList.Count > 0)
-                        {
-                            loggerConsole.Info("Metric Details for Application");
-
-                            reportMetricDetailApplication(programOptions, jobConfiguration, jobTarget, applicationList[0]);
-                        }
-
-                        #endregion
-
-                        #region Tier
-
-                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
-                        if (tiersList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Tiers ({0} entities)", tiersList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var tiersListChunks = tiersList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityTier>, int>(
-                                    tiersListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (tiersListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailTiers(programOptions, jobConfiguration, jobTarget, tiersListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailTiers(programOptions, jobConfiguration, jobTarget, tiersList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                        #region Nodes
-
-                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
-                        if (nodesList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Nodes ({0} entities)", nodesList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var nodesListChunks = nodesList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityNode>, int>(
-                                    nodesListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (nodesListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailNodes(programOptions, jobConfiguration, jobTarget, nodesListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailNodes(programOptions, jobConfiguration, jobTarget, nodesList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                        #region Backends
-
-                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
-                        if (backendsList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Backends ({0} entities)", backendsList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var backendsListChunks = backendsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityBackend>, int>(
-                                    backendsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (backendsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailBackends(programOptions, jobConfiguration, jobTarget, backendsListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailBackends(programOptions, jobConfiguration, jobTarget, backendsList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                        #region Business Transactions
-
-                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
-                        if (businessTransactionsList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Business Transactions ({0} entities)", businessTransactionsList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var businessTransactionsListChunks = businessTransactionsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityBusinessTransaction>, int>(
-                                    businessTransactionsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (businessTransactionsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailBusinessTransactions(programOptions, jobConfiguration, jobTarget, businessTransactionsListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailBusinessTransactions(programOptions, jobConfiguration, jobTarget, businessTransactionsList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                        #region Service Endpoints
-
-                        List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
-                        if (serviceEndpointsList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Service Endpoints ({0} entities)", serviceEndpointsList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var serviceEndpointsListChunks = serviceEndpointsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityServiceEndpoint>, int>(
-                                    serviceEndpointsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (serviceEndpointsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailServiceEndpoints(programOptions, jobConfiguration, jobTarget, serviceEndpointsListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailServiceEndpoints(programOptions, jobConfiguration, jobTarget, serviceEndpointsList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                        #region Errors
-
-                        List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
-                        if (errorsList != null)
-                        {
-                            loggerConsole.Info("Metric Details for Errors ({0} entities)", errorsList.Count);
-
-                            int j = 0;
-
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var errorsListChunks = errorsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                Parallel.ForEach<List<EntityError>, int>(
-                                    errorsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (errorsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += reportMetricDetailErrors(programOptions, jobConfiguration, jobTarget, errorsListChunk, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = reportMetricDetailErrors(programOptions, jobConfiguration, jobTarget, errorsList, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
-
-                        #endregion
-
-                    }
-                    catch (Exception ex)
-                    {
-                        logger.Warn(ex);
-                        loggerConsole.Warn(ex);
-                    }
-                    finally
-                    {
-                        stopWatchTarget.Stop();
-
-                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
-                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
-                    }
-                }
 
                 return true;
             }
@@ -7251,7 +6948,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SNAPSHOTS);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
 
                 sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SEGMENTS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -7265,7 +6962,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SEGMENTS);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
 
                 sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -7279,7 +6976,13 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 5, 7);
+                //sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 5, 7);
+
+                sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
 
                 sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -7298,7 +7001,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 1, 6);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT - 1, 6);
 
                 sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -7312,7 +7015,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + 1, 7);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT - 1, 7);
 
                 #endregion
 
@@ -7695,6 +7398,12 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Detail"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -7704,16 +7413,31 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Detail"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
                     fieldD.Function = DataFieldFunctions.Count;
+                    fieldD.Name = "Number of Items";
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
+                    fieldD.Function = DataFieldFunctions.Average;
+                    fieldD.Name = "Average Duration";
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Sum;
+                    fieldD.Name = "Total Duration";
+
+                    sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExitType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
+                    //fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    //fieldR.Compact = false;
+                    //fieldR.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
+                    fieldD.Function = DataFieldFunctions.Average;
+                    fieldD.Name = "Average Duration";
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_GRAPH_EXIT_CALLS_DETAILS_DURATION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT, 0, 4, 0);
+                    chart.SetSize(800, 600);
+                    //chart.Style = eChartStyle.Style17;
                 }
 
                 #endregion
@@ -7882,7 +7606,13 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
 
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
@@ -7900,6 +7630,532 @@ namespace AppDynamics.Dexter
                 }
 
                 #endregion
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                loggerConsole.Error(ex);
+
+                return false;
+            }
+            finally
+            {
+                stopWatch.Stop();
+
+                logger.Info("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+            }
+        }
+
+        private static bool stepReportIndividualApplicationAndEntityDetails(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            try
+            {
+                // Process each target
+                for (int i = 0; i < jobConfiguration.Target.Count; i++)
+                {
+                    Stopwatch stopWatchTarget = new Stopwatch();
+                    stopWatchTarget.Start();
+
+                    JobTarget jobTarget = jobConfiguration.Target[i];
+
+                    try
+                    {
+                        #region Output status
+
+                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
+                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
+
+                        #endregion
+
+                        #region Target state check
+
+                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
+                        {
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
+
+                            continue;
+                        }
+
+                        #endregion
+
+                        #region Target step variables
+
+                        // Various folders
+                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
+                        string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
+                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+                        // Report files
+                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+
+                        string eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
+                        string healthRuleViolationEventsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+                        string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+                        string segmentsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+                        string exitCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                        string serviceEndpointCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+                        string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                        string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+
+                        #endregion
+
+                        #region Preload all the reports that will be filtered by the subsequent entities
+
+                        loggerConsole.Info("Entity Details Data Preloading");
+
+                        List<Event> eventsAllList = FileIOHelper.readListFromCSVFile<Event>(eventsFilePath, new EventReportMap());
+                        List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.readListFromCSVFile<HealthRuleViolationEvent>(healthRuleViolationEventsFilePath, new HealthRuleViolationEventReportMap());
+                        List<Snapshot> snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
+                        List<Segment> segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
+                        List<ExitCall> exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
+                        List<ServiceEndpointCall> serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
+                        List<DetectedError> detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
+                        List<BusinessData> businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
+
+                        #endregion
+
+                        #region Application
+
+                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                        if (applicationList != null && applicationList.Count > 0)
+                        {
+                            loggerConsole.Info("Entity Details for Application");
+
+                            reportMetricDetailApplication(
+                                programOptions,
+                                jobConfiguration,
+                                jobTarget,
+                                applicationList[0],
+                                eventsAllList,
+                                healthRuleViolationEventsAllList,
+                                snapshotsAllList,
+                                segmentsAllList,
+                                exitCallsAllList,
+                                serviceEndpointCallsAllList,
+                                detectedErrorsAllList,
+                                businessDataAllList);
+                        }
+
+                        #endregion
+
+                        #region Tier
+
+                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                        if (tiersList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Tiers ({0} entities)", tiersList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var tiersListChunks = tiersList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityTier>, int>(
+                                    tiersListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (tiersListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailTiers(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            tiersListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailTiers(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    tiersList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Nodes
+
+                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+                        if (nodesList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Nodes ({0} entities)", nodesList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var nodesListChunks = nodesList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityNode>, int>(
+                                    nodesListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (nodesListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailNodes(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            nodesListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailNodes(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    nodesList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Backends
+
+                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                        if (backendsList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Backends ({0} entities)", backendsList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var backendsListChunks = backendsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityBackend>, int>(
+                                    backendsListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (backendsListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailBackends(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            backendsListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailBackends(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    backendsList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Business Transactions
+
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+                        if (businessTransactionsList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Business Transactions ({0} entities)", businessTransactionsList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var businessTransactionsListChunks = businessTransactionsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityBusinessTransaction>, int>(
+                                    businessTransactionsListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (businessTransactionsListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailBusinessTransactions(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            businessTransactionsListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailBusinessTransactions(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    businessTransactionsList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Service Endpoints
+
+                        List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
+                        if (serviceEndpointsList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Service Endpoints ({0} entities)", serviceEndpointsList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var serviceEndpointsListChunks = serviceEndpointsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityServiceEndpoint>, int>(
+                                    serviceEndpointsListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (serviceEndpointsListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailServiceEndpoints(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            serviceEndpointsListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailServiceEndpoints(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    serviceEndpointsList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Errors
+
+                        List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
+                        if (errorsList != null)
+                        {
+                            loggerConsole.Info("Entity Details for Errors ({0} entities)", errorsList.Count);
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var errorsListChunks = errorsList.BreakListIntoChunks(METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<EntityError>, int>(
+                                    errorsListChunks,
+                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (errorsListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportMetricDetailErrors(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            errorsListChunk,
+                                            eventsAllList,
+                                            healthRuleViolationEventsAllList,
+                                            snapshotsAllList,
+                                            segmentsAllList,
+                                            exitCallsAllList,
+                                            serviceEndpointCallsAllList,
+                                            detectedErrorsAllList,
+                                            businessDataAllList,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportMetricDetailErrors(
+                                    programOptions,
+                                    jobConfiguration,
+                                    jobTarget,
+                                    errorsList,
+                                    eventsAllList,
+                                    healthRuleViolationEventsAllList,
+                                    snapshotsAllList,
+                                    segmentsAllList,
+                                    exitCallsAllList,
+                                    serviceEndpointCallsAllList,
+                                    detectedErrorsAllList,
+                                    businessDataAllList,
+                                    true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
+                    }
+                    finally
+                    {
+                        stopWatchTarget.Stop();
+
+                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                    }
+                }
 
                 return true;
             }
@@ -8918,11 +9174,11 @@ namespace AppDynamics.Dexter
             {
                 EntityBase entityRow = entityList[i];
 
-                string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID));
+                string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -8936,9 +9192,9 @@ namespace AppDynamics.Dexter
 
                 string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -8952,9 +9208,9 @@ namespace AppDynamics.Dexter
 
                 string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -8968,9 +9224,9 @@ namespace AppDynamics.Dexter
 
                 string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -8984,9 +9240,9 @@ namespace AppDynamics.Dexter
 
                 string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -9000,9 +9256,9 @@ namespace AppDynamics.Dexter
 
                 string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                 string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+                string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -9011,12 +9267,12 @@ namespace AppDynamics.Dexter
             string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
             string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
             string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
                 EntityBase entityRow = entityList[i];
-                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, entityRow).Substring(programOptions.OutputJobFolderPath.Length + 1));
+                entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -10316,7 +10572,7 @@ namespace AppDynamics.Dexter
             string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
             string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
             string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
 
             #endregion
 
@@ -10441,9 +10697,8 @@ namespace AppDynamics.Dexter
                 long differenceInMinutesSnapshot = (toTimeUnixSnapshot - fromTimeUnixSnapshot) / (60000);
                 string DEEPLINK_THIS_TIMERANGE_SNAPSHOT = String.Format(DEEPLINK_TIMERANGE_BETWEEN_TIMES, toTimeUnixSnapshot, fromTimeUnixSnapshot, differenceInMinutesSnapshot);
                 snapshot.SnapshotLink = String.Format(DEEPLINK_SNAPSHOT_OVERVIEW, snapshot.Controller, snapshot.ApplicationID, snapshot.RequestID, DEEPLINK_THIS_TIMERANGE_SNAPSHOT);
-                snapshot.DetailLink = "TODO";
 
-                // This is the report link
+                // This is the snapshot report link
                 string reportFileName = String.Format(
                     REPORT_SNAPSHOT_DETAILS_FILE_NAME,
                     programOptions.JobName,
@@ -10460,7 +10715,7 @@ namespace AppDynamics.Dexter
                     SNAPSHOTS_FOLDER_NAME,
                     reportFileName);
 
-                reportFilePath = reportFilePath.Substring(programOptions.OutputJobFolderPath.Length + 1);
+                reportFilePath = reportFilePath.Substring(reportsFolderPath.Length + 1);
                 snapshot.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", reportFilePath);
 
                 #endregion
@@ -10488,8 +10743,7 @@ namespace AppDynamics.Dexter
                     // Don't know how long this one is going to be either
                     businessDataList = new List<BusinessData>();
 
-                    SortedDictionary<string, int> callChainsSnapshot = new SortedDictionary<string, int>();
-                    SortedDictionary<string, int> exitTypesSnapshot = new SortedDictionary<string, int>();
+                    SortedDictionary<string, CallChainContainer> callChainsSnapshot = new SortedDictionary<string, CallChainContainer>();
 
                     foreach (JToken snapshotSegmentToken in snapshotSegmentsList)
                     {
@@ -10713,6 +10967,8 @@ namespace AppDynamics.Dexter
 
                             #region Process Exits in Segment
 
+                            SortedDictionary<string, CallChainContainer> callChainsSegment = new SortedDictionary<string, CallChainContainer>();
+
                             List<ExitCall> exitCallsListInThisSegment = new List<ExitCall>();
                             foreach (JToken exitCallToken in snapshotSegmentDetail["snapshotExitCalls"])
                             {
@@ -10733,7 +10989,13 @@ namespace AppDynamics.Dexter
                                 exitCall.RequestID = segment.RequestID;
                                 exitCall.SegmentID = segment.SegmentID;
 
+                                exitCall.OccuredUtc = segment.OccuredUtc;
+                                exitCall.Occured = segment.Occured;
+
                                 exitCall.ExitType = exitCallToken["exitPointName"].ToString();
+
+                                exitCall.Duration = (long)exitCallToken["timeTakenInMillis"];
+                                exitCall.IsAsync = ((bool)exitCallToken["exitPointCall"]["synchronous"] == false);
 
                                 // Create pretty call chain
                                 // Where are we going, Tier or Backend
@@ -10751,7 +11013,14 @@ namespace AppDynamics.Dexter
                                     {
                                         exitCall.ToEntityName = goingToProperty["value"].ToString();
                                     }
-                                    exitCall.CallChain = String.Format("{0}->[{1}]-><{2}>", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName);
+                                    if (exitCall.IsAsync == false)
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms]-><{2}>", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
+                                    else
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms async]-><{2}>", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
                                 }
                                 else if (exitCallToken["toComponentId"].ToString().StartsWith("App:") == true)
                                 {
@@ -10767,7 +11036,14 @@ namespace AppDynamics.Dexter
                                     {
                                         exitCall.ToEntityName = goingToProperty["value"].ToString();
                                     }
-                                    exitCall.CallChain = String.Format("{0}->[{1}]->(({2}))", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName);
+                                    if (exitCall.IsAsync == false)
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms]->{{{2}}}", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
+                                    else
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms async]->{{{2}}}", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
                                 }
                                 else
                                 {
@@ -10779,16 +11055,46 @@ namespace AppDynamics.Dexter
                                     {
                                         exitCall.ToEntityName = goingToProperty["value"].ToString();
                                     }
-                                    exitCall.CallChain = String.Format("{0}->[{1}]->({2})", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName);
+                                    if (exitCall.IsAsync == false)
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms]->({2})", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
+                                    else
+                                    {
+                                        exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms async]->({2})", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                    }
                                 }
+
+                                // Add the exit call to the overall list for tracking
+                                string exitCCCKey = String.Format("{0}_{1}_{2}", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName);
+                                CallChainContainer cccSeg = null;
+                                if (callChainsSegment.ContainsKey(exitCCCKey) == false)
+                                {
+                                    cccSeg = new CallChainContainer { From = callChainForThisSegment, ExitType = exitCall.ExitType, ToEntityName = exitCall.ToEntityName, ToEntityType = exitCall.ToEntityType };
+                                    callChainsSegment.Add(exitCCCKey, cccSeg);
+                                }
+                                else
+                                {
+                                    cccSeg = callChainsSegment[exitCCCKey];
+                                }
+                                cccSeg.CallTimings.Add(new CallTiming { Async = exitCall.IsAsync, Duration = exitCall.Duration });
+
+                                CallChainContainer cccSnap = null;
+                                if (callChainsSnapshot.ContainsKey(exitCCCKey) == false)
+                                {
+                                    cccSnap = new CallChainContainer { From = callChainForThisSegment, ExitType = exitCall.ExitType, ToEntityName = exitCall.ToEntityName, ToEntityType = exitCall.ToEntityType };
+                                    callChainsSnapshot.Add(exitCCCKey, cccSnap);
+                                }
+                                else
+                                {
+                                    cccSnap = callChainsSnapshot[exitCCCKey];
+                                }
+                                cccSnap.CallTimings.Add(new CallTiming { Async = exitCall.IsAsync, Duration = exitCall.Duration });
 
                                 exitCall.Detail = exitCallToken["detailString"].ToString();
                                 exitCall.ErrorDetail = exitCallToken["errorDetails"].ToString();
                                 if (exitCall.ErrorDetail == "\\N") { exitCall.ErrorDetail = String.Empty; }
                                 exitCall.Method = exitCallToken["callingMethod"].ToString();
-
-                                exitCall.Duration = (long)exitCallToken["timeTakenInMillis"];
-                                exitCall.IsAsync = ((bool)exitCallToken["exitPointCall"]["synchronous"] == false);
 
                                 // Parse Properties
                                 exitCall.PropsAll = exitCallToken["propertiesAsString"].ToString();
@@ -11331,82 +11637,29 @@ namespace AppDynamics.Dexter
 
                             #region Update call chains and call types from exits into segment
 
-                            SortedDictionary<string, int> callChainsSegment = new SortedDictionary<string, int>();
                             SortedDictionary<string, int> exitTypesSegment = new SortedDictionary<string, int>();
 
-                            foreach (ExitCall exitCall in exitCallsListInThisSegment)
-                            {
-                                string callChain = exitCall.CallChain;
-                                if (callChainsSegment.ContainsKey(callChain) == true)
-                                {
-                                    callChainsSegment[callChain]++;
-                                }
-                                else
-                                {
-                                    callChainsSegment.Add(callChain, 1);
-                                }
-                                if (callChainsSnapshot.ContainsKey(callChain) == true)
-                                {
-                                    callChainsSnapshot[callChain]++;
-                                }
-                                else
-                                {
-                                    callChainsSnapshot.Add(callChain, 1);
-                                }
-                                string exitType = exitCall.ExitType;
-                                if (exitTypesSegment.ContainsKey(exitType) == true)
-                                {
-                                    exitTypesSegment[exitType]++;
-                                }
-                                else
-                                {
-                                    exitTypesSegment.Add(exitType, 1);
-                                }
-                                if (exitTypesSnapshot.ContainsKey(exitType) == true)
-                                {
-                                    exitTypesSnapshot[exitType]++;
-                                }
-                                else
-                                {
-                                    exitTypesSnapshot.Add(exitType, 1);
-                                }
-                            }
-                            if (exitCallsListInThisSegment.Count == 0)
-                            {
-                                string callChain = String.Format("{0}->(self)", callChainForThisSegment);
-                                if (callChainsSegment.ContainsKey(callChain) == true)
-                                {
-                                    callChainsSegment[callChain]++;
-                                }
-                                else
-                                {
-                                    callChainsSegment.Add(callChain, 1);
-                                }
-                                if (callChainsSnapshot.ContainsKey(callChain) == true)
-                                {
-                                    callChainsSnapshot[callChain]++;
-                                }
-                                else
-                                {
-                                    callChainsSnapshot.Add(callChain, 1);
-                                }
-                            }
-
-                            StringBuilder sb1 = new StringBuilder(128 * callChainsSegment.Count);
+                            StringBuilder sbCallChainsSegment = new StringBuilder(128 * callChainsSegment.Count);
                             foreach (var callChain in callChainsSegment)
                             {
-                                sb1.AppendFormat("{0}:[{1}];\n", callChain.Key, callChain.Value);
+                                sbCallChainsSegment.AppendFormat("{0}\n", callChain.Value);
+                                if (exitTypesSegment.ContainsKey(callChain.Value.ExitType) == false)
+                                {
+                                    exitTypesSegment.Add(callChain.Value.ExitType, 0);
+                                }
+                                exitTypesSegment[callChain.Value.ExitType] = exitTypesSegment[callChain.Value.ExitType] + callChain.Value.CallTimings.Count;
                             }
-                            if (sb1.Length > 2) { sb1.Remove(sb1.Length - 2, 2); }
-                            segment.CallChains = sb1.ToString();
+                            if (sbCallChainsSegment.Length > 1) { sbCallChainsSegment.Remove(sbCallChainsSegment.Length - 1, 1); }
+                            segment.CallChains = sbCallChainsSegment.ToString();
 
-                            sb1 = new StringBuilder(10 * exitTypesSegment.Count);
+                            StringBuilder sbExitTypesSegment = new StringBuilder(10 * exitTypesSegment.Count);
                             foreach (var exitType in exitTypesSegment)
                             {
-                                sb1.AppendFormat("{0}:[{1}];\n", exitType.Key, exitType.Value);
+                                sbExitTypesSegment.AppendFormat("{0}={1}\n", exitType.Key, exitType.Value);
                             }
-                            if (sb1.Length > 2) { sb1.Remove(sb1.Length - 2, 2); }
-                            segment.ExitTypes = sb1.ToString();
+
+                            if (sbExitTypesSegment.Length > 1) { sbExitTypesSegment.Remove(sbExitTypesSegment.Length - 1, 1); }
+                            segment.ExitTypes = sbExitTypesSegment.ToString();
 
                             #endregion
 
@@ -11445,21 +11698,29 @@ namespace AppDynamics.Dexter
 
                     #region Update call chains from segments into snapshot
 
-                    StringBuilder sb = new StringBuilder(128 * callChainsSnapshot.Count);
+                    SortedDictionary<string, int> exitTypesSnapshot = new SortedDictionary<string, int>();
+
+                    StringBuilder sbCallChainsSnapshot = new StringBuilder(128 * callChainsSnapshot.Count);
                     foreach (var callChain in callChainsSnapshot)
                     {
-                        sb.AppendFormat("{0};\n", callChain.Key);
+                        sbCallChainsSnapshot.AppendFormat("{0};\n", callChain.Value);
+                        if (exitTypesSnapshot.ContainsKey(callChain.Value.ExitType) == false)
+                        {
+                            exitTypesSnapshot.Add(callChain.Value.ExitType, 0);
+                        }
+                        exitTypesSnapshot[callChain.Value.ExitType] = exitTypesSnapshot[callChain.Value.ExitType] + callChain.Value.CallTimings.Count;
                     }
-                    if (sb.Length > 2) { sb.Remove(sb.Length - 2, 2); }
-                    snapshot.CallChains = sb.ToString();
+                    if (sbCallChainsSnapshot.Length > 1) { sbCallChainsSnapshot.Remove(sbCallChainsSnapshot.Length - 1, 1); }
+                    snapshot.CallChains = sbCallChainsSnapshot.ToString();
 
-                    sb = new StringBuilder(10 * exitTypesSnapshot.Count);
+                    StringBuilder sbExitTypesSnapshot = new StringBuilder(10 * exitTypesSnapshot.Count);
                     foreach (var exitType in exitTypesSnapshot)
                     {
-                        sb.AppendFormat("{0}:[{1}];\n", exitType.Key, exitType.Value);
+                        sbExitTypesSnapshot.AppendFormat("{0}={1}\n", exitType.Key, exitType.Value);
                     }
-                    if (sb.Length > 2) { sb.Remove(sb.Length - 2, 2); }
-                    snapshot.ExitTypes = sb.ToString();
+
+                    if (sbExitTypesSnapshot.Length > 1) { sbExitTypesSnapshot.Remove(sbExitTypesSnapshot.Length - 1, 1); }
+                    snapshot.ExitTypes = sbExitTypesSnapshot.ToString();
 
                     #endregion
 
@@ -11653,57 +11914,86 @@ namespace AppDynamics.Dexter
 
         #region Entity metric detail report functions
 
-        private static int reportMetricDetailApplication(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityApplication applicationRow)
+        private static int reportMetricDetailApplication(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            EntityApplication applicationRow,
+            List<Event> eventsAllList, 
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-            fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, APPLICATION_TYPE_SHORT, applicationRow);
+            fillIndividualEntityMetricReportForEntity(
+                programOptions, 
+                jobConfiguration, 
+                jobTarget, 
+                excelEntitiesDetail, 
+                APPLICATION_TYPE_SHORT, 
+                applicationRow,
+                eventsAllList, 
+                healthRuleViolationEventsAllList,
+                snapshotsAllList,
+                segmentsAllList,
+                exitCallsAllList,
+                serviceEndpointCallsAllList,
+                detectedErrorsAllList,
+                businessDataAllList);
 
             // Report file
-            string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, applicationRow);
+            string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, applicationRow);
 
-            finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+            finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, APPLICATION_TYPE_SHORT, reportFilePath);
 
             return 1;
         }
 
-        private static int reportMetricDetailTiers(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityTier> entityList, bool progressToConsole)
+        private static int reportMetricDetailTiers(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityTier> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityTier tierRow in entityList)
             {
-                //string metricsEntityFolderPath = Path.Combine(
-                //    metricsFolderPath,
-                //    TIERS_TYPE_SHORT,
-                //    getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID));
-
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, TIERS_TYPE_SHORT, tierRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    TIERS_TYPE_SHORT, 
+                    tierRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, tierRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, tierRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, TIERS_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11717,29 +12007,47 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int reportMetricDetailNodes(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityNode> entityList, bool progressToConsole)
+        private static int reportMetricDetailNodes(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityNode> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityNode nodeRow in entityList)
             {
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, NODES_TYPE_SHORT, nodeRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    NODES_TYPE_SHORT, 
+                    nodeRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, nodeRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, nodeRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, NODES_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11753,29 +12061,47 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int reportMetricDetailBackends(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityBackend> entityList, bool progressToConsole)
+        private static int reportMetricDetailBackends(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityBackend> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityBackend backendRow in entityList)
             {
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, BACKENDS_TYPE_SHORT, backendRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    BACKENDS_TYPE_SHORT, 
+                    backendRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, backendRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, backendRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, BACKENDS_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11789,29 +12115,47 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int reportMetricDetailBusinessTransactions(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityBusinessTransaction> entityList, bool progressToConsole)
+        private static int reportMetricDetailBusinessTransactions(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityBusinessTransaction> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityBusinessTransaction businessTransactionRow in entityList)
             {
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, BUSINESS_TRANSACTIONS_TYPE_SHORT, businessTransactionRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    BUSINESS_TRANSACTIONS_TYPE_SHORT, 
+                    businessTransactionRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, businessTransactionRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, businessTransactionRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, BUSINESS_TRANSACTIONS_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11825,29 +12169,47 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int reportMetricDetailServiceEndpoints(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityServiceEndpoint> entityList, bool progressToConsole)
+        private static int reportMetricDetailServiceEndpoints(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityServiceEndpoint> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityServiceEndpoint serviceEndpointRow in entityList)
             {
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, SERVICE_ENDPOINTS_TYPE_SHORT, serviceEndpointRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    SERVICE_ENDPOINTS_TYPE_SHORT, 
+                    serviceEndpointRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, serviceEndpointRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, serviceEndpointRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, SERVICE_ENDPOINTS_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11861,29 +12223,47 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int reportMetricDetailErrors(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityError> entityList, bool progressToConsole)
+        private static int reportMetricDetailErrors(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            List<EntityError> entityList,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList,
+            bool progressToConsole)
         {
-            #region Target step variables
-
-            // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(applicationFolderPath, REPORTS_FOLDER_NAME);
-
-            #endregion
-
             int j = 0;
 
             foreach (EntityError errorRow in entityList)
             {
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
-                fillIndividualEntityMetricReportForEntity(programOptions, jobConfiguration, jobTarget, excelEntitiesDetail, ERRORS_TYPE_SHORT, errorRow);
+                fillIndividualEntityMetricReportForEntity(
+                    programOptions, 
+                    jobConfiguration, 
+                    jobTarget, 
+                    excelEntitiesDetail, 
+                    ERRORS_TYPE_SHORT, 
+                    errorRow,
+                    eventsAllList,
+                    healthRuleViolationEventsAllList,
+                    snapshotsAllList,
+                    segmentsAllList,
+                    exitCallsAllList,
+                    serviceEndpointCallsAllList,
+                    detectedErrorsAllList,
+                    businessDataAllList);
 
                 // Report file
-                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, reportsFolderPath, errorRow);
+                string reportFilePath = getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, errorRow);
 
-                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, reportFilePath);
+                finalizeAndSaveIndividualEntityMetricReport(excelEntitiesDetail, ERRORS_TYPE_SHORT, reportFilePath);
+
                 if (progressToConsole == true)
                 {
                     j++;
@@ -11897,7 +12277,7 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static string getEntityMetricReportFilePath(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, string reportsFolderPath, EntityBase entityRow)
+        private static string getEntityMetricReportFilePath(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBase entityRow)
         {
             string reportFileName = String.Empty;
             string reportFilePath = String.Empty;
@@ -11912,7 +12292,10 @@ namespace AppDynamics.Dexter
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     APPLICATION_TYPE_SHORT,
                     reportFileName);
             }
@@ -11928,7 +12311,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     TIERS_TYPE_SHORT,
                     reportFileName);
             }
@@ -11944,7 +12330,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     NODES_TYPE_SHORT,
                     reportFileName);
             }
@@ -11960,7 +12349,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     BACKENDS_TYPE_SHORT,
                     reportFileName);
             }
@@ -11976,7 +12368,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
                     reportFileName);
             }
@@ -11992,7 +12387,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(serviceEndpointRow.SEPName, serviceEndpointRow.SEPID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     SERVICE_ENDPOINTS_TYPE_SHORT,
                     reportFileName);
             }
@@ -12008,7 +12406,10 @@ namespace AppDynamics.Dexter
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     getShortenedEntityNameForFileSystem(errorRow.ErrorName, errorRow.ErrorID));
                 reportFilePath = Path.Combine(
-                    reportsFolderPath,
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     ERRORS_TYPE_SHORT,
                     reportFileName);
             }
@@ -12143,10 +12544,151 @@ namespace AppDynamics.Dexter
 
             #endregion
 
+            #region Other sheets
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SUMMARY);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_METRICS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 8);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SEGMENTS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SEGMENTS);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS);
+            //sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Pivot";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA_PIVOT);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA_PIVOT);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[2, 1].Value = "See Table";
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
+
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_TIMELINE);
+            sheet.Cells[1, 1].Value = "Table of Contents";
+            sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT + 1, 6);
+
+            #endregion
+
             return excelEntityDetail;
         }
 
-        private static void fillIndividualEntityMetricReportForEntity(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, ExcelPackage excelEntityDetail, string entityType, EntityBase entityRow)
+        private static void fillIndividualEntityMetricReportForEntity(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            ExcelPackage excelEntityDetail, 
+            string entityType, 
+            EntityBase entityRow,
+            List<Event> eventsAllList,
+            List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
+            List<Snapshot> snapshotsAllList,
+            List<Segment> segmentsAllList,
+            List<ExitCall> exitCallsAllList,
+            List<ServiceEndpointCall> serviceEndpointCallsAllList,
+            List<DetectedError> detectedErrorsAllList,
+            List<BusinessData> businessDataAllList)
         {
             #region Target step variables
 
@@ -12268,79 +12810,61 @@ namespace AppDynamics.Dexter
 
             #region Parameter sheet
 
-            ExcelWorksheet sheetParameters = excelEntityDetail.Workbook.Worksheets[REPORT_SHEET_PARAMETERS];
+            ExcelWorksheet sheet = excelEntityDetail.Workbook.Worksheets[REPORT_SHEET_PARAMETERS];
 
-            int l = sheetParameters.Dimension.Rows + 2;
-            sheetParameters.Cells[l, 1].Value = "Entity Type";
-            sheetParameters.Cells[l, 2].Value = entityTypeForDisplay;
+            int l = sheet.Dimension.Rows + 2;
+            sheet.Cells[l, 1].Value = "Entity Type";
+            sheet.Cells[l, 2].Value = entityTypeForDisplay;
             l++;
-            sheetParameters.Cells[l, 1].Value = "Entity Name";
-            sheetParameters.Cells[l, 2].Value = entityNameForDisplay;
+            sheet.Cells[l, 1].Value = "Entity Name";
+            sheet.Cells[l, 2].Value = entityNameForDisplay;
 
             #endregion
 
             #region Entity Metrics Summary sheet
 
-            ExcelWorksheet sheetMetrics = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SUMMARY);
-            sheetMetrics.Cells[1, 1].Value = "Table of Contents";
-            sheetMetrics.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-            sheetMetrics.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SUMMARY];
 
-            if (jobConfiguration.Input.Metrics == true)
+            #region Full ranges
+
+            // Full range table
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+            if (File.Exists(entityFullRangeReportFilePath) == true)
             {
-                #region Full ranges
-
-                // Full range table
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                range = readCSVFileIntoExcelRange(entityFullRangeReportFilePath, 0, sheetMetrics, fromRow, 1);
+                range = readCSVFileIntoExcelRange(entityFullRangeReportFilePath, 0, sheet, fromRow, 1);
                 if (range != null)
                 {
-                    table = sheetMetrics.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_FULL);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfEntityRowTableInMetricReport(entityType, sheetMetrics, table);
+                    table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_FULL);
 
                     fromRow = fromRow + range.Rows + 2;
                 }
+            }
 
-                #endregion
-                
-                #region Hourly range
+            #endregion
 
-                // Hourly table
-                sheetMetrics.Cells[fromRow - 1, 1].Value = "Hourly";
+            #region Hourly range
 
-                entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                range = readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, 0, sheetMetrics, fromRow, 1);
+            // Hourly table
+            sheet.Cells[fromRow - 1, 1].Value = "Hourly";
+
+            entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+            if (File.Exists(entityFullRangeReportFilePath) == true)
+            {
+                range = readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, 0, sheet, fromRow, 1);
                 if (range != null)
                 {
-                    table = sheetMetrics.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_HOURLY);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfEntityRowTableInMetricReport(entityType, sheetMetrics, table);
-
-                    // Remove DetailLink column because this document would be pointing to relative location from the overall metric reports, and the link would be invalid
-                    sheetMetrics.DeleteColumn(table.Columns["DetailLink"].Position + 1);
+                    table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_HOURLY);
                 }
-
-                #endregion
             }
+
+            #endregion
 
             #endregion
 
             #region Entity Metric Detail sheet
 
-            ExcelWorksheet sheetMetricsDetail = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_METRICS);
-            sheetMetricsDetail.Cells[1, 1].Value = "Table of Contents";
-            sheetMetricsDetail.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-            sheetMetricsDetail.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_METRICS];
 
             #region ART Table
 
@@ -12352,22 +12876,22 @@ namespace AppDynamics.Dexter
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(entityMetricSummaryReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_ART_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_ART_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
-                    sheetMetricsDetail.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -12376,21 +12900,21 @@ namespace AppDynamics.Dexter
             entityMetricValuesReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(entityMetricValuesReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_ART_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_ART_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
 
                     tableValuesART = table;
                 }
@@ -12401,28 +12925,28 @@ namespace AppDynamics.Dexter
             #region CPM table
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-            fromColumnMetricSummary = sheetMetricsDetail.Dimension.Columns + 2;
+            fromColumnMetricSummary = sheet.Dimension.Columns + 2;
 
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_CPM_SHORTNAME);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(entityMetricSummaryReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_CPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_CPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
-                    sheetMetricsDetail.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -12431,21 +12955,21 @@ namespace AppDynamics.Dexter
             entityMetricValuesReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(entityMetricValuesReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_CPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_CPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
 
                     tableValuesCPM = table;
                 }
@@ -12456,28 +12980,28 @@ namespace AppDynamics.Dexter
             #region EPM table
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-            fromColumnMetricSummary = sheetMetricsDetail.Dimension.Columns + 2;
+            fromColumnMetricSummary = sheet.Dimension.Columns + 2;
 
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EPM_SHORTNAME);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(entityMetricSummaryReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_EPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_EPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
-                    sheetMetricsDetail.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -12486,21 +13010,21 @@ namespace AppDynamics.Dexter
             entityMetricValuesReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(entityMetricValuesReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_EPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_EPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
 
                     tableValuesEPM = table;
                 }
@@ -12511,28 +13035,28 @@ namespace AppDynamics.Dexter
             #region EXCPM table
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-            fromColumnMetricSummary = sheetMetricsDetail.Dimension.Columns + 2;
+            fromColumnMetricSummary = sheet.Dimension.Columns + 2;
 
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EXCPM_SHORTNAME);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(entityMetricSummaryReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_EXCPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_EXCPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
-                    sheetMetrics.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -12541,21 +13065,21 @@ namespace AppDynamics.Dexter
             entityMetricValuesReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(entityMetricValuesReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_EXCPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_EXCPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
 
                     tableValuesEXCPM = table;
 
@@ -12568,23 +13092,23 @@ namespace AppDynamics.Dexter
             #region HTTPEPM table
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-            fromColumnMetricSummary = sheetMetricsDetail.Dimension.Columns + 2;
+            fromColumnMetricSummary = sheet.Dimension.Columns + 2;
 
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_HTTPEPM_SHORTNAME);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
             if (File.Exists(entityMetricSummaryReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricSummaryReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_HTTPEPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_DESCRIPTION, entityType, METRIC_HTTPEPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
-                    sheetMetricsDetail.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["PropertyValue"].Position + fromColumnMetricSummary).Width = 20;
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -12593,21 +13117,21 @@ namespace AppDynamics.Dexter
             entityMetricValuesReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             if (File.Exists(entityMetricValuesReportFilePath) == true)
             {
-                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheetMetricsDetail, fromRow, fromColumnMetricSummary);
+                range = readCSVFileIntoExcelRange(entityMetricValuesReportFilePath, 0, sheet, fromRow, fromColumnMetricSummary);
                 if (range != null)
                 {
                     if (range.Rows == 1)
                     {
                         // If there was no data in the table, adjust the range to have at least one blank line, otherwise Excel thinks table is corrupt
-                        range = sheetMetricsDetail.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
+                        range = sheet.Cells[range.Start.Row, range.Start.Column, range.End.Row + 1, range.End.Column];
                     }
-                    table = sheetMetricsDetail.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_HTTPEPM_SHORTNAME));
+                    table = sheet.Tables.Add(range, String.Format(REPORT_ENTITY_DETAILS_METRIC_TABLE_METRIC_VALUES, entityType, METRIC_HTTPEPM_SHORTNAME));
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheetMetricsDetail.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
+                    sheet.Column(table.Columns["EventTimeStamp"].Position + fromColumnMetricSummary).AutoFit();
 
                     tableValuesHTTPEPM = table;
                 }
@@ -12619,36 +13143,13 @@ namespace AppDynamics.Dexter
 
             #region Activity grid sheet
 
-            ExcelWorksheet sheetActivityGrid = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID);
-            sheetActivityGrid.Cells[1, 1].Value = "Table of Contents";
-            sheetActivityGrid.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-            sheetActivityGrid.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID];
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
             string activityGridReportFileName = Path.Combine(metricsEntityFolderPath, CONVERT_ACTIVITY_GRID_FILE_NAME);
-            range = readCSVFileIntoExcelRange(activityGridReportFileName, 0, sheetActivityGrid, fromRow, 1);
-            if (range != null && range.Rows > 1)
+            if (File.Exists(activityGridReportFileName) == true)
             {
-                table = sheetActivityGrid.Tables.Add(range, REPORT_ENTITY_DETAILS_ACTIVITY_GRID);
-                table.ShowHeader = true;
-                table.TableStyle = TableStyles.Medium2;
-                table.ShowFilter = true;
-                table.ShowTotal = false;
-
-                sheetActivityGrid.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                sheetActivityGrid.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                sheetActivityGrid.Column(table.Columns["CallType"].Position + 1).Width = 10;
-                sheetActivityGrid.Column(table.Columns["FromName"].Position + 1).Width = 35;
-                sheetActivityGrid.Column(table.Columns["ToName"].Position + 1).Width = 35;
-                sheetActivityGrid.Column(table.Columns["From"].Position + 1).AutoFit();
-                sheetActivityGrid.Column(table.Columns["To"].Position + 1).AutoFit();
-                sheetActivityGrid.Column(table.Columns["FromUtc"].Position + 1).AutoFit();
-                sheetActivityGrid.Column(table.Columns["ToUtc"].Position + 1).AutoFit();
-                //sheetActivityGrid.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                //sheetActivityGrid.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                //sheetActivityGrid.Column(table.Columns["FromLink"].Position + 1).AutoFit();
-                //sheetActivityGrid.Column(table.Columns["ToLink"].Position + 1).AutoFit();
-                //sheetActivityGrid.Column(table.Columns["MetricLink"].Position + 1).AutoFit();
+                readCSVFileIntoExcelRange(activityGridReportFileName, 0, sheet, fromRow, 1);
             }
 
             #endregion
@@ -12658,132 +13159,63 @@ namespace AppDynamics.Dexter
             #region Filter events by type of entity output
 
             // Filter events if necessary
-            string eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
-            string eventsFilePathFiltered = String.Empty;
-            string healthRuleViolationEventsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
-            string healthRuleViolationEventsFilePathFiltered = String.Empty;
             List<Event> eventsFilteredList = null;
-            List<HealthRuleViolationEvent> healthRuleViolationFilteredList = null;
+            List<HealthRuleViolationEvent> healthRuleViolationEventsFilteredList = null;
 
             switch (entityType)
             {
                 case APPLICATION_TYPE_SHORT:
                     // The Application report has all events
-                    eventsFilteredList = FileIOHelper.readListFromCSVFile<Event>(eventsFilePath, new EventReportMap());
+                    eventsFilteredList = eventsAllList;
+                    healthRuleViolationEventsFilteredList = healthRuleViolationEventsAllList;
+
                     break;
 
                 case TIERS_TYPE_SHORT:
-                    // Filter
-                    eventsFilteredList = FileIOHelper.readListFromCSVFile<Event>(eventsFilePath, new EventReportMap());
-                    if (eventsFilteredList != null)
+                    // Filter events for the Tier
+                    if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsFilteredList.Where(e => e.TierID == entityRow.TierID).ToList();
-                        if (eventsFilteredList.Count > 0)
-                        {
-                            eventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<Event>(eventsFilteredList, new EventReportMap(), eventsFilePathFiltered);
-                            eventsFilePath = eventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            eventsFilePath = String.Empty;
-                        }
+                        eventsFilteredList = eventsAllList.Where(e => e.TierID == entityRow.TierID).ToList();
                     }
 
-                    healthRuleViolationFilteredList = FileIOHelper.readListFromCSVFile<HealthRuleViolationEvent>(healthRuleViolationEventsFilePath, new HealthRuleViolationEventReportMap());
-                    if (healthRuleViolationFilteredList != null)
+                    if (healthRuleViolationEventsAllList != null)
                     {
-                        healthRuleViolationFilteredList = healthRuleViolationFilteredList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_TIER] && e.EntityID == entityRow.TierID).ToList();
-                        if (healthRuleViolationFilteredList.Count > 0)
-                        {
-                            healthRuleViolationEventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_HEALTH_RULE_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<HealthRuleViolationEvent>(healthRuleViolationFilteredList, new HealthRuleViolationEventReportMap(), healthRuleViolationEventsFilePathFiltered);
-                            healthRuleViolationEventsFilePath = healthRuleViolationEventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            healthRuleViolationEventsFilePath = String.Empty;
-                        }
+                        healthRuleViolationEventsFilteredList = healthRuleViolationEventsAllList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_TIER] && e.EntityID == entityRow.TierID).ToList();
                     }
 
                     break;
 
                 case NODES_TYPE_SHORT:
-                    // Filter
-                    eventsFilteredList = FileIOHelper.readListFromCSVFile<Event>(eventsFilePath, new EventReportMap());
-                    if (eventsFilteredList != null)
+                    // Filter events for the Node
+                    if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsFilteredList.Where(e => e.NodeID == entityRow.NodeID).ToList();
-                        if (eventsFilteredList.Count > 0)
-                        {
-                            eventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<Event>(eventsFilteredList, new EventReportMap(), eventsFilePathFiltered);
-                            eventsFilePath = eventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            eventsFilePath = String.Empty;
-                        }
+                        eventsFilteredList = eventsAllList.Where(e => e.NodeID == entityRow.NodeID).ToList();
                     }
 
-                    healthRuleViolationFilteredList = FileIOHelper.readListFromCSVFile<HealthRuleViolationEvent>(healthRuleViolationEventsFilePath, new HealthRuleViolationEventReportMap());
-                    if (healthRuleViolationFilteredList != null)
+                    if (healthRuleViolationEventsAllList != null)
                     {
-                        healthRuleViolationFilteredList = healthRuleViolationFilteredList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_NODE] && e.EntityID == entityRow.NodeID).ToList();
-                        if (healthRuleViolationFilteredList.Count > 0)
-                        {
-                            healthRuleViolationEventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_HEALTH_RULE_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<HealthRuleViolationEvent>(healthRuleViolationFilteredList, new HealthRuleViolationEventReportMap(), healthRuleViolationEventsFilePathFiltered);
-                            healthRuleViolationEventsFilePath = healthRuleViolationEventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            healthRuleViolationEventsFilePath = String.Empty;
-                        }
+                        healthRuleViolationEventsFilteredList = healthRuleViolationEventsAllList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_NODE] && e.EntityID == entityRow.NodeID).ToList();
                     }
 
                     break;
 
                 case BUSINESS_TRANSACTIONS_TYPE_SHORT:
-                    // Filter
-                    eventsFilteredList = FileIOHelper.readListFromCSVFile<Event>(eventsFilePath, new EventReportMap());
-                    if (eventsFilteredList != null)
+                    // Filter events for the Business Transaction
+                    if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsFilteredList.Where(e => e.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
-                        if (eventsFilteredList.Count > 0)
-                        {
-                            eventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<Event>(eventsFilteredList, new EventReportMap(), eventsFilePathFiltered);
-                            eventsFilePath = eventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            eventsFilePath = String.Empty;
-                        }
+                        eventsFilteredList = eventsAllList.Where(e => e.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    healthRuleViolationFilteredList = FileIOHelper.readListFromCSVFile<HealthRuleViolationEvent>(healthRuleViolationEventsFilePath, new HealthRuleViolationEventReportMap());
-                    if (healthRuleViolationFilteredList != null)
+                    if (healthRuleViolationEventsAllList != null)
                     {
-                        healthRuleViolationFilteredList = healthRuleViolationFilteredList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_BUSINESS_TRANSACTION] && e.EntityID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
-                        if (healthRuleViolationFilteredList.Count > 0)
-                        {
-                            healthRuleViolationEventsFilePathFiltered = Path.Combine(eventsFolderPath, String.Format(CONVERT_HEALTH_RULE_EVENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                            FileIOHelper.writeListToCSVFile<HealthRuleViolationEvent>(healthRuleViolationFilteredList, new HealthRuleViolationEventReportMap(), healthRuleViolationEventsFilePathFiltered);
-                            healthRuleViolationEventsFilePath = healthRuleViolationEventsFilePathFiltered;
-                        }
-                        else
-                        {
-                            healthRuleViolationEventsFilePath = String.Empty;
-                        }
+                        healthRuleViolationEventsFilteredList = healthRuleViolationEventsAllList.Where(e => e.EntityType == entityTypeStringMapping[ENTITY_TYPE_BUSINESS_TRANSACTION] && e.EntityID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
                     break;
 
                 default:
                     // Display nothing
-                    eventsFilePath = String.Empty;
-                    healthRuleViolationEventsFilePath = String.Empty;
+
                     break;
             }
 
@@ -12791,81 +13223,18 @@ namespace AppDynamics.Dexter
 
             #region Events sheet
 
-            if (eventsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (eventsFilteredList != null && eventsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetEvents = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS);
-                sheetEvents.Cells[1, 1].Value = "Table of Contents";
-                sheetEvents.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetEvents.Cells[2, 1].Value = "See Pivot";
-                sheetEvents.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT);
-                sheetEvents.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS];
 
-                // Pivot
-                ExcelWorksheet sheetEventsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT);
-                sheetEventsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetEventsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetEventsPivot.Cells[2, 1].Value = "See Table";
-                sheetEventsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS);
-                sheetEventsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 9);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(eventsFilePath, 0, sheetEvents, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(eventsFilteredList, new EventReportMap()))
                 {
-                    table = sheetEvents.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EVENTS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetEvents.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["EventID"].Position + 1).AutoFit();
-                    sheetEvents.Column(table.Columns["Occured"].Position + 1).AutoFit();
-                    sheetEvents.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
-                    sheetEvents.Column(table.Columns["Summary"].Position + 1).Width = 35;
-                    sheetEvents.Column(table.Columns["Type"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["SubType"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["TriggeredEntityType"].Position + 1).Width = 20;
-                    sheetEvents.Column(table.Columns["TriggeredEntityName"].Position + 1).Width = 20;
-                    //sheetEvents.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheetEvents.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheetEvents.Column(table.Columns["TierLink"].Position + 1).AutoFit();
-                    //sheetEvents.Column(table.Columns["NodeLink"].Position + 1).AutoFit();
-                    //sheetEvents.Column(table.Columns["BTLink"].Position + 1).AutoFit();
-                    //sheetEvents.Column(table.Columns["EventLink"].Position + 1).AutoFit();
-
-                    tableEvents = table;
-
-                    ExcelPivotTable pivot = sheetEventsPivot.PivotTables.Add(sheetEventsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_EVENTS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["SubType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["NodeName"]);
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    range = readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
+                    if (range != null && range.Rows > 1)
+                    {
+                        tableEvents = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EVENTS);
+                    }
                 }
             }
 
@@ -12873,87 +13242,15 @@ namespace AppDynamics.Dexter
 
             #region HR Violations sheet
 
-            if (healthRuleViolationEventsFilePath != String.Empty)
-            { 
-                // Details
-                ExcelWorksheet sheetHRViolations = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR);
-                sheetHRViolations.Cells[1, 1].Value = "Table of Contents";
-                sheetHRViolations.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetHRViolations.Cells[2, 1].Value = "See Pivot";
-                sheetHRViolations.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR_PIVOT);
-                sheetHRViolations.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (healthRuleViolationEventsFilteredList != null && healthRuleViolationEventsFilteredList.Count > 0)
+            {
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS];
 
-                // Pivot
-                ExcelWorksheet sheetHRViolationsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR_PIVOT);
-                sheetHRViolationsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetHRViolationsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetHRViolationsPivot.Cells[2, 1].Value = "See Table";
-                sheetHRViolationsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_HR);
-                sheetHRViolationsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(healthRuleViolationEventsFilePath, 0, sheetHRViolations, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(healthRuleViolationEventsFilteredList, new HealthRuleViolationEventReportMap()))
                 {
-                    table = sheetHRViolations.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_HEALTH_RULE_VIOLATION_EVENTS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetHRViolations.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetHRViolations.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetHRViolations.Column(table.Columns["EventID"].Position + 1).AutoFit();
-                    sheetHRViolations.Column(table.Columns["From"].Position + 1).AutoFit();
-                    sheetHRViolations.Column(table.Columns["FromUtc"].Position + 1).AutoFit();
-                    sheetHRViolations.Column(table.Columns["To"].Position + 1).AutoFit();
-                    sheetHRViolations.Column(table.Columns["ToUtc"].Position + 1).AutoFit();
-                    sheetHRViolations.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
-                    sheetHRViolations.Column(table.Columns["EntityName"].Position + 1).Width = 20;
-                    //sheetHRViolations.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheetHRViolations.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheetHRViolations.Column(table.Columns["HealthRuleLink"].Position + 1).AutoFit();
-                    //sheetHRViolations.Column(table.Columns["EntityLink"].Position + 1).AutoFit();
-                    //sheetHRViolations.Column(table.Columns["EventLink"].Position + 1).AutoFit();
-
-                    ExcelPivotTable pivot = sheetHRViolationsPivot.PivotTables.Add(sheetHRViolationsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Status"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["EntityType"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    fieldC = pivot.ColumnFields.Add(pivot.Fields["EntityName"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    fieldC = pivot.ColumnFields.Add(pivot.Fields["HealthRuleName"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
-            }
-
-            #endregion
-
-            #region Clear out temporary files for Events and Health Rule Violations
-
-            if (eventsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(eventsFilePathFiltered);
-            }
-            if (healthRuleViolationEventsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(healthRuleViolationEventsFilePathFiltered);
             }
 
             #endregion
@@ -12964,44 +13261,28 @@ namespace AppDynamics.Dexter
 
             #region Filter events by type of entity output
 
-            string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
-            string snapshotsFilePathFiltered = String.Empty;
-            string segmentsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
-            string segmentsFilePathFiltered = String.Empty;
-            string exitCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
-            string exitCallsFilePathFiltered = String.Empty;
-            string serviceEndpointCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
-            string serviceEndpointCallsFilePathFiltered = String.Empty;
-            string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-            string detectedErrorsFilePathFiltered = String.Empty;
-            string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
-            string businessDataFilePathFiltered = String.Empty;
-
-            List<Snapshot> snapshotsFilteredList = null;
-            List<Segment> segmentsFilteredList = null;
-            List<ExitCall> exitCallsFilteredList = null;
-            List<ServiceEndpointCall> serviceEndpointCallsFilteredList = null;
-            List<DetectedError> detectedErrorsFilteredList = null;
-            List<BusinessData> businessDataFilteredList = null;
-
-            List<Snapshot> snapshotsAllList = null;
-            List<Segment> segmentsAllList = null;
-            List<ExitCall> exitCallsAllList = null;
-            List<ServiceEndpointCall> serviceEndpointCallsAllList = null;
-            List<DetectedError> detectedErrorsAllList = null;
-            List<BusinessData> businessDataAllList = null;
+            List<Snapshot> snapshotsFilteredList = new List<Snapshot>();
+            List<Segment> segmentsFilteredList = new List<Segment>();
+            List<ExitCall> exitCallsFilteredList = new List<ExitCall>();
+            List<ServiceEndpointCall> serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
+            List<DetectedError> detectedErrorsFilteredList = new List<DetectedError>();
+            List<BusinessData> businessDataFilteredList = new List<BusinessData>();
 
             switch (entityType)
             {
                 case APPLICATION_TYPE_SHORT:
                     // The Application report has all snapshots, segments, call exits etc.
-                    snapshotsFilteredList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
+                    snapshotsFilteredList = snapshotsAllList;
+                    segmentsFilteredList = segmentsAllList;
+                    exitCallsFilteredList = exitCallsAllList;
+                    serviceEndpointCallsFilteredList = serviceEndpointCallsAllList;
+                    detectedErrorsFilteredList = detectedErrorsAllList;
+                    businessDataFilteredList = businessDataAllList;
 
                     break;
 
                 case TIERS_TYPE_SHORT:
                     // Filter snapshots starting at this Tier
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
                     List<Snapshot> snapshotsStartingAtThisEntity = null;
                     if (snapshotsAllList != null)
                     {
@@ -13011,7 +13292,6 @@ namespace AppDynamics.Dexter
                     // Filter snapshots that start elsewhere, but include this tier
                     List<Snapshot> snapshotsCrossingThisEntity = new List<Snapshot>();
                     segmentsFilteredList = new List<Segment>();
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
                     if (segmentsAllList != null)
                     {
                         var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == entityRow.TierID).ToList().Select(e => e.RequestID).Distinct();
@@ -13035,8 +13315,6 @@ namespace AppDynamics.Dexter
                     snapshotsFilteredList = snapshotsFilteredList.Distinct().ToList();
 
                     // Filter exit calls to the list of snapshots
-                    exitCallsFilteredList = new List<ExitCall>();
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
                     if (exitCallsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13046,8 +13324,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Service Endpoint Calls to the list of snapshots
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
                     if (serviceEndpointCallsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13057,8 +13333,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Detected Errors to the list of snapshots
-                    detectedErrorsFilteredList = new List<DetectedError>();
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
                     if (detectedErrorsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13068,8 +13342,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Business Data to the list of snapshots
-                    businessDataFilteredList = new List<BusinessData>();
-                    businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
                     if (businessDataAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13082,7 +13354,6 @@ namespace AppDynamics.Dexter
 
                 case NODES_TYPE_SHORT:
                     // Filter snapshots starting at this Tier and Node
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
                     snapshotsStartingAtThisEntity = null;
                     if (snapshotsAllList != null)
                     {
@@ -13092,7 +13363,6 @@ namespace AppDynamics.Dexter
                     // Filter snapshots starting elsewhere, but including this Tier and Node
                     snapshotsCrossingThisEntity = new List<Snapshot>();
                     segmentsFilteredList = new List<Segment>();
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
                     if (segmentsAllList != null)
                     {
                         var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == entityRow.TierID && s.NodeID == entityRow.NodeID).ToList().Select(e => e.RequestID).Distinct();
@@ -13116,8 +13386,6 @@ namespace AppDynamics.Dexter
                     snapshotsFilteredList = snapshotsFilteredList.Distinct().ToList();
 
                     // Filter exit calls to the list of snapshots
-                    exitCallsFilteredList = new List<ExitCall>();
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
                     if (exitCallsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13127,8 +13395,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Service Endpoint Calls to the list of snapshots
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
                     if (serviceEndpointCallsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13138,8 +13404,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Detected Errors to the list of snapshots
-                    detectedErrorsFilteredList = new List<DetectedError>();
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
                     if (detectedErrorsAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13149,8 +13413,6 @@ namespace AppDynamics.Dexter
                     }
 
                     // Filter Business Data to the list of snapshots
-                    businessDataFilteredList = new List<BusinessData>();
-                    businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
                     if (businessDataAllList != null)
                     {
                         foreach (Snapshot snapshot in snapshotsFilteredList)
@@ -13163,21 +13425,6 @@ namespace AppDynamics.Dexter
 
                 case BACKENDS_TYPE_SHORT:
                     // Filter snapshots calling this Backend
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
-                    businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
-
-                    snapshotsFilteredList = new List<Snapshot>();
-                    segmentsFilteredList = new List<Segment>();
-                    exitCallsFilteredList = new List<ExitCall>();
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-                    detectedErrorsFilteredList = new List<DetectedError>();
-                    businessDataFilteredList = new List<BusinessData>();
-
-                    // Filter the backends
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
                     if (exitCallsAllList != null)
                     {
                         var uniqueSnapshotIDs = exitCallsAllList.Where(e => e.ToEntityID == ((EntityBackend)entityRow).BackendID).ToList().Select(e => e.RequestID).Distinct();
@@ -13210,77 +13457,41 @@ namespace AppDynamics.Dexter
                     break;
 
                 case BUSINESS_TRANSACTIONS_TYPE_SHORT:
-                    // Filter Snapshots by BTs 
-                    snapshotsFilteredList = new List<Snapshot>();
-                    segmentsFilteredList = new List<Segment>();
-                    exitCallsFilteredList = new List<ExitCall>();
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
+                    // Filter everything by BTs 
                     if (snapshotsAllList != null)
                     {
                         snapshotsFilteredList = snapshotsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    // Filter Segments by BTs 
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
                     if (segmentsAllList != null)
                     {
                         segmentsFilteredList = segmentsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    // Filter Exits by BTs 
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
                     if (exitCallsAllList != null)
                     {
                         exitCallsFilteredList = exitCallsAllList.Where(e => e.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    // Filter Service Endpoint Calls by BTs 
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
                     if (serviceEndpointCallsAllList != null)
                     {
                         serviceEndpointCallsFilteredList = serviceEndpointCallsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    // Filter Detected Errors by BTs
-                    detectedErrorsFilteredList = new List<DetectedError>();
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
                     if (detectedErrorsAllList != null)
                     {
-                        foreach (Snapshot snapshot in snapshotsFilteredList)
-                        {
-                            detectedErrorsFilteredList.AddRange(detectedErrorsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList());
-                        }
+                        detectedErrorsFilteredList = detectedErrorsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
-                    // Filter Business Data to the list of snapshots
-                    businessDataFilteredList = new List<BusinessData>();
-                    businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
                     if (businessDataAllList != null)
                     {
-                        foreach (Snapshot snapshot in snapshotsFilteredList)
-                        {
-                            businessDataFilteredList.AddRange(businessDataAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList());
-                        }
+                        businessDataFilteredList = businessDataAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entityRow).BTID).ToList();
                     }
 
                     break;
 
                 case SERVICE_ENDPOINTS_TYPE_SHORT:
                     // Filter snapshots that call this SEP
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
-
-                    snapshotsFilteredList = new List<Snapshot>();
-                    segmentsFilteredList = new List<Segment>();
-                    exitCallsFilteredList = new List<ExitCall>();
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-                    detectedErrorsFilteredList = new List<DetectedError>();
-
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
                     if (serviceEndpointCallsAllList != null)
                     {
                         var uniqueSnapshotIDs = serviceEndpointCallsAllList.Where(s => s.SEPID == ((EntityServiceEndpoint)entityRow).SEPID).ToList().Select(e => e.RequestID).Distinct();
@@ -13314,18 +13525,6 @@ namespace AppDynamics.Dexter
 
                 case ERRORS_TYPE_SHORT:
                     // Filter snapshots that had this error
-                    snapshotsAllList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
-                    segmentsAllList = FileIOHelper.readListFromCSVFile<Segment>(segmentsFilePath, new SegmentReportMap());
-                    serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
-                    exitCallsAllList = FileIOHelper.readListFromCSVFile<ExitCall>(exitCallsFilePath, new ExitCallReportMap());
-
-                    snapshotsFilteredList = new List<Snapshot>();
-                    segmentsFilteredList = new List<Segment>();
-                    exitCallsFilteredList = new List<ExitCall>();
-                    serviceEndpointCallsFilteredList = new List<ServiceEndpointCall>();
-                    detectedErrorsFilteredList = new List<DetectedError>();
-
-                    detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
                     if (detectedErrorsAllList != null)
                     {
                         var uniqueSnapshotIDs = detectedErrorsAllList.Where(e => e.ErrorID == ((EntityError)entityRow).ErrorID).ToList().Select(e => e.RequestID).Distinct();
@@ -13359,217 +13558,43 @@ namespace AppDynamics.Dexter
                     break;
 
                 default:
-                    // Will never hit here, because all the values
+                    // Will never hit here, because all the values are already taken care of
                     // But do nothing anyway
-                    snapshotsFilePath = String.Empty;
-                    segmentsFilePath = String.Empty;
-                    exitCallsFilePath = String.Empty;
-                    serviceEndpointCallsFilePath = String.Empty;
-                    detectedErrorsFilePath = String.Empty;
-                    businessDataFilePath = String.Empty;
-
                     break;
-            }
-
-            // Save all the filtered things
-            if (entityType != APPLICATION_TYPE_SHORT)
-            {
-                if (snapshotsFilteredList != null && snapshotsFilteredList.Count > 0)
-                {
-                    snapshotsFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<Snapshot>(snapshotsFilteredList, new SnapshotReportMap(), snapshotsFilePathFiltered);
-                    snapshotsFilePath = snapshotsFilePathFiltered;
-                }
-                else
-                {
-                    snapshotsFilePath = String.Empty;
-                }
-
-                if (segmentsFilteredList != null && segmentsFilteredList.Count > 0)
-                {
-                    segmentsFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_SEGMENTS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<Segment>(segmentsFilteredList, new SegmentReportMap(), segmentsFilePathFiltered);
-                    segmentsFilePath = segmentsFilePathFiltered;
-                }
-                else
-                {
-                    segmentsFilePath = String.Empty;
-                }
-
-                if (exitCallsFilteredList != null && exitCallsFilteredList.Count > 0)
-                {
-                    exitCallsFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<ExitCall>(exitCallsFilteredList, new ExitCallReportMap(), exitCallsFilePathFiltered);
-                    exitCallsFilePath = exitCallsFilePathFiltered;
-                }
-                else
-                {
-                    exitCallsFilePath = String.Empty;
-                }
-
-                if (serviceEndpointCallsFilteredList != null && serviceEndpointCallsFilteredList.Count > 0)
-                {
-                    serviceEndpointCallsFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilteredList, new ServiceEndpointCallReportMap(), serviceEndpointCallsFilePathFiltered);
-                    serviceEndpointCallsFilePath = serviceEndpointCallsFilePathFiltered;
-                }
-                else
-                {
-                    serviceEndpointCallsFilePath = String.Empty;
-                }
-
-                if (detectedErrorsFilteredList != null && detectedErrorsFilteredList.Count > 0)
-                {
-                    detectedErrorsFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<DetectedError>(detectedErrorsFilteredList, new DetectedErrorReportMap(), detectedErrorsFilePathFiltered);
-                    detectedErrorsFilePath = detectedErrorsFilePathFiltered;
-                }
-                else
-                {
-                    detectedErrorsFilePath = String.Empty;
-                }
-
-                if (businessDataFilteredList != null && businessDataFilteredList.Count > 0)
-                {
-                    businessDataFilePathFiltered = Path.Combine(snapshotsFolderPath, String.Format(CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILTERED_FILE_NAME, Guid.NewGuid()));
-                    FileIOHelper.writeListToCSVFile<BusinessData>(businessDataFilteredList, new BusinessDataReportMap(), businessDataFilePathFiltered);
-                    businessDataFilePath = businessDataFilePathFiltered;
-                }
-                else
-                {
-                    businessDataFilePath = String.Empty;
-                }
             }
 
             #endregion
 
             #region Snapshots sheet
 
-            if (snapshotsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (snapshotsFilteredList != null && snapshotsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetSnapshots = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS);
-                sheetSnapshots.Cells[1, 1].Value = "Table of Contents";
-                sheetSnapshots.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetSnapshots.Cells[2, 1].Value = "See Pivot";
-                sheetSnapshots.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT);
-                sheetSnapshots.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS];
 
-                // Pivot
-                ExcelWorksheet sheetSnapshotsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT);
-                sheetSnapshotsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetSnapshotsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetSnapshotsPivot.Cells[2, 1].Value = "See Table";
-                sheetSnapshotsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS);
-                sheetSnapshotsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(snapshotsFilePath, 0, sheetSnapshots, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(snapshotsFilteredList, new SnapshotReportMap()))
                 {
-                    table = sheetSnapshots.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetSnapshots.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
-                    sheetSnapshots.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheetSnapshots.Column(table.Columns["Occured"].Position + 1).AutoFit();
-                    sheetSnapshots.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
-                    sheetSnapshots.Column(table.Columns["DetailLink"].Position + 1).AutoFit();
-
-                    tableSnapshots = table;
-
-                    ExcelPivotTable pivot = sheetSnapshotsPivot.PivotTables.Add(sheetSnapshotsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_SNAPSHOTS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    range = readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
+                    if (range != null && range.Rows > 1)
+                    {
+                        tableSnapshots = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS);
+                    }
                 }
+                
             }
 
             #endregion
 
             #region Segments sheet
 
-            if (segmentsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (segmentsFilteredList != null && segmentsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetSegments = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SEGMENTS);
-                sheetSegments.Cells[1, 1].Value = "Table of Contents";
-                sheetSegments.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetSegments.Cells[2, 1].Value = "See Pivot";
-                sheetSegments.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT);
-                sheetSegments.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SEGMENTS];
 
-                // Pivot
-                ExcelWorksheet sheetSegmentsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT);
-                sheetSegmentsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetSegmentsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetSegmentsPivot.Cells[2, 1].Value = "See Table";
-                sheetSegmentsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_SEGMENTS);
-                sheetSegmentsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(segmentsFilePath, 0, sheetSegments, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(segmentsFilteredList, new SegmentReportMap()))
                 {
-                    table = sheetSegments.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SEGMENTS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetSegments.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
-                    sheetSegments.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheetSegments.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheetSegments.Column(table.Columns["ParentSegmentID"].Position + 1).Width = 15;
-                    sheetSegments.Column(table.Columns["ParentTierName"].Position + 1).Width = 20;
-                    sheetSegments.Column(table.Columns["Occured"].Position + 1).AutoFit();
-                    sheetSegments.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
-
-                    ExcelPivotTable pivot = sheetSegmentsPivot.PivotTables.Add(sheetSegmentsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_SEGMENTS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
             }
 
@@ -13577,69 +13602,14 @@ namespace AppDynamics.Dexter
 
             #region Exit Calls sheet
 
-            if (exitCallsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (exitCallsFilteredList != null && exitCallsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetExitCalls = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS);
-                sheetExitCalls.Cells[1, 1].Value = "Table of Contents";
-                sheetExitCalls.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetExitCalls.Cells[2, 1].Value = "See Pivot";
-                sheetExitCalls.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS_PIVOT);
-                sheetExitCalls.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS];
 
-                // Pivot
-                ExcelWorksheet sheetExitCallsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS_PIVOT);
-                sheetExitCallsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetExitCallsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetExitCallsPivot.Cells[2, 1].Value = "See Table";
-                sheetExitCallsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS);
-                sheetExitCallsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(exitCallsFilePath, 0, sheetExitCalls, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(exitCallsFilteredList, new ExitCallReportMap()))
                 {
-                    table = sheetExitCalls.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EXIT_CALLS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetExitCalls.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheetExitCalls.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheetExitCalls.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
-                    sheetExitCalls.Column(table.Columns["ExitType"].Position + 1).Width = 10;
-                    sheetExitCalls.Column(table.Columns["Detail"].Position + 1).Width = 20;
-                    sheetExitCalls.Column(table.Columns["Method"].Position + 1).Width = 20;
-                
-                    ExcelPivotTable pivot = sheetExitCallsPivot.PivotTables.Add(sheetExitCallsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_EXIT_CALLS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Detail"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
-                    fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
-                    fieldD.Function = DataFieldFunctions.Sum;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
             }
 
@@ -13647,32 +13617,14 @@ namespace AppDynamics.Dexter
 
             #region Service Endpoint Calls sheet
 
-            if (serviceEndpointCallsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (serviceEndpointCallsFilteredList != null && serviceEndpointCallsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetServiceEndpointCalls = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS);
-                sheetServiceEndpointCalls.Cells[1, 1].Value = "Table of Contents";
-                sheetServiceEndpointCalls.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetServiceEndpointCalls.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS];
 
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(serviceEndpointCallsFilePath, 0, sheetServiceEndpointCalls, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(serviceEndpointCallsFilteredList, new ServiceEndpointCallReportMap()))
                 {
-                    table = sheetServiceEndpointCalls.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SERVICE_ENDPOINT_CALLS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetServiceEndpointCalls.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetServiceEndpointCalls.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetServiceEndpointCalls.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetServiceEndpointCalls.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetServiceEndpointCalls.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetServiceEndpointCalls.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheetServiceEndpointCalls.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheetServiceEndpointCalls.Column(table.Columns["SepName"].Position + 1).Width = 20;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
             }
 
@@ -13680,63 +13632,14 @@ namespace AppDynamics.Dexter
 
             #region Detected Errors sheet
 
-            if (detectedErrorsFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (detectedErrorsFilteredList != null && detectedErrorsFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetDetectedErrors = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS);
-                sheetDetectedErrors.Cells[1, 1].Value = "Table of Contents";
-                sheetDetectedErrors.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetDetectedErrors.Cells[2, 1].Value = "See Pivot";
-                sheetDetectedErrors.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT);
-                sheetDetectedErrors.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS];
 
-                // Pivot
-                ExcelWorksheet sheetDetectedErrorsPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT);
-                sheetDetectedErrorsPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetDetectedErrorsPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetDetectedErrorsPivot.Cells[2, 1].Value = "See Table";
-                sheetDetectedErrorsPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS);
-                sheetDetectedErrorsPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 6);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(detectedErrorsFilePath, 0, sheetDetectedErrors, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(detectedErrorsFilteredList, new DetectedErrorReportMap()))
                 {
-                    table = sheetDetectedErrors.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_DETECTED_ERRORS);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetDetectedErrors.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheetDetectedErrors.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheetDetectedErrors.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
-                    sheetDetectedErrors.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
-
-                    ExcelPivotTable pivot = sheetDetectedErrorsPivot.PivotTables.Add(sheetDetectedErrorsPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_DETECTED_ERRORS);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ErrorMessage"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
             }
 
@@ -13744,96 +13647,15 @@ namespace AppDynamics.Dexter
 
             #region Business Data sheet
 
-            if (businessDataFilePath != String.Empty)
+            fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
+            if (businessDataFilteredList != null && businessDataFilteredList.Count > 0)
             {
-                // Detail
-                ExcelWorksheet sheetBusinessData = excelEntityDetail.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
-                sheetBusinessData.Cells[1, 1].Value = "Table of Contents";
-                sheetBusinessData.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetBusinessData.Cells[2, 1].Value = "See Pivot";
-                sheetBusinessData.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_PIVOT);
-                sheetBusinessData.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA];
 
-                // Pivot
-                ExcelWorksheet sheetBusinessDataPivot = excelEntityDetail.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_PIVOT);
-                sheetBusinessDataPivot.Cells[1, 1].Value = "Table of Contents";
-                sheetBusinessDataPivot.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheetBusinessDataPivot.Cells[2, 1].Value = "See Table";
-                sheetBusinessDataPivot.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
-                sheetBusinessDataPivot.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
-
-                fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-                range = readCSVFileIntoExcelRange(businessDataFilePath, 0, sheetBusinessData, fromRow, 1);
-                if (range != null && range.Rows > 1)
+                using (MemoryStream ms = FileIOHelper.writeListToMemoryStream(businessDataFilteredList, new BusinessDataReportMap()))
                 {
-                    table = sheetBusinessData.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_BUSINESS_DATA);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    sheetBusinessData.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheetBusinessData.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheetBusinessData.Column(table.Columns["DataName"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["DataValue"].Position + 1).Width = 20;
-                    sheetBusinessData.Column(table.Columns["DataType"].Position + 1).Width = 10;
-                    
-                    ExcelPivotTable pivot = sheetBusinessDataPivot.PivotTables.Add(sheetBusinessDataPivot.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_BUSINESS_DATA);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["DataType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["DataName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
-                    fieldD.Function = DataFieldFunctions.Count;
+                    readCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
                 }
-            }
-
-            #endregion
-
-            #region Clear out temporary files
-
-            if (snapshotsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(snapshotsFilePathFiltered);
-            }
-            if (segmentsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(segmentsFilePathFiltered);
-            }
-            if (exitCallsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(exitCallsFilePathFiltered);
-            }
-            if (serviceEndpointCallsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(serviceEndpointCallsFilePathFiltered);
-            }
-            if (detectedErrorsFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(detectedErrorsFilePathFiltered);
-            }
-            if (businessDataFilePathFiltered != String.Empty)
-            {
-                FileIOHelper.deleteFile(businessDataFilePathFiltered);
             }
 
             #endregion
@@ -13842,20 +13664,12 @@ namespace AppDynamics.Dexter
 
             #region Detail sheet with Graphs, Snapshots and Events
 
-            ExcelWorksheet sheetDetails = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_HOURLY_TIMELINE);
-            sheetDetails.Cells[1, 1].Value = "Table of Contents";
-            sheetDetails.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-            sheetDetails.Cells[2, 1].Value = "Entity Type";
-            sheetDetails.Cells[2, 2].Value = entityTypeForDisplay;
-            sheetDetails.Cells[3, 1].Value = "Entity Name";
-            sheetDetails.Cells[3, 2].Value = entityNameForDisplay;
-            sheetDetails.View.FreezePanes(REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT + 1, 6);
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_TIMELINE];
 
-            sheetDetails.Column(1).Width = 10;
-            sheetDetails.Column(2).Width = 10;
-            sheetDetails.Column(3).Width = 10;
-            sheetDetails.Column(4).Width = 12;
-            sheetDetails.Column(5).Width = 12;
+            sheet.Cells[2, 1].Value = "Entity Type";
+            sheet.Cells[2, 2].Value = entityTypeForDisplay;
+            sheet.Cells[3, 1].Value = "Entity Name";
+            sheet.Cells[3, 2].Value = entityNameForDisplay;
 
             #region Load Metric Data
 
@@ -13911,58 +13725,58 @@ namespace AppDynamics.Dexter
 
             #region Prepare Styles and Resize Columns for each of the hour ranges
 
-            var minuteHeadingtyle = sheetDetails.Workbook.Styles.CreateNamedStyle("MinuteHeadingStyle");
+            var minuteHeadingtyle = sheet.Workbook.Styles.CreateNamedStyle("MinuteHeadingStyle");
             minuteHeadingtyle.Style.Font.Size = 9;
 
-            var eventHeadingStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("EventHeadingStyle");
+            var eventHeadingStyle = sheet.Workbook.Styles.CreateNamedStyle("EventHeadingStyle");
             eventHeadingStyle.Style.Font.Size = 9;
 
-            var infoEventLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("InfoEventLinkStyle");
+            var infoEventLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("InfoEventLinkStyle");
             infoEventLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             //infoEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
             infoEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0x0, 0x70, 0xC0)); // This is sort of Color.LightBlue, but I like it better
             infoEventLinkStyle.Style.Font.Color.SetColor(Color.White);
             infoEventLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var warnEventLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("WarnEventLinkStyle");
+            var warnEventLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("WarnEventLinkStyle");
             warnEventLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             //warnEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.Orange);
             warnEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0xFF, 0xC0, 0x0)); // This is sort of Color.Orange, but I like it better
             warnEventLinkStyle.Style.Font.Color.SetColor(Color.Black);
             warnEventLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var errorEventLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("ErrorEventLinkStyle");
+            var errorEventLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("ErrorEventLinkStyle");
             errorEventLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             //errorEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.IndianRed);
             errorEventLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0xFF, 0x69, 0x69));
             errorEventLinkStyle.Style.Font.Color.SetColor(Color.Black);
             errorEventLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var normalSnapshotLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("NormalSnapshotLinkStyle");
+            var normalSnapshotLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("NormalSnapshotLinkStyle");
             normalSnapshotLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             normalSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0x00, 0x99, 0x0));
             normalSnapshotLinkStyle.Style.Font.Color.SetColor(Color.White);
             normalSnapshotLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var slowSnapshotLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("SlowSnapshotLinkStyle");
+            var slowSnapshotLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("SlowSnapshotLinkStyle");
             slowSnapshotLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             slowSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.Yellow); 
             slowSnapshotLinkStyle.Style.Font.Color.SetColor(Color.Black);
             slowSnapshotLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var verySlowSnapshotLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("VerySlowSnapshotLinkStyle");
+            var verySlowSnapshotLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("VerySlowSnapshotLinkStyle");
             verySlowSnapshotLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             verySlowSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0xFF, 0xC0, 0x0)); // This is sort of Color.Orange, but I like it better
             verySlowSnapshotLinkStyle.Style.Font.Color.SetColor(Color.Black);
             verySlowSnapshotLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var stallSnapshotLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("StallSnapshotLinkStyle");
+            var stallSnapshotLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("StallSnapshotLinkStyle");
             stallSnapshotLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             stallSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0x99, 0x33, 0xFF)); // This is sort of Color.Purple, but I like it better
             stallSnapshotLinkStyle.Style.Font.Color.SetColor(Color.White);
             stallSnapshotLinkStyle.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
 
-            var errorSnapshotLinkStyle = sheetDetails.Workbook.Styles.CreateNamedStyle("ErrorSnapshotLinkStyle");
+            var errorSnapshotLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("ErrorSnapshotLinkStyle");
             errorSnapshotLinkStyle.Style.Fill.PatternType = ExcelFillStyle.Solid;
             //errorSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.IndianRed);
             errorSnapshotLinkStyle.Style.Fill.BackgroundColor.SetColor(Color.FromArgb(0xFF, 0x69, 0x69));
@@ -13986,22 +13800,22 @@ namespace AppDynamics.Dexter
                 int minuteNumber = 0;
                 for (int columnIndex = columnIndexTimeRangeStart; columnIndex < columnIndexTimeRangeEnd; columnIndex++)
                 {
-                    sheetDetails.Column(columnIndex).Width = 2.5;
-                    sheetDetails.Cells[REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT, columnIndex].Value = minuteNumber;
-                    sheetDetails.Cells[REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT, columnIndex].StyleName = "MinuteHeadingStyle";
+                    sheet.Column(columnIndex).Width = 2.5;
+                    sheet.Cells[REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT, columnIndex].Value = minuteNumber;
+                    sheet.Cells[REPORT_ENTITY_DETAILS_GRAPHS_SHEET_START_TABLE_AT, columnIndex].StyleName = "MinuteHeadingStyle";
 
-                    sheetDetails.Column(columnIndex).OutlineLevel = 1;
+                    sheet.Column(columnIndex).OutlineLevel = 1;
                     minuteNumber++;
                 }
 
-                sheetDetails.Cells[1, columnIndexTimeRangeStart + 40].Value = "From";
-                sheetDetails.Cells[1, columnIndexTimeRangeStart + 50].Value = "To";
-                sheetDetails.Cells[2, columnIndexTimeRangeStart + 37].Value = "Local";
-                sheetDetails.Cells[2, columnIndexTimeRangeStart + 40].Value = jobTimeRange.From.ToLocalTime().ToString("G");
-                sheetDetails.Cells[2, columnIndexTimeRangeStart + 50].Value = jobTimeRange.To.ToLocalTime().ToString("G");
-                sheetDetails.Cells[3, columnIndexTimeRangeStart + 37].Value = "UTC";
-                sheetDetails.Cells[3, columnIndexTimeRangeStart + 40].Value = jobTimeRange.From.ToString("G");
-                sheetDetails.Cells[3, columnIndexTimeRangeStart + 50].Value = jobTimeRange.To.ToString("G");
+                sheet.Cells[1, columnIndexTimeRangeStart + 40].Value = "From";
+                sheet.Cells[1, columnIndexTimeRangeStart + 50].Value = "To";
+                sheet.Cells[2, columnIndexTimeRangeStart + 37].Value = "Local";
+                sheet.Cells[2, columnIndexTimeRangeStart + 40].Value = jobTimeRange.From.ToLocalTime().ToString("G");
+                sheet.Cells[2, columnIndexTimeRangeStart + 50].Value = jobTimeRange.To.ToLocalTime().ToString("G");
+                sheet.Cells[3, columnIndexTimeRangeStart + 37].Value = "UTC";
+                sheet.Cells[3, columnIndexTimeRangeStart + 40].Value = jobTimeRange.From.ToString("G");
+                sheet.Cells[3, columnIndexTimeRangeStart + 50].Value = jobTimeRange.To.ToString("G");
             }
 
             #endregion
@@ -14020,7 +13834,7 @@ namespace AppDynamics.Dexter
 
                 int columnIndexTimeRangeStart = columnOffsetBegin + i * columnOffsetBetweenRanges + i * 60;
 
-                ExcelChart chart = sheetDetails.Drawings.AddChart(String.Format(REPORT_ENTITY_DETAILS_GRAPH, entityType, jobTimeRange.From), eChartType.XYScatterLinesNoMarkers);
+                ExcelChart chart = sheet.Drawings.AddChart(String.Format(REPORT_ENTITY_DETAILS_GRAPH, entityType, jobTimeRange.From), eChartType.XYScatterLinesNoMarkers);
                 chart.SetPosition(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 0, columnIndexTimeRangeStart - 1, 0);
                 chart.SetSize(1020, 200);
                 chart.Style = eChartStyle.Style17;
@@ -14180,11 +13994,11 @@ namespace AppDynamics.Dexter
                 // At this point we have the events partitioned just the way we want them
                 // Each entry is guaranteed to have at least one item
 
-                sheetDetails.Cells[fromRow, 1].Value = "Type";
-                sheetDetails.Cells[fromRow, 2].Value = "SubType";
-                sheetDetails.Cells[fromRow, 3].Value = "Tier";
-                sheetDetails.Cells[fromRow, 4].Value = "BT";
-                sheetDetails.Cells[fromRow, 5].Value = "Trigger";
+                sheet.Cells[fromRow, 1].Value = "Type";
+                sheet.Cells[fromRow, 2].Value = "SubType";
+                sheet.Cells[fromRow, 3].Value = "Tier";
+                sheet.Cells[fromRow, 4].Value = "BT";
+                sheet.Cells[fromRow, 5].Value = "Trigger";
 
                 fromRow++;
                 for (int i = 0; i < eventsAllGrouped.Count; i++)
@@ -14208,7 +14022,7 @@ namespace AppDynamics.Dexter
                             int rowToOutputThisEventTo = fromRow;
                             while (true)
                             {
-                                if (sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Value == null && sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula == String.Empty)
+                                if (sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Value == null && sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula == String.Empty)
                                 {
                                     break;
                                 }
@@ -14228,32 +14042,32 @@ namespace AppDynamics.Dexter
                             switch (interestingEvent.Severity)
                             {
                                 case "INFO":
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""I"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "InfoEventLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""I"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "InfoEventLinkStyle";
                                     break;
                                 case "WARN":
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""W"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "WarnEventLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""W"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "WarnEventLinkStyle";
                                     break;
                                 case "ERROR":
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""E"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorEventLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""E"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorEventLinkStyle";
                                     break;
                                 default:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""?"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorEventLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""?"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS, getRangeEventDataTableThisEvent(tableEvents, rowIndexOfThisEvent));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorEventLinkStyle";
                                     break;
                             }
 
                             // Add tooltip
-                            ExcelComment comment = sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].AddComment(interestingEvent.Summary, interestingEvent.EventID.ToString());
+                            ExcelComment comment = sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].AddComment(interestingEvent.Summary, interestingEvent.EventID.ToString());
                             comment.AutoFit = true;
 
                             // Is there more than one event in this time range
                             if (rowToOutputThisEventTo > fromRow)
                             {
                                 // Yes, then indicate that it has a few by underline
-                                sheetDetails.Cells[fromRow, columnInThisTimeRange].Style.Font.UnderLine = true;
+                                sheet.Cells[fromRow, columnInThisTimeRange].Style.Font.UnderLine = true;
                             }
                         }
                     }
@@ -14262,23 +14076,23 @@ namespace AppDynamics.Dexter
                     Event firstEvent = eventsAllGrouped[i][0];
                     for (int j = fromRow; j <= toRow; j++)
                     {
-                        sheetDetails.Cells[j, 1].Value = firstEvent.Type;
-                        if (firstEvent.SubType != String.Empty) { sheetDetails.Cells[j, 2].Value = firstEvent.SubType; }
-                        if (firstEvent.TierName != String.Empty) { sheetDetails.Cells[j, 3].Value = firstEvent.TierName; }
-                        if (firstEvent.BTName != String.Empty) { sheetDetails.Cells[j, 4].Value = firstEvent.BTName; }
-                        if (firstEvent.TriggeredEntityName != String.Empty) { sheetDetails.Cells[j, 5].Value = firstEvent.TriggeredEntityName; }
-                        sheetDetails.Cells[j, 1].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 2].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 3].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 4].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 5].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 1].Value = firstEvent.Type;
+                        if (firstEvent.SubType != String.Empty) { sheet.Cells[j, 2].Value = firstEvent.SubType; }
+                        if (firstEvent.TierName != String.Empty) { sheet.Cells[j, 3].Value = firstEvent.TierName; }
+                        if (firstEvent.BTName != String.Empty) { sheet.Cells[j, 4].Value = firstEvent.BTName; }
+                        if (firstEvent.TriggeredEntityName != String.Empty) { sheet.Cells[j, 5].Value = firstEvent.TriggeredEntityName; }
+                        sheet.Cells[j, 1].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 2].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 3].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 4].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 5].StyleName = "EventHeadingStyle";
                         if (j == fromRow)
                         {
-                            sheetDetails.Row(j).OutlineLevel = 1;
+                            sheet.Row(j).OutlineLevel = 1;
                         }
                         else if (j > fromRow)
                         {
-                            sheetDetails.Row(j).OutlineLevel = 2;
+                            sheet.Row(j).OutlineLevel = 2;
                         }
                     }
 
@@ -14291,8 +14105,8 @@ namespace AppDynamics.Dexter
             if (rowTableStart < rowTableEnd)
             {
                 // Insert the table
-                range = sheetDetails.Cells[rowTableStart, 1, rowTableEnd, 5];
-                table = sheetDetails.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EVENTS_IN_TIMELINE);
+                range = sheet.Cells[rowTableStart, 1, rowTableEnd, 5];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EVENTS_IN_TIMELINE);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.None;
                 //table.TableStyle = TableStyles.Medium2;
@@ -14332,11 +14146,11 @@ namespace AppDynamics.Dexter
                 // At this point we have the snapshots partitioned just the way we want them
                 // Each entry is guaranteed to have at least one item
 
-                sheetDetails.Cells[fromRow, 1].Value = "Tier";
-                sheetDetails.Cells[fromRow, 2].Value = "BT";
-                sheetDetails.Cells[fromRow, 3].Value = " ";
-                sheetDetails.Cells[fromRow, 4].Value = "  ";
-                sheetDetails.Cells[fromRow, 5].Value = "Experience";
+                sheet.Cells[fromRow, 1].Value = "Tier";
+                sheet.Cells[fromRow, 2].Value = "BT";
+                sheet.Cells[fromRow, 3].Value = " ";
+                sheet.Cells[fromRow, 4].Value = "  ";
+                sheet.Cells[fromRow, 5].Value = "Experience";
 
                 fromRow++;
                 for (int i = 0; i < snapshotsAllGrouped.Count; i++)
@@ -14360,7 +14174,7 @@ namespace AppDynamics.Dexter
                             int rowToOutputThisEventTo = fromRow;
                             while (true)
                             {
-                                if (sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Value == null && sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula == String.Empty)
+                                if (sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Value == null && sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula == String.Empty)
                                 {
                                     break;
                                 }
@@ -14379,31 +14193,31 @@ namespace AppDynamics.Dexter
                             switch (interestingSnapshot.UserExperience)
                             {
                                 case SNAPSHOT_UX_NORMAL:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""N"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "NormalSnapshotLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""N"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "NormalSnapshotLinkStyle";
                                     break;
                                 case SNAPSHOT_UX_SLOW:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""S"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "SlowSnapshotLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""S"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "SlowSnapshotLinkStyle";
                                     break;
                                 case SNAPSHOT_UX_VERY_SLOW:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""V"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "VerySlowSnapshotLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""V"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "VerySlowSnapshotLinkStyle";
                                     break;
                                 case SNAPSHOT_UX_STALL:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""X"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "StallSnapshotLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""X"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "StallSnapshotLinkStyle";
                                     break;
                                 case SNAPSHOT_UX_ERROR:
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""E"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
-                                    sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorSnapshotLinkStyle";
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].Formula = String.Format(@"=HYPERLINK(""#'{0}'!{1}"", ""E"")", REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS, getRangeEventDataTableThisEvent(tableSnapshots, rowIndexOfThisSnapshot));
+                                    sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].StyleName = "ErrorSnapshotLinkStyle";
                                     break;
                                 default:
                                     break;
                             }
 
                             // Add tooltip
-                            ExcelComment comment = sheetDetails.Cells[rowToOutputThisEventTo, columnInThisTimeRange].AddComment(
+                            ExcelComment comment = sheet.Cells[rowToOutputThisEventTo, columnInThisTimeRange].AddComment(
                                 String.Format("Duration: {0}\nURL: {1}\nSegments: {2}\nCall Graph: {3}\nCall Chain:\n{4}",
                                     interestingSnapshot.Duration,
                                     interestingSnapshot.URL,
@@ -14417,7 +14231,7 @@ namespace AppDynamics.Dexter
                             if (rowToOutputThisEventTo > fromRow)
                             {
                                 // Yes, then indicate that it has a few by underline
-                                sheetDetails.Cells[fromRow, columnInThisTimeRange].Style.Font.UnderLine = true;
+                                sheet.Cells[fromRow, columnInThisTimeRange].Style.Font.UnderLine = true;
                             }
                         }
 
@@ -14427,19 +14241,19 @@ namespace AppDynamics.Dexter
                     Snapshot firstSnapshot = snapshotsAllGrouped[i][0];
                     for (int j = fromRow; j <= toRow; j++)
                     {
-                        sheetDetails.Cells[j, 1].Value = firstSnapshot.TierName;
-                        sheetDetails.Cells[j, 2].Value = firstSnapshot.BTName;
-                        sheetDetails.Cells[j, 5].Value = firstSnapshot.UserExperience;
-                        sheetDetails.Cells[j, 1].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 2].StyleName = "EventHeadingStyle";
-                        sheetDetails.Cells[j, 5].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 1].Value = firstSnapshot.TierName;
+                        sheet.Cells[j, 2].Value = firstSnapshot.BTName;
+                        sheet.Cells[j, 5].Value = firstSnapshot.UserExperience;
+                        sheet.Cells[j, 1].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 2].StyleName = "EventHeadingStyle";
+                        sheet.Cells[j, 5].StyleName = "EventHeadingStyle";
                         if (j == fromRow)
                         {
-                            sheetDetails.Row(j).OutlineLevel = 1;
+                            sheet.Row(j).OutlineLevel = 1;
                         }
                         else if (j > fromRow)
                         {
-                            sheetDetails.Row(j).OutlineLevel = 2;
+                            sheet.Row(j).OutlineLevel = 2;
                         }
                     }
 
@@ -14452,8 +14266,8 @@ namespace AppDynamics.Dexter
             if (rowTableStart < rowTableEnd)
             {
                 // Insert the table
-                range = sheetDetails.Cells[rowTableStart, 1, rowTableEnd, 5];
-                table = sheetDetails.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS_IN_TIMELINE);
+                range = sheet.Cells[rowTableStart, 1, rowTableEnd, 5];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS_IN_TIMELINE);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.None;
                 //table.TableStyle = TableStyles.Medium2;
@@ -14461,23 +14275,502 @@ namespace AppDynamics.Dexter
                 table.ShowTotal = false;
             }
 
-            sheetDetails.OutLineSummaryBelow = false;
-            sheetDetails.OutLineSummaryRight = true;
+            sheet.OutLineSummaryBelow = false;
+            sheet.OutLineSummaryRight = true;
+
             #endregion
 
             #endregion
         }
 
-        private static bool finalizeAndSaveIndividualEntityMetricReport(ExcelPackage excelEntityDetail, string reportFilePath)
+        private static bool finalizeAndSaveIndividualEntityMetricReport(ExcelPackage excelEntityDetail, string entityType, string reportFilePath)
         {
             logger.Info("Finalize Entity Metrics Report File {0}", reportFilePath);
 
-            excelEntityDetail.Workbook.Worksheets.MoveAfter(REPORT_ENTITY_DETAILS_SHEET_HOURLY_TIMELINE, REPORT_ENTITY_DETAILS_SHEET_SUMMARY);
+            ExcelWorksheet sheet;
+            ExcelRangeBase range;
+            ExcelTable table;
+
+            #region Summary sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SUMMARY];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_ENTITY_HOURLY];
+                if (table != null)
+                {
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+                }
+                table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_ENTITY_FULL];
+                if (table != null)
+                {
+                    table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_ENTITY_FULL];
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    adjustColumnsOfEntityRowTableInMetricReport(entityType, sheet, table);
+
+                    // Remove DetailLink column because this document would be pointing to relative location from the overall metric reports, and the link would be invalid
+                    sheet.DeleteColumn(table.Columns["DetailLink"].Position + 1);
+                }
+            }
+
+            #endregion
+
+            #region Timeline sheet
+
+            // Move the last-created Timeline sheet to the earlier location
+            excelEntityDetail.Workbook.Worksheets.MoveAfter(REPORT_ENTITY_DETAILS_SHEET_TIMELINE, REPORT_ENTITY_DETAILS_SHEET_SUMMARY);
+
+            sheet.Column(1).Width = 12;
+            sheet.Column(2).Width = 12;
+            sheet.Column(3).Width = 12;
+            sheet.Column(4).Width = 12;
+            sheet.Column(5).Width = 12;
+
+            #endregion
+
+            #region Activity Flow sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_ACTIVITY_GRID);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["CallType"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["FromName"].Position + 1).Width = 35;
+                sheet.Column(table.Columns["ToName"].Position + 1).Width = 35;
+                sheet.Column(table.Columns["From"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["To"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["FromUtc"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["ToUtc"].Position + 1).AutoFit();
+            }
+
+            #endregion
+
+            #region Events sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_EVENTS];
+                if (table != null)
+                {
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EventID"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["Occured"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["Summary"].Position + 1).Width = 35;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["SubType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TriggeredEntityType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TriggeredEntityName"].Position + 1).Width = 20;
+
+                    sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT];
+
+                    range = (ExcelRangeBase)table.Address;
+
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_EVENTS);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["SubType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["NodeName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+            }
+
+            #endregion
+
+            #region HR Violations sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_HEALTH_RULE_VIOLATION_EVENTS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["EventID"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["From"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["FromUtc"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["To"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["ToUtc"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["EntityName"].Position + 1).Width = 20;
+
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT];
+
+                ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS);
+                ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["Status"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["HealthRuleName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["EntityType"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.ColumnFields.Add(pivot.Fields["EntityName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
+                fieldC.Compact = false;
+                fieldC.Outline = false;
+                ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
+                fieldD.Function = DataFieldFunctions.Count;
+            }
+
+            #endregion
+
+            #region Snapshots sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS];
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS];
+                if (table != null)
+                {
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occured"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["DetailLink"].Position + 1).AutoFit();
+
+                    sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT];
+
+                    range = (ExcelRangeBase)table.Address;
+
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_SNAPSHOTS);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+
+            }
+
+            #endregion
+
+            #region Segments sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SEGMENTS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SEGMENTS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["ParentSegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["ParentTierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["Occured"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
+
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT];
+
+                ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_SEGMENTS);
+                ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
+                fieldC.Compact = false;
+                fieldC.Outline = false;
+                ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
+                fieldD.Function = DataFieldFunctions.Count;
+            }
+
+            #endregion
+
+            #region Exit Calls sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EXIT_CALLS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
+
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS_PIVOT];
+
+                ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_EXIT_CALLS);
+                ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["Detail"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
+                fieldD.Function = DataFieldFunctions.Count;
+                fieldD.Name = "Number of Items";
+                fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
+                fieldD.Function = DataFieldFunctions.Average;
+                fieldD.Name = "Average Duration";
+                fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
+                fieldD.Function = DataFieldFunctions.Sum;
+                fieldD.Name = "Total Duration";
+            }
+
+            #endregion
+
+            #region Service Endpoint Calls sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SERVICE_ENDPOINT_CALLS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SepName"].Position + 1).Width = 20;
+            }
+
+            #endregion
+
+            #region Errors sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_DETECTED_ERRORS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
+
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS_PIVOT];
+
+                ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_DETECTED_ERRORS);
+                ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ErrorMessage"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
+                fieldD.Function = DataFieldFunctions.Count;
+            }
+
+            #endregion
+
+            #region Business Data sheet
+
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA];
+
+            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            {
+                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_BUSINESS_DATA);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;
+
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA_PIVOT];
+
+                ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_BUSINESS_DATA);
+                ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["DataType"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                fieldR = pivot.RowFields.Add(pivot.Fields["DataName"]);
+                fieldR.Compact = false;
+                fieldR.Outline = false;
+                ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
+                fieldD.Function = DataFieldFunctions.Count;
+            }
+
+            #endregion
 
             #region TOC sheet
 
             // TOC sheet again
-            ExcelWorksheet sheet = excelEntityDetail.Workbook.Worksheets[REPORT_SHEET_TOC];
+            sheet = excelEntityDetail.Workbook.Worksheets[REPORT_SHEET_TOC];
             sheet.Cells[1, 1].Value = "Sheet Name";
             sheet.Cells[1, 2].Value = "# Tables";
             sheet.Cells[1, 3].Value = "Link";
@@ -14492,8 +14785,8 @@ namespace AppDynamics.Dexter
                     sheet.Cells[rowNum, 2].Value =  s.Tables[0].Address.Rows - 1;
                 }
             }
-            ExcelRangeBase range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-            ExcelTable table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_TOC);
+            range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+            table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_TOC);
             table.ShowHeader = true;
             table.TableStyle = TableStyles.Medium2;
             table.ShowFilter = true;
@@ -14761,6 +15054,26 @@ namespace AppDynamics.Dexter
 
         #region Helper functions for reading CSV into Excel worksheet
 
+        private static ExcelRangeBase readCSVFileIntoExcelRange(MemoryStream csvStream, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
+        {
+            logger.Trace("Reading CSV file from memory stream to Excel Worksheet {0} at (row {1}, column {2})", sheet.Name, startRow, startColumn);
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(csvStream))
+                {
+                    return readCSVIntoExcelRage(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Unable to read CSV from memory stream");
+                logger.Error(ex);
+            }
+
+            return null;
+        }
+
         private static ExcelRangeBase readCSVFileIntoExcelRange(string csvFilePath, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
         {
             logger.Trace("Reading CSV file {0} to Excel Worksheet {1} at (row {2}, column {3})", csvFilePath, sheet.Name, startRow, startColumn);
@@ -14774,119 +15087,10 @@ namespace AppDynamics.Dexter
 
             try
             {
-                int csvRowIndex = -1;
-                int numColumnsInCSV = 0;
-                string[] headerRowValues = null;
-
                 using (StreamReader sr = File.OpenText(csvFilePath))
                 {
-                    CsvParser csvParser = new CsvParser(sr);
-
-                    // Read all rows
-                    while (true)
-                    {
-                        string[] rowValues = csvParser.Read();
-                        if (rowValues == null)
-                        {
-                            break;
-                        }
-                        csvRowIndex++;
-
-                        // Grab the headers
-                        if (csvRowIndex == 0)
-                        {
-                            headerRowValues = rowValues;
-                            numColumnsInCSV = headerRowValues.Length;
-                        }
-
-                        // Should we skip?
-                        if (csvRowIndex < skipLinesFromBeginning)
-                        {
-                            // Skip this line
-                            continue;
-                        }
-
-                        // Read row one field at a time
-                        int csvFieldIndex = 0;
-                        foreach (string fieldValue in rowValues)
-                        {
-                            ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
-                            if (fieldValue.StartsWith("=") == true)
-                            {
-                                cell.Formula = fieldValue;
-
-                                if (fieldValue.StartsWith("=HYPERLINK") == true)
-                                {
-                                    cell.StyleName = "HyperLinkStyle";
-                                }
-                            }
-                            else if (fieldValue.StartsWith("http://") == true || fieldValue.StartsWith("https://") == true)
-                            {
-                                // If it is in the column ending in Link, I want it to be hyperlinked and use the column name
-                                if (headerRowValues[csvFieldIndex] == "Link")
-                                {
-                                    // This is the ART summary table, those links are OK, there are not that many of them
-                                    cell.Hyperlink = new Uri(fieldValue);
-                                    cell.Value = "<Go>";
-                                    cell.StyleName = "HyperLinkStyle";
-                                }
-                                // Temporarily commenting out until I figure the large number of rows leading to hyperlink corruption thing
-                                //else if (headerRowValues[csvFieldIndex].EndsWith("Link"))
-                                //{
-                                //    cell.Hyperlink = new Uri(fieldValue);
-                                //    string linkName = String.Format("<{0}>", headerRowValues[csvFieldIndex].Replace("Link", ""));
-                                //    if (linkName == "<>") linkName = "<Go>";
-                                //    cell.Value = linkName;
-                                //    cell.StyleName = "HyperLinkStyle";
-                                //}
-                                else
-                                {
-                                    // Otherwise dump it as text
-                                    cell.Value = fieldValue;
-                                }
-                            }
-                            else
-                            {
-                                Double numValue;
-                                bool boolValue;
-                                DateTime dateValue;
-
-                                // Try some casting
-                                if (Double.TryParse(fieldValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out numValue) == true)
-                                {
-                                    // Number
-                                    cell.Value = numValue;
-                                }
-                                else if (Boolean.TryParse(fieldValue, out boolValue) == true)
-                                {
-                                    // Boolean
-                                    cell.Value = boolValue;
-                                }
-                                else if (DateTime.TryParse(fieldValue, out dateValue))
-                                {
-                                    // DateTime
-                                    cell.Value = dateValue;
-                                    if (headerRowValues[csvFieldIndex] == "EventTime")
-                                    {
-                                        cell.Style.Numberformat.Format = "hh:mm";
-                                    }
-                                    else
-                                    {
-                                        cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
-                                    }
-                                }
-                                else
-                                {
-                                    // Something else, dump as is
-                                    cell.Value = fieldValue;
-                                }
-                            }
-                            csvFieldIndex++;
-                        }
-                    }
+                    return readCSVIntoExcelRage(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
                 }
-
-                return sheet.Cells[startRow, startColumn, startRow + csvRowIndex, startColumn + numColumnsInCSV - 1];
             }
             catch (Exception ex)
             {
@@ -14895,6 +15099,120 @@ namespace AppDynamics.Dexter
             }
 
             return null;
+        }
+
+        private static ExcelRangeBase readCSVIntoExcelRage(StreamReader sr, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
+        {
+            int csvRowIndex = -1;
+            int numColumnsInCSV = 0;
+            string[] headerRowValues = null;
+
+            CsvParser csvParser = new CsvParser(sr);
+
+            // Read all rows
+            while (true)
+            {
+                string[] rowValues = csvParser.Read();
+                if (rowValues == null)
+                {
+                    break;
+                }
+                csvRowIndex++;
+
+                // Grab the headers
+                if (csvRowIndex == 0)
+                {
+                    headerRowValues = rowValues;
+                    numColumnsInCSV = headerRowValues.Length;
+                }
+
+                // Should we skip?
+                if (csvRowIndex < skipLinesFromBeginning)
+                {
+                    // Skip this line
+                    continue;
+                }
+
+                // Read row one field at a time
+                int csvFieldIndex = 0;
+                foreach (string fieldValue in rowValues)
+                {
+                    ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
+                    if (fieldValue.StartsWith("=") == true)
+                    {
+                        cell.Formula = fieldValue;
+
+                        if (fieldValue.StartsWith("=HYPERLINK") == true)
+                        {
+                            cell.StyleName = "HyperLinkStyle";
+                        }
+                    }
+                    else if (fieldValue.StartsWith("http://") == true || fieldValue.StartsWith("https://") == true)
+                    {
+                        // If it is in the column ending in Link, I want it to be hyperlinked and use the column name
+                        if (headerRowValues[csvFieldIndex] == "Link")
+                        {
+                            // This is the ART summary table, those links are OK, there are not that many of them
+                            cell.Hyperlink = new Uri(fieldValue);
+                            cell.Value = "<Go>";
+                            cell.StyleName = "HyperLinkStyle";
+                        }
+                        // Temporarily commenting out until I figure the large number of rows leading to hyperlink corruption thing
+                        //else if (headerRowValues[csvFieldIndex].EndsWith("Link"))
+                        //{
+                        //    cell.Hyperlink = new Uri(fieldValue);
+                        //    string linkName = String.Format("<{0}>", headerRowValues[csvFieldIndex].Replace("Link", ""));
+                        //    if (linkName == "<>") linkName = "<Go>";
+                        //    cell.Value = linkName;
+                        //    cell.StyleName = "HyperLinkStyle";
+                        //}
+                        else
+                        {
+                            // Otherwise dump it as text
+                            cell.Value = fieldValue;
+                        }
+                    }
+                    else
+                    {
+                        Double numValue;
+                        bool boolValue;
+                        DateTime dateValue;
+
+                        // Try some casting
+                        if (Double.TryParse(fieldValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out numValue) == true)
+                        {
+                            // Number
+                            cell.Value = numValue;
+                        }
+                        else if (Boolean.TryParse(fieldValue, out boolValue) == true)
+                        {
+                            // Boolean
+                            cell.Value = boolValue;
+                        }
+                        else if (DateTime.TryParse(fieldValue, out dateValue))
+                        {
+                            // DateTime
+                            cell.Value = dateValue;
+                            if (headerRowValues[csvFieldIndex] == "EventTime")
+                            {
+                                cell.Style.Numberformat.Format = "hh:mm";
+                            }
+                            else
+                            {
+                                cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
+                            }
+                        }
+                        else
+                        {
+                            // Something else, dump as is
+                            cell.Value = fieldValue;
+                        }
+                    }
+                    csvFieldIndex++;
+                }
+            }
+
+            return sheet.Cells[startRow, startColumn, startRow + csvRowIndex, startColumn + numColumnsInCSV - 1];
         }
 
         #endregion

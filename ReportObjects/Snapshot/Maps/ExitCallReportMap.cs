@@ -17,6 +17,9 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ToEntityName).Index(i); i++;
             Map(m => m.ToEntityType).Index(i); i++;
 
+            Map(m => m.Occured).Index(i); i++;
+            Map(m => m.OccuredUtc).Index(i); i++;
+
             Map(m => m.Duration).Index(i); i++;
             Map(m => m.ExitType).Index(i); i++;
             Map(m => m.Detail).Index(i); i++;

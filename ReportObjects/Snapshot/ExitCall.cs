@@ -28,6 +28,9 @@ namespace AppDynamics.Dexter.DataObjects
         public string ToEntityName { get; set; }
         public string ToEntityType { get; set; }
 
+        public DateTime Occured { get; set; }
+        public DateTime OccuredUtc { get; set; }
+
         public string RequestID { get; set; }
         public long SegmentID { get; set; }
 

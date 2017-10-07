@@ -380,6 +380,34 @@ namespace AppDynamics.Dexter
             return false;
         }
 
+        public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, CsvClassMap<T> classMap)
+        {
+            try
+            {
+                logger.Trace("Writing list with {0} elements containing type {1} to memory stream", listToWrite.Count, typeof(T));
+
+                MemoryStream ms = new MemoryStream(1024 * listToWrite.Count);
+                StreamWriter sw = new StreamWriter(ms);
+                CsvWriter csvWriter = new CsvWriter(sw);
+                csvWriter.Configuration.RegisterClassMap(classMap);
+                csvWriter.WriteRecords(listToWrite);
+
+                sw.Flush();
+
+                // Rewind the stream
+                ms.Position = 0;
+
+                return ms;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Unable to write CSV to memory stream");
+                logger.Error(ex);
+            }
+
+            return null;
+        }
+
         public static List<T> readListFromCSVFile<T>(string csvFilePath, CsvClassMap<T> classMap)
         {
             try

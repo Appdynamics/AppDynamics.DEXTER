@@ -49,7 +49,7 @@ namespace AppDynamics.Dexter
             httpClient.Timeout = new TimeSpan(0, 3, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(string.Format("{0}:{1}", this.UserName, this.Password))));
-            httpClient.DefaultRequestHeaders.Add("x-requested-by", String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version));
+            httpClient.DefaultRequestHeaders.Add("User-Agent", String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version));
 
             // If customer controller certificates are not in trusted store, let's not fail
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
