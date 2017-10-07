@@ -414,11 +414,11 @@ namespace AppDynamics.Dexter
 
         #region Metric retrieval
 
-        public string GetMetricData(string applicationName, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
+        public string GetMetricData(string applicationNameOrID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
         {
             return this.apiGET(
                 String.Format("controller/rest/applications/{0}/metric-data?metric-path={1}&time-range-type=BETWEEN_TIMES&start-time={2}&end-time={3}&rollup={4}&output=JSON",
-                    applicationName,
+                    applicationNameOrID,
                     WebUtility.UrlEncode(metricPath),
                     startTimeInUnixEpochFormat,
                     endTimeInUnixEpochFormat,

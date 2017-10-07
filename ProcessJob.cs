@@ -420,8 +420,8 @@ namespace AppDynamics.Dexter
         private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS = "4.Events";
         private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT = "4.Events.Type";
 
-        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR = "5.HR Violations";
-        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR_PIVOT = "5.HR Violations.Type";
+        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS = "5.HR Violations";
+        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "5.HR Violations.Type";
 
         private const string REPORT_DETECTED_EVENTS_TABLE_CONTROLLERS = "t_Controllers";
 
@@ -451,7 +451,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_PIVOT = "8.Events.Type";
         // Health rule 
         private const string REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS = "9.HR Violations";
-        private const string REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT = "9.HR Violations.Type";
+        private const string REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "9.HR Violations.Type";
         // Snapshots and segments
         private const string REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS = "10.Snapshots";
         private const string REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT = "10.Snapshots.Type";
@@ -6465,19 +6465,19 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS);
                 sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + 2, 8);
 
-                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR);
+                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Pivot";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR_PIVOT);
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT);
                 sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
-                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR_PIVOT);
+                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR);
-                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + 2, 9);
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS);
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
 
                 #endregion
 
@@ -6579,7 +6579,7 @@ namespace AppDynamics.Dexter
 
                         eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
 
-                        sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR];
+                        sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                         {
                             fromRow = REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT;
@@ -6694,7 +6694,7 @@ namespace AppDynamics.Dexter
                 #region Health Rule Violation Events
 
                 // Make table
-                sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR];
+                sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS];
                 loggerConsole.Info("Health Rule Events Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6715,7 +6715,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EntityName"].Position + 1).Width = 20;
         
-                    sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_HR_PIVOT];
+                    sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
@@ -6732,7 +6732,7 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["EntityType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.ColumnFields.Add(pivot.Fields["EntityName"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["EntityName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
@@ -12579,15 +12579,15 @@ namespace AppDynamics.Dexter
             sheet.Cells[1, 1].Value = "Table of Contents";
             sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
             sheet.Cells[2, 1].Value = "See Pivot";
-            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT);
+            sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT);
             sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
-            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT);
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT);
             sheet.Cells[1, 1].Value = "Table of Contents";
             sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
             sheet.Cells[2, 1].Value = "See Table";
             sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS);
-            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 5);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 7);
 
             sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS);
             sheet.Cells[1, 1].Value = "Table of Contents";
@@ -14407,9 +14407,6 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["SubType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Severity"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -14452,7 +14449,7 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["EntityName"].Position + 1).Width = 20;
 
-                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS_HEALTH_RULE_VIOLATIONS_PIVOT];
+                sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT];
 
                 ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_ENTITY_DETAILS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS);
                 ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
@@ -14470,7 +14467,7 @@ namespace AppDynamics.Dexter
                 fieldR = pivot.RowFields.Add(pivot.Fields["EntityType"]);
                 fieldR.Compact = false;
                 fieldR.Outline = false;
-                fieldR = pivot.ColumnFields.Add(pivot.Fields["EntityName"]);
+                fieldR = pivot.RowFields.Add(pivot.Fields["EntityName"]);
                 fieldR.Compact = false;
                 fieldR.Outline = false;
                 ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
