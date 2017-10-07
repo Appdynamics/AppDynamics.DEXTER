@@ -30,7 +30,7 @@ Here is an example of "Entity Timeline View" for a fairly busy Application throu
 
 And here is an hourly report of the Backend (Oracle database), filtered to only Slow and Very Slow transactions. Note the higher than usual ART from minutes 00 to 19, corresponding to the higher incidence of Slow, Very Slow and Error "Checkout" and "Checkout – Mobile" transactions, with some Snapshots happening more than once per minute:
 
-![Alt text](https://github.com/Appdynamics/AppDynamics.DEXTER/blob/master/Images/EntityDetailsApplication.png?raw=true)
+![Alt text](https://github.com/Appdynamics/AppDynamics.DEXTER/blob/master/Images/EntityDetailsBackend.png?raw=true)
 
 This is only a small part of Entity report. Additional data includes Grid view of Flow Map, Calls/Response/Errors summaries, list of Events, list of Snapshots, list of Errors and Backends, and Business Data (data collectors) applicable to this entity.
 
