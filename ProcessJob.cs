@@ -53,6 +53,7 @@ namespace AppDynamics.Dexter
 
         //Business Transaction Performance|Business Transactions|Web|AppHttpHandler ashx services|Calls per Minute
         //Business Transaction Performance|Business Transactions|*|AppHttpHandler ashx services|Calls per Minute
+        //Business Transaction Performance|Business Transactions|*|*|Calls per Minute
         private const string METRIC_PATH_BUSINESS_TRANSACTION = "Business Transaction Performance|Business Transactions|{0}|{1}|{2}";
 
         //Business Transaction Performance|Business Transactions|Web|AppHttpHandler ashx services|Individual Nodes|*|Calls per Minute
@@ -60,7 +61,9 @@ namespace AppDynamics.Dexter
         // Not going to support that one
 
         //Backends|Discovered backend call - Azure ACS OAuth CloudSync-login.windows.net-443|Calls per Minute
-        private const string METRIC_PATH_BACKEND = "Backends|Discovered backend call - {0}|{1}";
+        //Backends|*|Calls per Minute
+        private const string METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX = "Backends|Discovered backend call - {0}|{1}";
+        private const string METRIC_PATH_BACKEND = "Backends|{0}|{1}";
 
         //Overall Application Performance|Web|External Calls|Call-HTTP to Discovered backend call - Azure ACS OAuth CloudSync-login.windows.net-443|Calls per Minute
         //Overall Application Performance|Web|Individual Nodes|*|External Calls|Call-HTTP to Discovered backend call - Azure ACS OAuth CloudSync-login.windows.net-443|Calls per Minute
@@ -68,12 +71,14 @@ namespace AppDynamics.Dexter
         // Not going to support that one
 
         //Errors|Web|CrmException|Errors per Minute
+        //Errors|*|*|Errors per Minute
         private const string METRIC_PATH_ERROR = "Errors|{0}|{1}|{2}";
 
         //Errors|Web|CrmException|Individual Nodes|*|Errors per Minute
         // Not going to support that one
 
         //Service Endpoints|Web|CrmAction.Execute|Calls per Minute
+        //Service Endpoints|*|*|Calls per Minute
         private const string METRIC_PATH_SERVICE_ENDPOINT = "Service Endpoints|{0}|{1}|{2}";
 
         //Service End Points|Web|CrmAction.Execute|Individual Nodes|*|Calls per Minute
@@ -92,7 +97,7 @@ namespace AppDynamics.Dexter
         private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
         private const string EVENTS_FOLDER_NAME = "EVT";
 
-        // More folder names for entity types
+        // Folder names for entity types
         private const string APPLICATION_TYPE_SHORT = "APP";
         private const string TIERS_TYPE_SHORT = "TIER";
         private const string NODES_TYPE_SHORT = "NODE";
@@ -581,9 +586,6 @@ namespace AppDynamics.Dexter
         #endregion
 
         #region Constants for parallelization of processes
-
-        private const int METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 10;
-        private const int METRIC_EXTRACT_NUMBER_OF_THREADS = 5;
 
         private const int FLOWMAP_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 20;
         private const int FLOWMAP_EXTRACT_NUMBER_OF_THREADS = 5;
@@ -1353,244 +1355,117 @@ namespace AppDynamics.Dexter
 
                         #region Application
 
-                        // Application
-                        loggerConsole.Info("Extract Metrics for Application ({0} entities * {1} time ranges * {2} metrics)", 1, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
+                        loggerConsole.Info("Extract Metrics for Application ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                        extractMetricsApplication(jobConfiguration, jobTarget, controllerApi, metricsFolderPath);
+                        string metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            APPLICATION_TYPE_SHORT);
+
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Tiers
 
-                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
-                        if (tiersList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Tiers ({0} entities * {1} time ranges * {2} metrics)", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
+                        loggerConsole.Info("Extract Metrics for Tiers ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            TIERS_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var tiersListChunks = tiersList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTTier>, int>(
-                                    tiersListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (tiersListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsTiers(jobConfiguration, jobTarget, controllerApi, tiersListChunk, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsTiers(jobConfiguration, jobTarget, controllerApi, tiersList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
-                        if (nodesList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Nodes ({0} entities * {1} time ranges * {2} metrics)", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 5);
+                        loggerConsole.Info("Extract Metrics for Nodes ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            NODES_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var nodesListChunks = nodesList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTNode>, int>(
-                                    nodesListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (nodesListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsNodes(jobConfiguration, jobTarget, controllerApi, nodesListChunk, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsNodes(jobConfiguration, jobTarget, controllerApi, nodesList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
-                        if (backendsList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Backends ({0} entities * {1} time ranges * {2} metrics)", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 3);
+                        loggerConsole.Info("Extract Metrics for Backends ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            BACKENDS_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var backendsListChunks = backendsList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTBackend>, int>(
-                                    backendsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (backendsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsBackends(jobConfiguration, jobTarget, controllerApi, backendsListChunk, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsBackends(jobConfiguration, jobTarget, controllerApi, backendsList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
-                        if (businessTransactionsList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Business Transactions ({0} entities * {1} time ranges * {2} metrics)", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 3);
+                        loggerConsole.Info("Extract Metrics for Business Transactions ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            BUSINESS_TRANSACTIONS_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var businessTransactionsListChunks = businessTransactionsList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTBusinessTransaction>, int>(
-                                    businessTransactionsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (businessTransactionsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsListChunk, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Service Endpoints
 
-                        List<AppDRESTMetric> serviceEndpointsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
-                        if (serviceEndpointsList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Service Endpoints ({0} entities * {1} time ranges * {2} metrics)", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 3);
+                        loggerConsole.Info("Extract Metrics for Service Endpoints ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            SERVICE_ENDPOINTS_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var serviceEndpointsListChunks = serviceEndpointsList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTMetric>, int>(
-                                    serviceEndpointsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (serviceEndpointsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsServiceEndpoints(jobConfiguration, jobTarget, controllerApi, serviceEndpointsListChunk, tiersList, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsServiceEndpoints(jobConfiguration, jobTarget, controllerApi, serviceEndpointsList, tiersList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
 
                         #region Errors
 
-                        List<AppDRESTMetric> errorsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
-                        if (errorsList != null)
-                        {
-                            loggerConsole.Info("Extract Metrics for Errors ({0} entities * {1} time ranges * {2} metrics)", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count + 1, 1);
+                        loggerConsole.Info("Extract Metrics for Errors ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
-                            int j = 0;
+                        metricsEntityFolderPath = Path.Combine(
+                            metricsFolderPath,
+                            ERRORS_TYPE_SHORT);
 
-                            if (programOptions.ProcessSequentially == false)
-                            {
-                                var errorsListChunks = errorsList.BreakListIntoChunks(METRIC_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                        getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_ERROR, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
 
-                                Parallel.ForEach<List<AppDRESTMetric>, int>(
-                                    errorsListChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = METRIC_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (errorsListChunk, loop, subtotal) =>
-                                    {
-                                        subtotal += extractMetricsErrors(jobConfiguration, jobTarget, controllerApi, errorsListChunk, tiersList, metricsFolderPath, false);
-                                        return subtotal;
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        j = Interlocked.Add(ref j, finalResult);
-                                        Console.Write("[{0}].", j);
-                                    }
-                                );
-                            }
-                            else
-                            {
-                                j = extractMetricsErrors(jobConfiguration, jobTarget, controllerApi, errorsList, tiersList, metricsFolderPath, true);
-                            }
-
-                            loggerConsole.Info("{0} entities", j);
-                        }
+                        Console.WriteLine();
 
                         #endregion
                     }
@@ -3105,12 +2980,28 @@ namespace AppDynamics.Dexter
                         string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
 
                         // Metric files
-                        string metricsEntityFolderPath = String.Empty;
                         string metricsDataFilePath = String.Empty;
+                        string metricsEntitiesFolderPath = String.Empty;
+                        string metricsEntityFolderPath = String.Empty;
                         string entityFullRangeReportFilePath = String.Empty;
                         string entityHourlyRangeReportFilePath = String.Empty;
                         string entitiesFullRangeReportFilePath = String.Empty;
                         string entitiesHourlyRangeReportFilePath = String.Empty;
+
+                        string fullRangeMetricDataFileName = String.Format(EXTRACT_METRIC_FULL_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
+                        string hourlyRangeMetricDataFileName = String.Empty;
+
+                        // Metric data 
+                        List<AppDRESTMetric> metricDataFullART = null;
+                        List<AppDRESTMetric> metricDataFullCPM = null;
+                        List<AppDRESTMetric> metricDataFullEPM = null;
+                        List<AppDRESTMetric> metricDataFullEXCPM = null;
+                        List<AppDRESTMetric> metricDataFullHTTPEPM = null;
+                        List<AppDRESTMetric> metricDataHourlyART = null;
+                        List<AppDRESTMetric> metricDataHourlyCPM = null;
+                        List<AppDRESTMetric> metricDataHourlyEPM = null;
+                        List<AppDRESTMetric> metricDataHourlyEXCPM = null;
+                        List<AppDRESTMetric> metricDataHourlyHTTPEPM = null;
 
                         #endregion
 
@@ -3121,34 +3012,80 @@ namespace AppDynamics.Dexter
                         {
                             loggerConsole.Info("Index Metrics for Application ({0} entities)", applicationList.Count);
 
-                            List<EntityApplication> applicationFullList = new List<EntityApplication>(1);
-                            List<EntityApplication> applicationHourlyList = new List<EntityApplication>(jobConfiguration.Input.HourlyTimeRanges.Count);
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                APPLICATION_TYPE_SHORT);
 
                             metricsEntityFolderPath = Path.Combine(
                                 metricsFolderPath,
                                 APPLICATION_TYPE_SHORT);
 
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            #endregion
+
                             #region Full Range
 
+                            List<EntityApplication> applicationFullList = new List<EntityApplication>(1);
                             EntityApplication applicationRow = applicationList[0].Clone();
-                            if (fillFullRangeMetricEntityRow(applicationRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                            {
-                                applicationFullList.Add(applicationRow);
-                            }
+                            fillFullRangeMetricEntityRow(applicationRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                            applicationFullList.Add(applicationRow);
 
                             #endregion
 
                             #region Hourly ranges
 
+                            List<EntityApplication> applicationHourlyList = new List<EntityApplication>(jobConfiguration.Input.HourlyTimeRanges.Count);
+
                             for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                             {
                                 JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                #region Load Hourly Range Metrics
+
+                                metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                #endregion
+
+                                #region Hour Range
+
                                 applicationRow = applicationList[0].Clone();
-                                if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(applicationRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                {
-                                    applicationHourlyList.Add(applicationRow);
-                                }
+                                fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(applicationRow, jobTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                applicationHourlyList.Add(applicationRow);
+
+                                #endregion
                             }
 
                             #endregion
@@ -3175,13 +3112,33 @@ namespace AppDynamics.Dexter
                             List<EntityTier> tiersFullList = new List<EntityTier>(tiersList.Count);
                             List<EntityTier> tiersHourlyList = new List<EntityTier>(tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                TIERS_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityTier tierRowOriginal in tiersList)
                             {
-                                List<EntityTier> tierFullList = new List<EntityTier>(1);
-                                List<EntityTier> tierHourlyList = new List<EntityTier>(jobConfiguration.Input.HourlyTimeRanges.Count);
-
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
                                     TIERS_TYPE_SHORT,
@@ -3189,27 +3146,52 @@ namespace AppDynamics.Dexter
 
                                 #region Full Range
 
+                                List<EntityTier> tierFullList = new List<EntityTier>(1);
                                 EntityTier tierRow = tierRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(tierRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    tiersFullList.Add(tierRow);
-                                    tierFullList.Add(tierRow);
-                                }
+                                fillFullRangeMetricEntityRow(tierRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                tiersFullList.Add(tierRow);
+                                tierFullList.Add(tierRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityTier> tierHourlyList = new List<EntityTier>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     tierRow = tierRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(tierRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        tiersHourlyList.Add(tierRow);
-                                        tierHourlyList.Add(tierRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(tierRow, jobTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                    tiersHourlyList.Add(tierRow);
+                                    tierHourlyList.Add(tierRow);
+
+                                    #endregion
                                 }
 
                                 #endregion
@@ -3253,13 +3235,33 @@ namespace AppDynamics.Dexter
                             List<EntityNode> nodesFullList = new List<EntityNode>(nodesList.Count);
                             List<EntityNode> nodesHourlyList = new List<EntityNode>(nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                NODES_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityNode nodeRowOriginal in nodesList)
                             {
-                                List<EntityNode> nodeFullList = new List<EntityNode>(1);
-                                List<EntityNode> nodeHourlyList = new List<EntityNode>(jobConfiguration.Input.HourlyTimeRanges.Count);
-
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
                                     NODES_TYPE_SHORT,
@@ -3268,27 +3270,52 @@ namespace AppDynamics.Dexter
 
                                 #region Full Range
 
+                                List<EntityNode> nodeFullList = new List<EntityNode>(1);
                                 EntityNode nodeRow = nodeRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(nodeRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    nodesFullList.Add(nodeRow);
-                                    nodeFullList.Add(nodeRow);
-                                }
+                                fillFullRangeMetricEntityRow(nodeRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                nodesFullList.Add(nodeRow);
+                                nodeFullList.Add(nodeRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityNode> nodeHourlyList = new List<EntityNode>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     nodeRow = nodeRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(nodeRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        nodesHourlyList.Add(nodeRow);
-                                        nodeHourlyList.Add(nodeRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(nodeRow, jobTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                    nodesHourlyList.Add(nodeRow);
+                                    nodeHourlyList.Add(nodeRow);
+
+                                    #endregion
                                 }
 
                                 #endregion
@@ -3332,12 +3359,31 @@ namespace AppDynamics.Dexter
                             List<EntityBackend> backendsFullList = new List<EntityBackend>(backendsList.Count);
                             List<EntityBackend> backendsHourlyList = new List<EntityBackend>(backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                BACKENDS_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricDataFullEXCPM = null;
+
+                            metricDataFullHTTPEPM = null;
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityBackend backendRowOriginal in backendsList)
                             {
-                                List<EntityBackend> backendFullList = new List<EntityBackend>(1);
-                                List<EntityBackend> backendHourlyList = new List<EntityBackend>(jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
@@ -3345,28 +3391,51 @@ namespace AppDynamics.Dexter
                                     getShortenedEntityNameForFileSystem(backendRowOriginal.BackendName, backendRowOriginal.BackendID));
 
                                 #region Full Range
-                                
+
+                                List<EntityBackend> backendFullList = new List<EntityBackend>(1);
                                 EntityBackend backendRow = backendRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(backendRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    backendsFullList.Add(backendRow);
-                                    backendFullList.Add(backendRow);
-                                }
+                                fillFullRangeMetricEntityRow(backendRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                backendsFullList.Add(backendRow);
+                                backendFullList.Add(backendRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityBackend> backendHourlyList = new List<EntityBackend>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricDataHourlyEXCPM = null;
+
+                                    metricDataHourlyHTTPEPM = null;
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     backendRow = backendRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(backendRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        backendsHourlyList.Add(backendRow);
-                                        backendHourlyList.Add(backendRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(backendRow, jobTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                    backendsHourlyList.Add(backendRow);
+                                    backendHourlyList.Add(backendRow);
+
+                                    #endregion
                                 }
 
                                 #endregion
@@ -3378,7 +3447,7 @@ namespace AppDynamics.Dexter
                                 FileIOHelper.writeListToCSVFile(backendHourlyList, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
 
                                 j++;
-                                if (j % 10 == 0)
+                                if (j % 50 == 0)
                                 {
                                     Console.Write("[{0}].", j);
                                 }
@@ -3410,13 +3479,31 @@ namespace AppDynamics.Dexter
                             List<EntityBusinessTransaction> businessTransactionsFullList = new List<EntityBusinessTransaction>(businessTransactionsList.Count);
                             List<EntityBusinessTransaction> businessTransactionsHourlyList = new List<EntityBusinessTransaction>(businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                BUSINESS_TRANSACTIONS_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricDataFullEXCPM = null;
+
+                            metricDataFullHTTPEPM = null;
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityBusinessTransaction businessTransactionRowOriginal in businessTransactionsList)
                             {
-                                List<EntityBusinessTransaction> businessTransactionFullList = new List<EntityBusinessTransaction>(1);
-                                List<EntityBusinessTransaction> businessTransactionHourlyList = new List<EntityBusinessTransaction>(jobConfiguration.Input.HourlyTimeRanges.Count);
-
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
                                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
@@ -3425,27 +3512,50 @@ namespace AppDynamics.Dexter
 
                                 #region Full Range
 
+                                List<EntityBusinessTransaction> businessTransactionFullList = new List<EntityBusinessTransaction>(1);
                                 EntityBusinessTransaction businessTransactionRow = businessTransactionRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(businessTransactionRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    businessTransactionsFullList.Add(businessTransactionRow);
-                                    businessTransactionFullList.Add(businessTransactionRow);
-                                }
+                                fillFullRangeMetricEntityRow(businessTransactionRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                businessTransactionsFullList.Add(businessTransactionRow);
+                                businessTransactionFullList.Add(businessTransactionRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityBusinessTransaction> businessTransactionHourlyList = new List<EntityBusinessTransaction>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricDataHourlyEXCPM = null;
+
+                                    metricDataHourlyHTTPEPM = null;
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     businessTransactionRow = businessTransactionRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(businessTransactionRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        businessTransactionsHourlyList.Add(businessTransactionRow);
-                                        businessTransactionHourlyList.Add(businessTransactionRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(businessTransactionRow, jobTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                    businessTransactionsHourlyList.Add(businessTransactionRow);
+                                    businessTransactionHourlyList.Add(businessTransactionRow);
+
+                                    #endregion
                                 }
 
                                 #endregion
@@ -3489,13 +3599,31 @@ namespace AppDynamics.Dexter
                             List<EntityServiceEndpoint> serviceEndpointsFullList = new List<EntityServiceEndpoint>(serviceEndpointsList.Count);
                             List<EntityServiceEndpoint> serviceEndpointsHourlyList = new List<EntityServiceEndpoint>(serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                SERVICE_ENDPOINTS_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricDataFullEXCPM = null;
+
+                            metricDataFullHTTPEPM = null;
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityServiceEndpoint serviceEndpointRowOriginal in serviceEndpointsList)
                             {
-                                List<EntityServiceEndpoint> serviceEndpointFullList = new List<EntityServiceEndpoint>(1);
-                                List<EntityServiceEndpoint> serviceEndpointHourlyList = new List<EntityServiceEndpoint>(jobConfiguration.Input.HourlyTimeRanges.Count);
-
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
                                     SERVICE_ENDPOINTS_TYPE_SHORT,
@@ -3504,27 +3632,50 @@ namespace AppDynamics.Dexter
 
                                 #region Full Range
 
+                                List<EntityServiceEndpoint> serviceEndpointFullList = new List<EntityServiceEndpoint>(1);
                                 EntityServiceEndpoint serviceEndpointRow = serviceEndpointRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(serviceEndpointRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    serviceEndpointsFullList.Add(serviceEndpointRow);
-                                    serviceEndpointFullList.Add(serviceEndpointRow);
-                                }
+                                fillFullRangeMetricEntityRow(serviceEndpointRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                serviceEndpointsFullList.Add(serviceEndpointRow);
+                                serviceEndpointFullList.Add(serviceEndpointRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityServiceEndpoint> serviceEndpointHourlyList = new List<EntityServiceEndpoint>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricDataHourlyEXCPM = null;
+
+                                    metricDataHourlyHTTPEPM = null;
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     serviceEndpointRow = serviceEndpointRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(serviceEndpointRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        serviceEndpointsHourlyList.Add(serviceEndpointRow);
-                                        serviceEndpointHourlyList.Add(serviceEndpointRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(serviceEndpointRow, jobTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+
+                                    serviceEndpointsHourlyList.Add(serviceEndpointRow);
+                                    serviceEndpointHourlyList.Add(serviceEndpointRow);
+                                    
+                                    #endregion
                                 }
 
                                 #endregion
@@ -3568,12 +3719,29 @@ namespace AppDynamics.Dexter
                             List<EntityError> errorsFullList = new List<EntityError>(errorsList.Count);
                             List<EntityError> errorsHourlyList = new List<EntityError>(errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                            metricsEntitiesFolderPath = Path.Combine(
+                                metricsFolderPath,
+                                ERRORS_TYPE_SHORT);
+
+                            #region Load Full Range Metrics
+
+                            metricDataFullART = null;
+
+                            metricDataFullCPM = null;
+
+                            metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                            metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                            metricDataFullEXCPM = null;
+
+                            metricDataFullHTTPEPM = null;
+
+                            #endregion
+
                             int j = 0;
 
                             foreach (EntityError errorRowOriginal in errorsList)
                             {
-                                List<EntityError> errorFullList = new List<EntityError>(1);
-                                List<EntityError> errorHourlyList = new List<EntityError>(jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                 metricsEntityFolderPath = Path.Combine(
                                     metricsFolderPath,
@@ -3583,27 +3751,48 @@ namespace AppDynamics.Dexter
 
                                 #region Full Range
 
+                                List<EntityError> errorFullList = new List<EntityError>(1);
                                 EntityError errorRow = errorRowOriginal.Clone();
-                                if (fillFullRangeMetricEntityRow(errorRow, metricsEntityFolderPath, jobConfiguration.Input.ExpandedTimeRange) == true)
-                                {
-                                    errorsFullList.Add(errorRow);
-                                    errorFullList.Add(errorRow);
-                                }
+                                fillFullRangeMetricEntityRow(errorRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+
+                                errorsFullList.Add(errorRow);
+                                errorFullList.Add(errorRow);
 
                                 #endregion
 
                                 #region Hourly ranges
 
+                                List<EntityError> errorHourlyList = new List<EntityError>(jobConfiguration.Input.HourlyTimeRanges.Count);
                                 for (int k = 0; k < jobConfiguration.Input.HourlyTimeRanges.Count; k++)
                                 {
                                     JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[k];
 
+                                    hourlyRangeMetricDataFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
+
+                                    #region Load Hourly Range Metrics
+
+                                    metricDataHourlyART = null;
+
+                                    metricDataHourlyCPM = null;
+
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                    metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
+
+                                    metricDataHourlyEXCPM = null;
+
+                                    metricDataHourlyHTTPEPM = null;
+
+                                    #endregion
+
+                                    #region Hour Range
+
                                     errorRow = errorRowOriginal.Clone();
-                                    if (fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(errorRow, metricsEntityFolderPath, jobTimeRange, k) == true)
-                                    {
-                                        errorsHourlyList.Add(errorRow);
-                                        errorHourlyList.Add(errorRow);
-                                    }
+                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(errorRow, jobTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                    
+                                    errorsHourlyList.Add(errorRow);
+                                    errorHourlyList.Add(errorRow);
+
+                                    #endregion
                                 }
 
                                 #endregion
@@ -8180,259 +8369,6 @@ namespace AppDynamics.Dexter
 
         #region Metric extraction functions
 
-        private static int extractMetricsApplication(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string metricsFolderPath)
-        {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
-                APPLICATION_TYPE_SHORT);
-
-            getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-            getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-            getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-            getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-            getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-            return 1;
-        }
-
-        private static int extractMetricsTiers(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTTier> entityList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTTier tier in entityList)
-            {
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    TIERS_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(tier.name, tier.id));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, tier.name, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, tier.name, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, tier.name, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, tier.name, METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, tier.name, METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(tier, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
-        private static int extractMetricsNodes(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTNode> entityList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTNode node in entityList)
-            {
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    NODES_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
-                    getShortenedEntityNameForFileSystem(node.name, node.id));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, node.tierName, node.name, METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(node, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
-        private static int extractMetricsBackends(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBackend> entityList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTBackend backend in entityList)
-            {
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    BACKENDS_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(backend.name, backend.id));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, backend.name, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, backend.name, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, backend.name, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(backend, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
-        private static int extractMetricsBusinessTransactions(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBusinessTransaction> entityList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTBusinessTransaction businessTransaction in entityList)
-            {
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    BUSINESS_TRANSACTIONS_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(businessTransaction.tierName, businessTransaction.tierId),
-                    getShortenedEntityNameForFileSystem(businessTransaction.name, businessTransaction.id));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransaction.tierName, businessTransaction.name, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransaction.tierName, businessTransaction.name, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransaction.tierName, businessTransaction.name, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(businessTransaction, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
-        private static int extractMetricsServiceEndpoints(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTMetric> entityList, List<AppDRESTTier> tiersList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTMetric serviceEndpoint in entityList)
-            {
-                // Parse SEP values
-                string serviceEndpointTierName = serviceEndpoint.metricPath.Split('|')[1];
-                long serviceEndpointTierID = -1;
-                if (tiersList != null)
-                {
-                    // metricPath
-                    // Service Endpoints|ECommerce-Services|/appdynamicspilot/rest|Calls per Minute
-                    //                   ^^^^^^^^^^^^^^^^^^
-                    //                   Tier
-                    AppDRESTTier tierForThisEntity = tiersList.Where(tier => tier.name == serviceEndpointTierName).FirstOrDefault();
-                    if (tierForThisEntity != null)
-                    {
-                        serviceEndpointTierID = tierForThisEntity.id;
-                    }
-                }
-                // metricName
-                // BTM|Application Diagnostic Data|SEP:4855|Calls per Minute
-                //                                     ^^^^
-                //                                     ID
-                int serviceEndpointID = Convert.ToInt32(serviceEndpoint.metricName.Split('|')[2].Split(':')[1]);
-                // metricPath
-                // Service Endpoints|ECommerce-Services|/appdynamicspilot/rest|Calls per Minute
-                //                                      ^^^^^^^^^^^^^^^^^^^^^^
-                //                                      Name
-                string serviceEndpointName = serviceEndpoint.metricPath.Split('|')[2];
-
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    SERVICE_ENDPOINTS_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(serviceEndpointTierName, serviceEndpointTierID),
-                    getShortenedEntityNameForFileSystem(serviceEndpointName, serviceEndpointID));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointTierName, serviceEndpointName, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointTierName, serviceEndpointName, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointTierName, serviceEndpointName, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(serviceEndpoint, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
-        private static int extractMetricsErrors(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTMetric> entityList, List<AppDRESTTier> tiersList, string metricsFolderPath, bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (AppDRESTMetric error in entityList)
-            {
-                // Parse Error values
-                string errorTierName = error.metricPath.Split('|')[1];
-                long errorTierID = -1;
-                if (tiersList != null)
-                {
-                    // metricPath
-                    // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
-                    //        ^^^^^^^^^^^^^^^^^^
-                    //        Tier
-                    AppDRESTTier tierForThisEntity = tiersList.Where(tier => tier.name == errorTierName).FirstOrDefault();
-                    if (tierForThisEntity != null)
-                    {
-                        errorTierID = tierForThisEntity.id;
-                    }
-                }
-                // metricName
-                // BTM|Application Diagnostic Data|Error:11626|Errors per Minute
-                //                                       ^^^^^
-                //                                       ID
-                int errorID = Convert.ToInt32(error.metricName.Split('|')[2].Split(':')[1]);
-                // metricPath
-                // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
-                //                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                //                           Name
-                string errorName = error.metricPath.Split('|')[2];
-
-                string metricsEntityFolderPath = Path.Combine(
-                    metricsFolderPath,
-                    ERRORS_TYPE_SHORT,
-                    getShortenedEntityNameForFileSystem(errorTierName, errorTierID),
-                    getShortenedEntityNameForFileSystem(errorName, errorID));
-
-                getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_ERROR, errorTierName, errorName, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath);
-
-                FileIOHelper.writeObjectToFile(error, Path.Combine(metricsEntityFolderPath, EXTRACT_ENTITY_NAME_FILE_NAME));
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 10 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return entityList.Count;
-        }
-
         private static void getMetricDataForMetricForAllRanges(ControllerApi controllerApi, JobTarget jobTarget, string metricPath, string metricName, JobConfiguration jobConfiguration, string metricsEntityFolderPath)
         {
             string metricEntitySubFolderName = metricNameToShortMetricNameMapping[metricName];
@@ -8447,6 +8383,8 @@ namespace AppDynamics.Dexter
             string metricsDataFilePath = Path.Combine(metricsEntityFolderPath, metricEntitySubFolderName, String.Format(EXTRACT_METRIC_FULL_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
             if (File.Exists(metricsDataFilePath) == false)
             {
+                Console.Write(".");
+
                 // First range is the whole thing
                 metricsJson = controllerApi.GetMetricData(
                     jobTarget.ApplicationID,
@@ -8461,6 +8399,8 @@ namespace AppDynamics.Dexter
             // Get the hourly time ranges
             for (int j = 0; j < jobConfiguration.Input.HourlyTimeRanges.Count; j++)
             {
+                Console.Write(".");
+
                 jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                 logger.Info("Retrieving metric for Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricPath, jobTimeRange.From, jobTimeRange.To);
@@ -8774,143 +8714,221 @@ namespace AppDynamics.Dexter
 
         #region Metric detail conversion functions
 
-        private static bool fillFullRangeMetricEntityRow(EntityBase entityRow, string metricsEntityFolderPath, JobTimeRange jobTimeRange)
+        private static void fillFullRangeMetricEntityRow(
+            EntityBase entityRow, 
+            JobTimeRange jobTimeRange, 
+            string entityMetricPathPrefix, 
+            string metricsEntityFolderPath, 
+            List<AppDRESTMetric> metricDataART, 
+            List<AppDRESTMetric> metricDataCPM, 
+            List<AppDRESTMetric> metricDataEPM, 
+            List<AppDRESTMetric> metricDataEXCPM, 
+            List<AppDRESTMetric> metricDataHTTPEPM)
         {
-            string fullRangeFileName = String.Format(EXTRACT_METRIC_FULL_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
-
-            logger.Info("Retrieving full range metrics for Entity Type {0} from path={1}, file {2}, From={3:o}, To={4:o}", entityRow.GetType().Name, metricsEntityFolderPath, fullRangeFileName, jobTimeRange.From, jobTimeRange.To);
-
             entityRow.Duration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;
             entityRow.From = jobTimeRange.From.ToLocalTime();
             entityRow.To = jobTimeRange.To.ToLocalTime();
             entityRow.FromUtc = jobTimeRange.From;
             entityRow.ToUtc = jobTimeRange.To;
 
+            // Determine the entity ID to bve used in ensuring we get only one specific entity
+            // This is to address identically named Entities
+            // Backends can be named identically - see Azure Table exits
+            // Errors can also occasionally be named identically
+            long entityID = -1;
+            if (entityRow is EntityApplication)
+            {
+                // Application level metrics don't need ever have anything unusual
+            }
+            else if (entityRow is EntityTier)
+            {
+                entityID = entityRow.TierID;
+            }
+            else if (entityRow is EntityNode)
+            {
+                entityID = entityRow.TierID;
+            }
+            else if (entityRow is EntityBackend)
+            {
+                entityID = ((EntityBackend)entityRow).BackendID;
+            }
+            else if (entityRow is EntityBusinessTransaction)
+            {
+                entityID = ((EntityBusinessTransaction)entityRow).BTID;
+            }
+            else if (entityRow is EntityServiceEndpoint)
+            {
+                entityID = ((EntityServiceEndpoint)entityRow).SEPID;
+            }
+            else if (entityRow is EntityError)
+            {
+                entityID = ((EntityError)entityRow).ErrorID;
+            }
+
+            entityRow.MetricsIDs = new List<long>(5);
+
+            AppDRESTMetric thisEntityMetricData = null;
+
             #region Read and convert metrics
 
-            if (entityRow.MetricsIDs == null) { entityRow.MetricsIDs = new List<long>(3); }
-
+            // ART
             string metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_ART_SHORTNAME);
-            string metricsDataFilePath = Path.Combine(metricsDataFolderPath, fullRangeFileName);
             string entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataART != null && metricDataART.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataART.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataART.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.ART = metricData[0].metricValues[0].value;
-                        entityRow.TimeTotal = metricData[0].metricValues[0].sum;
+                        entityRow.ART = thisEntityMetricData.metricValues[0].value;
+                        entityRow.TimeTotal = thisEntityMetricData.metricValues[0].sum;
                     }
 
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
-                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
+                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(thisEntityMetricData, entityRow, jobTimeRange);
                         FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // CPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_CPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, fullRangeFileName);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataCPM != null && metricDataCPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.CPM = metricData[0].metricValues[0].value;
-                        entityRow.Calls = metricData[0].metricValues[0].sum;
+                        entityRow.CPM = thisEntityMetricData.metricValues[0].value;
+                        entityRow.Calls = thisEntityMetricData.metricValues[0].sum;
                     }
 
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
-                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
+                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(thisEntityMetricData, entityRow, jobTimeRange);
                         FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // EPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, fullRangeFileName);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataEPM != null && metricDataEPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.EPM = metricData[0].metricValues[0].value;
-                        entityRow.Errors = metricData[0].metricValues[0].sum;
+                        entityRow.EPM = thisEntityMetricData.metricValues[0].value;
+                        entityRow.Errors = thisEntityMetricData.metricValues[0].sum;
                         entityRow.ErrorsPercentage = Math.Round((double)(double)entityRow.Errors / (double)entityRow.Calls * 100, 2);
                         if (Double.IsNaN(entityRow.ErrorsPercentage) == true) entityRow.ErrorsPercentage = 0;
                     }
 
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
-                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
+                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(thisEntityMetricData, entityRow, jobTimeRange);
                         FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // EXCPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EXCPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, fullRangeFileName);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataEXCPM != null && metricDataEXCPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataEXCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataEXCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.EXCPM = metricData[0].metricValues[0].value;
-                        entityRow.Exceptions = metricData[0].metricValues[0].sum;
+                        entityRow.EXCPM = thisEntityMetricData.metricValues[0].value;
+                        entityRow.Exceptions = thisEntityMetricData.metricValues[0].sum;
                     }
 
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
-                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
+                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(thisEntityMetricData, entityRow, jobTimeRange);
                         FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // HTTPEPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_HTTPEPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, fullRangeFileName);
             entityMetricSummaryReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_SUMMARY_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataHTTPEPM != null && metricDataHTTPEPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataHTTPEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataHTTPEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.HTTPEPM = metricData[0].metricValues[0].value;
-                        entityRow.HttpErrors = metricData[0].metricValues[0].sum;
+                        entityRow.HTTPEPM = thisEntityMetricData.metricValues[0].value;
+                        entityRow.HttpErrors = thisEntityMetricData.metricValues[0].sum;
                     }
 
                     if (File.Exists(entityMetricSummaryReportFilePath) == false)
                     {
-                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(metricData[0], entityRow, jobTimeRange);
+                        List<MetricSummary> metricSummaries = convertMetricSummaryToTypedListForCSV(thisEntityMetricData, entityRow, jobTimeRange);
                         FileIOHelper.writeListToCSVFile(metricSummaries, new MetricSummaryMetricReportMap(), entityMetricSummaryReportFilePath, false);
                     }
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
+
+            #endregion
 
             if (entityRow.ART == 0 &&
                 entityRow.CPM == 0 &&
@@ -8925,136 +8943,212 @@ namespace AppDynamics.Dexter
                 entityRow.HasActivity = true;
             }
 
-            #endregion
-
+            // Add link to the metrics
             updateEntityWithDeeplinks(entityRow, jobTimeRange);
 
-            return true;
+            return;
         }
 
-        private static bool fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(EntityBase entityRow, string metricsEntityFolderPath, JobTimeRange jobTimeRange, int timeRangeIndex)
+        private static void fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(
+            EntityBase entityRow, 
+            JobTimeRange jobTimeRange, 
+            string entityMetricPathPrefix, 
+            string metricsEntityFolderPath,
+            int timeRangeIndex,
+            List<AppDRESTMetric> metricDataART, 
+            List<AppDRESTMetric> metricDataCPM, 
+            List<AppDRESTMetric> metricDataEPM,
+            List<AppDRESTMetric> metricDataEXCPM,
+            List<AppDRESTMetric> metricDataHTTPEPM)
         {
-            string hourRangeFileName = String.Format(EXTRACT_METRIC_HOUR_FILE_NAME, jobTimeRange.From, jobTimeRange.To);
-
-            logger.Info("Retrieving hourly range metrics for Entity Type {0} from path={1}, file {2}, From={3:o}, To={4:o}", entityRow.GetType().Name, metricsEntityFolderPath, hourRangeFileName, jobTimeRange.From, jobTimeRange.To);
-
             entityRow.Duration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;
             entityRow.From = jobTimeRange.From.ToLocalTime();
             entityRow.To = jobTimeRange.To.ToLocalTime();
             entityRow.FromUtc = jobTimeRange.From;
             entityRow.ToUtc = jobTimeRange.To;
 
-            #region Read and convert metrics
+            // Determine the entity ID to bve used in ensuring we get only one specific entity
+            // This is to address identically named Entities
+            // Backends can be named identically - see Azure Table exits
+            // Errors can also occasionally be named identically
+            long entityID = -1;
+            if (entityRow is EntityApplication)
+            {
+                // Application level metrics don't need ever have anything unusual
+            }
+            else if (entityRow is EntityTier)
+            {
+                entityID = entityRow.TierID;
+            }
+            else if (entityRow is EntityNode)
+            {
+                entityID = entityRow.TierID;
+            }
+            else if (entityRow is EntityBackend)
+            {
+                entityID = ((EntityBackend)entityRow).BackendID;
+            }
+            else if (entityRow is EntityBusinessTransaction)
+            {
+                entityID = ((EntityBusinessTransaction)entityRow).BTID;
+            }
+            else if (entityRow is EntityServiceEndpoint)
+            {
+                entityID = ((EntityServiceEndpoint)entityRow).SEPID;
+            }
+            else if (entityRow is EntityError)
+            {
+                entityID = ((EntityError)entityRow).ErrorID;
+            }
 
             if (entityRow.MetricsIDs == null) { entityRow.MetricsIDs = new List<long>(5); }
 
-            string metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_ART_SHORTNAME);
-            string metricsDataFilePath = Path.Combine(metricsDataFolderPath, hourRangeFileName);
-            string entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
             bool appendRecordsToExistingFile = true;
             if (timeRangeIndex == 0) { appendRecordsToExistingFile = false; }
 
-            if (File.Exists(metricsDataFilePath) == true)
+            AppDRESTMetric thisEntityMetricData = null;
+
+            #region Read and convert metrics
+
+            // ART
+            string metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_ART_SHORTNAME);
+            string entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
+            if (metricDataART != null && metricDataART.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataART.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataART.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.ART = (long)Math.Round((double)((double)metricData[0].metricValues.Sum(mv => mv.sum) / (double)metricData[0].metricValues.Sum(mv => mv.count)), 0);
-                        entityRow.TimeTotal = metricData[0].metricValues.Sum(mv => mv.sum);
+                        entityRow.ART = (long)Math.Round((double)((double)thisEntityMetricData.metricValues.Sum(mv => mv.sum) / (double)thisEntityMetricData.metricValues.Sum(mv => mv.count)), 0);
+                        entityRow.TimeTotal = thisEntityMetricData.metricValues.Sum(mv => mv.sum);
                     }
 
-                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
+                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(thisEntityMetricData);
                     FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, appendRecordsToExistingFile);
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // CPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_CPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, hourRangeFileName);
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataCPM != null && metricDataCPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.CPM = (long)Math.Round((double)((double)metricData[0].metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
-                        entityRow.Calls = metricData[0].metricValues.Sum(mv => mv.sum);
+                        entityRow.CPM = (long)Math.Round((double)((double)thisEntityMetricData.metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
+                        entityRow.Calls = thisEntityMetricData.metricValues.Sum(mv => mv.sum);
                     }
 
-                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
+                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(thisEntityMetricData);
                     FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, appendRecordsToExistingFile);
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // EPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, hourRangeFileName);
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataEPM != null && metricDataEPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.EPM = (long)Math.Round((double)((double)metricData[0].metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
-                        entityRow.Errors = metricData[0].metricValues.Sum(mv => mv.sum);
+                        entityRow.EPM = (long)Math.Round((double)((double)thisEntityMetricData.metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
+                        entityRow.Errors = thisEntityMetricData.metricValues.Sum(mv => mv.sum);
                         entityRow.ErrorsPercentage = Math.Round((double)(double)entityRow.Errors / (double)entityRow.Calls * 100, 2);
                         if (Double.IsNaN(entityRow.ErrorsPercentage) == true) entityRow.ErrorsPercentage = 0;
                     }
 
-                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
+                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(thisEntityMetricData);
                     FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, appendRecordsToExistingFile);
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // EXCPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_EXCPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, hourRangeFileName);
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataEXCPM != null && metricDataEXCPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataEXCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataEXCPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.EXCPM = (long)Math.Round((double)((double)metricData[0].metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
-                        entityRow.Exceptions = metricData[0].metricValues.Sum(mv => mv.sum);
+                        entityRow.EXCPM = (long)Math.Round((double)((double)thisEntityMetricData.metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
+                        entityRow.Exceptions = thisEntityMetricData.metricValues.Sum(mv => mv.sum);
                     }
 
-                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
+                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(thisEntityMetricData);
                     FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, appendRecordsToExistingFile);
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
+            // HTTPEPM
             metricsDataFolderPath = Path.Combine(metricsEntityFolderPath, METRIC_HTTPEPM_SHORTNAME);
-            metricsDataFilePath = Path.Combine(metricsDataFolderPath, hourRangeFileName);
             entityMetricReportFilePath = Path.Combine(metricsDataFolderPath, CONVERT_METRIC_VALUES_FILE_NAME);
-            if (File.Exists(metricsDataFilePath) == true)
+            if (metricDataHTTPEPM != null && metricDataHTTPEPM.Count > 0)
             {
-                List<AppDRESTMetric> metricData = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
-                if (metricData != null && metricData.Count > 0)
+                if (entityID != -1)
                 {
-                    if (metricData[0].metricValues.Count > 0)
+                    thisEntityMetricData = metricDataHTTPEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true && m.metricName.Contains(entityID.ToString()) == true).FirstOrDefault();
+                }
+                else
+                {
+                    thisEntityMetricData = metricDataHTTPEPM.Where(m => m.metricPath.StartsWith(entityMetricPathPrefix) == true).FirstOrDefault();
+                }
+                if (thisEntityMetricData != null)
+                {
+                    if (thisEntityMetricData.metricValues.Count > 0)
                     {
-                        entityRow.HTTPEPM = (long)Math.Round((double)((double)metricData[0].metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
-                        entityRow.HttpErrors = metricData[0].metricValues.Sum(mv => mv.sum);
+                        entityRow.HTTPEPM = (long)Math.Round((double)((double)thisEntityMetricData.metricValues.Sum(mv => mv.sum) / (double)entityRow.Duration), 0);
+                        entityRow.HttpErrors = thisEntityMetricData.metricValues.Sum(mv => mv.sum);
                     }
 
-                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(metricData[0]);
+                    List<MetricValue> metricValues = convertMetricValueToTypedListForCSV(thisEntityMetricData);
                     FileIOHelper.writeListToCSVFile(metricValues, new MetricValueMetricReportMap(), entityMetricReportFilePath, appendRecordsToExistingFile);
 
-                    entityRow.MetricsIDs.Add(metricData[0].metricId);
+                    entityRow.MetricsIDs.Add(thisEntityMetricData.metricId);
                 }
             }
 
@@ -9076,7 +9170,7 @@ namespace AppDynamics.Dexter
             // Add link to the metrics
             updateEntityWithDeeplinks(entityRow, jobTimeRange);
 
-            return true;
+            return;
         }
 
         private static bool updateEntityWithDeeplinks(EntityBase entityRow)
