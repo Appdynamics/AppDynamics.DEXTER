@@ -77,7 +77,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControllerApi\ControllerApi.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobOutput.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
+    <Compile Include="DataObjects\RestApi\AppDRESTControllerSetting.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBackend.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBackendProperty.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBusinessTransaction.cs" />
@@ -100,7 +102,37 @@
     <Compile Include="Program.cs" />
     <Compile Include="DataObjects\ProgramOptions\ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportObjects\Configuration\AgentCallGraphSetting.cs" />
+    <Compile Include="ReportObjects\Configuration\HealthRule.cs" />
+    <Compile Include="ReportObjects\Configuration\EntityBusinessTransactionConfiguration.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\AgentCallGraphSettingReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\HealthRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\EntityBusinessTransactionConfigurationReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\EntityTierConfigurationReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\HTTPDataCollectorReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\MethodInvocationDataCollectorReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\HTTPDataCollector.cs" />
+    <Compile Include="ReportObjects\Configuration\MethodInvocationDataCollector.cs" />
+    <Compile Include="ReportObjects\Configuration\AgentConfigurationProperty.cs" />
+    <Compile Include="ReportObjects\Configuration\InformationPointRule.cs" />
+    <Compile Include="ReportObjects\Configuration\CustomExitRule.cs" />
+    <Compile Include="ReportObjects\Configuration\BackendDiscoveryRule.cs" />
+    <Compile Include="ReportObjects\Configuration\BusinessTransactionDiscoveryRule.cs" />
+    <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryRule.cs" />
+    <Compile Include="ReportObjects\Configuration\EntityApplicationConfiguration.cs" />
+    <Compile Include="ReportObjects\Configuration\ControllerSetting.cs" />
+    <Compile Include="ReportObjects\Configuration\EntityTierConfiguration.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\AgentConfigurationPropertyReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\InformationPointRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\CustomExitRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BackendDiscoveryRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BusinessTransactionEntryRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BusinessTransactionDiscoveryRuleReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\EntityApplicationConfigurationReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\ControllerSettingReportMap.cs" />
+    <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
+    <Compile Include="ReportObjects\Snapshot\Maps\ApplicationSnapshotReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\BusinessDataReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\BusinessData.cs" />
     <Compile Include="ReportObjects\Snapshot\ExitCall.cs" />
@@ -150,11 +182,15 @@
     <Compile Include="ReportObjects\Snapshot\Maps\SnapshotReportMap.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Apache License 2.0.rtf" />
     <None Include="App.config" />
+    <Content Include="License.txt" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="JobFiles\DefaultJob.json" />
+    <None Include="DefaultJob.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
     </None>

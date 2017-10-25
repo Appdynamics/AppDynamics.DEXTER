@@ -1,0 +1,30 @@
+﻿{
+    "Input": {
+        "TimeRange" : {
+            "From": "2017-10-01T18:00:00",
+            "To": "2017-10-02T19:00:00"
+        },
+        "Flowmaps": false,
+        "Metrics": false,
+        "Snapshots": false,
+        "Events": false,
+        "Configuration": false
+    },
+    "Output": {
+        "DetectedEntities": true,
+        "EntityMetrics": false,
+        "EntityDetails": false,
+        "Snapshots": false,
+        "Events": false,
+        "Configuration": false
+    },
+    "Target": [
+        {
+            "Controller": "http://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "yourpassword or leave blank to be prompted",
+            "Application": "YourApplication",
+            "NameRegex": false
+        }
+    ]
+}

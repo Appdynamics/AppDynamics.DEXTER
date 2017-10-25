@@ -256,7 +256,6 @@ namespace AppDynamics.Dexter
 
         // Detected entity report conversion file names
         private const string CONVERT_ENTITY_CONTROLLER_FILE_NAME = "controller.csv";
-        private const string CONVERT_ENTITY_CONTROLLERS_FILE_NAME = "controllers.csv";
         private const string CONVERT_ENTITY_APPLICATIONS_FILE_NAME = "applications.csv";
         private const string CONVERT_ENTITY_APPLICATION_FILE_NAME = "application.csv";
         private const string CONVERT_ENTITY_TIERS_FILE_NAME = "tiers.csv";
@@ -278,9 +277,12 @@ namespace AppDynamics.Dexter
         private const string CONVERT_ACTIVITY_GRID_FILE_NAME = "activitygrid.full.csv";
 
         // Events list
+        private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "application.events.csv";
         private const string CONVERT_EVENTS_FILE_NAME = "events.csv";
         private const string CONVERT_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
 
+        // Snapshot files
+        private const string CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME = "application.snapshots.csv";
         private const string CONVERT_SNAPSHOTS_FILE_NAME = "snapshots.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME = "snapshots.segments.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME = "snapshots.exits.csv";
@@ -294,6 +296,22 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME = "snapshot.serviceendpoints.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshot.errors.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshot.businessdata.csv";
+
+        // Settings report list
+        private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
+        private const string APPLICATION_CONFIGURATION_FILE_NAME = "application.configuration.csv";
+        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME = "btdiscovery.rules.csv";
+        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME = "btentry.rules.csv";
+        private const string APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME = "backend.rules.csv";
+        private const string APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME = "customexit.rules.csv";
+        private const string APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME = "infopoints.csv";
+        private const string APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME = "agent.properties.csv";
+        private const string APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME = "datacollectors.midc.csv";
+        private const string APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME = "datacollectors.http.csv";
+        private const string APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME = "tiers.configuration.csv";
+        private const string APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.configuration.csv";
+        private const string APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
+        private const string APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME = "healthrules.csv";
 
         //private const string CONVERT_SNAPSHOT_FLOWMAP_FILE_NAME = "flowmap.json";
         //private const string CONVERT_SNAPSHOT_SEGMENT_ERRORS_FILE_NAME = "snapshot.errors.csv";
@@ -313,6 +331,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.EntityMetrics.xlsx";
         private const string REPORT_DETECTED_EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.Events.xlsx";
         private const string REPORT_SNAPSHOTS_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.Snapshots.xlsx";
+        private const string REPORT_CONFIGURATION_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.Configuration.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.{3}.{4}.xlsx";
@@ -330,7 +349,7 @@ namespace AppDynamics.Dexter
 
         #region Constants for Detected Entities Report contents
 
-        private const string REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
+        private const string REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
         private const string REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST = "4.Applications";
         private const string REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST = "5.Tiers";
         private const string REPORT_DETECTED_ENTITIES_SHEET_TIERS_PIVOT = "5.Tiers.Pivot";
@@ -374,13 +393,13 @@ namespace AppDynamics.Dexter
         private const string REPORT_DETECTED_ENTITIES_PIVOT_ERRORS_LOCATION = "p_ErrorsLocation";
 
         private const int REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT = 4;
-        private const int REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT = 6;
+        private const int REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT = 7;
 
         #endregion
 
         #region Constants for All Entities Metrics Report contents
 
-        private const string REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
+        private const string REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_FULL = "4.Applications";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_HOURLY = "4.Applications.Hourly";
         private const string REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_FULL = "5.Tiers";
@@ -420,15 +439,17 @@ namespace AppDynamics.Dexter
 
         #region Constants for Detected Events and Health Rule Violations Report contents
 
-        private const string REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS_LIST = "3.Controllers";
+        private const string REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS = "3.Controllers";
+        private const string REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS = "4.Applications";
 
-        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS = "4.Events";
-        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT = "4.Events.Type";
+        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS = "5.Events";
+        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT = "5.Events.Type";
 
-        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS = "5.HR Violations";
-        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "5.HR Violations.Type";
+        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS = "6.HR Violations";
+        private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "6.HR Violations.Type";
 
         private const string REPORT_DETECTED_EVENTS_TABLE_CONTROLLERS = "t_Controllers";
+        private const string REPORT_DETECTED_EVENTS_TABLE_APPLICATIONS = "t_Applications";
 
         private const string REPORT_DETECTED_EVENTS_TABLE_EVENTS = "t_Events";
         private const string REPORT_DETECTED_EVENTS_TABLE_HEALTH_RULE_VIOLATION_EVENTS = "t_HealthRuleViolationEvents";
@@ -443,7 +464,7 @@ namespace AppDynamics.Dexter
 
         #region Constants for Entity Metric Details Report contents
 
-        private const string REPORT_ENTITY_DETAILS_SHEET_CONTROLLERS_LIST = "3.Controllers";
+        private const string REPORT_ENTITY_DETAILS_SHEET_CONTROLLERS = "3.Controllers";
 
         // Metric summaries full, hourly
         private const string REPORT_ENTITY_DETAILS_SHEET_SUMMARY = "4.Summary";
@@ -519,25 +540,29 @@ namespace AppDynamics.Dexter
 
         #region Constants for Snapshots Report contents
 
-        private const string REPORT_SNAPSHOTS_SHEET_CONTROLLERS_LIST = "3.Controllers";
+        private const string REPORT_SNAPSHOTS_SHEET_CONTROLLERS = "3.Controllers";
+        private const string REPORT_SNAPSHOTS_SHEET_APPLICATIONS = "4.Applications";
 
-        private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS = "4.Snapshots";
-        private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT = "4.Snapshots.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS = "5.Snapshots";
+        private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT = "5.Snapshots.Type";
 
-        private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS = "5.Segments";
-        private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT = "5.Segments.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS = "6.Segments";
+        private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT = "6.Segments.Type";
 
-        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS = "6.Exit Calls";
-        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT = "6.Exit Calls.Type";
-        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT = "6.Exit Calls.Duration";
+        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS = "7.Exit Calls";
+        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT = "7.Exit Calls.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT = "7.Exit Calls.Duration";
 
-        private const string REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS = "7.Service Endpoint Calls";
+        private const string REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS = "8.Service Endpoint Calls";
 
-        private const string REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS = "8.Errors";
-        private const string REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_PIVOT = "8.Errors.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS = "9.Errors";
+        private const string REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_PIVOT = "9.Errors.Type";
 
-        private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA = "9.Business Data";
-        private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_PIVOT = "9.Business Data.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA = "10.Business Data";
+        private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_PIVOT = "10.Business Data.Type";
+
+        private const string REPORT_SNAPSHOTS_TABLE_CONTROLLERS = "t_Controllers";
+        private const string REPORT_SNAPSHOTS_TABLE_APPLICATIONS = "t_Applications";
 
         private const string REPORT_SNAPSHOTS_TABLE_SNAPSHOTS = "t_Snapshots";
         private const string REPORT_SNAPSHOTS_TABLE_SEGMENTS = "t_Segments";
@@ -557,6 +582,62 @@ namespace AppDynamics.Dexter
 
         private const int REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT = 8;
+
+        #endregion
+
+        #region Constants for Configuration Report contents
+
+        private const string REPORT_CONFIGURATION_SHEET_CONTROLLERS = "3.Controllers";
+
+        private const string REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS = "4.Controller Settings";
+        private const string REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION = "5.Application Configuration";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES = "6.BT Discovery Rules";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES = "7.BT Entry Rules";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE = "7.BT Entry Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION = "7.BT Entry Rules.Location";
+        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES = "8.Backend Discovery Rules";
+        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT = "8.Backend Discovery Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES = "9.Custom Exit Rules";
+        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT = "9.Custom Exit Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES = "10.Health Rules";
+        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT = "10.Health Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_TIER_SETTINGS = "11.Tier Settings";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS = "12.BT Settings";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES = "13.Agent Properties";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT = "13.Agent Properties.Type";
+        private const string REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES = "14.Information Points";
+        private const string REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS = "15.MIDCs";
+        private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "16.HTTP DCs";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "17.Call Graph Settings";
+
+        private const string REPORT_CONFIGURATION_DETAILS_TABLE_TOC = "t_TOC";
+        private const string REPORT_CONFIGURATION_DETAILS_TABLE_CONTROLLERS = "t_Controllers";
+
+        // Full and hourly metric data
+        private const string REPORT_CONFIGURATION_TABLE_CONTROLLER_SETTINGS = "t_ControllerSettings";
+        private const string REPORT_CONFIGURATION_TABLE_APPLICATION_CONFIGURATION = "t_ApplicationConfiguration";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_DISCOVERY_RULES = "t_BTDiscoveryRules";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_ENTRY_RULES = "t_BTEntryRules";
+        private const string REPORT_CONFIGURATION_TABLE_BACKEND_DISCOVERY_RULES = "t_BackendDiscoveryRules";
+        private const string REPORT_CONFIGURATION_TABLE_CUSTOM_EXIT_RULES = "t_CustomExitRules";
+        private const string REPORT_CONFIGURATION_TABLE_AGENT_CONFIGURATION_PROPERTIES = "t_AgentProperties";
+        private const string REPORT_CONFIGURATION_TABLE_INFORMATION_POINT_RULES = "t_InformationPointRules";
+        private const string REPORT_CONFIGURATION_TABLE_METHOD_INVOCATION_DATA_COLLECTORS = "t_MIDCs";
+        private const string REPORT_CONFIGURATION_TABLE_HTTP_DATA_COLLECTORS = "t_HTTPDCs";
+        private const string REPORT_CONFIGURATION_TABLE_HEALTH_RULES = "t_HealthRules";
+        private const string REPORT_CONFIGURATION_TABLE_TIER_SETTINGS = "t_Tiers";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SETTINGS = "t_BusinessTransactions";
+        private const string REPORT_CONFIGURATION_TABLE_AGENT_CALL_GRAPH_SETTINGS = "t_AgentCallGraphSettings";
+
+        private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE = "p_BTEntryRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_LOCATION = "p_BTEntryRulesLocation";
+        private const string REPORT_CONFIGURATION_PIVOT_BACKEND_DISCOVERY_RULES_TYPE = "p_BackendDiscoveryRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE = "p_CustomExitRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE = "p_AgentPropertiesType";
+        private const string REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE = "p_HealthRulesType";
+
+        private const int REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT = 4;
+        private const int REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT = 7;
 
         #endregion
 
@@ -600,6 +681,7 @@ namespace AppDynamics.Dexter
         private const int METRIC_DETAILS_REPORT_EXTRACT_NUMBER_OF_THREADS = 10;
 
         #endregion
+
 
         #region Job steps router
 
@@ -652,6 +734,7 @@ namespace AppDynamics.Dexter
             loggerConsole.Info("Job status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Job status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', ExpandedTimeRange.From='{2:o}', ExpandedTimeRange.To='{3:o}', Time ranges='{4}', Flowmaps='{5}', Metrics='{6}', Snapshots='{7}', Configuration='{8}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration);
+            logger.Info("Job output: DetectedEntities='{0}', EntityMetrics='{1}', EntityDetails='{2}', Snapshots='{3}', Configuration='{4}', Events='{5}'", jobConfiguration.Output.DetectedEntities, jobConfiguration.Output.EntityMetrics, jobConfiguration.Output.EntityDetails, jobConfiguration.Output.Snapshots, jobConfiguration.Output.Configuration, jobConfiguration.Output.Events);
 
             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
             {
@@ -888,14 +971,27 @@ namespace AppDynamics.Dexter
                         break;
 
                     case JobStatus.ReportControlerApplicationsAndEntities:
-                        if (stepReportControlerApplicationsAndEntities(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                        if (jobConfiguration.Output.DetectedEntities == true)
+                        {
+                            if (stepReportControlerApplicationsAndEntities(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
                         {
                             jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Debug("Skipping report of detected entities");
                         }
                         break;
 
                     case JobStatus.ReportControllerAndApplicationConfiguration:
-                        if (jobConfiguration.Input.Configuration == true)
+                        if (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.Configuration == true)
                         {
                             if (stepReportControllerAndApplicationConfiguration(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
@@ -915,7 +1011,7 @@ namespace AppDynamics.Dexter
                         break;
 
                     case JobStatus.ReportEventsAndHealthRuleViolations:
-                        if (jobConfiguration.Input.Events == true)
+                        if (jobConfiguration.Input.Events == true && jobConfiguration.Output.Events == true)
                         {
                             if (stepReportEventsAndHealthRuleViolations(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
@@ -935,7 +1031,7 @@ namespace AppDynamics.Dexter
                         break;
 
                     case JobStatus.ReportApplicationAndEntityMetrics:
-                        if (jobConfiguration.Input.Metrics == true)
+                        if (jobConfiguration.Input.Metrics == true && jobConfiguration.Output.EntityMetrics == true)
                         {
                             if (stepReportApplicationAndEntityMetrics(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
@@ -954,31 +1050,8 @@ namespace AppDynamics.Dexter
                         }
                         break;
 
-                    case JobStatus.ReportIndividualApplicationAndEntityDetails:
-                        if (jobConfiguration.Input.Metrics == true ||
-                            jobConfiguration.Input.Events == true ||
-                            jobConfiguration.Input.Flowmaps == true ||
-                            jobConfiguration.Input.Snapshots == true)
-                        {
-                            if (stepReportIndividualApplicationAndEntityDetails(programOptions, jobConfiguration, jobConfiguration.Status) == true)
-                            {
-                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
-                            }
-                            else
-                            {
-                                jobConfiguration.Status = JobStatus.Error;
-                            }
-                        }
-                        else
-                        {
-                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
-
-                            loggerConsole.Debug("Skipping report of entity metric details");
-                        }
-                        break;
-
                     case JobStatus.ReportSnapshots:
-                        if (jobConfiguration.Input.Snapshots == true)
+                        if (jobConfiguration.Input.Snapshots == true && jobConfiguration.Output.Snapshots == true)
                         {
                             if (stepReportSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
@@ -996,6 +1069,30 @@ namespace AppDynamics.Dexter
                             loggerConsole.Debug("Skipping report of snapshots");
                         }
                         break;
+
+                    case JobStatus.ReportIndividualApplicationAndEntityDetails:
+                        if ((jobConfiguration.Input.Metrics == true ||
+                            jobConfiguration.Input.Events == true ||
+                            jobConfiguration.Input.Flowmaps == true ||
+                            jobConfiguration.Input.Snapshots == true) && jobConfiguration.Output.EntityDetails == true)
+                        {
+                            if (stepReportIndividualApplicationAndEntityDetails(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Debug("Skipping report of entity detail reports");
+                        }
+                        break;
+
 
                     default:
                         jobConfiguration.Status = JobStatus.Error;
@@ -2212,7 +2309,6 @@ namespace AppDynamics.Dexter
                         string errorsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
 
                         // Report files
-                        string controllersReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, CONVERT_ENTITY_CONTROLLERS_FILE_NAME);
                         string controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
                         string applicationsReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
                         string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
@@ -2272,24 +2368,6 @@ namespace AppDynamics.Dexter
                         {
                             FileIOHelper.writeListToCSVFile(controllerList, new ControllerEntityReportMap(), controllerReportFilePath);
                         }
-
-                        // Now append this controller to the list of all controllers
-                        List<EntityController> controllersList = FileIOHelper.readListFromCSVFile<EntityController>(controllersReportFilePath, new ControllerEntityReportMap());
-                        if (controllersList == null || controllersList.Count == 0)
-                        {
-                            // First time, let's output these rows
-                            controllersList = controllerList;
-                        }
-                        else
-                        {
-                            EntityController controllerExisting = controllersList.Where(c => c.Controller == controller.Controller).FirstOrDefault();
-                            if (controllerExisting == null)
-                            {
-                                controllersList.Add(controller);
-                            }
-                        }
-                        controllersList = controllersList.OrderBy(o => o.Controller).ToList();
-                        FileIOHelper.writeListToCSVFile(controllersList, new ControllerEntityReportMap(), controllersReportFilePath);
 
                         #endregion
 
@@ -2505,6 +2583,8 @@ namespace AppDynamics.Dexter
                                 businessTransactionRow.ApplicationName = jobTarget.Application;
                                 businessTransactionRow.BTID = businessTransaction.id;
                                 businessTransactionRow.BTName = businessTransaction.name;
+                                businessTransactionRow.BTNameOriginal = businessTransaction.internalName;
+                                businessTransactionRow.IsRenamed = !(businessTransaction.name == businessTransaction.internalName);
                                 if (businessTransactionRow.BTName == "_APPDYNAMICS_DEFAULT_TX_")
                                 {
                                     businessTransactionRow.BTType = "OVERFLOW";
@@ -2844,14 +2924,13 @@ namespace AppDynamics.Dexter
 
         private static bool stepIndexControllerAndApplicationConfiguration(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
         {
-            loggerConsole.Fatal("TODO {0}({0:d})", jobStatus);
-            return true;
-
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             try
             {
+                List<string> listOfControllersAlreadyProcessed = new List<string>(jobConfiguration.Target.Count);
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -2880,20 +2959,653 @@ namespace AppDynamics.Dexter
 
                         #endregion
 
-                        // Business Transaction Rules
+                        #region Target step variables
 
-                        // Backend Rules configuration/backend-match-point-configurations
+                        // Various folders
+                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
+                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
 
-                        // Data Collectors
+                        // Entity files
+                        string controllerSettingsFilePath = Path.Combine(controllerFolderPath, EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
+                        string applicationConfigFilePath = Path.Combine(configFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
 
-                        // Agent properties
+                        // Report files
+                        string controllerSettingsReportFilePath = Path.Combine(controllerFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
+                        string applicationConfigurationReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
+                        string businessTransactionDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                        string businessTransactionEntryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                        string backendDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                        string customExitRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                        string informationPointRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                        string agentConfigurationPropertiesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string httpDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                        string entityTierConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                        string entityBusinessTransactionConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string agentCallGraphSettingsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
+                        string healthRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
+                        
+                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
 
-                        // Health Rules configuration/health-rules
+                        #endregion
 
-                        // Error Detection configuration/error-configuration
+                        #region Controller Settings
 
-                        loggerConsole.Fatal("TODO {0}({0:d})", jobStatus);
+                        // Only output this once per controller
+                        if (listOfControllersAlreadyProcessed.Contains(jobTarget.Controller) == false)
+                        {
+                            listOfControllersAlreadyProcessed.Add(jobTarget.Controller);
 
+                            loggerConsole.Info("Controller Settings");
+
+                            List<ControllerSetting> controllerSettingsList = new List<ControllerSetting>();
+                            List<AppDRESTControllerSetting> controllerSettingsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTControllerSetting>(controllerSettingsFilePath);
+                            if (controllerSettingsRESTList != null)
+                            {
+                                foreach (AppDRESTControllerSetting controllerSetting in controllerSettingsRESTList)
+                                {
+                                    ControllerSetting controllerSettingRow = new ControllerSetting();
+
+                                    controllerSettingRow.Controller = jobTarget.Controller;
+                                    controllerSettingRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, controllerSettingRow.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
+                                    controllerSettingRow.Name = controllerSetting.name;
+                                    controllerSettingRow.Description = controllerSetting.description;
+                                    controllerSettingRow.Value = controllerSetting.value;
+                                    controllerSettingRow.Updateable = controllerSetting.updateable;
+                                    controllerSettingRow.Scope = controllerSetting.scope;
+
+                                    controllerSettingsList.Add(controllerSettingRow);
+                                }
+                            }
+
+                            controllerSettingsList = controllerSettingsList.OrderBy(c => c.Name).ToList();
+                            FileIOHelper.writeListToCSVFile(controllerSettingsList, new ControllerSettingReportMap(), controllerSettingsReportFilePath);
+                        }
+
+                        #endregion
+
+                        #region Preload list of detected entities
+
+                        // For later cross-reference
+                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+
+                        #endregion
+
+                        #region Application Summary
+
+                        loggerConsole.Info("Load Configuration file");
+
+                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationConfigFilePath);
+                        if (configXml == null)
+                        {
+                            logger.Warn("No application configuration in {0} file", applicationConfigFilePath);
+                            continue;
+                        }
+
+                        EntityApplicationConfiguration applicationConfiguration = new EntityApplicationConfiguration();
+                        applicationConfiguration.Controller = jobTarget.Controller;
+                        applicationConfiguration.ControllerLink = String.Format(DEEPLINK_CONTROLLER, applicationConfiguration.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
+                        applicationConfiguration.ApplicationName = configXml.SelectSingleNode("application/name").InnerText;
+                        applicationConfiguration.ApplicationID = jobTarget.ApplicationID;
+                        applicationConfiguration.ApplicationLink = String.Format(DEEPLINK_APPLICATION, applicationConfiguration.Controller, applicationConfiguration.ApplicationID, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
+                        applicationConfiguration.ApplicationDescription = configXml.SelectSingleNode("application/description").InnerText;
+
+                        XmlAttribute mdsEnabledAttribute = configXml.SelectSingleNode("application").Attributes["mds-config-enabled"];
+                        if (mdsEnabledAttribute != null)
+                        {
+                            applicationConfiguration.IsMDSEnabled = Convert.ToBoolean(mdsEnabledAttribute.Value);
+                        }
+
+                        if (configXml.SelectSingleNode("application/configuration/application-instrumentation-level").InnerText != "PRODUCTION")
+                        {
+                            applicationConfiguration.IsDeveloperModeEnabled = true;
+                        }
+
+                        applicationConfiguration.SnapshotEvalInterval = getIntegerValueFromXmlNode(configXml.SelectSingleNode("application/configuration/snapshot-evaluation-interval"));
+                        applicationConfiguration.SnapshotQuietTime = getIntegerValueFromXmlNode(configXml.SelectSingleNode("application/configuration/snapshot-quiet-time-post-sla-failure"));
+                        applicationConfiguration.IsHREngineEnabled = getBoolValueFromXmlNode(configXml.SelectSingleNode("application/configuration/policy-engine-enabled"));
+                        applicationConfiguration.IsBTLockdownEnabled = getBoolValueFromXmlNode(configXml.SelectSingleNode("application/configuration/bt-discovery-locked"));
+                        applicationConfiguration.IsAsyncSupported = getBoolValueFromXmlNode(configXml.SelectSingleNode("application/configuration/async-activity-supported"));
+
+                        applicationConfiguration.BTSLAConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/sla"));
+                        applicationConfiguration.BTSnapshotCollectionConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/business-transaction-config/snapshot-collection-policy"));
+                        applicationConfiguration.BTRequestThresholdConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/business-transaction-config/bt-request-thresholds"));
+                        applicationConfiguration.BTBackgroundSnapshotCollectionConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/background-business-transaction-config/snapshot-collection-policy"));
+                        applicationConfiguration.BTBackgroundRequestThresholdConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/background-business-transaction-config/bt-request-thresholds"));
+
+                        applicationConfiguration.EUMConfigExclude = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/exclude-config"));
+                        applicationConfiguration.EUMConfigPage = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/page-config"));
+                        applicationConfiguration.EUMConfigMobilePage = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config"));
+                        applicationConfiguration.EUMConfigMobileAgent = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/eum-mobile-agent-config"));
+
+                        applicationConfiguration.AnalyticsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/analytics-dynamic-service-configurations"));
+                        applicationConfiguration.WorkflowsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/workflows"));
+                        applicationConfiguration.TasksConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/tasks"));
+                        applicationConfiguration.BTGroupsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/business-transaction-groups"));
+
+                        applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/metric-baselines/metric-baseline"));
+                        applicationConfiguration.NumBaselines = configXml.SelectNodes("application/metric-baselines/metric-baseline").Count;
+
+                        applicationConfiguration.ErrorAgentConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/configuration/error-configuration"));
+                        applicationConfiguration.NumErrorRules = configXml.SelectNodes("application/configuration/error-configuration").Count;
+
+                        #endregion
+
+                        #region Business Transaction Detection Rules
+
+                        loggerConsole.Info("Business Transaction Detection Rules");
+
+                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesList = new List<BusinessTransactionDiscoveryRule>();
+
+                        // Application level
+                        // application
+                        //      entry-match-point-configurations
+                        //          entry-match-point-configuration[agentType=AGENT]
+                        //              transaction-configurations
+                        //                  configuration[transaction-entry-point-type=TYPE]
+                        foreach (XmlNode entryMatchPointConfigurationNode in configXml.SelectNodes("application/entry-match-point-configurations/entry-match-point-configuration"))
+                        {
+                            foreach (XmlNode entryMatchPointTransactionConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("transaction-configurations/configuration"))
+                            {
+                                BusinessTransactionDiscoveryRule businessTransactionDiscoveryRule = fillBusinessTransactionDiscoveryRule(entryMatchPointConfigurationNode, entryMatchPointTransactionConfigurationNode, applicationConfiguration, null);
+                                businessTransactionDiscoveryRulesList.Add(businessTransactionDiscoveryRule);
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              entry-match-point-configurations
+                        //                  entry-match-point-configuration[agentType=AGENT]
+                        //                      transaction-configurations
+                        //                          configuration[transaction-entry-point-type=TYPE]
+                        //                              override=true
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode entryMatchPointConfigurationNode in applicationComponentNode.SelectNodes("entry-match-point-configurations/entry-match-point-configuration"))
+                            {
+                                foreach (XmlNode entryMatchPointTransactionConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("transaction-configurations/configuration"))
+                                {
+                                    if (Convert.ToBoolean(entryMatchPointConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                    {
+                                        BusinessTransactionDiscoveryRule businessTransactionDiscoveryRule = fillBusinessTransactionDiscoveryRule(entryMatchPointConfigurationNode, entryMatchPointTransactionConfigurationNode, applicationConfiguration, applicationComponentNode);
+                                        businessTransactionDiscoveryRulesList.Add(businessTransactionDiscoveryRule);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumBTDiscoveryRules = businessTransactionDiscoveryRulesList.Count;
+
+                        businessTransactionDiscoveryRulesList = businessTransactionDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
+                        FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRulesList, new BusinessTransactionDiscoveryRuleReportMap(), businessTransactionDiscoveryRulesReportFilePath);
+
+                        #endregion
+
+                        #region Business Transaction Rules
+                    
+                        loggerConsole.Info("Business Transaction Include and Exclude Rules");
+
+                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesList = new List<BusinessTransactionEntryRule>();
+
+                        // Exclude rules first
+
+                        // Application level
+                        // application
+                        //      entry-match-point-configurations
+                        //          entry-match-point-configuration[agentType=AGENT]
+                        //              transaction-configurations
+                        //                  configuration[transaction-entry-point-type=TYPE]
+                        //                      discovery-config
+                        //                          excludes
+                        foreach (XmlNode entryMatchPointConfigurationNode in configXml.SelectNodes("application/entry-match-point-configurations/entry-match-point-configuration"))
+                        {
+                            foreach (XmlNode entryMatchPointTransactionConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("transaction-configurations/configuration"))
+                            {
+                                foreach (XmlNode entryMatchPointCustomMatchPointConfigurationNode in entryMatchPointTransactionConfigurationNode.SelectNodes("discovery-config/excludes/exclude"))
+                                {
+                                    BusinessTransactionEntryRule businessTransactionEntryRule = fillBusinessTransactionExcludeRule(entryMatchPointConfigurationNode, entryMatchPointTransactionConfigurationNode, entryMatchPointCustomMatchPointConfigurationNode, applicationConfiguration, null);
+                                    businessTransactionEntryRulesList.Add(businessTransactionEntryRule);
+                                }
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              entry-match-point-configurations
+                        //                  entry-match-point-configuration[agentType=AGENT]
+                        //                      transaction-configurations
+                        //                          configuration[transaction-entry-point-type=TYPE]
+                        //                              override=true
+                        //                              discovery-config
+                        //                                  excludes
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode entryMatchPointConfigurationNode in applicationComponentNode.SelectNodes("entry-match-point-configurations/entry-match-point-configuration"))
+                            {
+                                foreach (XmlNode entryMatchPointTransactionConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("transaction-configurations/configuration"))
+                                {
+                                    foreach (XmlNode entryMatchPointCustomMatchPointConfigurationNode in entryMatchPointTransactionConfigurationNode.SelectNodes("discovery-config/excludes/exclude"))
+                                    {
+                                        if (Convert.ToBoolean(entryMatchPointConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                        {
+                                            BusinessTransactionEntryRule businessTransactionEntryRule = fillBusinessTransactionExcludeRule(entryMatchPointConfigurationNode, entryMatchPointTransactionConfigurationNode, entryMatchPointCustomMatchPointConfigurationNode, applicationConfiguration, applicationComponentNode);
+                                            businessTransactionEntryRulesList.Add(businessTransactionEntryRule);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Include rules
+
+                        // Application level
+                        // application
+                        //      entry-match-point-configurations
+                        //          entry-match-point-configuration[agentType=AGENT]
+                        //              custom-match-point-definitions
+                        //                  custom-match-point-definition[transaction-entry-point-type=TYPE]
+                        //                      transaction-configurations
+                        foreach (XmlNode entryMatchPointConfigurationNode in configXml.SelectNodes("application/entry-match-point-configurations/entry-match-point-configuration"))
+                        {
+                            foreach (XmlNode entryMatchPointCustomMatchPointConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("custom-match-point-definitions/custom-match-point-definition"))
+                            {
+                                BusinessTransactionEntryRule businessTransactionEntryRule = fillBusinessTransactionEntryRule(entryMatchPointConfigurationNode, entryMatchPointCustomMatchPointConfigurationNode, applicationConfiguration, null, businessTransactionsList);
+                                businessTransactionEntryRulesList.Add(businessTransactionEntryRule);
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              entry-match-point-configurations
+                        //                  entry-match-point-configuration[agentType=AGENT]
+                        //                      custom-match-point-definitions
+                        //                          custom-match-point-definition[transaction-entry-point-type=TYPE]
+                        //                              transaction-configurations
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode entryMatchPointConfigurationNode in applicationComponentNode.SelectNodes("entry-match-point-configurations/entry-match-point-configuration"))
+                            {
+                                foreach (XmlNode entryMatchPointCustomMatchPointConfigurationNode in entryMatchPointConfigurationNode.SelectNodes("custom-match-point-definitions/custom-match-point-definition"))
+                                {
+                                    if (Convert.ToBoolean(entryMatchPointConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                    {
+                                        BusinessTransactionEntryRule businessTransactionEntryRule = fillBusinessTransactionEntryRule(entryMatchPointConfigurationNode, entryMatchPointCustomMatchPointConfigurationNode, applicationConfiguration, applicationComponentNode, businessTransactionsList);
+                                        businessTransactionEntryRulesList.Add(businessTransactionEntryRule);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumBTEntryRules = businessTransactionEntryRulesList.Where(b => b.IsExclusion == false).Count();
+                        applicationConfiguration.NumBTExcludeRules = businessTransactionEntryRulesList.Count - applicationConfiguration.NumBTEntryRules;
+
+                        businessTransactionEntryRulesList = businessTransactionEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
+                        FileIOHelper.writeListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), businessTransactionEntryRulesReportFilePath);
+
+                        #endregion
+
+                        #region Backend Rules 
+
+                        loggerConsole.Info("Backend Detection Rules");
+
+                        List<BackendDiscoveryRule> backendDiscoveryRulesList = new List<BackendDiscoveryRule>();
+
+                        // Application level
+                        // application
+                        //      backend-match-point-configurations
+                        //          backend-match-point-configuration[agentType=AGENT]
+                        //              backend-discovery-configurations
+                        //                  backend-discovery-configuration
+                        foreach (XmlNode backendDiscoveryMatchPointConfigurationNode in configXml.SelectNodes("application/backend-match-point-configurations/backend-match-point-configuration"))
+                        {
+                            foreach (XmlNode backendDiscoveryConfigurationNode in backendDiscoveryMatchPointConfigurationNode.SelectNodes("backend-discovery-configurations/backend-discovery-configuration"))
+                            {
+                                BackendDiscoveryRule backendDiscoveryRule = fillBackendDiscoveryRule(backendDiscoveryMatchPointConfigurationNode, backendDiscoveryConfigurationNode, applicationConfiguration, null, backendsList);
+                                backendDiscoveryRulesList.Add(backendDiscoveryRule);
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              backend-match-point-configurations
+                        //                  backend-match-point-configuration[agentType=AGENT]
+                        //                      backend-discovery-configurations
+                        //                          backend-discovery-configuration
+                        //                              override=true
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode backendDiscoveryMatchPointConfigurationNode in applicationComponentNode.SelectNodes("backend-match-point-configurations/backend-match-point-configuration"))
+                            {
+                                foreach (XmlNode backendDiscoveryConfigurationNode in backendDiscoveryMatchPointConfigurationNode.SelectNodes("backend-discovery-configurations/backend-discovery-configuration"))
+                                {
+                                    if (Convert.ToBoolean(backendDiscoveryMatchPointConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                    {
+                                        BackendDiscoveryRule backendDiscoveryRule = fillBackendDiscoveryRule(backendDiscoveryMatchPointConfigurationNode, backendDiscoveryConfigurationNode, applicationConfiguration, applicationComponentNode, backendsList);
+                                        backendDiscoveryRulesList.Add(backendDiscoveryRule);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumBackendRules = backendDiscoveryRulesList.Count;
+
+                        backendDiscoveryRulesList = backendDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
+                        FileIOHelper.writeListToCSVFile(backendDiscoveryRulesList, new BackendDiscoveryRuleReportMap(), backendDiscoveryRulesReportFilePath);
+
+                        #endregion
+
+                        #region Custom Exit Rules 
+
+                        loggerConsole.Info("Custom Exit Rules");
+
+                        List<CustomExitRule> customExitRulesList = new List<CustomExitRule>();
+
+                        // Application level
+                        // application
+                        //      backend-match-point-configurations
+                        //          backend-match-point-configuration[agentType=AGENT]
+                        //              custom-exit-point-definitions
+                        //                  custom-exit-point-definition
+                        foreach (XmlNode backendDiscoveryMatchPointConfigurationNode in configXml.SelectNodes("application/backend-match-point-configurations/backend-match-point-configuration"))
+                        {
+                            foreach (XmlNode customExitConfigurationNode in backendDiscoveryMatchPointConfigurationNode.SelectNodes("custom-exit-point-definitions/custom-exit-point-definition"))
+                            {
+                                CustomExitRule customExitRule = fillCustomExitRule(backendDiscoveryMatchPointConfigurationNode, customExitConfigurationNode, applicationConfiguration, null, backendsList);
+                                customExitRulesList.Add(customExitRule);
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              backend-match-point-configurations
+                        //                  backend-match-point-configuration[agentType=AGENT]
+                        //                      custom-exit-point-definition
+                        //                          custom-exit-point-definition
+                        //                              override=true
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode backendDiscoveryMatchPointConfigurationNode in applicationComponentNode.SelectNodes("backend-match-point-configurations/backend-match-point-configuration"))
+                            {
+                                foreach (XmlNode customExitConfigurationNode in backendDiscoveryMatchPointConfigurationNode.SelectNodes("custom-exit-point-definitions/custom-exit-point-definition"))
+                                {
+                                    if (Convert.ToBoolean(backendDiscoveryMatchPointConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                    {
+                                        CustomExitRule customExitRule = fillCustomExitRule(backendDiscoveryMatchPointConfigurationNode, customExitConfigurationNode, applicationConfiguration, applicationComponentNode, backendsList);
+                                        customExitRulesList.Add(customExitRule);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumBackendRules = applicationConfiguration.NumBackendRules + customExitRulesList.Count;
+
+                        customExitRulesList = customExitRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
+                        FileIOHelper.writeListToCSVFile(customExitRulesList, new CustomExitRuleReportMap(), customExitRulesReportFilePath);
+
+                        #endregion
+
+                        #region Agent Configuration Properties 
+
+                        loggerConsole.Info("Agent Configuration Properties");
+
+                        List<AgentConfigurationProperty> agentConfigurationPropertiesList = new List<AgentConfigurationProperty>();
+
+                        // Application level
+                        // application
+                        //      agent-configurations
+                        //          agent_configuration[agentType=AGENT]
+                        //              property-definitions
+                        //                  property-definition
+                        //              properties
+                        //                  property
+                        foreach (XmlNode agentConfigurationNode in configXml.SelectNodes("application/agent-configurations/agent_configuration"))
+                        {
+                            foreach (XmlNode agentPropertyDefinitionConfigurationNode in agentConfigurationNode.SelectNodes("property-definitions/property-definition"))
+                            {
+                                XmlNode agentPropertyValueConfigurationNode = agentConfigurationNode.SelectSingleNode(String.Format(@"properties/property/property-definition[. = ""{0}""]", agentPropertyDefinitionConfigurationNode.SelectSingleNode("name").InnerText)).ParentNode;
+
+                                AgentConfigurationProperty agentConfigurationProperty = fillAgentConfigurationProperty(agentConfigurationNode, agentPropertyDefinitionConfigurationNode, agentPropertyValueConfigurationNode, applicationConfiguration, null);
+                                agentConfigurationPropertiesList.Add(agentConfigurationProperty);
+                            }
+                        }
+
+                        // Tier overrides
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              agent-configurations
+                        //                  agent_configuration[agentType=AGENT]
+                        //                      property-definitions
+                        //                          property-definition
+                        //                      properties
+                        //                          property
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode agentConfigurationNode in applicationComponentNode.SelectNodes("agent-configurations/agent_configuration"))
+                            {
+                                foreach (XmlNode agentPropertyDefinitionConfigurationNode in agentConfigurationNode.SelectNodes("property-definitions/property-definition"))
+                                {
+                                    if (Convert.ToBoolean(agentConfigurationNode.SelectSingleNode("override").InnerText) == true)
+                                    {
+                                        XmlNode agentPropertyValueConfigurationNode = agentConfigurationNode.SelectSingleNode(String.Format(@"properties/property/property-definition[. = ""{0}""]", agentPropertyDefinitionConfigurationNode.SelectSingleNode("name").InnerText)).ParentNode;
+
+                                        AgentConfigurationProperty agentConfigurationProperty = fillAgentConfigurationProperty(agentConfigurationNode, agentPropertyDefinitionConfigurationNode, agentPropertyValueConfigurationNode, applicationConfiguration, applicationComponentNode);
+                                        agentConfigurationPropertiesList.Add(agentConfigurationProperty);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumAgentProps = agentConfigurationPropertiesList.Count;
+
+                        agentConfigurationPropertiesList = agentConfigurationPropertiesList.OrderBy(p => p.TierName).ThenBy(p => p.AgentType).ThenBy(p => p.PropertyName).ToList();
+                        FileIOHelper.writeListToCSVFile(agentConfigurationPropertiesList, new AgentConfigurationPropertyReportMap(), agentConfigurationPropertiesReportFilePath);
+
+                        #endregion
+
+                        #region Information Point Rules
+
+                        List<InformationPointRule> informationPointRulesList = new List<InformationPointRule>();
+
+                        // Application level
+                        // application
+                        //      info-point-gatherer-configs
+                        //          info-point-gatherer-config
+                        foreach (XmlNode informationPointConfigurationNode in configXml.SelectNodes("application/info-point-gatherer-configs/info-point-gatherer-config"))
+                        {
+                            InformationPointRule informationPointRule = fillInformationPointRule(informationPointConfigurationNode, applicationConfiguration);
+                            informationPointRulesList.Add(informationPointRule);
+                        }
+
+                        applicationConfiguration.NumInfoPointRules = informationPointRulesList.Count;
+
+                        informationPointRulesList = informationPointRulesList.OrderBy(b => b.AgentType).ThenBy(b => b.RuleName).ToList();
+                        FileIOHelper.writeListToCSVFile(informationPointRulesList, new InformationPointRuleReportMap(), informationPointRulesReportFilePath);
+
+                        #endregion
+
+                        #region Detected Business Transaction and Assigned Data Collectors
+
+                        loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors");
+
+                        List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList = new List<EntityBusinessTransactionConfiguration>();
+
+                        // Tier settings
+                        // application
+                        //      application-components
+                        //          application-component
+                        //              business-transaction
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            foreach (XmlNode businessTransactionConfigurationtNode in applicationComponentNode.SelectNodes("business-transactions/business-transaction"))
+                            {
+                                EntityBusinessTransactionConfiguration entityBusinessTransactionConfiguration = fillEntityBusinessTransactionConfiguration(applicationComponentNode, businessTransactionConfigurationtNode, applicationConfiguration, tiersList, businessTransactionsList);
+                                entityBusinessTransactionConfigurationsList.Add(entityBusinessTransactionConfiguration);
+                            }
+                        }
+
+                        applicationConfiguration.NumBTs = entityBusinessTransactionConfigurationsList.Count;
+
+                        entityBusinessTransactionConfigurationsList = entityBusinessTransactionConfigurationsList.OrderBy(b => b.TierName).ThenBy(b => b.BTType).ThenBy(b => b.BTName).ToList();
+                        FileIOHelper.writeListToCSVFile(entityBusinessTransactionConfigurationsList, new EntityBusinessTransactionConfigurationReportMap(), entityBusinessTransactionConfigurationsReportFilePath);
+
+                        #endregion
+
+                        #region Tier Settings
+
+                        loggerConsole.Info("Tier Settings");
+
+                        List<EntityTierConfiguration> entityTierConfigurationsList = new List<EntityTierConfiguration>();
+
+                        // Tier settings
+                        // application
+                        //      application-components
+                        //          application-component
+                        foreach (XmlNode applicationComponentNode in configXml.SelectNodes("application/application-components/application-component"))
+                        {
+                            EntityTierConfiguration entityTierConfiguration = fillEntityTierConfiguration(applicationComponentNode, applicationConfiguration, tiersList, entityBusinessTransactionConfigurationsList);
+                            entityTierConfigurationsList.Add(entityTierConfiguration);
+                        }
+
+                        applicationConfiguration.NumTiers = entityTierConfigurationsList.Count;
+
+                        entityTierConfigurationsList = entityTierConfigurationsList.OrderBy(p => p.TierName).ToList();
+                        FileIOHelper.writeListToCSVFile(entityTierConfigurationsList, new EntityTierConfigurationReportMap(), entityTierConfigurationsReportFilePath);
+
+                        #endregion
+
+                        #region Data Collectors
+
+                        loggerConsole.Info("Data Collectors");
+
+                        // MIDCs
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = new List<MethodInvocationDataCollector>();
+
+                        // Application level
+                        // application
+                        //      data-gatherer-configs
+                        //          pojo-data-gatherer-config
+                        foreach (XmlNode methodInvocationDataCollectorConfigurationNode in configXml.SelectNodes("application/data-gatherer-configs/pojo-data-gatherer-config"))
+                        {
+                            foreach (XmlNode dataGathererConfigurationNode in methodInvocationDataCollectorConfigurationNode.SelectNodes("method-invocation-data-gatherer-config"))
+                            {
+                                MethodInvocationDataCollector methodInvocationDataCollector = fillMethodInvocationDataCollector(methodInvocationDataCollectorConfigurationNode, dataGathererConfigurationNode, applicationConfiguration, entityBusinessTransactionConfigurationsList);
+                                methodInvocationDataCollectorsList.Add(methodInvocationDataCollector);
+                            }
+                        }
+
+                        applicationConfiguration.NumMIDCVariablesCollected = methodInvocationDataCollectorsList.Count;
+                        applicationConfiguration.NumMIDCs = methodInvocationDataCollectorsList.GroupBy(m => m.CollectorName).Count();
+
+                        methodInvocationDataCollectorsList = methodInvocationDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
+                        FileIOHelper.writeListToCSVFile(methodInvocationDataCollectorsList, new MethodInvocationDataCollectorReportMap(), methodInvocationDataCollectorsReportFilePath);
+
+                        // HTTP DCs
+
+                        // Application level
+                        // application
+                        //      data-gatherer-configs
+                        //          http-data-gatherer-config
+                        List<HTTPDataCollector> httpDataCollectorsList = new List<HTTPDataCollector>();
+
+                        // Application level
+                        // application
+                        //      data-gatherer-configs
+                        //          pojo-data-gatherer-config
+                        foreach (XmlNode httpDataCollectorConfigurationNode in configXml.SelectNodes("application/data-gatherer-configs/http-data-gatherer-config"))
+                        {
+                            foreach (XmlNode dataGathererConfigurationNode in httpDataCollectorConfigurationNode.SelectNodes("parameters/parameter"))
+                            {
+                                HTTPDataCollector httpDataCollector = fillHTTPDataCollector(httpDataCollectorConfigurationNode, dataGathererConfigurationNode, applicationConfiguration, entityBusinessTransactionConfigurationsList);
+                                httpDataCollectorsList.Add(httpDataCollector);
+                            }
+                        }
+
+                        applicationConfiguration.NumHTTPDCVariablesCollected = httpDataCollectorsList.Count;
+                        applicationConfiguration.NumHTTPDCs = httpDataCollectorsList.GroupBy(m => m.CollectorName).Count(); 
+
+                        httpDataCollectorsList = httpDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
+                        FileIOHelper.writeListToCSVFile(httpDataCollectorsList, new HTTPDataCollectorReportMap(), httpDataCollectorsReportFilePath);
+
+                        #endregion
+
+                        #region Call Grapth Settings
+
+                        loggerConsole.Info("Call Graph Settings");
+
+                        // MIDCs
+                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsList = new List<AgentCallGraphSetting>();
+
+                        // Application level
+                        // application
+                        //      configuration
+                        //          call-graph
+                        foreach (XmlNode agentCallGraphSettingConfigurationNode in configXml.SelectNodes("application/configuration/call-graph"))
+                        {
+                            AgentCallGraphSetting agentCallGraphSetting = fillAgentCallGraphSetting(agentCallGraphSettingConfigurationNode, applicationConfiguration);
+                            agentCallGraphSettingCollectorsList.Add(agentCallGraphSetting);
+                        }
+
+                        agentCallGraphSettingCollectorsList = agentCallGraphSettingCollectorsList.OrderBy(a => a.AgentType).ToList();
+                        FileIOHelper.writeListToCSVFile(agentCallGraphSettingCollectorsList, new AgentCallGraphSettingReportMap(), agentCallGraphSettingsReportFilePath);
+
+                        #endregion
+
+                        #region Health Rules
+
+                        loggerConsole.Info("Health Rules");
+
+                        List<HealthRule> healthRulesList = new List<HealthRule>();
+
+                        // Application level
+                        // application
+                        //      configuration
+                        //          call-graph
+                        foreach (XmlNode healthRuleConfigurationNode in configXml.SelectNodes("application/health-rules/health-rule"))
+                        {
+                            HealthRule healthRule = fillHealthRule(healthRuleConfigurationNode, applicationConfiguration);
+                            healthRulesList.Add(healthRule);
+                        }
+
+                        applicationConfiguration.NumHealthRules = agentConfigurationPropertiesList.Count;
+
+                        healthRulesList = healthRulesList.OrderBy(h => h.RuleType).ThenBy(h => h.RuleName).ToList();
+                        FileIOHelper.writeListToCSVFile(healthRulesList, new HealthRuleReportMap(), healthRulesReportFilePath);
+
+                        #endregion
+
+                        #region MDS Scopes
+
+                        //TODO get these done
+
+                        applicationConfiguration.NumMDSRules = -1;
+                        applicationConfiguration.NumMDSScopes = -1;
+
+                        #endregion
+
+                        #region Application Settings
+
+                        List<EntityApplicationConfiguration> applicationConfigurationsList = new List<EntityApplicationConfiguration>(1);
+                        applicationConfigurationsList.Add(applicationConfiguration);
+                        FileIOHelper.writeListToCSVFile(applicationConfigurationsList, new EntityApplicationConfigurationReportMap(), applicationConfigurationReportFilePath);
+
+                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -4109,6 +4821,8 @@ namespace AppDynamics.Dexter
                         string serviceEndpointCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
                         string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                         string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string applicationSnapshotsSummaryReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         #endregion
 
@@ -4183,6 +4897,19 @@ namespace AppDynamics.Dexter
                         FileIOHelper.deleteFile(serviceEndpointCallsFilePath);
                         FileIOHelper.deleteFile(detectedErrorsFilePath);
                         FileIOHelper.deleteFile(businessDataFilePath);
+
+                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                        EntityApplication applicationsRow = null;
+                        if (applicationList != null && applicationList.Count > 0)
+                        {
+                            applicationsRow = applicationList[0];
+
+                            applicationsRow.Duration = (int)(jobConfiguration.Input.ExpandedTimeRange.To - jobConfiguration.Input.ExpandedTimeRange.From).Duration().TotalMinutes;
+                            applicationsRow.From = jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime();
+                            applicationsRow.To = jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime();
+                            applicationsRow.FromUtc = jobConfiguration.Input.ExpandedTimeRange.From;
+                            applicationsRow.ToUtc = jobConfiguration.Input.ExpandedTimeRange.To;
+                        }
 
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
@@ -4261,6 +4988,20 @@ namespace AppDynamics.Dexter
                                     // Flush every 500 items
                                     if (j % 500 == 0)
                                     {
+                                        if (applicationsRow != null)
+                                        {
+                                            applicationsRow.NumSnapshots = applicationsRow.NumSnapshots + allSnapshotList.Count;
+                                            applicationsRow.NumSnapshotsNormal = applicationsRow.NumSnapshotsNormal + allSnapshotList.Count(s => s.UserExperience == "NORMAL");
+                                            applicationsRow.NumSnapshotsSlow = applicationsRow.NumSnapshotsSlow + allSnapshotList.Count(s => s.UserExperience == "SLOW");
+                                            applicationsRow.NumSnapshotsVerySlow = applicationsRow.NumSnapshotsVerySlow + allSnapshotList.Count(s => s.UserExperience == "VERY_SLOW");
+                                            applicationsRow.NumSnapshotsStall = applicationsRow.NumSnapshotsStall + allSnapshotList.Count(s => s.UserExperience == "STALL");
+                                            applicationsRow.NumSnapshotsError = applicationsRow.NumSnapshotsError + allSnapshotList.Count(s => s.UserExperience == "ERROR");
+
+                                            applicationsRow.NumSegments = applicationsRow.NumSnapshots + allSegmentList.Count;
+                                            applicationsRow.NumExitCalls = applicationsRow.NumSnapshots + allExitCallsList.Count;
+                                            applicationsRow.NumBusinessData = applicationsRow.NumSnapshots + allBusinessDataList.Count;
+                                        }
+
                                         // Flush 
                                         FileIOHelper.writeListToCSVFile(allSnapshotList, new SnapshotReportMap(), snapshotsFilePath, true);
                                         FileIOHelper.writeListToCSVFile(allSegmentList, new SegmentReportMap(), segmentsFilePath, true);
@@ -4278,6 +5019,20 @@ namespace AppDynamics.Dexter
                                     }
                                 }
 
+                                if (applicationsRow != null)
+                                {
+                                    applicationsRow.NumSnapshots = applicationsRow.NumSnapshots + allSnapshotList.Count;
+                                    applicationsRow.NumSnapshotsNormal = applicationsRow.NumSnapshotsNormal + allSnapshotList.Count(s => s.UserExperience == "NORMAL");
+                                    applicationsRow.NumSnapshotsSlow = applicationsRow.NumSnapshotsSlow + allSnapshotList.Count(s => s.UserExperience == "SLOW");
+                                    applicationsRow.NumSnapshotsVerySlow = applicationsRow.NumSnapshotsVerySlow + allSnapshotList.Count(s => s.UserExperience == "VERY_SLOW");
+                                    applicationsRow.NumSnapshotsStall = applicationsRow.NumSnapshotsStall + allSnapshotList.Count(s => s.UserExperience == "STALL");
+                                    applicationsRow.NumSnapshotsError = applicationsRow.NumSnapshotsError + allSnapshotList.Count(s => s.UserExperience == "ERROR");
+
+                                    applicationsRow.NumSegments = applicationsRow.NumSnapshots + allSegmentList.Count;
+                                    applicationsRow.NumExitCalls = applicationsRow.NumSnapshots + allExitCallsList.Count;
+                                    applicationsRow.NumBusinessData = applicationsRow.NumSnapshots + allBusinessDataList.Count;
+                                }
+
                                 // Flush final block
                                 FileIOHelper.writeListToCSVFile(allSnapshotList, new SnapshotReportMap(), snapshotsFilePath, true);
                                 FileIOHelper.writeListToCSVFile(allSegmentList, new SegmentReportMap(), segmentsFilePath, true);
@@ -4288,6 +5043,15 @@ namespace AppDynamics.Dexter
                             }
                             loggerConsole.Info("{0} snapshots", j);
                         }
+
+                        if (applicationsRow != null)
+                        {
+                            if (applicationsRow.NumSnapshots > 0)
+                            {
+                                applicationsRow.HasActivity = true;
+                            }
+                        }
+                        FileIOHelper.writeListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), applicationSnapshotsSummaryReportFilePath);
 
                         #endregion
                     }
@@ -4368,6 +5132,10 @@ namespace AppDynamics.Dexter
                         string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
                         string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
                         string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
+
+                        // Report files
+                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string applicationEventsSummaryReportFilePath = Path.Combine(eventsFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
 
                         #endregion
 
@@ -4606,6 +5374,38 @@ namespace AppDynamics.Dexter
                         FileIOHelper.writeListToCSVFile<Event>(eventsList, new EventReportMap(), eventsFilePath);
 
                         #endregion
+
+                        #region Application
+
+                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                        if (applicationList != null && applicationList.Count > 0)
+                        {
+                            EntityApplication applicationsRow = applicationList[0];
+
+                            applicationsRow.NumEvents = eventsList.Count;
+                            applicationsRow.NumEventsError = eventsList.Count(e => e.Severity == "ERROR");
+                            applicationsRow.NumEventsWarning = eventsList.Count(e => e.Severity == "WARN");
+                            applicationsRow.NumEventsInfo = eventsList.Count(e => e.Severity == "INFO");
+
+                            applicationsRow.NumHRViolations = healthRuleViolationList.Count;
+                            applicationsRow.NumHRViolationsCritical = healthRuleViolationList.Count(e => e.Severity == "CRITICAL");
+                            applicationsRow.NumHRViolationsWarning = healthRuleViolationList.Count(e => e.Severity == "WARNING");
+
+                            applicationsRow.Duration = (int)(jobConfiguration.Input.ExpandedTimeRange.To - jobConfiguration.Input.ExpandedTimeRange.From).Duration().TotalMinutes;
+                            applicationsRow.From = jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime();
+                            applicationsRow.To = jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime();
+                            applicationsRow.FromUtc = jobConfiguration.Input.ExpandedTimeRange.From;
+                            applicationsRow.ToUtc = jobConfiguration.Input.ExpandedTimeRange.To;
+
+                            if (applicationsRow.NumEvents > 0 || applicationsRow.NumHRViolations > 0)
+                            {
+                                applicationsRow.HasActivity = true;
+                            }
+
+                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationEventReportMap(), applicationEventsSummaryReportFilePath);
+                        }
+
+                        #endregion
                     }
                     catch (Exception ex)
                     {
@@ -4748,7 +5548,7 @@ namespace AppDynamics.Dexter
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelDetectedEntities.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST);
+                sheet = excelDetectedEntities.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.View.FreezePanes(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
@@ -4951,7 +5751,7 @@ namespace AppDynamics.Dexter
 
                             loggerConsole.Info("List of Controllers");
 
-                            sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
+                            sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
                             if (sheet.Dimension.Rows < REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                             {
                                 fromRow = REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT;
@@ -5115,7 +5915,7 @@ namespace AppDynamics.Dexter
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
+                sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -5183,6 +5983,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["AgentType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["TierName"]);
                     fieldD.Function = DataFieldFunctions.Count;
                     //fieldD.Name = "Tiers Of Type";
@@ -5228,6 +6029,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["AgentVersion"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["TierName"]);
                     fieldD.Function = DataFieldFunctions.Count;
                     //fieldD.Name = "Agents Of Type";
@@ -5250,9 +6052,9 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["MachineAgentVersion"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["TierName"]);
                     fieldD.Function = DataFieldFunctions.Count;
-                    //fieldD.Name = "Machine Agents Of Type";
                 }
 
                 #endregion
@@ -5288,9 +6090,9 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["BackendType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["BackendName"]);
                     fieldD.Function = DataFieldFunctions.Count;
-                    //fieldD.Name = "Backends Of Type";
 
                     // Make pivot
                     sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_LOCATION_PIVOT];
@@ -5347,6 +6149,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["BTType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["BTName"]);
                     fieldD.Function = DataFieldFunctions.Count;
                     //fieldD.Name = "BTs Of Type";
@@ -5409,9 +6212,9 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["SEPType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SEPName"]);
                     fieldD.Function = DataFieldFunctions.Count;
-                    //fieldD.Name = "SEPs Of Type";
 
                     // Make pivot
                     sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_LOCATION_PIVOT];
@@ -5471,9 +6274,9 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ErrorType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["ErrorName"]);
                     fieldD.Function = DataFieldFunctions.Count;
-                    //fieldD.Name = "Errors Of Type";
 
                     // Make pivot
                     sheet = excelDetectedEntities.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LOCATION_PIVOT_LOCATION];
@@ -5582,14 +6385,242 @@ namespace AppDynamics.Dexter
 
         private static bool stepReportControllerAndApplicationConfiguration(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
         {
-            loggerConsole.Fatal("TODO {0}({0:d})", jobStatus);
-            return true;
-
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
             try
             {
+                loggerConsole.Info("Prepare Settings Report File");
+
+                #region Prepare the report package
+
+                // Prepare package
+                ExcelPackage excelDetectedSettings = new ExcelPackage();
+                excelDetectedSettings.Workbook.Properties.Author = String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version);
+                excelDetectedSettings.Workbook.Properties.Title = "AppDynamics DEXTER Detected Settings Report";
+                excelDetectedSettings.Workbook.Properties.Subject = programOptions.JobName;
+
+                excelDetectedSettings.Workbook.Properties.Comments = String.Format("Targets={0}\nFrom={1:o}\nTo={2:o}", jobConfiguration.Target.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+
+                #endregion
+
+                #region Parameters sheet
+
+                // Parameters sheet
+                ExcelWorksheet sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_SHEET_PARAMETERS);
+
+                var hyperLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("HyperLinkStyle");
+                hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
+                hyperLinkStyle.Style.Font.Color.SetColor(Color.Blue);
+
+                int l = 1;
+                sheet.Cells[l, 1].Value = "Table of Contents";
+                sheet.Cells[l, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                l++; l++;
+                sheet.Cells[l, 1].Value = "AppDynamics DEXTER Controller and Application Settings Report";
+                l++; l++;
+                sheet.Cells[l, 1].Value = "From";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.From.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "To";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.To.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded From (UTC)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.From.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded From (Local)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime().ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded To (UTC)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.To.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded To (Local)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime().ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Number of Hours Intervals";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.HourlyTimeRanges.Count;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Metrics";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Metrics;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Snapshots";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Snapshots;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Flowmaps";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Flowmaps;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Configuration";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Configuration;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Events";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Events;
+                l++;
+                sheet.Cells[l, 1].Value = "Targets:";
+                l++; l++;
+                ExcelRangeBase range = sheet.Cells[l, 1].LoadFromCollection(from jobTarget in jobConfiguration.Target
+                                                                            select new
+                                                                            {
+                                                                                Controller = jobTarget.Controller,
+                                                                                UserName = jobTarget.UserName,
+                                                                                Application = jobTarget.Application,
+                                                                                ApplicationID = jobTarget.ApplicationID,
+                                                                                Status = jobTarget.Status.ToString()
+                                                                            }, true);
+                ExcelTable table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_PARAMETERS_TARGETS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(1).AutoFit();
+                sheet.Column(2).AutoFit();
+                sheet.Column(3).AutoFit();
+
+                #endregion
+
+                #region TOC sheet
+
+                // Navigation sheet with link to other sheets
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_SHEET_TOC);
+
+                #endregion
+
+                #region Entity sheets and their associated pivots
+
+                // Entity sheets
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "Types of BT Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE);
+                sheet.Cells[3, 1].Value = "Locations BT Rules";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 6);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 7);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "Types of Backend Detection Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 6);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "Types of Custom Exit Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 6);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_HEALTH_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "Types of Health Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_HEALTH_RULES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 5);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_TIER_SETTINGS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "Types of Agent Configuration Properties";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT + 2, 6);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedSettings.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                #endregion
+
+                List<string> listOfControllersAlreadyProcessed = new List<string>(jobConfiguration.Target.Count);
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -5618,7 +6649,320 @@ namespace AppDynamics.Dexter
 
                         #endregion
 
-                        loggerConsole.Fatal("TODO {0}({0:d})", jobStatus);
+                        #region Target step variables
+
+                        // Various folders
+                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
+
+                        // Report files
+                        string controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
+                        string controllerSettingsReportFilePath = Path.Combine(controllerFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
+                        string applicationConfigurationReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
+                        string businessTransactionDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                        string businessTransactionEntryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                        string backendDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                        string customExitRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                        string informationPointRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                        string agentConfigurationPropertiesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string httpDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                        string entityTierConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                        string entityBusinessTransactionConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string agentCallGraphSettingsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
+                        string healthRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
+
+                        // Sheet row counters
+                        int numRowsToSkipInCSVFile = 0;
+                        int fromRow = 1;
+
+                        #endregion
+
+                        #region Controller Settings
+
+                        // Only output this once per controller
+                        if (listOfControllersAlreadyProcessed.Contains(jobTarget.Controller) == false)
+                        {
+                            listOfControllersAlreadyProcessed.Add(jobTarget.Controller);
+
+                            loggerConsole.Info("List of Controllers");
+
+                            sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLERS];
+                            if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                            {
+                                fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                                numRowsToSkipInCSVFile = 0;
+                            }
+                            else
+                            {
+                                fromRow = sheet.Dimension.Rows + 1;
+                                numRowsToSkipInCSVFile = 1;
+                            }
+                            readCSVFileIntoExcelRange(controllerReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+
+                            loggerConsole.Info("List of Controller Settings");
+
+                            sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS];
+                            if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                            {
+                                fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                                numRowsToSkipInCSVFile = 0;
+                            }
+                            else
+                            {
+                                fromRow = sheet.Dimension.Rows + 1;
+                                numRowsToSkipInCSVFile = 1;
+                            }
+                            readCSVFileIntoExcelRange(controllerSettingsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        }
+
+                        #endregion
+
+                        #region Application Configuration
+
+                        loggerConsole.Info("Application Configuration");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(applicationConfigurationReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Business Transaction Detection Rules
+
+                        loggerConsole.Info("List of Business Transaction Detection Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(businessTransactionDiscoveryRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Business Transaction Entry Rules
+
+                        loggerConsole.Info("List of Business Transaction Entry Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(businessTransactionEntryRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Backend Discovery Rules
+
+                        loggerConsole.Info("List of Backend Detection Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(backendDiscoveryRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Custom Exit Rules
+
+                        loggerConsole.Info("List of Custom Exit Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(customExitRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Information Point Rules
+
+                        loggerConsole.Info("List of Information Point Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(informationPointRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Agent Configuration Properties
+
+                        loggerConsole.Info("List of Agent Configuration Properties");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(agentConfigurationPropertiesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Data Collectors
+
+                        loggerConsole.Info("List of Method Invocation Data Collectors");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(methodInvocationDataCollectorsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        loggerConsole.Info("List of HTTP Data Collectors");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(httpDataCollectorsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Tier Settings
+
+                        loggerConsole.Info("List of Tier Settings");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_TIER_SETTINGS];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(entityTierConfigurationsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Detected Business Transaction and Assigned Data Collectors
+
+                        loggerConsole.Info("List of Detected Business Transaction and Assigned Data Collectors");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(entityBusinessTransactionConfigurationsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Agent Call Graph Settings
+
+                        loggerConsole.Info("List of Agent Call Graph Settings");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(agentCallGraphSettingsReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
+                        #region Health Rules
+
+                        loggerConsole.Info("List of Health Rules");
+
+                        sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
+                        if (sheet.Dimension.Rows < REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(healthRulesReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
 
                     }
                     catch (Exception ex)
@@ -5635,6 +6979,566 @@ namespace AppDynamics.Dexter
                         loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
                     }
                 }
+
+                loggerConsole.Info("Finalize Settings Report File");
+
+                #region Controllers sheet
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_DETAILS_TABLE_CONTROLLERS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["UserName"].Position + 1).AutoFit();
+                }
+
+                #endregion
+
+                #region Controller Settings
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS];
+                loggerConsole.Info("Controller Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_CONTROLLER_SETTINGS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Name"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["Value"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Description"].Position + 1).Width = 30;
+                }
+
+                #endregion
+
+                #region Application Configuration
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION];
+                loggerConsole.Info("Application Configuration Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_APPLICATION_CONFIGURATION);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Business Transaction Detection Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES];
+                loggerConsole.Info("Business Transaction Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_DISCOVERY_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["DiscoveryType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Business Transaction Entry Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
+                loggerConsole.Info("Business Transaction Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_ENTRY_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+
+                    // Make pivot
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsExclusion"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["EntryPointType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_BT_RULES_LOCATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsExclusion"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["EntryPointType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["NumdetectedBTs"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+                }
+
+                #endregion
+
+                #region Backend Discovery Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES];
+                loggerConsole.Info("Backend Discovery Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BACKEND_DISCOVERY_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["ExitType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+
+                    // Make pivot
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_BACKEND_DISCOVERY_RULES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ExitType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+
+                #endregion
+
+                #region Custom Exit Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES];
+                loggerConsole.Info("Custom Exit Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_CUSTOM_EXIT_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["ExitType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+
+                    // Make pivot
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ExitType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+
+                #endregion
+
+                #region Information Point Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES];
+                loggerConsole.Info("Information Point Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_INFORMATION_POINT_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Agent Configuration Properties
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES];
+                loggerConsole.Info("Agent Configuration Properties Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_AGENT_CONFIGURATION_PROPERTIES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["PropertyName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["PropertyName"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["StringValue"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["IntegerValue"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["BooleanValue"].Position + 1).Width = 15;
+
+                    // Make pivot
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsDefault"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["PropertyName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["PropertyType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["PropertyName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+
+                #endregion
+
+                #region Data Collectors
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS];
+                loggerConsole.Info("Method Invocation Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_METHOD_INVOCATION_DATA_COLLECTORS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["CollectorName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["MatchClass"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["MatchMethod"].Position + 1).Width = 20;
+                }
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS];
+                loggerConsole.Info("HTTP Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_HTTP_DATA_COLLECTORS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["CollectorName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["DataGathererName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["DataGathererValue"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Tier Settings
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_TIER_SETTINGS];
+                loggerConsole.Info("Tier Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_TIER_SETTINGS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["TierType"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Detected Business Transaction and Assigned Data Collectors
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS];
+                loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SETTINGS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AssignedMIDCs"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Agent Call Graph Settings
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS];
+                loggerConsole.Info("Agent Call Graph Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_AGENT_CALL_GRAPH_SETTINGS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
+
+                }
+
+                #endregion
+
+                #region Health Rules
+
+                // Make table
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
+                loggerConsole.Info("Health Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_HEALTH_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["RuleType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AffectsEntityType"].Position + 1).Width = 15;
+
+                    // Make pivot
+                    sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsDefault"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsAlwaysEnabled"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                }
+
+                #endregion
+
+                #region TOC sheet
+
+                // TOC sheet again
+                sheet = excelDetectedSettings.Workbook.Worksheets[REPORT_SHEET_TOC];
+                sheet.Cells[1, 1].Value = "Sheet Name";
+                sheet.Cells[1, 2].Value = "# Entities";
+                sheet.Cells[1, 3].Value = "Link";
+                int rowNum = 1;
+                foreach (ExcelWorksheet s in excelDetectedSettings.Workbook.Worksheets)
+                {
+                    rowNum++;
+                    sheet.Cells[rowNum, 1].Value = s.Name;
+                    sheet.Cells[rowNum, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", s.Name);
+                    if (s.Tables.Count > 0)
+                    {
+                        sheet.Cells[rowNum, 2].Value = s.Tables[0].Address.Rows - 1;
+                    }
+                }
+                range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_CONFIGURATION_DETAILS_TABLE_TOC);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Sheet Name"].Position + 1).AutoFit();
+                sheet.Column(table.Columns["# Entities"].Position + 1).AutoFit();
+
+                #endregion
+
+                #region Save file 
+
+                // Report files
+                string reportFileName = String.Format(
+                    REPORT_CONFIGURATION_FILE_NAME,
+                    programOptions.JobName,
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                logger.Info("Saving Excel report {0}", reportFilePath);
+                loggerConsole.Info("Saving Excel report {0}", reportFilePath);
+
+                try
+                {
+                    // Save full report Excel files
+                    excelDetectedSettings.SaveAs(new FileInfo(reportFilePath));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.Warn("Unable to save Excel file {0}", reportFilePath);
+                    logger.Warn(ex);
+                    loggerConsole.Warn("Unable to save Excel file {0}", reportFilePath);
+                }
+
+                #endregion
 
                 return true;
             }
@@ -5759,7 +7663,7 @@ namespace AppDynamics.Dexter
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelEntitiesMetrics.Workbook.Worksheets.Add(REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS_LIST);
+                sheet = excelEntitiesMetrics.Workbook.Worksheets.Add(REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.View.FreezePanes(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
@@ -5878,8 +7782,6 @@ namespace AppDynamics.Dexter
 
                         // Metric paths and files
                         string metricsEntityFolderPath = String.Empty;
-                        string entityFullRangeReportFilePath = String.Empty;
-                        string entityHourlyRangeReportFilePath = String.Empty;
                         string entitiesFullRangeReportFilePath = String.Empty;
                         string entitiesHourlyRangeReportFilePath = String.Empty;
 
@@ -5898,7 +7800,7 @@ namespace AppDynamics.Dexter
 
                             loggerConsole.Info("List of Controllers");
 
-                            sheet = excelEntitiesMetrics.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS_LIST];
+                            sheet = excelEntitiesMetrics.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS];
                             if (sheet.Dimension.Rows < REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                             {
                                 fromRow = REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT;
@@ -5931,8 +7833,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Applications (Hourly)");
 
@@ -5947,8 +7849,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -5969,8 +7871,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Tiers (Hourly)");
 
@@ -5985,8 +7887,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -6007,8 +7909,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Nodes (Hourly)");
 
@@ -6023,8 +7925,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -6045,8 +7947,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Backends (Hourly)");
 
@@ -6061,8 +7963,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -6083,8 +7985,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Business Transactions (Hourly)");
 
@@ -6099,8 +8001,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -6121,8 +8023,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Service Endpoints (Hourly)");
 
@@ -6137,8 +8039,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -6159,8 +8061,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesFullRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         loggerConsole.Info("List of Errors (Hourly)");
 
@@ -6175,8 +8077,8 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        readCSVFileIntoExcelRange(entityHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        entitiesHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        readCSVFileIntoExcelRange(entitiesHourlyRangeReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
                     }
@@ -6199,7 +8101,7 @@ namespace AppDynamics.Dexter
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelEntitiesMetrics.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS_LIST];
+                sheet = excelEntitiesMetrics.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS];
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6635,10 +8537,15 @@ namespace AppDynamics.Dexter
                 #region Entity sheets and their associated pivot
 
                 // Entity sheets
-                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS_LIST);
+                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.View.FreezePanes(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelDetectedEvents.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -6709,6 +8616,9 @@ namespace AppDynamics.Dexter
 
                         // Report files
                         string controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
+                        string applicationEventsSummaryReportFilePath = Path.Combine(eventsFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
+                        string eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
+                        string healthRuleViolationsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
 
                         // Sheet row counters
                         int numRowsToSkipInCSVFile = 0;
@@ -6725,7 +8635,7 @@ namespace AppDynamics.Dexter
 
                             loggerConsole.Info("List of Controllers");
 
-                            sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS_LIST];
+                            sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS];
                             if (sheet.Dimension.Rows < REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                             {
                                 fromRow = REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT;
@@ -6741,11 +8651,28 @@ namespace AppDynamics.Dexter
 
                         #endregion
 
+                        #region Applications
+
+                        loggerConsole.Info("List of Applications");
+
+                        sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
+                        if (sheet.Dimension.Rows < REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(applicationEventsSummaryReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+
+                        #endregion
+
                         #region Events
 
                         loggerConsole.Info("List of Events");
-
-                        string eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
 
                         sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
@@ -6766,8 +8693,6 @@ namespace AppDynamics.Dexter
 
                         loggerConsole.Info("List of Health Rule Violation Events");
 
-                        eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
-
                         sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS];
                         if (sheet.Dimension.Rows < REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                         {
@@ -6779,7 +8704,7 @@ namespace AppDynamics.Dexter
                             fromRow = sheet.Dimension.Rows + 1;
                             numRowsToSkipInCSVFile = 1;
                         }
-                        readCSVFileIntoExcelRange(eventsFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
+                        readCSVFileIntoExcelRange(healthRuleViolationsFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
                     }
@@ -6802,7 +8727,7 @@ namespace AppDynamics.Dexter
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS_LIST];
+                sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS];
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6815,7 +8740,25 @@ namespace AppDynamics.Dexter
 
                     sheet.Column(table.Columns["Controller"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["UserName"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
+                }
+
+                #endregion
+
+                #region Applications
+
+                // Make table
+                sheet = excelDetectedEvents.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
+                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_APPLICATIONS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    adjustColumnsOfEntityRowTableInMetricReport(APPLICATION_TYPE_SHORT, sheet, table);
                 }
 
                 #endregion
@@ -7120,7 +9063,12 @@ namespace AppDynamics.Dexter
                 #region Entity sheets and their associated pivot
 
                 // Entity sheets
-                sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_CONTROLLERS_LIST);
+                sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_CONTROLLERS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelSnapshots.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_APPLICATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
@@ -7253,6 +9201,7 @@ namespace AppDynamics.Dexter
                         string serviceEndpointCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
                         string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                         string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string applicationSnapshotsSummaryReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         // Sheet row counters
                         int numRowsToSkipInCSVFile = 0;
@@ -7269,7 +9218,7 @@ namespace AppDynamics.Dexter
 
                             loggerConsole.Info("List of Controllers");
 
-                            sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS_LIST];
+                            sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
                             if (sheet.Dimension.Rows < REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                             {
                                 fromRow = REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT;
@@ -7282,6 +9231,25 @@ namespace AppDynamics.Dexter
                             }
                             readCSVFileIntoExcelRange(controllerReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
                         }
+
+                        #endregion
+
+                        #region Applications
+
+                        loggerConsole.Info("List of Applications");
+
+                        sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
+                        if (sheet.Dimension.Rows < REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                        {
+                            fromRow = REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT;
+                            numRowsToSkipInCSVFile = 0;
+                        }
+                        else
+                        {
+                            fromRow = sheet.Dimension.Rows + 1;
+                            numRowsToSkipInCSVFile = 1;
+                        }
+                        readCSVFileIntoExcelRange(applicationSnapshotsSummaryReportFilePath, numRowsToSkipInCSVFile, sheet, fromRow, 1);
 
                         #endregion
 
@@ -7417,12 +9385,12 @@ namespace AppDynamics.Dexter
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelSnapshots.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS_LIST];
+                sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
-                    range = sheet.Cells[REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_CONTROLLERS);
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_CONTROLLERS);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
@@ -7430,7 +9398,25 @@ namespace AppDynamics.Dexter
 
                     sheet.Column(table.Columns["Controller"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["UserName"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
+                }
+
+                #endregion
+
+                #region Applications
+
+                // Make table
+                sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
+                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_APPLICATIONS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    adjustColumnsOfEntityRowTableInMetricReport(APPLICATION_TYPE_SHORT, sheet, table);
                 }
 
                 #endregion
@@ -7459,12 +9445,6 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["Occured"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["DetailLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["SnapshotLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["TierLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["NodeLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["BTLink"].Position + 1).AutoFit();
 
                     sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS);
@@ -7517,12 +9497,6 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["ParentTierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occured"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["SnapshotLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["ApplicationLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["TierLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["NodeLink"].Position + 1).AutoFit();
-                    //sheet.Column(table.Columns["BTLink"].Position + 1).AutoFit();
 
                     sheet = excelSnapshots.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_SNAPSHOTS_PIVOT_SEGMENTS);
@@ -7616,9 +9590,10 @@ namespace AppDynamics.Dexter
                     pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ExitType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
-                    //fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
-                    //fieldR.Compact = false;
-                    //fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
@@ -7878,6 +9853,7 @@ namespace AppDynamics.Dexter
                         // Various folders
                         string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
                         string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
                         string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
                         string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
                         string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
@@ -7900,6 +9876,9 @@ namespace AppDynamics.Dexter
                         string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                         string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
 
+                        string metricsEntityFolderPath = String.Empty;
+                        string entitiesFullRangeReportFilePath = String.Empty;
+
                         #endregion
 
                         #region Preload all the reports that will be filtered by the subsequent entities
@@ -7920,6 +9899,11 @@ namespace AppDynamics.Dexter
                         #region Application
 
                         List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityApplication> applicationMetricsList = FileIOHelper.readListFromCSVFile<EntityApplication>(entitiesFullRangeReportFilePath, new ApplicationMetricReportMap());
+
                         if (applicationList != null && applicationList.Count > 0)
                         {
                             loggerConsole.Info("Entity Details for Application");
@@ -7929,6 +9913,7 @@ namespace AppDynamics.Dexter
                                 jobConfiguration,
                                 jobTarget,
                                 applicationList[0],
+                                (applicationMetricsList != null && applicationMetricsList.Count > 0) ? applicationMetricsList[0] : null,
                                 eventsAllList,
                                 healthRuleViolationEventsAllList,
                                 snapshotsAllList,
@@ -7944,6 +9929,11 @@ namespace AppDynamics.Dexter
                         #region Tier
 
                         List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityTier> tiersMetricsList = FileIOHelper.readListFromCSVFile<EntityTier>(entitiesFullRangeReportFilePath, new TierMetricReportMap());
+
                         if (tiersList != null)
                         {
                             loggerConsole.Info("Entity Details for Tiers ({0} entities)", tiersList.Count);
@@ -7965,6 +9955,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             tiersListChunk,
+                                            tiersMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -7990,6 +9981,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     tiersList,
+                                    tiersMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -8009,6 +10001,11 @@ namespace AppDynamics.Dexter
                         #region Nodes
 
                         List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityNode> nodesMetricsList = FileIOHelper.readListFromCSVFile<EntityNode>(entitiesFullRangeReportFilePath, new NodeMetricReportMap());
+
                         if (nodesList != null)
                         {
                             loggerConsole.Info("Entity Details for Nodes ({0} entities)", nodesList.Count);
@@ -8030,6 +10027,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             nodesListChunk,
+                                            nodesMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -8055,6 +10053,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     nodesList,
+                                    nodesMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -8074,6 +10073,11 @@ namespace AppDynamics.Dexter
                         #region Backends
 
                         List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityBackend> backendsMetricsList = FileIOHelper.readListFromCSVFile<EntityBackend>(entitiesFullRangeReportFilePath, new BackendMetricReportMap());
+
                         if (backendsList != null)
                         {
                             loggerConsole.Info("Entity Details for Backends ({0} entities)", backendsList.Count);
@@ -8095,6 +10099,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             backendsListChunk,
+                                            backendsMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -8120,6 +10125,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     backendsList,
+                                    backendsMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -8139,6 +10145,11 @@ namespace AppDynamics.Dexter
                         #region Business Transactions
 
                         List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityBusinessTransaction> businessTransactionsMetricsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entitiesFullRangeReportFilePath, new BusinessTransactionMetricReportMap());
+
                         if (businessTransactionsList != null)
                         {
                             loggerConsole.Info("Entity Details for Business Transactions ({0} entities)", businessTransactionsList.Count);
@@ -8160,6 +10171,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             businessTransactionsListChunk,
+                                            businessTransactionsMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -8185,6 +10197,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     businessTransactionsList,
+                                    businessTransactionsMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -8204,6 +10217,11 @@ namespace AppDynamics.Dexter
                         #region Service Endpoints
 
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityServiceEndpoint> serviceEndpointsMetricsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entitiesFullRangeReportFilePath, new ServiceEndpointMetricReportMap());
+
                         if (serviceEndpointsList != null)
                         {
                             loggerConsole.Info("Entity Details for Service Endpoints ({0} entities)", serviceEndpointsList.Count);
@@ -8225,6 +10243,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             serviceEndpointsListChunk,
+                                            serviceEndpointsMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -8250,6 +10269,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     serviceEndpointsList,
+                                    serviceEndpointsMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -8269,6 +10289,11 @@ namespace AppDynamics.Dexter
                         #region Errors
 
                         List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
+
+                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, ERRORS_TYPE_SHORT);
+                        entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        List<EntityError> errorsMetricsList = FileIOHelper.readListFromCSVFile<EntityError>(entitiesFullRangeReportFilePath, new ErrorMetricReportMap());
+
                         if (errorsList != null)
                         {
                             loggerConsole.Info("Entity Details for Errors ({0} entities)", errorsList.Count);
@@ -8290,6 +10315,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             errorsListChunk,
+                                            errorsMetricsList,
                                             eventsAllList,
                                             healthRuleViolationEventsAllList,
                                             snapshotsAllList,
@@ -8315,6 +10341,7 @@ namespace AppDynamics.Dexter
                                     jobConfiguration,
                                     jobTarget,
                                     errorsList,
+                                    errorsMetricsList,
                                     eventsAllList,
                                     healthRuleViolationEventsAllList,
                                     snapshotsAllList,
@@ -9585,6 +11612,1055 @@ namespace AppDynamics.Dexter
             }
 
             return metricSummaries;
+        }
+
+        #endregion
+
+        #region Configuration detail conversion functions
+
+        private static string getNameValueDetailsFromNameValueCollection(XmlNode xmlNodeWithNameValuePairs)
+        {
+            if (xmlNodeWithNameValuePairs == null) return String.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (XmlNode xmlNodeNameValue in xmlNodeWithNameValuePairs.SelectNodes("name-values"))
+            {
+                sb.AppendFormat("{0}={1};", xmlNodeNameValue.SelectSingleNode("name").InnerText, xmlNodeNameValue.SelectSingleNode("value").InnerText);
+            }
+
+            return sb.ToString();
+        }
+
+        private static string getNameValueDetailsFromParametersCollection(XmlNode xmlNodeWithParameters)
+        {
+            if (xmlNodeWithParameters == null) return String.Empty;
+
+            StringBuilder sb = new StringBuilder();
+            foreach (XmlNode xmlNodeNameValue in xmlNodeWithParameters.SelectNodes("parameter"))
+            {
+                sb.AppendFormat(
+                    "{0}:{1}/{2}={3}/{4};",
+                    xmlNodeNameValue.Attributes["match-type"].Value,
+                    xmlNodeNameValue.SelectSingleNode("name").Attributes["filter-value"].Value,
+                    xmlNodeNameValue.SelectSingleNode("name").Attributes["filter-type"].Value,
+                    xmlNodeNameValue.SelectSingleNode("value").Attributes["filter-value"].Value,
+                    xmlNodeNameValue.SelectSingleNode("value").Attributes["filter-type"].Value);
+            }
+
+            return sb.ToString();
+        }
+
+        private static int getIntegerValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null) return 0;
+
+            if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return 0;
+            }
+            else
+            {
+                int value;
+                if (Int32.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    double value1;
+                    if (Double.TryParse(xmlNode.InnerText, out value1) == true)
+                    {
+                        return Convert.ToInt32(Math.Floor(value1));
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        private static bool getBoolValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null) return false;
+
+            if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return false;
+            }
+            else
+            {
+                bool value;
+                if (Boolean.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        private static string getStringValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null) return String.Empty;
+
+            if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return String.Empty;
+            }
+            else
+            {
+                return xmlNode.InnerText;
+            }
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/1123718/format-xml-string-to-print-friendly-xml-string
+        /// </summary>
+        /// <param name="XML"></param>
+        /// <returns></returns>
+        private static string makeXMLFormattedAndIndented(String XML)
+        {
+            string Result = "";
+
+            MemoryStream MS = new MemoryStream();
+            XmlTextWriter W = new XmlTextWriter(MS, Encoding.Unicode);
+            XmlDocument D = new XmlDocument();
+
+            try
+            {
+                // Load the XmlDocument with the XML.
+                D.LoadXml(XML);
+
+                W.Formatting = Formatting.Indented;
+
+                // Write the XML into a formatting XmlTextWriter
+                D.WriteContentTo(W);
+                W.Flush();
+                MS.Flush();
+
+                // Have to rewind the MemoryStream in order to read
+                // its contents.
+                MS.Position = 0;
+
+                // Read MemoryStream contents into a StreamReader.
+                StreamReader SR = new StreamReader(MS);
+
+                // Extract the text from the StreamReader.
+                String FormattedXML = SR.ReadToEnd();
+
+                Result = FormattedXML;
+            }
+            catch (XmlException)
+            {
+            }
+
+            MS.Close();
+            W.Close();
+
+            return Result;
+        }
+
+        private static string makeXMLFormattedAndIndented(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                return makeXMLFormattedAndIndented(xmlNode.OuterXml);
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
+        private static string makeXMLFormattedAndIndented(XmlNodeList xmlNodeList)
+        {
+            if (xmlNodeList.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder(128 * xmlNodeList.Count);
+                foreach (XmlNode xmlNode in xmlNodeList)
+                {
+                    sb.Append(makeXMLFormattedAndIndented(xmlNode));
+                    sb.AppendLine();
+                }
+                sb.Remove(sb.Length - 1, 1);
+                return sb.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
+        private static BusinessTransactionDiscoveryRule fillBusinessTransactionDiscoveryRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointTransactionConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode)
+        {
+            BusinessTransactionDiscoveryRule businessTransactionDiscoveryRule = new BusinessTransactionDiscoveryRule();
+
+            businessTransactionDiscoveryRule.Controller = applicationConfiguration.Controller;
+            businessTransactionDiscoveryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            businessTransactionDiscoveryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            businessTransactionDiscoveryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            businessTransactionDiscoveryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            businessTransactionDiscoveryRule.AgentType = entryMatchPointConfigurationNode.SelectSingleNode("agent-type").InnerText;
+            businessTransactionDiscoveryRule.EntryPointType = entryMatchPointTransactionConfigurationNode.Attributes["transaction-entry-point-type"].Value;
+            businessTransactionDiscoveryRule.IsMonitoringEnabled = getBoolValueFromXmlNode(entryMatchPointTransactionConfigurationNode.SelectSingleNode("enable"));
+            businessTransactionDiscoveryRule.DiscoveryType = entryMatchPointTransactionConfigurationNode.SelectSingleNode("discovery-config").Attributes["discovery-resolution"].Value;
+            businessTransactionDiscoveryRule.IsDiscoveryEnabled = getBoolValueFromXmlNode(entryMatchPointTransactionConfigurationNode.SelectSingleNode("discovery-config/discovery-config-enabled"));
+            businessTransactionDiscoveryRule.NamingConfigType = entryMatchPointTransactionConfigurationNode.SelectSingleNode("discovery-config/naming-config").Attributes["scheme"].Value;
+
+            businessTransactionDiscoveryRule.RuleRawValue = makeXMLFormattedAndIndented(entryMatchPointTransactionConfigurationNode);
+
+            if (applicationComponentNode != null)
+            {
+                businessTransactionDiscoveryRule.TierName = applicationComponentNode.SelectSingleNode("name").InnerText;
+            }
+
+            return businessTransactionDiscoveryRule;
+        }
+
+        private static BusinessTransactionEntryRule fillBusinessTransactionExcludeRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointTransactionConfigurationNode, XmlNode entryMatchPointCustomMatchPointConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode)
+        {
+            BusinessTransactionEntryRule businessTransactionEntryRule = new BusinessTransactionEntryRule();
+
+            businessTransactionEntryRule.Controller = applicationConfiguration.Controller;
+            businessTransactionEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            businessTransactionEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            businessTransactionEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            businessTransactionEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            businessTransactionEntryRule.AgentType = getStringValueFromXmlNode(entryMatchPointConfigurationNode.SelectSingleNode("agent-type"));
+            businessTransactionEntryRule.EntryPointType = entryMatchPointTransactionConfigurationNode.Attributes["transaction-entry-point-type"].Value;
+            businessTransactionEntryRule.RuleName = entryMatchPointCustomMatchPointConfigurationNode.Attributes["name"].Value;
+            businessTransactionEntryRule.IsExclusion = true;
+
+            XmlNode matchRule = entryMatchPointCustomMatchPointConfigurationNode.ChildNodes[0];
+            fillMatchRuleDetails(businessTransactionEntryRule, matchRule);
+
+            businessTransactionEntryRule.RuleRawValue = makeXMLFormattedAndIndented(entryMatchPointCustomMatchPointConfigurationNode);
+
+            if (applicationComponentNode != null)
+            {
+                businessTransactionEntryRule.TierName = applicationComponentNode.SelectSingleNode("name").InnerText;
+            }
+
+            return businessTransactionEntryRule;
+        }
+
+        private static BusinessTransactionEntryRule fillBusinessTransactionEntryRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointCustomMatchPointConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBusinessTransaction> businessTransactionsList)
+        {
+            BusinessTransactionEntryRule businessTransactionEntryRule = new BusinessTransactionEntryRule();
+
+            businessTransactionEntryRule.Controller = applicationConfiguration.Controller;
+            businessTransactionEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            businessTransactionEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            businessTransactionEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            businessTransactionEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            businessTransactionEntryRule.AgentType = getStringValueFromXmlNode(entryMatchPointConfigurationNode.SelectSingleNode("agent-type"));
+            businessTransactionEntryRule.EntryPointType = entryMatchPointCustomMatchPointConfigurationNode.Attributes["transaction-entry-point-type"].Value;
+            businessTransactionEntryRule.RuleName = getStringValueFromXmlNode(entryMatchPointCustomMatchPointConfigurationNode.SelectSingleNode("name"));
+            businessTransactionEntryRule.IsBackground = getBoolValueFromXmlNode(entryMatchPointCustomMatchPointConfigurationNode.SelectSingleNode("background"));
+            businessTransactionEntryRule.IsExclusion = false;
+
+            XmlNode matchRule = entryMatchPointCustomMatchPointConfigurationNode.SelectSingleNode("match-rule").ChildNodes[0];
+            fillMatchRuleDetails(businessTransactionEntryRule, matchRule);
+
+            businessTransactionEntryRule.RuleRawValue = makeXMLFormattedAndIndented(entryMatchPointCustomMatchPointConfigurationNode);
+
+            if (applicationComponentNode != null)
+            {
+                businessTransactionEntryRule.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            }
+
+            if (businessTransactionsList != null)
+            {
+                List<EntityBusinessTransaction> businessTransactionsForThisRule = new List<EntityBusinessTransaction>();
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName == businessTransactionEntryRule.RuleName).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal == businessTransactionEntryRule.RuleName).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
+                businessTransactionsForThisRule = businessTransactionsForThisRule.Distinct().ToList();
+                businessTransactionEntryRule.NumDetectedBTs = businessTransactionsForThisRule.Count;
+                if (businessTransactionsForThisRule.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder(32 * businessTransactionsForThisRule.Count);
+                    foreach (EntityBusinessTransaction bt in businessTransactionsForThisRule)
+                    {
+                        sb.AppendFormat("{0}/{1} ({2});\n", bt.TierName, bt.BTName, bt.BTID);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    businessTransactionEntryRule.DetectedBTs = sb.ToString();
+                }
+            }
+
+            return businessTransactionEntryRule;
+        }
+
+        private static BackendDiscoveryRule fillBackendDiscoveryRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode backendDiscoveryConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBackend> backendsList)
+        {
+            BackendDiscoveryRule backendDiscoveryRule = new BackendDiscoveryRule();
+
+            backendDiscoveryRule.Controller = applicationConfiguration.Controller;
+            backendDiscoveryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            backendDiscoveryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            backendDiscoveryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            backendDiscoveryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            backendDiscoveryRule.AgentType = getStringValueFromXmlNode(backendDiscoveryMatchPointConfigurationNode.SelectSingleNode("agent-type"));
+            backendDiscoveryRule.ExitType = getStringValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("exit-point-type"));
+            if (backendDiscoveryRule.ExitType == "CUSTOM")
+            {
+                backendDiscoveryRule.ExitType = getStringValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("exit-point-subtype"));
+            }
+            backendDiscoveryRule.RuleName = getStringValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("name"));
+            backendDiscoveryRule.IsEnabled = getBoolValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("discovery-enabled"));
+            backendDiscoveryRule.IsCorrelationSupported = getBoolValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("supports-correlation"));
+            backendDiscoveryRule.IsCorrelationEnabled = getBoolValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("correlation-enabled"));
+            backendDiscoveryRule.Priority = getIntegerValueFromXmlNode(backendDiscoveryConfigurationNode.SelectSingleNode("priority"));
+
+            backendDiscoveryRule.IdentityOptions = makeXMLFormattedAndIndented(backendDiscoveryConfigurationNode.SelectSingleNode("backend-identity-options"));
+            backendDiscoveryRule.DiscoveryConditions = makeXMLFormattedAndIndented(backendDiscoveryConfigurationNode.SelectSingleNode("backend-identity-options"));
+
+            backendDiscoveryRule.RuleRawValue = makeXMLFormattedAndIndented(backendDiscoveryConfigurationNode);
+
+            if (applicationComponentNode != null)
+            {
+                backendDiscoveryRule.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            }
+
+            if (backendsList != null)
+            {
+                List<EntityBackend> backendsForThisRule = new List<EntityBackend>();
+
+                // Try to find them by match first
+                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName == backendDiscoveryRule.RuleName).ToList());
+                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName.StartsWith(String.Format("{0}", backendDiscoveryRule.RuleName))).ToList());
+                backendsForThisRule = backendsForThisRule.Distinct().ToList();
+                if (backendsForThisRule.Count == 0)
+                {
+                    // If by name doesn't match, let's do by type
+                    // Nope, this doesn't work. Backend is differentiated by the Agent Type
+                    // Because of that the backend matches every darn type starting with Default
+                    // backendsForThisRule.AddRange(backendsList.Where(b => b.BackendType == backendDiscoveryRule.ExitType).ToList());
+                }
+                backendDiscoveryRule.NumDetectedBackends = backendsForThisRule.Count;
+                if (backendsForThisRule.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder(32 * backendsForThisRule.Count);
+                    foreach (EntityBackend backend in backendsForThisRule)
+                    {
+                        sb.AppendFormat("{0} ({1});\n", backend.BackendName, backend.BackendID);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    backendDiscoveryRule.DetectedBackends = sb.ToString();
+                }
+            }
+
+            return backendDiscoveryRule;
+        }
+
+        private static CustomExitRule fillCustomExitRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode customExitConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBackend> backendsList)
+        {
+            CustomExitRule customExitRule = new CustomExitRule();
+
+            customExitRule.Controller = applicationConfiguration.Controller;
+            customExitRule.ControllerLink = applicationConfiguration.ControllerLink;
+            customExitRule.ApplicationName = applicationConfiguration.ApplicationName;
+            customExitRule.ApplicationID = applicationConfiguration.ApplicationID;
+            customExitRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            customExitRule.AgentType = getStringValueFromXmlNode(backendDiscoveryMatchPointConfigurationNode.SelectSingleNode("agent-type"));
+            customExitRule.ExitType = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("type"));
+
+            customExitRule.RuleName = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("name"));
+            customExitRule.MatchClass = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/pojo-method-definition/class-name"));
+            customExitRule.MatchMethod = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/pojo-method-definition/method-name"));
+            customExitRule.MatchType = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/pojo-method-definition/match-type"));
+            customExitRule.MatchParameterTypes = getStringValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/pojo-method-definition/method-parameter-types"));
+
+            customExitRule.IsApplyToAllBTs = getBoolValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/apply-to-all-bts"));
+
+            customExitRule.DataCollectorsConfig = makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/method-invocation-data-gatherer-config"));
+            customExitRule.InfoPointsConfig = makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/info-point-metric-definition"));
+
+            customExitRule.RuleRawValue = makeXMLFormattedAndIndented(customExitConfigurationNode);
+
+            if (applicationComponentNode != null)
+            {
+                customExitRule.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            }
+
+            if (backendsList != null)
+            {
+                List<EntityBackend> backendsForThisRule = new List<EntityBackend>();
+
+                // Try to find them by match first
+                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName == customExitRule.RuleName).ToList());
+                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName.StartsWith(String.Format("{0}", customExitRule.RuleName))).ToList());
+                backendsForThisRule = backendsForThisRule.Distinct().ToList();
+                if (backendsForThisRule.Count == 0)
+                {
+                    // If by name doesn't match, let's do by type
+                    // Nope, this doesn't work. Backend is differentiated by the Agent Type
+                    // Because of that the backend matches every darn type starting with Default
+                    // backendsForThisRule.AddRange(backendsList.Where(b => b.BackendType == customExitRule.ExitType).ToList());
+                }
+                customExitRule.NumDetectedBackends = backendsForThisRule.Count;
+                if (backendsForThisRule.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder(32 * backendsForThisRule.Count);
+                    foreach (EntityBackend backend in backendsForThisRule)
+                    {
+                        sb.AppendFormat("{0} ({1});\n", backend.BackendName, backend.BackendID);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    customExitRule.DetectedBackends = sb.ToString();
+                }
+            }
+
+            return customExitRule;
+        }
+
+        private static InformationPointRule fillInformationPointRule(XmlNode informationPointConfigurationNode, EntityApplicationConfiguration applicationConfiguration)
+        {
+            InformationPointRule informationPointRule = new InformationPointRule();
+
+            informationPointRule.Controller = applicationConfiguration.Controller;
+            informationPointRule.ControllerLink = applicationConfiguration.ControllerLink;
+            informationPointRule.ApplicationName = applicationConfiguration.ApplicationName;
+            informationPointRule.ApplicationID = applicationConfiguration.ApplicationID;
+            informationPointRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            informationPointRule.AgentType = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("agent-type"));
+
+            informationPointRule.RuleName = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("name"));
+            informationPointRule.MatchClass = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/class-name"));
+            informationPointRule.MatchMethod = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/method-name"));
+            informationPointRule.MatchType = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/match-type"));
+            informationPointRule.MatchParameterTypes = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/method-parameter-types"));
+            informationPointRule.MatchCondition = makeXMLFormattedAndIndented(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/match-condition"));
+
+            informationPointRule.InfoPointsConfig = makeXMLFormattedAndIndented(informationPointConfigurationNode.SelectNodes("info-point-metric-definition"));
+
+            informationPointRule.RuleRawValue = makeXMLFormattedAndIndented(informationPointConfigurationNode);
+
+            return informationPointRule;
+        }
+
+        private static AgentConfigurationProperty fillAgentConfigurationProperty(XmlNode agentConfigurationNode, XmlNode agentPropertyDefinitionConfigurationNode, XmlNode agentPropertyValueConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode)
+        {
+            AgentConfigurationProperty agentConfigurationProperty = new AgentConfigurationProperty();
+
+            agentConfigurationProperty.Controller = applicationConfiguration.Controller;
+            agentConfigurationProperty.ControllerLink = applicationConfiguration.ControllerLink;
+            agentConfigurationProperty.ApplicationName = applicationConfiguration.ApplicationName;
+            agentConfigurationProperty.ApplicationID = applicationConfiguration.ApplicationID;
+            agentConfigurationProperty.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            agentConfigurationProperty.AgentType = getStringValueFromXmlNode(agentConfigurationNode.SelectSingleNode("agent-type"));
+
+            agentConfigurationProperty.PropertyName = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("name"));
+            agentConfigurationProperty.PropertyType = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("type"));
+            agentConfigurationProperty.Description = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("description"));
+            agentConfigurationProperty.IsRequired = getBoolValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("required"));
+
+            switch (agentConfigurationProperty.PropertyType)
+            {
+                case "STRING":
+                    agentConfigurationProperty.StringValue = getStringValueFromXmlNode(agentPropertyValueConfigurationNode.SelectSingleNode("string-value"));
+                    agentConfigurationProperty.StringDefaultValue = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("default-string-value"));
+                    agentConfigurationProperty.StringMaxLength = getIntegerValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("string-max-length"));
+                    agentConfigurationProperty.StringAllowedValues = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("allowed-string-values"));
+
+                    agentConfigurationProperty.IsDefault = (agentConfigurationProperty.StringDefaultValue == agentConfigurationProperty.StringDefaultValue);
+                    break;
+
+                case "BOOLEAN":
+                    agentConfigurationProperty.BooleanValue = getBoolValueFromXmlNode(agentPropertyValueConfigurationNode.SelectSingleNode("string-value"));
+                    agentConfigurationProperty.BooleanDefaultValue = getBoolValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("default-string-value"));
+
+                    agentConfigurationProperty.IsDefault = (agentConfigurationProperty.BooleanValue == agentConfigurationProperty.BooleanDefaultValue);
+                    break;
+
+                case "INTEGER":
+                    agentConfigurationProperty.IntegerValue = getIntegerValueFromXmlNode(agentPropertyValueConfigurationNode.SelectSingleNode("string-value"));
+                    agentConfigurationProperty.IntegerDefaultValue = getIntegerValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("default-string-value"));
+                    agentConfigurationProperty.IntegerMinValue = getIntegerValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("lower-numeric-bound"));
+                    agentConfigurationProperty.IntegerMaxValue = getIntegerValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("upper-numeric-bound"));
+
+                    agentConfigurationProperty.IsDefault = (agentConfigurationProperty.IntegerValue == agentConfigurationProperty.IntegerDefaultValue);
+                    break;
+
+                default:
+                    agentConfigurationProperty.StringValue = getStringValueFromXmlNode(agentPropertyValueConfigurationNode.SelectSingleNode("string-value"));
+                    break;
+            }
+
+            if (applicationComponentNode != null)
+            {
+                agentConfigurationProperty.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            }
+
+            return agentConfigurationProperty;
+        }
+
+        private static MethodInvocationDataCollector fillMethodInvocationDataCollector(XmlNode methodInvocationDataCollectorConfigurationNode, XmlNode dataGathererConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList)
+        {
+            MethodInvocationDataCollector methodInvocationDataCollector = new MethodInvocationDataCollector();
+
+            methodInvocationDataCollector.Controller = applicationConfiguration.Controller;
+            methodInvocationDataCollector.ControllerLink = applicationConfiguration.ControllerLink;
+            methodInvocationDataCollector.ApplicationName = applicationConfiguration.ApplicationName;
+            methodInvocationDataCollector.ApplicationID = applicationConfiguration.ApplicationID;
+            methodInvocationDataCollector.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            methodInvocationDataCollector.CollectorName = getStringValueFromXmlNode(methodInvocationDataCollectorConfigurationNode.SelectSingleNode("name"));
+
+            methodInvocationDataCollector.IsAPM = Convert.ToBoolean(methodInvocationDataCollectorConfigurationNode.Attributes["enabled-for-apm"].Value);
+            methodInvocationDataCollector.IsAnalytics = Convert.ToBoolean(methodInvocationDataCollectorConfigurationNode.Attributes["enabled-for-analytics"].Value);
+            methodInvocationDataCollector.IsAssignedToNewBTs = Convert.ToBoolean(methodInvocationDataCollectorConfigurationNode.Attributes["attach-to-new-bts"].Value);
+
+            methodInvocationDataCollector.MatchClass = getStringValueFromXmlNode(methodInvocationDataCollectorConfigurationNode.SelectSingleNode("pojo-method-definition/class-name"));
+            methodInvocationDataCollector.MatchMethod = getStringValueFromXmlNode(methodInvocationDataCollectorConfigurationNode.SelectSingleNode("pojo-method-definition/method-name"));
+            methodInvocationDataCollector.MatchType = getStringValueFromXmlNode(methodInvocationDataCollectorConfigurationNode.SelectSingleNode("pojo-method-definition/match-type"));
+            methodInvocationDataCollector.MatchParameterTypes = getStringValueFromXmlNode(methodInvocationDataCollectorConfigurationNode.SelectSingleNode("pojo-method-definition/method-parameter-types"));
+
+            methodInvocationDataCollector.DataGathererName = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("name"));
+            methodInvocationDataCollector.DataGathererType = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("gatherer-type"));
+            methodInvocationDataCollector.DataGathererPosition = getIntegerValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("position"));
+            methodInvocationDataCollector.DataGathererTransform = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("transformer-type"));
+            methodInvocationDataCollector.DataGathererGetter = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("transformer-value"));
+
+            methodInvocationDataCollector.IsAssignedToBTs = false;
+
+            methodInvocationDataCollector.RuleRawValue = makeXMLFormattedAndIndented(methodInvocationDataCollectorConfigurationNode);
+
+            if (entityBusinessTransactionConfigurationsList != null)
+            {
+                List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsForThisDCList = entityBusinessTransactionConfigurationsList.Where(b => b.AssignedMIDCs.Contains(String.Format("{0};", methodInvocationDataCollector.CollectorName)) == true).ToList();
+
+                if (entityBusinessTransactionConfigurationsForThisDCList.Count > 0)
+                {
+                    methodInvocationDataCollector.IsAssignedToBTs = true;
+                    methodInvocationDataCollector.NumAssignedBTs = entityBusinessTransactionConfigurationsForThisDCList.Count;
+
+                    StringBuilder sb = new StringBuilder(32 * entityBusinessTransactionConfigurationsForThisDCList.Count);
+                    foreach (EntityBusinessTransactionConfiguration bt in entityBusinessTransactionConfigurationsForThisDCList)
+                    {
+                        sb.AppendFormat("{0}/{1} ({2});\n", bt.TierName, bt.BTName, bt.BTID);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    methodInvocationDataCollector.AssignedBTs = sb.ToString();
+                }
+            }
+
+            return methodInvocationDataCollector;
+        }
+
+        private static HTTPDataCollector fillHTTPDataCollector(XmlNode httpDataCollectorConfigurationNode, XmlNode dataGathererConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList)
+        {
+            HTTPDataCollector httpDataCollector = new HTTPDataCollector();
+
+            httpDataCollector.Controller = applicationConfiguration.Controller;
+            httpDataCollector.ControllerLink = applicationConfiguration.ControllerLink;
+            httpDataCollector.ApplicationName = applicationConfiguration.ApplicationName;
+            httpDataCollector.ApplicationID = applicationConfiguration.ApplicationID;
+            httpDataCollector.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            httpDataCollector.CollectorName = getStringValueFromXmlNode(httpDataCollectorConfigurationNode.SelectSingleNode("name"));
+
+            httpDataCollector.IsAPM = Convert.ToBoolean(httpDataCollectorConfigurationNode.Attributes["enabled-for-apm"].Value);
+            httpDataCollector.IsAnalytics = Convert.ToBoolean(httpDataCollectorConfigurationNode.Attributes["enabled-for-analytics"].Value);
+            httpDataCollector.IsAssignedToNewBTs = Convert.ToBoolean(httpDataCollectorConfigurationNode.Attributes["attach-to-new-bts"].Value);
+
+            httpDataCollector.IsURLEnabled = getBoolValueFromXmlNode(httpDataCollectorConfigurationNode.SelectSingleNode("gather-url"));
+            httpDataCollector.IsSessionIDEnabled = getBoolValueFromXmlNode(httpDataCollectorConfigurationNode.SelectSingleNode("gather-session-id"));
+            httpDataCollector.IsUserPrincipalEnabled = getBoolValueFromXmlNode(httpDataCollectorConfigurationNode.SelectSingleNode("gather-user-principal"));
+
+            httpDataCollector.DataGathererName = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("display-name"));
+            httpDataCollector.DataGathererValue = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("name"));
+
+            httpDataCollector.IsAssignedToBTs = false;
+
+            httpDataCollector.RuleRawValue = makeXMLFormattedAndIndented(httpDataCollectorConfigurationNode);
+
+            if (entityBusinessTransactionConfigurationsList != null)
+            {
+                List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsForThisDCList = entityBusinessTransactionConfigurationsList.Where(b => b.AssignedMIDCs.Contains(String.Format("{0};", httpDataCollector.CollectorName)) == true).ToList();
+
+                if (entityBusinessTransactionConfigurationsForThisDCList.Count > 0)
+                {
+                    httpDataCollector.IsAssignedToBTs = true;
+                    httpDataCollector.NumAssignedBTs = entityBusinessTransactionConfigurationsForThisDCList.Count;
+
+                    StringBuilder sb = new StringBuilder(32 * entityBusinessTransactionConfigurationsForThisDCList.Count);
+                    foreach (EntityBusinessTransactionConfiguration bt in entityBusinessTransactionConfigurationsForThisDCList)
+                    {
+                        sb.AppendFormat("{0}/{1} ({2});\n", bt.TierName, bt.BTName, bt.BTID);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    httpDataCollector.AssignedBTs = sb.ToString();
+                }
+            }
+
+            return httpDataCollector;
+        }
+
+        private static EntityTierConfiguration fillEntityTierConfiguration(XmlNode applicationComponentNode, EntityApplicationConfiguration applicationConfiguration, List<EntityTier> tiersList, List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList)
+        {
+            EntityTierConfiguration entityTierConfiguration = new EntityTierConfiguration();
+
+            entityTierConfiguration.Controller = applicationConfiguration.Controller;
+            entityTierConfiguration.ControllerLink = applicationConfiguration.ControllerLink;
+            entityTierConfiguration.ApplicationName = applicationConfiguration.ApplicationName;
+            entityTierConfiguration.ApplicationID = applicationConfiguration.ApplicationID;
+            entityTierConfiguration.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            entityTierConfiguration.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            entityTierConfiguration.TierDescription = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("description"));
+            entityTierConfiguration.TierType = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("component-type"));
+            EntityTier tier = tiersList.Where(t => t.TierName == entityTierConfiguration.TierName).FirstOrDefault();
+            if (tier != null)
+            {
+                entityTierConfiguration.TierID = tier.TierID;
+            }
+
+            entityTierConfiguration.IsDynamicScalingEnabled = getBoolValueFromXmlNode(applicationComponentNode.SelectSingleNode("dynamic-scaling-enabled"));
+
+            entityTierConfiguration.MemoryConfig = makeXMLFormattedAndIndented(applicationComponentNode.SelectSingleNode("memory-configuration"));
+            entityTierConfiguration.CacheConfig = makeXMLFormattedAndIndented(applicationComponentNode.SelectSingleNode("cache-configuration"));
+            entityTierConfiguration.CustomCacheConfig = makeXMLFormattedAndIndented(applicationComponentNode.SelectSingleNode("custom-cache-configurations"));
+
+            if (entityBusinessTransactionConfigurationsList != null)
+            {
+                List<EntityBusinessTransactionConfiguration> businessTransactionsList = entityBusinessTransactionConfigurationsList.Where(b => b.TierID == entityTierConfiguration.TierID).ToList();
+                entityTierConfiguration.NumBTs = businessTransactionsList.Count;
+
+                var businessTransactionsListGroup = businessTransactionsList.GroupBy(b => b.BTType);
+                entityTierConfiguration.NumBTTypes = businessTransactionsListGroup.Count();
+            }
+
+            return entityTierConfiguration;
+        }
+
+        private static EntityBusinessTransactionConfiguration fillEntityBusinessTransactionConfiguration(XmlNode applicationComponentNode, XmlNode businessTransactionConfigurationtNode, EntityApplicationConfiguration applicationConfiguration, List<EntityTier> tiersList, List<EntityBusinessTransaction> businessTransactionsList)
+        {
+            EntityBusinessTransactionConfiguration entityBusinessTransactionConfiguration = new EntityBusinessTransactionConfiguration();
+
+            entityBusinessTransactionConfiguration.Controller = applicationConfiguration.Controller;
+            entityBusinessTransactionConfiguration.ControllerLink = applicationConfiguration.ControllerLink;
+            entityBusinessTransactionConfiguration.ApplicationName = applicationConfiguration.ApplicationName;
+            entityBusinessTransactionConfiguration.ApplicationID = applicationConfiguration.ApplicationID;
+            entityBusinessTransactionConfiguration.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            entityBusinessTransactionConfiguration.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
+            EntityTier tier = tiersList.Where(t => t.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+            if (tier != null)
+            {
+                entityBusinessTransactionConfiguration.TierID = tier.TierID;
+            }
+
+            entityBusinessTransactionConfiguration.BTName = getStringValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("name"));
+            entityBusinessTransactionConfiguration.BTType = businessTransactionConfigurationtNode.Attributes["transaction-entry-point-type"].Value;
+            EntityBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTName == entityBusinessTransactionConfiguration.BTName && b.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+            if (businessTransaction != null)
+            {
+                entityBusinessTransactionConfiguration.BTID = businessTransaction.BTID;
+            }
+
+            entityBusinessTransactionConfiguration.IsExcluded = Convert.ToBoolean(businessTransactionConfigurationtNode.Attributes["excluded"].Value);
+            entityBusinessTransactionConfiguration.IsBackground = getBoolValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("background"));
+
+            entityBusinessTransactionConfiguration.IsEUMEnabled = getBoolValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("enabled-for-eum"));
+            entityBusinessTransactionConfiguration.IsEUMPossible = getStringValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("eum-auto-enable-possible"));
+            entityBusinessTransactionConfiguration.IsAnalyticsEnabled = getBoolValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("analytics-enabled"));
+
+            entityBusinessTransactionConfiguration.BTSLAConfig = makeXMLFormattedAndIndented(businessTransactionConfigurationtNode.SelectSingleNode("sla"));
+            entityBusinessTransactionConfiguration.BTSnapshotCollectionConfig = makeXMLFormattedAndIndented(businessTransactionConfigurationtNode.SelectSingleNode("business-transaction-config/snapshot-collection-policy"));
+            entityBusinessTransactionConfiguration.BTRequestThresholdConfig = makeXMLFormattedAndIndented(businessTransactionConfigurationtNode.SelectSingleNode("business-transaction-config/bt-request-thresholds"));
+            entityBusinessTransactionConfiguration.BTBackgroundSnapshotCollectionConfig = makeXMLFormattedAndIndented(businessTransactionConfigurationtNode.SelectSingleNode("background-business-transaction-config/snapshot-collection-policy"));
+            entityBusinessTransactionConfiguration.BTBackgroundRequestThresholdConfig = makeXMLFormattedAndIndented(businessTransactionConfigurationtNode.SelectSingleNode("background-business-transaction-config/bt-request-thresholds"));
+
+            entityBusinessTransactionConfiguration.NumAssignedMIDCs = businessTransactionConfigurationtNode.SelectNodes("data-gatherer-config").Count;
+            entityBusinessTransactionConfiguration.AssignedMIDCs = String.Empty;
+            if (entityBusinessTransactionConfiguration.NumAssignedMIDCs > 0)
+            {
+                StringBuilder sb = new StringBuilder(32 * entityBusinessTransactionConfiguration.NumAssignedMIDCs);
+                foreach (XmlNode dataGathererXmlNode in businessTransactionConfigurationtNode.SelectNodes("data-gatherer-config"))
+                {
+                    sb.AppendFormat("{0};\n", dataGathererXmlNode.InnerText);
+                }
+                sb.Remove(sb.Length - 1, 1);
+                entityBusinessTransactionConfiguration.AssignedMIDCs = sb.ToString();
+            }
+
+            return entityBusinessTransactionConfiguration;
+        }
+
+        private static AgentCallGraphSetting fillAgentCallGraphSetting(XmlNode agentCallGraphSettingConfigurationNode, EntityApplicationConfiguration applicationConfiguration)
+        {
+            AgentCallGraphSetting agentCallGraphSetting = new AgentCallGraphSetting();
+
+            agentCallGraphSetting.Controller = applicationConfiguration.Controller;
+            agentCallGraphSetting.ControllerLink = applicationConfiguration.ControllerLink;
+            agentCallGraphSetting.ApplicationName = applicationConfiguration.ApplicationName;
+            agentCallGraphSetting.ApplicationID = applicationConfiguration.ApplicationID;
+            agentCallGraphSetting.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            agentCallGraphSetting.AgentType = agentCallGraphSettingConfigurationNode.Attributes["agent-type"].Value;
+
+            agentCallGraphSetting.SamplingRate = getIntegerValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("sampling-rate"));
+            agentCallGraphSetting.IncludePackages = getStringValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("include-packages"));
+            agentCallGraphSetting.NumIncludePackages = agentCallGraphSetting.IncludePackages.Split('|').Count();
+            agentCallGraphSetting.IncludePackages = agentCallGraphSetting.IncludePackages.Replace("|", ";\n");
+            agentCallGraphSetting.ExcludePackages = getStringValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("exclude-packages"));
+            agentCallGraphSetting.NumExcludePackages = agentCallGraphSetting.ExcludePackages.Split('|').Count();
+            agentCallGraphSetting.ExcludePackages = agentCallGraphSetting.ExcludePackages.Replace("|", ";\n");
+            agentCallGraphSetting.MinSQLDuration = getIntegerValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("min-duration-for-db-calls"));
+            agentCallGraphSetting.IsRawSQLEnabled = getBoolValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("raw-sql"));
+            agentCallGraphSetting.IsHotSpotEnabled = getBoolValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("hotspots-enabled"));
+
+            return agentCallGraphSetting;
+        }
+
+        private static HealthRule fillHealthRule(XmlNode healthRuleConfigurationNode, EntityApplicationConfiguration applicationConfiguration)
+        {
+            HealthRule healthRule = new HealthRule();
+
+            healthRule.Controller = applicationConfiguration.Controller;
+            healthRule.ControllerLink = applicationConfiguration.ControllerLink;
+            healthRule.ApplicationName = applicationConfiguration.ApplicationName;
+            healthRule.ApplicationID = applicationConfiguration.ApplicationID;
+            healthRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            healthRule.RuleName = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("name"));
+            healthRule.RuleType = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("type"));
+            healthRule.Description = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("description"));
+            healthRule.IsEnabled = getBoolValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("enabled"));
+            healthRule.IsDefault = getBoolValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("is-default"));
+            healthRule.IsAlwaysEnabled = getBoolValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("always-enabled"));
+            healthRule.Schedule = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("schedule"));
+            healthRule.DurationOfEvalPeriod = getIntegerValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("duration-min"));
+            healthRule.WaitTimeAfterViolation = getIntegerValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("wait-time-min"));
+
+            healthRule.AffectedEntitiesRawValue = makeXMLFormattedAndIndented(healthRuleConfigurationNode.SelectSingleNode("affected-entities-match-criteria"));
+            healthRule.CriticalConditionRawValue = makeXMLFormattedAndIndented(healthRuleConfigurationNode.SelectSingleNode("critical-execution-criteria"));
+            healthRule.WarningConditionRawValue = makeXMLFormattedAndIndented(healthRuleConfigurationNode.SelectSingleNode("warning-execution-criteria"));
+
+            // Affected entity selection
+            XmlNode affectedWrapperXmlNode = healthRuleConfigurationNode.SelectSingleNode("affected-entities-match-criteria").ChildNodes[0];
+            if (affectedWrapperXmlNode != null)
+            {
+                healthRule.AffectsEntityType = getStringValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("type"));
+                healthRule.AffectsEntityMatchType = getStringValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("match-type"));
+                healthRule.AffectsEntityMatchPattern = getStringValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("match-pattern"));
+                healthRule.AffectsEntityMatchIsInverse = getBoolValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("inverse"));
+                healthRule.AffectsEntityMatchCriteria = makeXMLFormattedAndIndented(affectedWrapperXmlNode.SelectNodes("*[not(self::type) and not(self::match-type) and not(self::match-pattern) and not(self::inverse)]"));
+
+                //if (healthRule.AffectsEntityType.Contains("ALL") == true)
+                //{
+                //    healthRule.AffectsEntities = "All";
+                //}
+                //else if (healthRule.AffectsEntityType.Contains("SPECIFIC") == true || healthRule.AffectsEntityType.Contains("SPFICIC") == true)
+                //{
+                //    // TODO do specific
+                //    healthRule.AffectsEntities = "TODO SPECIFIC";
+                //}
+                //else
+                //{
+                //    // Here there must be a rule trying to match things
+
+                //}
+            }
+
+            // XML can look like that for single element
+            //<critical-execution-criteria>
+            //    <entity-aggregation-scope>
+            //        <type>ANY</type>
+            //        <value>0</value>
+            //    </entity-aggregation-scope>
+            //    <policy-condition>
+            //        <type>leaf</type>
+            //        <display-name>condition 1</display-name>
+            //        <condition-value-type>ABSOLUTE</condition-value-type>
+            //        <condition-value>0.0</condition-value>
+            //        <operator>GREATER_THAN</operator>
+            //        <condition-expression/>
+            //        <use-active-baseline>false</use-active-baseline>
+            //        <trigger-on-no-data>true</trigger-on-no-data>
+            //        <metric-expression>
+            //            <type>leaf</type>
+            //            <function-type>VALUE</function-type>
+            //            <value>0</value>
+            //            <is-literal-expression>false</is-literal-expression>
+            //            <display-name>null</display-name>
+            //            <metric-definition>
+            //                <type>LOGICAL_METRIC</type>
+            //                <logical-metric-name>Agent|App|Availability</logical-metric-name>
+            //            </metric-definition>
+            //        </metric-expression>
+            //    </policy-condition>
+            //</critical-execution-criteria>
+
+            // Or like that for multiple
+            //<critical-execution-criteria>
+            //    <entity-aggregation-scope>
+            //        <type>AGGREGATE</type>
+            //        <value>0</value>
+            //    </entity-aggregation-scope>
+            //    <policy-condition>
+            //        <type>boolean</type>
+            //        <operator>AND</operator>
+            //        <condition1>
+            //            <type>leaf</type>
+            //            <display-name>Average Response Time (ms) Baseline Condition</display-name>
+            //            <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
+            //            <condition-value>3.0</condition-value>
+            //            <operator>GREATER_THAN</operator>
+            //            <condition-expression/>
+            //            <use-active-baseline>true</use-active-baseline>
+            //            <trigger-on-no-data>false</trigger-on-no-data>
+            //            <metric-expression>
+            //                <type>leaf</type>
+            //                <function-type>VALUE</function-type>
+            //                <value>0</value>
+            //                <is-literal-expression>false</is-literal-expression>
+            //                <display-name>null</display-name>
+            //                <metric-definition>
+            //                    <type>LOGICAL_METRIC</type>
+            //                    <logical-metric-name>Average Response Time (ms)</logical-metric-name>
+            //                </metric-definition>
+            //            </metric-expression>
+            //        </condition1>
+            //        <condition2>
+            //            <type>leaf</type>
+            //            <display-name>Calls per Minute Condition</display-name>
+            //            <condition-value-type>ABSOLUTE</condition-value-type>
+            //            <condition-value>50.0</condition-value>
+            //            <operator>GREATER_THAN</operator>
+            //            <condition-expression/>
+            //            <use-active-baseline>false</use-active-baseline>
+            //            <trigger-on-no-data>false</trigger-on-no-data>
+            //            <metric-expression>
+            //                <type>leaf</type>
+            //                <function-type>VALUE</function-type>
+            //                <value>0</value>
+            //                <is-literal-expression>false</is-literal-expression>
+            //                <display-name>null</display-name>
+            //                <metric-definition>
+            //                    <type>LOGICAL_METRIC</type>
+            //                    <logical-metric-name>Calls per Minute</logical-metric-name>
+            //                </metric-definition>
+            //            </metric-expression>
+            //        </condition2>
+            //    </policy-condition>
+            //</critical-execution-criteria>            
+
+            // Critical
+            XmlNode criticalExecutionCriteriaXmlNode = healthRuleConfigurationNode.SelectSingleNode("critical-execution-criteria");
+            if (criticalExecutionCriteriaXmlNode != null)
+            {
+                healthRule.CriticalAggregateType = getStringValueFromXmlNode(criticalExecutionCriteriaXmlNode.SelectSingleNode("entity-aggregation-scope/type"));
+
+                XmlNode firstCondition = criticalExecutionCriteriaXmlNode.SelectSingleNode("policy-condition");
+                XmlNodeList condition1sXmlNodeList = criticalExecutionCriteriaXmlNode.SelectNodes("policy-condition//condition1");
+                XmlNodeList condition2sXmlNodeList = criticalExecutionCriteriaXmlNode.SelectNodes("policy-condition//condition2");
+
+                List<XmlNode> conditionsList = new List<XmlNode>();
+                if (condition1sXmlNodeList.Count == 0)
+                {
+                    healthRule.CriticalEntityConditionType = "AND";
+                    conditionsList.Add(firstCondition);
+                }
+                else
+                {
+                    healthRule.CriticalEntityConditionType = getStringValueFromXmlNode(criticalExecutionCriteriaXmlNode.SelectSingleNode("policy-condition/operator"));
+                    foreach (XmlNode xmlNode in condition1sXmlNodeList)
+                    {
+                        conditionsList.Add(xmlNode);
+                    }
+                    conditionsList.Add(condition2sXmlNodeList[condition2sXmlNodeList.Count - 1]);
+                }
+                
+                healthRule.CriticalNumConditions = conditionsList.Count;
+
+                int i = 1;
+                foreach (XmlNode conditionXmlNode in conditionsList)
+                {
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Name", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("display-name")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Type", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value-type")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Value", i)).SetValue(healthRule, getIntegerValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Operator", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("operator")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Expression", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-expression")), null);
+                    if (getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("use-active-baseline")) == true)
+                    {
+                        healthRule.GetType().GetProperty(String.Format("Crit{0}BaselineUsed", i)).SetValue(healthRule, "Default Baseline", null);
+                    }
+                    else
+                    {
+                        healthRule.GetType().GetProperty(String.Format("Crit{0}BaselineUsed", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-baseline/name")), null);
+                    }
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}TriggerOnNoData", i)).SetValue(healthRule, getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("trigger-on-no-data")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}MetricName", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-expression/metric-definition/logical-metric-name")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}MetricFunction", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-expression/function-type")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}MetricExpressionConfig", i)).SetValue(healthRule, makeXMLFormattedAndIndented(conditionXmlNode.SelectSingleNode("metric-expression")), null);
+
+                    i++;
+                    if (i > 5) break;
+                }
+            }
+
+            // Warning
+            XmlNode warningExecutionCriteriaXmlNode = healthRuleConfigurationNode.SelectSingleNode("warning-execution-criteria");
+            if (warningExecutionCriteriaXmlNode != null)
+            {
+                healthRule.WarningAggregateType = getStringValueFromXmlNode(warningExecutionCriteriaXmlNode.SelectSingleNode("entity-aggregation-scope/type"));
+
+                XmlNode firstCondition = warningExecutionCriteriaXmlNode.SelectSingleNode("policy-condition");
+                XmlNodeList condition1sXmlNodeList = warningExecutionCriteriaXmlNode.SelectNodes("policy-condition//condition1");
+                XmlNodeList condition2sXmlNodeList = warningExecutionCriteriaXmlNode.SelectNodes("policy-condition//condition2");
+
+                List<XmlNode> conditionsList = new List<XmlNode>();
+                if (condition1sXmlNodeList.Count == 0)
+                {
+                    healthRule.WarningEntityConditionType = "AND";
+                    conditionsList.Add(firstCondition);
+                }
+                else
+                {
+                    healthRule.WarningEntityConditionType = getStringValueFromXmlNode(warningExecutionCriteriaXmlNode.SelectSingleNode("policy-condition/operator"));
+                    foreach (XmlNode xmlNode in condition1sXmlNodeList)
+                    {
+                        conditionsList.Add(xmlNode);
+                    }
+                    conditionsList.Add(condition2sXmlNodeList[condition2sXmlNodeList.Count - 1]);
+                }
+
+                healthRule.WarningNumConditions = conditionsList.Count;
+
+                int i = 1;
+                foreach (XmlNode conditionXmlNode in conditionsList)
+                {
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Name", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("display-name")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Type", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value-type")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Value", i)).SetValue(healthRule, getIntegerValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Operator", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("operator")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Expression", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-expression")), null);
+                    if (getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("use-active-baseline")) == true)
+                    {
+                        healthRule.GetType().GetProperty(String.Format("Warn{0}BaselineUsed", i)).SetValue(healthRule, "Default Baseline", null);
+                    }
+                    else
+                    {
+                        healthRule.GetType().GetProperty(String.Format("Warn{0}BaselineUsed", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-baseline/name")), null);
+                    }
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}TriggerOnNoData", i)).SetValue(healthRule, getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("trigger-on-no-data")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}MetricName", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-expression/metric-definition/logical-metric-name")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}MetricFunction", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("metric-expression/function-type")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}MetricExpressionConfig", i)).SetValue(healthRule, makeXMLFormattedAndIndented(conditionXmlNode.SelectSingleNode("metric-expression")), null);
+
+                    i++;
+                    if (i > 5) break;
+                }
+            }
+
+            return healthRule;
+        }
+
+        private static void fillMatchRuleDetails(BusinessTransactionEntryRule businessTransactionEntryRule, XmlNode matchRule)
+        {
+            // Enabled seems to be set inside of the match-rule, not couple of levels up
+            businessTransactionEntryRule.IsEnabled = Convert.ToBoolean(matchRule.SelectSingleNode("enabled").InnerText);
+            businessTransactionEntryRule.Priority = Convert.ToInt32(matchRule.SelectSingleNode("priority").InnerText);
+            businessTransactionEntryRule.IsExcluded = Convert.ToBoolean(matchRule.SelectSingleNode("excluded").InnerText);
+
+            switch (businessTransactionEntryRule.EntryPointType)
+            {
+                case "ASP_DOTNET":
+                    businessTransactionEntryRule.MatchURI = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("uri"));
+                    //businessTransactionEntryRule.Parameters = getNameValueDetailsFromParametersCollection(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.Parameters = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("class-name"));
+
+                    break;
+
+                case "NODEJS_WEB":
+                    businessTransactionEntryRule.MatchURI = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("uri"));
+                    //businessTransactionEntryRule.Parameters = getNameValueDetailsFromParametersCollection(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.Parameters = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("http-method"));
+
+                    break;
+
+                case "PYTHON_WEB":
+                    businessTransactionEntryRule.MatchURI = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("uri"));
+                    //businessTransactionEntryRule.Parameters = getNameValueDetailsFromParametersCollection(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.Parameters = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("http-method"));
+
+                    break;
+
+                case "POCO":
+                    // Background is really only set for POCOs
+                    businessTransactionEntryRule.IsBackground = Convert.ToBoolean(matchRule.SelectSingleNode("background").InnerText);
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("match-class"));
+                    businessTransactionEntryRule.MatchMethod = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("match-method"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+
+                    break;
+
+                case "POJO":
+                    // Background is really only set for POJOs
+                    businessTransactionEntryRule.IsBackground = Convert.ToBoolean(matchRule.SelectSingleNode("background").InnerText);
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("match-class"));
+                    businessTransactionEntryRule.MatchMethod = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("match-method"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+
+                    break;
+
+                case "SERVLET":
+                    businessTransactionEntryRule.MatchURI = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("uri"));
+                    //businessTransactionEntryRule.Parameters = getNameValueDetailsFromParametersCollection(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.Parameters = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("class-name"));
+
+                    break;
+
+                case "STRUTS_ACTION":
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("action-class-name"));
+                    businessTransactionEntryRule.MatchMethod = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("action-method-name"));
+                    // There is also Struts Action Name in the UI, but I don't know how it shows up
+
+                    break;
+
+                case "WCF":
+                    businessTransactionEntryRule.MatchClass = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("web-service-name"));
+                    businessTransactionEntryRule.MatchMethod = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("operation-name"));
+
+                    break;
+
+                case "WEB":
+                    businessTransactionEntryRule.MatchURI = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("uri"));
+                    //businessTransactionEntryRule.Parameters = getNameValueDetailsFromParametersCollection(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.Parameters = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("parameters"));
+                    businessTransactionEntryRule.SplitConfig = makeXMLFormattedAndIndented(matchRule.SelectSingleNode("split-config"));
+
+                    break;
+
+                default:
+                    break;
+            }
+
         }
 
         #endregion
@@ -11961,6 +15037,7 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).AutoFit();
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["BTNameOriginal"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTType"].Position + 1).AutoFit();
                 sheet.Column(table.Columns["DetailLink"].Position + 1).AutoFit();
                 //sheet.Column(table.Columns["ControllerLink"].Position + 1).AutoFit();
@@ -12013,6 +15090,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             EntityApplication applicationRow,
+            EntityApplication applicationRowMetrics,
             List<Event> eventsAllList, 
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12022,6 +15100,16 @@ namespace AppDynamics.Dexter
             List<DetectedError> detectedErrorsAllList,
             List<BusinessData> businessDataAllList)
         {
+            // Check to see if there is activity
+            if (applicationRowMetrics != null)                
+            {
+                if (applicationRowMetrics.HasActivity == false)
+                {
+                    logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", applicationRow);
+                    return 0;
+                }
+            }
+
             ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
             fillIndividualEntityMetricReportForEntity(
                 programOptions, 
@@ -12052,6 +15140,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityTier> entityList,
+            List<EntityTier> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12066,6 +15155,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityTier tierRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityTier tierRowMetric = entityListMetrics.Where(t => t.TierID == tierRow.TierID).FirstOrDefault();
+                    if (tierRowMetric != null)
+                    {
+                        if (tierRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", tierRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12106,6 +15208,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityNode> entityList,
+            List<EntityNode> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12120,6 +15223,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityNode nodeRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityNode nodeRowMetric = entityListMetrics.Where(n => n.NodeID == nodeRow.NodeID).FirstOrDefault();
+                    if (nodeRowMetric != null)
+                    {
+                        if (nodeRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", nodeRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12160,6 +15276,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityBackend> entityList,
+            List<EntityBackend> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12174,6 +15291,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityBackend backendRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityBackend backendRowMetric = entityListMetrics.Where(b => b.BackendID == backendRow.BackendID).FirstOrDefault();
+                    if (backendRowMetric != null)
+                    {
+                        if (backendRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", backendRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12214,6 +15344,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityBusinessTransaction> entityList,
+            List<EntityBusinessTransaction> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12228,6 +15359,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityBusinessTransaction businessTransactionRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityBusinessTransaction businessTransactionRowMetric = entityListMetrics.Where(b => b.BTID == businessTransactionRow.BTID).FirstOrDefault();
+                    if (businessTransactionRowMetric != null)
+                    {
+                        if (businessTransactionRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", businessTransactionRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12268,6 +15412,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityServiceEndpoint> entityList,
+            List<EntityServiceEndpoint> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12282,6 +15427,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityServiceEndpoint serviceEndpointRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityServiceEndpoint serviceEndpointRowMetric = entityListMetrics.Where(s => s.SEPID == serviceEndpointRow.SEPID).FirstOrDefault();
+                    if (serviceEndpointRowMetric != null)
+                    {
+                        if (serviceEndpointRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", serviceEndpointRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12322,6 +15480,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             List<EntityError> entityList,
+            List<EntityError> entityListMetrics,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
             List<Snapshot> snapshotsAllList,
@@ -12336,6 +15495,19 @@ namespace AppDynamics.Dexter
 
             foreach (EntityError errorRow in entityList)
             {
+                if (entityListMetrics != null && entityListMetrics.Count > 0)
+                {
+                    EntityError errorRowMetric = entityListMetrics.Where(e => e.ErrorID == errorRow.ErrorID).FirstOrDefault();
+                    if (errorRowMetric != null)
+                    {
+                        if (errorRowMetric.HasActivity == false)
+                        {
+                            logger.Warn("No metric activity in Entity {0}, skipping Entity Details output", errorRow);
+                            continue;
+                        }
+                    }
+                }
+
                 ExcelPackage excelEntitiesDetail = createIndividualEntityMetricReportTemplate(programOptions, jobConfiguration, jobTarget);
                 fillIndividualEntityMetricReportForEntity(
                     programOptions, 
@@ -12617,7 +15789,7 @@ namespace AppDynamics.Dexter
 
             #region Controller sheet
 
-            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_CONTROLLERS_LIST);
+            sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_CONTROLLERS);
             sheet.Cells[1, 1].Value = "Table of Contents";
             sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
             sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, 1);
@@ -12900,7 +16072,7 @@ namespace AppDynamics.Dexter
 
             #endregion
 
-            logger.Info("Creating Entity Metrics Report for Metrics in {0}", metricsEntityFolderPath);
+            logger.Info("Creating Entity Metrics Report for {0} in {1}", entityRow, metricsEntityFolderPath);
 
             #region Parameter sheet
 
@@ -15296,7 +18468,19 @@ namespace AppDynamics.Dexter
                         else
                         {
                             // Something else, dump as is
-                            cell.Value = fieldValue;
+
+                            // https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
+                            // Total number of characters that a cell can contain 32,767 characters
+                            // Must cut off cell value if it is too big, or risk Excel complaining during sheet load
+
+                            if (fieldValue.Length > 32000)
+                            {
+                                cell.Value = fieldValue.Substring(0, 32000);
+                            }
+                            else
+                            {
+                                cell.Value = fieldValue;
+                            }
                         }
                     }
                     csvFieldIndex++;

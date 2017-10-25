@@ -42,13 +42,6 @@ namespace AppDynamics.Dexter.DataObjects
         public double ErrorsPercentage { get; set; }
         public bool HasActivity { get; set; }
 
-        public int NumSnaps { get; set; }
-        public int NumSnapsNormal { get; set; }
-        public int NumSnapsSlow { get; set; }
-        public int NumSnapsVerySlow { get; set; }
-        public int NumSnapsStall { get; set; }
-        public int NumSnapsError { get; set; }
-
         public string DetailLink { get; set; }
     }
 }

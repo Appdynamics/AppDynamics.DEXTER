@@ -8,7 +8,6 @@ namespace AppDynamics.Dexter.DataObjects
         public string Version { get; set; }
 
         public int NumApps { get; set; }
-        public int NumSettings { get; set; }
 
         public override String ToString()
         {

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -105,32 +104,51 @@ namespace AppDynamics.Dexter
 
             #region Validate Input 
 
+            if (jobConfiguration.Input == null)
+            {
+                logger.Error("Job File Problem: Input can not be empty");
+                loggerConsole.Error("Job File Problem: Input can not be empty");
+
+                return false;
+            }
             // Validate input time range selection
             if (jobConfiguration.Input.TimeRange == null || jobConfiguration.Input.TimeRange.From == null || jobConfiguration.Input.TimeRange.From == DateTime.MinValue)
             {
-                logger.Error("Input.TimeRange.From can not be empty");
-                loggerConsole.Error("Input.TimeRange.From can not be empty");
+                logger.Error("Job File Problem: Input.TimeRange.From can not be empty");
+                loggerConsole.Error("Job File Problem: Input.TimeRange.From can not be empty");
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange == null || jobConfiguration.Input.TimeRange.To == null || jobConfiguration.Input.TimeRange.To == DateTime.MinValue)
             {
-                logger.Error("Input.TimeRange.To can not be empty");
-                loggerConsole.Error("Input.TimeRange.To can not be empty");
+                logger.Error("Job File Problem: Input.TimeRange.To can not be empty");
+                loggerConsole.Error("Job File Problem: Input.TimeRange.To can not be empty");
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange.From >= jobConfiguration.Input.TimeRange.To)
             {
-                logger.Error("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
-                loggerConsole.Error("Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                logger.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                loggerConsole.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
 
                 return false;
             }
             else if (jobConfiguration.Input.TimeRange.From > DateTime.Now)
             {
-                logger.Error("Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
-                loggerConsole.Error("Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
+                logger.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
+                loggerConsole.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
+
+                return false;
+            }
+
+            #endregion
+
+            #region Validate Output
+
+            if (jobConfiguration.Output == null)
+            {
+                logger.Error("Job File Problem: Output can not be empty");
+                loggerConsole.Error("Job File Problem: Output can not be empty");
 
                 return false;
             }
@@ -188,8 +206,8 @@ namespace AppDynamics.Dexter
             // Validate list of targets
             if (jobConfiguration.Target == null || jobConfiguration.Target.Count == 0)
             {
-                logger.Error("No targets to work on in job input file {0}", programOptions.InputJobFilePath);
-                loggerConsole.Error("No targets to work on in job input file {0}", programOptions.InputJobFilePath);
+                logger.Error("Job File Problem: No targets to work on");
+                loggerConsole.Error("Job File Problem: No targets to work on");
 
                 return false;
             }
@@ -249,7 +267,7 @@ namespace AppDynamics.Dexter
                     logger.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
                     loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
 
-                    loggerConsole.Info("Enter Password for user {0}:", jobTarget.UserName);
+                    loggerConsole.Warn("Enter Password for user {0} for {1}:", jobTarget.UserName, jobTarget.Controller);
 
                     String password = ReadPassword('*');
                     Console.WriteLine();

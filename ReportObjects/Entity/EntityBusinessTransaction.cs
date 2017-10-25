@@ -8,6 +8,8 @@ namespace AppDynamics.Dexter.DataObjects
         public string BTLink { get; set; }
         public string BTName { get; set; }
         public string BTType { get; set; }
+        public string BTNameOriginal { get; set; }
+        public bool IsRenamed { get; set; }
 
         public EntityBusinessTransaction Clone()
         {

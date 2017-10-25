@@ -29,6 +29,7 @@ namespace AppDynamics.Dexter
         /// </summary>
 
         public JobInput Input { get; set; }
+        public JobOutput Output { get; set; }
         public List<JobTarget> Target { get; set; }
         public JobStatus Status { get; set; }
     }

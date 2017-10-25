@@ -11,13 +11,23 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumSEPs { get; set; }
         public int NumTiers { get; set; }
 
-        public int? NumEntryRules { get; set; }
-        public int? NumExitRules { get; set; }
-        public int? NumAgentProps { get; set; }
-        public int? NumHealthRules { get; set; }
-        public int? NumErrorRules { get; set; }
-        public int? NumHTTPDCs { get; set; }
-        public int? NumMIDCs { get; set; }
+        public int NumSnapshots { get; set; }
+        public int NumSnapshotsNormal { get; set; }
+        public int NumSnapshotsSlow { get; set; }
+        public int NumSnapshotsVerySlow { get; set; }
+        public int NumSnapshotsStall { get; set; }
+        public int NumSnapshotsError { get; set; }
+        public int NumSegments { get; set; }
+        public int NumExitCalls { get; set; }
+        public int NumBusinessData { get; set; }
+
+        public int NumEvents { get; set; }
+        public int NumEventsInfo { get; set; }
+        public int NumEventsWarning { get; set; }
+        public int NumEventsError { get; set; }
+        public int NumHRViolations { get; set; }
+        public int NumHRViolationsWarning { get; set; }
+        public int NumHRViolationsCritical { get; set; }
 
         public EntityApplication Clone()
         {

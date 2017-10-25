@@ -11,7 +11,6 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;
             Map(m => m.ErrorName).Index(i); i++;
-            Map(m => m.ErrorName).Index(i); i++;
             Map(m => m.Errors).Index(i); i++;
             Map(m => m.EPM).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
