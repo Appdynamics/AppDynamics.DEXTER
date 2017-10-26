@@ -37,7 +37,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Crit1Name { get; set; }
         public string Crit1Type { get; set; }
-        public int Crit1Value { get; set; }
+        public long Crit1Value { get; set; }
         public string Crit1Operator { get; set; }
         public string Crit1Expression { get; set; }
         public string Crit1BaselineUsed { get; set; }
@@ -48,7 +48,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Crit2Name { get; set; }
         public string Crit2Type { get; set; }
-        public int Crit2Value { get; set; }
+        public long Crit2Value { get; set; }
         public string Crit2Operator { get; set; }
         public string Crit2Expression { get; set; }
         public string Crit2BaselineUsed { get; set; }
@@ -59,7 +59,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Crit3Name { get; set; }
         public string Crit3Type { get; set; }
-        public int Crit3Value { get; set; }
+        public long Crit3Value { get; set; }
         public string Crit3Operator { get; set; }
         public string Crit3Expression { get; set; }
         public string Crit3BaselineUsed { get; set; }
@@ -70,7 +70,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Crit4Name { get; set; }
         public string Crit4Type { get; set; }
-        public int Crit4Value { get; set; }
+        public long Crit4Value { get; set; }
         public string Crit4Operator { get; set; }
         public string Crit4Expression { get; set; }
         public string Crit4BaselineUsed { get; set; }
@@ -81,7 +81,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Crit5Name { get; set; }
         public string Crit5Type { get; set; }
-        public int Crit5Value { get; set; }
+        public long Crit5Value { get; set; }
         public string Crit5Operator { get; set; }
         public string Crit5Expression { get; set; }
         public string Crit5BaselineUsed { get; set; }
@@ -92,7 +92,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Warn1Name { get; set; }
         public string Warn1Type { get; set; }
-        public int Warn1Value { get; set; }
+        public long Warn1Value { get; set; }
         public string Warn1Operator { get; set; }
         public string Warn1Expression { get; set; }
         public string Warn1BaselineUsed { get; set; }
@@ -103,7 +103,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Warn2Name { get; set; }
         public string Warn2Type { get; set; }
-        public int Warn2Value { get; set; }
+        public long Warn2Value { get; set; }
         public string Warn2Operator { get; set; }
         public string Warn2Expression { get; set; }
         public string Warn2BaselineUsed { get; set; }
@@ -114,7 +114,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Warn3Name { get; set; }
         public string Warn3Type { get; set; }
-        public int Warn3Value { get; set; }
+        public long Warn3Value { get; set; }
         public string Warn3Operator { get; set; }
         public string Warn3Expression { get; set; }
         public string Warn3BaselineUsed { get; set; }
@@ -125,7 +125,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Warn4Name { get; set; }
         public string Warn4Type { get; set; }
-        public int Warn4Value { get; set; }
+        public long Warn4Value { get; set; }
         public string Warn4Operator { get; set; }
         public string Warn4Expression { get; set; }
         public string Warn4BaselineUsed { get; set; }
@@ -136,7 +136,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string Warn5Name { get; set; }
         public string Warn5Type { get; set; }
-        public int Warn5Value { get; set; }
+        public long Warn5Value { get; set; }
         public string Warn5Operator { get; set; }
         public string Warn5Expression { get; set; }
         public string Warn5BaselineUsed { get; set; }

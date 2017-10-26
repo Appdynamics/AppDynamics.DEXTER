@@ -11684,6 +11684,36 @@ namespace AppDynamics.Dexter
             }
         }
 
+        private static long getLongValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null) return 0;
+
+            if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return 0;
+            }
+            else
+            {
+                long value;
+                if (Int64.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    double value1;
+                    if (Double.TryParse(xmlNode.InnerText, out value1) == true)
+                    {
+                        return Convert.ToInt64(Math.Floor(value1));
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
         private static bool getBoolValueFromXmlNode(XmlNode xmlNode)
         {
             if (xmlNode == null) return false;
@@ -12499,7 +12529,7 @@ namespace AppDynamics.Dexter
                 {
                     healthRule.GetType().GetProperty(String.Format("Crit{0}Name", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("display-name")), null);
                     healthRule.GetType().GetProperty(String.Format("Crit{0}Type", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value-type")), null);
-                    healthRule.GetType().GetProperty(String.Format("Crit{0}Value", i)).SetValue(healthRule, getIntegerValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
+                    healthRule.GetType().GetProperty(String.Format("Crit{0}Value", i)).SetValue(healthRule, getLongValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
                     healthRule.GetType().GetProperty(String.Format("Crit{0}Operator", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("operator")), null);
                     healthRule.GetType().GetProperty(String.Format("Crit{0}Expression", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-expression")), null);
                     if (getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("use-active-baseline")) == true)
@@ -12553,7 +12583,7 @@ namespace AppDynamics.Dexter
                 {
                     healthRule.GetType().GetProperty(String.Format("Warn{0}Name", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("display-name")), null);
                     healthRule.GetType().GetProperty(String.Format("Warn{0}Type", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value-type")), null);
-                    healthRule.GetType().GetProperty(String.Format("Warn{0}Value", i)).SetValue(healthRule, getIntegerValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
+                    healthRule.GetType().GetProperty(String.Format("Warn{0}Value", i)).SetValue(healthRule, getLongValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-value")), null);
                     healthRule.GetType().GetProperty(String.Format("Warn{0}Operator", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("operator")), null);
                     healthRule.GetType().GetProperty(String.Format("Warn{0}Expression", i)).SetValue(healthRule, getStringValueFromXmlNode(conditionXmlNode.SelectSingleNode("condition-expression")), null);
                     if (getBoolValueFromXmlNode(conditionXmlNode.SelectSingleNode("use-active-baseline")) == true)
