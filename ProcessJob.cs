@@ -7140,8 +7140,12 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldD = pivot.DataFields.Add(pivot.Fields["NumdetectedBTs"]);
+                    fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                    fieldD.Name = "Number of Rules";
+                    fieldD = pivot.DataFields.Add(pivot.Fields["NumDetectedBTs"]);
                     fieldD.Function = DataFieldFunctions.Sum;
+                    fieldD.Name = "Number of Detected BTs";
                 }
 
                 #endregion
@@ -7178,10 +7182,10 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
@@ -7228,10 +7232,10 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
