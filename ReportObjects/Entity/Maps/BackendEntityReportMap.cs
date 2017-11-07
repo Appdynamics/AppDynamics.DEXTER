@@ -22,6 +22,11 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.Prop4Value).Index(i); i++;
             Map(m => m.Prop5Name).Index(i); i++;
             Map(m => m.Prop5Value).Index(i); i++;
+            Map(m => m.Prop6Name).Index(i); i++;
+            Map(m => m.Prop6Value).Index(i); i++;
+            Map(m => m.Prop7Name).Index(i); i++;
+            Map(m => m.Prop7Value).Index(i); i++;
+
             Map(m => m.TierName).Index(i); i++;
             Map(m => m.NodeName).Index(i); i++;
             Map(m => m.ApplicationID).Index(i); i++;

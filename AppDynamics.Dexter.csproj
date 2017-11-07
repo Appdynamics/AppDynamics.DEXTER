@@ -49,7 +49,13 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>AppDynamics DEXTER.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>SearchContract.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
@@ -180,14 +186,20 @@
     <Compile Include="ReportObjects\Metric\Maps\ApplicationMetricReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\SegmentReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\SnapshotReportMap.cs" />
+    <Compile Include="ReportObjects\Timing\Maps\StepTimingReportMap.cs" />
+    <Compile Include="ReportObjects\Timing\StepTiming.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SearchContract.ico" />
     <None Include="Apache License 2.0.rtf" />
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="License.txt" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="AppDynamics DEXTER.pfx" />
     <None Include="DefaultJob.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

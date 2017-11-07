@@ -15,10 +15,6 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.NumSnapshotsVerySlow).Index(i); i++;
             Map(m => m.NumSnapshotsStall).Index(i); i++;
             Map(m => m.NumSnapshotsError).Index(i); i++;
-            Map(m => m.NumSegments).Index(i); i++;
-            Map(m => m.NumExitCalls).Index(i); i++;
-            Map(m => m.NumBusinessData).Index(i); i++;
-            Map(m => m.NumErrors).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
             Map(m => m.From).Index(i); i++;
             Map(m => m.To).Index(i); i++;

@@ -11,6 +11,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;
             Map(m => m.TierType).Index(i); i++;
+            Map(m => m.Description).Index(i); i++;
             Map(m => m.AgentType).Index(i); i++;
             Map(m => m.NumNodes).Index(i); i++;
             Map(m => m.NumBTs).Index(i); i++;

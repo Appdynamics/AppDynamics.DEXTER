@@ -437,6 +437,121 @@ namespace AppDynamics.Dexter
             return null;
         }
 
+        public static bool appendTwoCSVFiles(string csvToAppendToFilePath, string csvToAppendFilePath)
+        {
+            string folderPath = Path.GetDirectoryName(csvToAppendToFilePath);
+
+            if (createFolder(folderPath) == true)
+            {
+                try
+                {
+                    logger.Trace("Appending CSV file {0} and file {1}", csvToAppendToFilePath, csvToAppendFilePath);
+
+                    if (File.Exists(csvToAppendFilePath) == true)
+                    {
+                        if (File.Exists(csvToAppendToFilePath) == true)
+                        {
+                            // Append without header
+                            using (FileStream sr = File.Open(csvToAppendFilePath, FileMode.Open))
+                            {
+                                while (true)
+                                {
+                                    if (sr.Position == sr.Length) break;
+
+                                    char c = (char)sr.ReadByte();
+                                    if (c == '\n' || c == '\r')
+                                    {
+                                        sr.ReadByte();
+                                        break;
+                                    }
+                                }
+
+                                using (FileStream sw = File.Open(csvToAppendToFilePath, FileMode.Append))
+                                {
+                                    copyStream(sr, sw);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Create new file with header
+                            using (StreamReader sr = File.OpenText(csvToAppendFilePath))
+                            {
+                                using (StreamWriter sw = File.CreateText(csvToAppendToFilePath))
+                                {
+                                    copyStream(sr.BaseStream, sw.BaseStream);
+                                }
+                            }
+                        }
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Appending file {0} and file {1} failed", csvToAppendToFilePath, csvToAppendFilePath);
+                    logger.Error(ex);
+                }
+            }
+
+            return false;
+        }
+
+        public static bool appendTwoCSVFiles(FileStream csvToAppendToSW, string csvToAppendFilePath)
+        {
+            try
+            {
+                logger.Trace("Appending CSV file {0} to another CSV file open as stream", csvToAppendFilePath);
+
+                if (File.Exists(csvToAppendFilePath) == true)
+                {
+                    using (FileStream sr = File.Open(csvToAppendFilePath, FileMode.Open))
+                    {
+                        // If the stream to append to is already ahead, that means we don't need headers anymore
+                        if (csvToAppendToSW.Position > 0)
+                        {
+                            while (true)
+                            {
+                                if (sr.Position == sr.Length) break;
+
+                                char c = (char)sr.ReadByte();
+                                if (c == '\n' || c == '\r')
+                                {
+                                    sr.ReadByte();
+                                    break;
+                                }
+                            }
+                        }
+
+                        copyStream(sr, csvToAppendToSW);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Appending CSV file {0} to another CSV file open as stream", csvToAppendFilePath);
+                logger.Error(ex);
+            }
+
+            return false;
+        }
+
+        private static void copyStream(Stream input, Stream output)
+        {
+            byte[] buffer = new byte[1024 * 128];
+            int bytesRead;
+            while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
+            {
+                output.Write(buffer, 0, bytesRead);
+            }
+        }
+
+        #endregion
+
+        #region File stream appending
+
         #endregion
 
     }

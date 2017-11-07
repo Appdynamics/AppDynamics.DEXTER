@@ -20,6 +20,10 @@ namespace AppDynamics.Dexter.DataObjects
         public string Prop4Value { get; set; }
         public string Prop5Name { get; set; }
         public string Prop5Value { get; set; }
+        public string Prop6Name { get; set; }
+        public string Prop6Value { get; set; }
+        public string Prop7Name { get; set; }
+        public string Prop7Value { get; set; }
 
         public EntityBackend Clone()
         {

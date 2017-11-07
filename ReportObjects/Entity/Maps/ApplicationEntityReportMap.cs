@@ -9,6 +9,7 @@ namespace AppDynamics.Dexter.DataObjects
             int i = 0;
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
+            Map(m => m.Description).Index(i); i++;
             Map(m => m.NumTiers).Index(i); i++;
             Map(m => m.NumNodes).Index(i); i++;
             Map(m => m.NumBackends).Index(i); i++;

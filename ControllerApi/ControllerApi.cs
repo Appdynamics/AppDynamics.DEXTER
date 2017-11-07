@@ -283,57 +283,83 @@ namespace AppDynamics.Dexter
 
         #region Snapshot retrieval
 
-        public string GetListOfSnapshots(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, string serverCursorIdName, long serverCursorId)
+        public string GetListOfSnapshotsFirstPage(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows)
+        {
+            // Full body of the snapshot re
+            //@"{\
+            //    ""firstInChain"": true,
+            //    ""maxRows"": {4},
+            //    ""applicationIds"": [{0}],
+            //    ""businessTransactionIds"": [],
+            //    ""applicationComponentIds"": [],
+            //    ""applicationComponentNodeIds"": [],
+            //    ""errorIDs"": [],
+            //    ""errorOccured"": null,
+            //    ""userExperience"": [],
+            //    ""executionTimeInMilis"": null,
+            //    ""endToEndLatency"": null,
+            //    ""url"": null,
+            //    ""sessionId"": null,
+            //    ""userPrincipalId"": null,
+            //    ""dataCollectorFilter"": null,
+            //    ""archived"": null,
+            //    ""guids"": [],
+            //    ""diagnosticSnapshot"": null,
+            //    ""badRequest"": null,
+            //    ""deepDivePolicy"": [],
+            //    ""rangeSpecifier"": {
+            //        ""type"": ""BETWEEN_TIMES"",
+            //        ""startTime"": ""{1:o}"",
+            //        ""endTime"": ""{2:o}"",
+            //        ""durationInMinutes"": {3}
+            //    }
+            //}";
+
+            string requestJSONTemplate =
+@"{{
+    ""firstInChain"": true,
+    ""maxRows"": {4},
+    ""applicationIds"": [{0}],
+    ""rangeSpecifier"": {{
+        ""type"": ""BETWEEN_TIMES"",
+        ""startTime"": ""{1:o}"",
+        ""endTime"": ""{2:o}"",
+        ""durationInMinutes"": {3}
+    }}
+}}";
+
+            // The controller expects the data in one of the following forms for java.util.Date:
+            // "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            // "EEE, dd MMM yyyy HH:mm:ss zzz", 
+            // "yyyy-MM-dd"
+            string requestBody = String.Format(requestJSONTemplate,
+                applicationID,
+                startTime.ToUniversalTime(),
+                endTime.ToUniversalTime(),
+                durationBetweenTimes,
+                maxRows);
+
+            return this.apiPOST("controller/restui/snapshot/snapshotListDataWithFilterHandle", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetListOfSnapshotsNextPage_Type_rsdScrollId(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, long serverCursorId)
         {
             string requestJSONTemplate =
 @"{{
     ""firstInChain"": true,
-	""maxRows"": {4},
-	""applicationIds"": [{0}],
-	""rangeSpecifier"": {{
-		""type"": ""BETWEEN_TIMES"",
-		""startTime"": ""{1:o}"",
-		""endTime"": ""{2:o}"",
-		""durationInMinutes"": {3}
-	}}{5}
+    ""maxRows"": {4},
+    ""applicationIds"": [{0}],
+    ""rangeSpecifier"": {{
+        ""type"": ""BETWEEN_TIMES"",
+        ""startTime"": ""{1:o}"",
+        ""endTime"": ""{2:o}"",
+        ""durationInMinutes"": {3}
+    }},
+    ""serverCursor"": {{
+        ""rsdScrollId"": {5}
+    }}
 }}";
-            #region Full body
-            //@"{\
-            //    ""firstInChain"": true,
-            //	""maxRows"": {4},
-            //	""applicationIds"": [{0}],
-            //	""businessTransactionIds"": [],
-            //	""applicationComponentIds"": [],
-            //	""applicationComponentNodeIds"": [],
-            //	""errorIDs"": [],
-            //	""errorOccured"": null,
-            //	""userExperience"": [],
-            //	""executionTimeInMilis"": null,
-            //	""endToEndLatency"": null,
-            //	""url"": null,
-            //	""sessionId"": null,
-            //	""userPrincipalId"": null,
-            //	""dataCollectorFilter"": null,
-            //	""archived"": null,
-            //	""guids"": [],
-            //	""diagnosticSnapshot"": null,
-            //	""badRequest"": null,
-            //	""deepDivePolicy"": [],
-            //	""rangeSpecifier"": {
-            //		""type"": ""BETWEEN_TIMES"",
-            //		""startTime"": ""{1:o}"",
-            //		""endTime"": ""{2:o}"",
-            //		""durationInMinutes"": {3}
-            //	}
-            //}";
-            #endregion
-
-            string cursorJSONTemplate =
-@",
-	""serverCursor"": {{
-		""{0}"": {1}
-	}}
-";
 
             // The controller expects the data in one of the following forms for java.util.Date:
             // "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
@@ -346,7 +372,75 @@ namespace AppDynamics.Dexter
                 endTime.ToUniversalTime(),
                 durationBetweenTimes,
                 maxRows,
-                serverCursorId > 0 ? String.Format(cursorJSONTemplate, serverCursorIdName, serverCursorId) : String.Empty);
+                serverCursorId);
+
+            return this.apiPOST("controller/restui/snapshot/snapshotListDataWithFilterHandle", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetListOfSnapshotsNextPage_Type_scrollId(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, long serverCursorId)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""firstInChain"": true,
+    ""maxRows"": {4},
+    ""applicationIds"": [{0}],
+    ""rangeSpecifier"": {{
+        ""type"": ""BETWEEN_TIMES"",
+        ""startTime"": ""{1:o}"",
+        ""endTime"": ""{2:o}"",
+        ""durationInMinutes"": {3}
+    }},
+    ""serverCursor"": {{
+        ""scrollId"": {5}
+    }}
+}}";
+
+            // The controller expects the data in one of the following forms for java.util.Date:
+            // "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            // "EEE, dd MMM yyyy HH:mm:ss zzz", 
+            // "yyyy-MM-dd"
+            string requestBody = String.Format(requestJSONTemplate,
+                applicationID,
+                startTime.ToUniversalTime(),
+                endTime.ToUniversalTime(),
+                durationBetweenTimes,
+                maxRows,
+                serverCursorId);
+
+            return this.apiPOST("controller/restui/snapshot/snapshotListDataWithFilterHandle", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetListOfSnapshotsNextPage_Type_handle(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, long serverCursorId)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""firstInChain"": true,
+    ""maxRows"": {4},
+    ""applicationIds"": [{0}],
+    ""rangeSpecifier"": {{
+        ""type"": ""BETWEEN_TIMES"",
+        ""startTime"": ""{1:o}"",
+        ""endTime"": ""{2:o}"",
+        ""durationInMinutes"": {3}
+    }},
+	""startingRequestId"": 1,
+    ""endRequestId"": 1,
+    ""handle"": {5}
+}}";
+
+            // The controller expects the data in one of the following forms for java.util.Date:
+            // "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+            // "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+            // "EEE, dd MMM yyyy HH:mm:ss zzz", 
+            // "yyyy-MM-dd"
+            string requestBody = String.Format(requestJSONTemplate,
+                applicationID,
+                startTime.ToUniversalTime(),
+                endTime.ToUniversalTime(),
+                durationBetweenTimes,
+                maxRows,
+                serverCursorId);
 
             return this.apiPOST("controller/restui/snapshot/snapshotListDataWithFilterHandle", "application/json", requestBody, "application/json", true);
         }
@@ -363,7 +457,7 @@ namespace AppDynamics.Dexter
         ""startTime"": ""{1:o}"",
         ""endTime"": ""{2:o}"",
         ""durationInMinutes"": {3}
-	}}
+    }}
 }}";
             string requestBody = String.Format(requestJSONTemplate,
                 requestGUID,

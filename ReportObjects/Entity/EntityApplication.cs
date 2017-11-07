@@ -4,6 +4,8 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityApplication : EntityBase
     {
+        public string Description { get; set; }
+
         public int NumBackends { get; set; }
         public int NumBTs { get; set; }
         public int NumErrors { get; set; }
@@ -17,9 +19,6 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumSnapshotsVerySlow { get; set; }
         public int NumSnapshotsStall { get; set; }
         public int NumSnapshotsError { get; set; }
-        public int NumSegments { get; set; }
-        public int NumExitCalls { get; set; }
-        public int NumBusinessData { get; set; }
 
         public int NumEvents { get; set; }
         public int NumEventsInfo { get; set; }

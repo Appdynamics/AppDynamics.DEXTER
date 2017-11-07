@@ -4,6 +4,8 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityTier : EntityBase
     {
+        public string Description { get; set; }
+
         public string AgentType { get; set; }
         public string TierType { get; set; }
 

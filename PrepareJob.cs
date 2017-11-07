@@ -359,6 +359,15 @@ namespace AppDynamics.Dexter
                 #endregion
             }
 
+            // Final check for fat-fingered passwords or no internet access
+            if (expandedJobTargets.Count(t => t.Status == JobTargetStatus.ConfigurationValid) == 0)
+            {
+                logger.Error("Job File Problem: Expanded targets but not a single valid target to work on");
+                loggerConsole.Error("Job File Problem: Expanded targets but not a single valid target to work on");
+
+                return false;
+            }
+
             // Sort them to be pretty
             expandedJobTargets = expandedJobTargets.OrderBy(o => o.Controller).ThenBy(o => o.Application).ToList();
 
