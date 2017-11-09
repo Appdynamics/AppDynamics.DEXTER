@@ -306,7 +306,10 @@ namespace AppDynamics.Dexter
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
         private const string APPLICATION_CONFIGURATION_FILE_NAME = "application.configuration.csv";
         private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME = "btdiscovery.rules.csv";
+        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME = "btdiscovery.rules.2.0.csv";
         private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME = "btentry.rules.csv";
+        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME = "btentry.rules.2.0.csv";
+        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME = "btentry.scopes.csv";
         private const string APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME = "backend.rules.csv";
         private const string APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME = "customexit.rules.csv";
         private const string APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME = "infopoints.csv";
@@ -339,8 +342,8 @@ namespace AppDynamics.Dexter
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
 
         // Per entity report names
-        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "{3}.{4}.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
-        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "{3}.{4}.{5}.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "{0}.{1}.{2:yyyyMMddHH}-{3:yyyyMMddHH}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.xlsx";
         private const string REPORT_SNAPSHOT_DETAILS_FILE_NAME = "{3}.{4}.{5}.{6}.{7:yyyyMMddHHmmss}.{8}.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
 
         #endregion
@@ -619,20 +622,25 @@ namespace AppDynamics.Dexter
         private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES = "7.BT Entry Rules";
         private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE = "7.BT Entry Rules.Type";
         private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION = "7.BT Entry Rules.Location";
-        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES = "8.Backend Discovery Rules";
-        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT = "8.Backend Discovery Rules.Type";
-        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES = "9.Custom Exit Rules";
-        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT = "9.Custom Exit Rules.Type";
-        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES = "10.Health Rules";
-        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT = "10.Health Rules.Type";
-        private const string REPORT_CONFIGURATION_SHEET_TIER_SETTINGS = "11.Tier Settings";
-        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS = "12.BT Settings";
-        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES = "13.Agent Properties";
-        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT = "13.Agent Properties.Type";
-        private const string REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES = "14.Information Points";
-        private const string REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS = "15.MIDCs";
-        private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "16.HTTP DCs";
-        private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "17.Call Graph Settings";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES = "8.BT Scopes";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20 = "9.BT Discovery Rules 2.0";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20 = "9.BT Entry Rules 2.0";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE = "9.BT Entry Rules 2.0.Type";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION = "9.BT Entry Rules 2.0.Location";
+        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES = "10.Backend Discovery Rules";
+        private const string REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES_PIVOT = "10.Backend Discovery Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES = "11.Custom Exit Rules";
+        private const string REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES_PIVOT = "11.Custom Exit Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES = "12.Health Rules";
+        private const string REPORT_CONFIGURATION_SHEET_HEALTH_RULES_PIVOT = "12.Health Rules.Type";
+        private const string REPORT_CONFIGURATION_SHEET_TIER_SETTINGS = "13.Tier Settings";
+        private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS = "14.BT Settings";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES = "15.Agent Properties";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES_PIVOT = "15.Agent Properties.Type";
+        private const string REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES = "16.Information Points";
+        private const string REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS = "17.MIDCs";
+        private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "18.HTTP DCs";
+        private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "19.Call Graph Settings";
 
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_TOC = "t_TOC";
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_CONTROLLERS = "t_Controllers";
@@ -642,6 +650,9 @@ namespace AppDynamics.Dexter
         private const string REPORT_CONFIGURATION_TABLE_APPLICATION_CONFIGURATION = "t_ApplicationConfiguration";
         private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_DISCOVERY_RULES = "t_BTDiscoveryRules";
         private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_ENTRY_RULES = "t_BTEntryRules";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SCOPES = "t_BTScopes";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_DISCOVERY_RULES_20 = "t_BTDiscoveryRules20";
+        private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_ENTRY_RULES_20 = "t_BTEntryRules20";
         private const string REPORT_CONFIGURATION_TABLE_BACKEND_DISCOVERY_RULES = "t_BackendDiscoveryRules";
         private const string REPORT_CONFIGURATION_TABLE_CUSTOM_EXIT_RULES = "t_CustomExitRules";
         private const string REPORT_CONFIGURATION_TABLE_AGENT_CONFIGURATION_PROPERTIES = "t_AgentProperties";
@@ -655,12 +666,15 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE = "p_BTEntryRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_LOCATION = "p_BTEntryRulesLocation";
+        private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_20_TYPE = "p_BTEntryRules20Type";
+        private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_20_LOCATION = "p_BTEntryRules20Location";
         private const string REPORT_CONFIGURATION_PIVOT_BACKEND_DISCOVERY_RULES_TYPE = "p_BackendDiscoveryRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE = "p_CustomExitRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE = "p_AgentPropertiesType";
         private const string REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE = "p_HealthRulesType";
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE_GRAPH = "g_BTEntryRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_20_TYPE_GRAPH = "g_BTEntryRules20Type";
         private const string REPORT_CONFIGURATION_PIVOT_BACKEND_DISCOVERY_RULES_TYPE_GRAPH = "g_BackendDiscoveryRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE_GRAPH = "g_CustomExitRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE_GRAPH = "g_AgentPropertiesType";
@@ -3478,6 +3492,11 @@ namespace AppDynamics.Dexter
                         string applicationConfigurationReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
                         string businessTransactionDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
                         string businessTransactionEntryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+
+                        string businessTransactionEntryScopesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                        string businessTransactionDiscoveryRules20ReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                        string businessTransactionEntryRules20ReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
+
                         string backendDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
                         string customExitRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
                         string informationPointRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
@@ -3494,6 +3513,9 @@ namespace AppDynamics.Dexter
                         string applicationConfigurationAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
                         string businessTransactionDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
                         string businessTransactionEntryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                        string businessTransactionEntryScopesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                        string businessTransactionDiscoveryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                        string businessTransactionEntryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
                         string backendDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
                         string customExitRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
                         string informationPointRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
@@ -3573,7 +3595,7 @@ namespace AppDynamics.Dexter
                         XmlAttribute mdsEnabledAttribute = configXml.SelectSingleNode("application").Attributes["mds-config-enabled"];
                         if (mdsEnabledAttribute != null)
                         {
-                            applicationConfiguration.IsMDSEnabled = Convert.ToBoolean(mdsEnabledAttribute.Value);
+                            applicationConfiguration.IsBT20ConfigEnabled = Convert.ToBoolean(mdsEnabledAttribute.Value);
                         }
 
                         if (configXml.SelectSingleNode("application/configuration/application-instrumentation-level").InnerText != "PRODUCTION")
@@ -3767,6 +3789,65 @@ namespace AppDynamics.Dexter
 
                         businessTransactionEntryRulesList = businessTransactionEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
                         FileIOHelper.writeListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), businessTransactionEntryRulesReportFilePath);
+
+                        #endregion
+
+                        #region MDS/Config 2.0 Scopes, BT Detection and BT Rules
+
+                        if (applicationConfiguration.IsBT20ConfigEnabled == true)
+                        {
+                            loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");
+
+                            List<BusinessTransactionEntryScope> businessTransactionEntryScopeList = new List<BusinessTransactionEntryScope>();
+
+                            XmlNode scopeToRuleMappingConfigurationNode = configXml.SelectSingleNode("application/mds-data/mds-config-data/scope-rule-mapping-list");
+
+                            foreach (XmlNode scopeConfigurationNode in configXml.SelectNodes("application/mds-data/mds-config-data/scope-list/scope"))
+                            {
+                                BusinessTransactionEntryScope businessTransactionEntryRuleScope = fillBusinessTransactionEntryScope(scopeConfigurationNode, scopeToRuleMappingConfigurationNode, applicationConfiguration);
+                                businessTransactionEntryScopeList.Add(businessTransactionEntryRuleScope);
+                            }
+
+                            applicationConfiguration.NumBT20Scopes = businessTransactionEntryScopeList.Count;
+
+                            businessTransactionEntryScopeList = businessTransactionEntryScopeList.OrderBy(b => b.ScopeType).ThenBy(b => b.ScopeName).ToList();
+                            FileIOHelper.writeListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryRuleScopeReportMap(), businessTransactionEntryScopesReportFilePath);
+
+
+                            List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = new List<BusinessTransactionEntryRule20>();
+
+                            foreach (XmlNode ruleConfigurationNode in configXml.SelectNodes("application/mds-data/mds-config-data/rule-list/rule"))
+                            {
+                                BusinessTransactionEntryRule20 businessTransactionEntryRule = fillBusinessTransactionEntryRule20(ruleConfigurationNode, scopeToRuleMappingConfigurationNode, applicationConfiguration, businessTransactionsList);
+                                if (businessTransactionEntryRule != null)
+                                {
+                                    businessTransactionEntryRules20List.Add(businessTransactionEntryRule);
+                                }
+                            }
+
+                            applicationConfiguration.NumBT20EntryRules = businessTransactionEntryRules20List.Where(b => b.IsExclusion == false).Count();
+                            applicationConfiguration.NumBT20ExcludeRules = businessTransactionEntryRules20List.Count - applicationConfiguration.NumBT20EntryRules;
+
+                            businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
+                            FileIOHelper.writeListToCSVFile(businessTransactionEntryRules20List, new BusinessTransactionEntryRule20ReportMap(), businessTransactionEntryRules20ReportFilePath);
+
+
+                            List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20List = new List<BusinessTransactionDiscoveryRule20>();
+
+                            foreach (XmlNode ruleConfigurationNode in configXml.SelectNodes("application/mds-data/mds-config-data/rule-list/rule"))
+                            {
+                                List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRuleList = fillBusinessTransactionDiscoveryRule20(ruleConfigurationNode, scopeToRuleMappingConfigurationNode, applicationConfiguration, businessTransactionsList);
+                                if (businessTransactionDiscoveryRuleList != null)
+                                {
+                                    businessTransactionDiscoveryRule20List.AddRange(businessTransactionDiscoveryRuleList);
+                                }
+                            }
+
+                            applicationConfiguration.NumBT20DiscoveryRules = businessTransactionEntryRules20List.Count;
+
+                            businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
+                            FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRule20List, new BusinessTransactionDiscoveryRule20ReportMap(), businessTransactionDiscoveryRules20ReportFilePath);
+                        }
 
                         #endregion
 
@@ -4105,19 +4186,10 @@ namespace AppDynamics.Dexter
                             healthRulesList.Add(healthRule);
                         }
 
-                        applicationConfiguration.NumHealthRules = agentConfigurationPropertiesList.Count;
+                        applicationConfiguration.NumHealthRules = healthRulesList.Count;
 
                         healthRulesList = healthRulesList.OrderBy(h => h.RuleType).ThenBy(h => h.RuleName).ToList();
                         FileIOHelper.writeListToCSVFile(healthRulesList, new HealthRuleReportMap(), healthRulesReportFilePath);
-
-                        #endregion
-
-                        #region MDS Scopes
-
-                        //TODO get these done
-
-                        applicationConfiguration.NumMDSRules = -1;
-                        applicationConfiguration.NumMDSScopes = -1;
 
                         #endregion
 
@@ -4143,6 +4215,9 @@ namespace AppDynamics.Dexter
                         FileIOHelper.appendTwoCSVFiles(applicationConfigurationAllReportFilePath, applicationConfigurationReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRulesAllReportFilePath, businessTransactionDiscoveryRulesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRulesAllReportFilePath, businessTransactionEntryRulesReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionEntryScopesAllReportFilePath, businessTransactionEntryScopesReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRules20AllReportFilePath, businessTransactionDiscoveryRules20ReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRules20AllReportFilePath, businessTransactionEntryRules20ReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(backendDiscoveryRulesAllReportFilePath, backendDiscoveryRulesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(customExitRulesAllReportFilePath, customExitRulesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(informationPointRulesAllReportFilePath, informationPointRulesReportFilePath);
@@ -6656,6 +6731,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6677,6 +6753,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST];
+                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6714,6 +6791,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST];
+                logger.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6768,6 +6846,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODES_LIST];
+                logger.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6843,6 +6922,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_LIST];
+                logger.Info("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6903,6 +6983,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_LIST];
+                logger.Info("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -6969,6 +7050,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_LIST];
+                logger.Info("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7035,6 +7117,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LIST];
+                logger.Info("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7357,6 +7440,48 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "Types of BT Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "Locations BT Rules";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + REPORT_CONFIGURATION_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + 1, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
@@ -7482,6 +7607,9 @@ namespace AppDynamics.Dexter
                 string applicationConfigurationAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
                 string businessTransactionDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
                 string businessTransactionEntryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                string businessTransactionEntryScopesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                string businessTransactionDiscoveryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                string businessTransactionEntryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
                 string backendDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
                 string customExitRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
                 string informationPointRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
@@ -7537,6 +7665,33 @@ namespace AppDynamics.Dexter
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
                 readCSVFileIntoExcelRange(businessTransactionEntryRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Business Transaction Scopes
+
+                loggerConsole.Info("List of Business Transaction Scopes");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES];
+                readCSVFileIntoExcelRange(businessTransactionEntryScopesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Business Transaction Detection Rules 2.0
+
+                loggerConsole.Info("List of Business Transaction 2.0 Detection Rules");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20];
+                readCSVFileIntoExcelRange(businessTransactionDiscoveryRules20AllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Business Transaction Entry Rules 2.0
+
+                loggerConsole.Info("List of Business Transaction 2.0 Entry Rules");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20];
+                readCSVFileIntoExcelRange(businessTransactionEntryRules20AllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -7632,6 +7787,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7652,6 +7808,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS];
+                logger.Info("Controller Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controller Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7674,6 +7831,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION];
+                logger.Info("Application Configuration Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Application Configuration Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7694,6 +7852,18 @@ namespace AppDynamics.Dexter
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTExcludeRules"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20Scopes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20Scopes"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20DiscoveryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20DiscoveryRules"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20EntryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20EntryRules"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20ExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20ExcludeRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBackendRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBackendRules"].Position + 1);
@@ -7726,11 +7896,6 @@ namespace AppDynamics.Dexter
                     cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBaselines"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBaselines"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMDSScopes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMDSScopes"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMDSRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMDSRules"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
@@ -7745,6 +7910,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES];
+                logger.Info("Business Transaction Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Business Transaction Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7760,6 +7926,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["AgentType"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["EntryPointType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["NamingConfigType"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["DiscoveryType"].Position + 1).AutoFit();
                     sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
                 }
@@ -7770,6 +7937,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
+                logger.Info("Business Transaction Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Business Transaction Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7851,10 +8019,146 @@ namespace AppDynamics.Dexter
 
                 #endregion
 
+                #region Business Transaction Scopes
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES];
+                logger.Info("Business Transaction Scopes Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transaction Scopes Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SCOPES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["IncludedTiers"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["IncludedRules"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region Business Transaction Detection Rules 2.0
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20];
+                logger.Info("Business Transaction 2.0 Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transaction 2.0 Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_DISCOVERY_RULES_20);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["NamingConfigType"].Position + 1).Width = 15;
+                }
+
+                #endregion
+
+                #region Business Transaction Entry Rules 2.0
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20];
+                logger.Info("Business Transaction 2.0 Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Business Transaction 2.0 Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_ENTRY_RULES_20);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).AutoFit();
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+
+                    // Make pivot
+                    sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + REPORT_CONFIGURATION_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_CONFIGURATION_PIVOT_BT_RULES_20_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsExclusion"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ScopeName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["EntryPointType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_CONFIGURATION_PIVOT_BT_RULES_20_TYPE_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_CONFIGURATION_PIVOT_BT_RULES_20_LOCATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsExclusion"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsEnabled"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["AgentType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["EntryPointType"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ScopeName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                    fieldD.Name = "Number of Rules";
+                    fieldD = pivot.DataFields.Add(pivot.Fields["NumDetectedBTs"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+                    fieldD.Name = "Number of Detected BTs";
+                }
+
+                #endregion
+
                 #region Backend Discovery Rules
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES];
+                logger.Info("Backend Discovery Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Backend Discovery Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7910,6 +8214,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES];
+                logger.Info("Custom Exit Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Custom Exit Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7964,6 +8269,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES];
+                logger.Info("Information Point Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Information Point Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -7987,6 +8293,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES];
+                logger.Info("Agent Configuration Properties Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Agent Configuration Properties Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8044,6 +8351,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS];
+                logger.Info("Method Invocation Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Method Invocation Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8063,6 +8371,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS];
+                logger.Info("HTTP Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("HTTP Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8086,6 +8395,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_TIER_SETTINGS];
+                logger.Info("Tier Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Tier Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8108,6 +8418,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS];
+                logger.Info("Detected Business Transaction and Assigned Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8132,6 +8443,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS];
+                logger.Info("Agent Call Graph Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Agent Call Graph Settings Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8154,6 +8466,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
+                logger.Info("Health Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Health Rules Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8637,6 +8950,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8658,6 +8972,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_FULL];
+                logger.Info("Applications Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8673,6 +8988,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_HOURLY];
+                logger.Info("Applications Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8693,6 +9009,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_FULL];
+                logger.Info("Tiers Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Tiers Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8708,6 +9025,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_HOURLY];
+                logger.Info("Tiers Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Tiers Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8728,6 +9046,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_FULL];
+                logger.Info("Nodes Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Nodes Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8743,6 +9062,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_HOURLY];
+                logger.Info("Nodes Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Nodes Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8763,6 +9083,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BACKENDS_FULL];
+                logger.Info("Backends Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Backends Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8778,6 +9099,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BACKENDS_HOURLY];
+                logger.Info("Backends Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Backends Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8798,6 +9120,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_FULL];
+                logger.Info("Business Transactions Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Business Transactions Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8813,6 +9136,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_HOURLY];
+                logger.Info("Business Transactions Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Business Transactions Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8833,6 +9157,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_SERVICE_ENDPOINTS_FULL];
+                logger.Info("Service Endpoints Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Service Endpoints Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8848,6 +9173,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_SERVICE_ENDPOINTS_HOURLY];
+                logger.Info("Service Endpoints Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Service Endpoints Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8868,6 +9194,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_ERRORS_FULL];
+                logger.Info("Errors Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Errors Sheet Full ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -8883,6 +9210,7 @@ namespace AppDynamics.Dexter
                 }
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_ERRORS_HOURLY];
+                logger.Info("Errors Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Errors Sheet Hourly ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9215,6 +9543,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9235,6 +9564,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
+                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9275,6 +9605,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS];
+                logger.Info("Events Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Events Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9339,6 +9670,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS];
+                logger.Info("Health Rule Events Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Health Rule Events Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9816,6 +10148,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9836,6 +10169,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
+                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9873,6 +10207,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS];
+                logger.Info("Snapshots Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Snapshots Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -9994,6 +10329,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS];
+                logger.Info("Segments Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Segments Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -10114,6 +10450,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS];
+                logger.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -10148,6 +10485,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityName"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -10203,6 +10541,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS];
+                logger.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -10229,6 +10568,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS];
+                logger.Info("Detected Errors Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Detected Errors Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -10281,6 +10621,7 @@ namespace AppDynamics.Dexter
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA];
+                logger.Info("Detected Business Data ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Detected Business Data ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
@@ -12596,6 +12937,231 @@ namespace AppDynamics.Dexter
             return businessTransactionEntryRule;
         }
 
+        private static BusinessTransactionEntryScope fillBusinessTransactionEntryScope(XmlNode scopeConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration)
+        {
+            BusinessTransactionEntryScope businessTransactionEntryScope = new BusinessTransactionEntryScope();
+
+            businessTransactionEntryScope.Controller = applicationConfiguration.Controller;
+            businessTransactionEntryScope.ControllerLink = applicationConfiguration.ControllerLink;
+            businessTransactionEntryScope.ApplicationName = applicationConfiguration.ApplicationName;
+            businessTransactionEntryScope.ApplicationID = applicationConfiguration.ApplicationID;
+            businessTransactionEntryScope.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            businessTransactionEntryScope.ScopeName = scopeConfigurationNode.Attributes["scope-name"].Value;
+            businessTransactionEntryScope.ScopeType = scopeConfigurationNode.Attributes["scope-type"].Value;
+            businessTransactionEntryScope.Description = scopeConfigurationNode.Attributes["scope-description"].Value;
+            businessTransactionEntryScope.Version = Convert.ToInt32(scopeConfigurationNode.Attributes["scope-version"].Value);
+
+            XmlNodeList includedTierNodeList = scopeConfigurationNode.SelectNodes("included-tiers/tier-name");
+            businessTransactionEntryScope.NumTiers = includedTierNodeList.Count;
+            if (businessTransactionEntryScope.NumTiers > 0)
+            {
+                List<string> includedTiersList = new List<string>(businessTransactionEntryScope.NumTiers);
+                foreach (XmlNode includedTierNode in includedTierNodeList)
+                {
+                    includedTiersList.Add(includedTierNode.InnerText);
+                }
+                includedTiersList.Sort();
+
+                StringBuilder sb = new StringBuilder(32 * businessTransactionEntryScope.NumTiers);
+                foreach (string includedTier in includedTiersList)
+                {
+                    sb.AppendFormat("{0};\n", includedTier);
+                }
+                sb.Remove(sb.Length - 1, 1);
+                businessTransactionEntryScope.IncludedTiers = sb.ToString();
+            }
+
+            XmlNodeList ruleMappingNodeList = scopeToRuleMappingConfigurationNode.SelectNodes(String.Format("scope-rule-mapping[@scope-name='{0}']/rule", businessTransactionEntryScope.ScopeName));
+            businessTransactionEntryScope.NumRules = ruleMappingNodeList.Count;
+            if (businessTransactionEntryScope.NumRules > 0)
+            {
+                List<string> ruleMappingList = new List<string>(businessTransactionEntryScope.NumRules);
+                foreach (XmlNode ruleMappingNode in ruleMappingNodeList)
+                {
+                    string ruleName = ruleMappingNode.Attributes["rule-name"].Value;
+                    string ruleDescription = ruleMappingNode.Attributes["rule-description"].Value;
+                    string ruleNameAndDescription = String.Empty;
+                    if (ruleDescription.Length > 0 && ruleDescription != ruleName)
+                    {
+                        ruleMappingList.Add(String.Format("{0} ({1})", ruleName, ruleDescription));
+                    }
+                    else
+                    {
+                        ruleMappingList.Add(ruleName);
+                    }
+                }
+                ruleMappingList.Sort();
+
+                StringBuilder sb = new StringBuilder(32 * businessTransactionEntryScope.NumRules);
+                foreach (string ruleMapping in ruleMappingList)
+                {
+                    sb.AppendFormat("{0};\n", ruleMapping);
+                }
+                sb.Remove(sb.Length - 1, 1);
+                businessTransactionEntryScope.IncludedRules = sb.ToString();
+            }
+
+            return businessTransactionEntryScope;
+        }
+
+        private static BusinessTransactionEntryRule20 fillBusinessTransactionEntryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransaction> businessTransactionsList)
+        {
+            BusinessTransactionEntryRule20 businessTransactionEntryRule = new BusinessTransactionEntryRule20();
+
+            businessTransactionEntryRule.Controller = applicationConfiguration.Controller;
+            businessTransactionEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            businessTransactionEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            businessTransactionEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            businessTransactionEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            businessTransactionEntryRule.AgentType = ruleConfigurationNode.Attributes["agent-type"].Value;
+            businessTransactionEntryRule.RuleName = ruleConfigurationNode.Attributes["rule-name"].Value;
+            businessTransactionEntryRule.Description = ruleConfigurationNode.Attributes["rule-description"].Value;
+            businessTransactionEntryRule.Version = Convert.ToInt32(ruleConfigurationNode.Attributes["version"].Value);
+
+            businessTransactionEntryRule.IsEnabled = Convert.ToBoolean(ruleConfigurationNode.Attributes["enabled"].Value);
+            businessTransactionEntryRule.Priority = Convert.ToInt32(ruleConfigurationNode.Attributes["priority"].Value);
+
+            JObject txRuleSettings = JObject.Parse(getStringValueFromXmlNode(ruleConfigurationNode.SelectSingleNode("tx-match-rule")));
+            if (txRuleSettings != null)
+            {
+                if (txRuleSettings["type"].ToString() != "CUSTOM")
+                {
+                    // This is likely autodiscovery rule, do not fill it out and bail
+                    return null;
+                }
+
+                JToken txCustomRuleSettings = txRuleSettings["txcustomrule"];
+                if (txCustomRuleSettings != null)
+                {
+                    if (txCustomRuleSettings["type"].ToString() == "EXCLUDE")
+                    {
+                        businessTransactionEntryRule.IsExclusion = true;
+                    }
+                    else if (txCustomRuleSettings["type"].ToString() == "INCLUDE")
+                    {
+                        businessTransactionEntryRule.IsExclusion = false;
+                    }
+
+                    businessTransactionEntryRule.EntryPointType = txCustomRuleSettings["txentrypointtype"].ToString();
+
+                    JToken isBackgroundProperty = txCustomRuleSettings["properties"].Where(p => p["name"].ToString() == "BACKGROUND_TASK").FirstOrDefault();
+                    if (isBackgroundProperty != null)
+                    {
+                        businessTransactionEntryRule.IsBackground = (bool)isBackgroundProperty["booleanvalue"];
+                    }
+
+                    businessTransactionEntryRule.MatchConditions = txCustomRuleSettings["matchconditions"].ToString();
+                    businessTransactionEntryRule.Actions = txCustomRuleSettings["actions"].ToString();
+                    businessTransactionEntryRule.Properties = txCustomRuleSettings["properties"].ToString();
+                }
+            }
+
+            // I really want to do it, but some of our rules have apostrophes
+            // Spring WS - Base servlet for Spring's web framework
+            // And the query for scope-rule-mapping/rule[@rule-name='Spring WS - Base servlet for Spring's web framework'] breaks
+            // So going to do it the hard way
+            //XmlNode scopeForThisRuleNode = scopeToRuleMappingConfigurationNode.SelectSingleNode(String.Format("scope-rule-mapping/rule[@rule-name='{0}']", businessTransactionEntryRule.RuleName));
+            foreach (XmlNode scopeNode in scopeToRuleMappingConfigurationNode.SelectNodes("scope-rule-mapping/rule"))
+            {
+                if (scopeNode.Attributes["rule-name"].Value == businessTransactionEntryRule.RuleName)
+                {
+                    businessTransactionEntryRule.ScopeName = scopeNode.ParentNode.Attributes["scope-name"].Value;
+                    break;
+                }
+            }
+
+            if (businessTransactionsList != null)
+            {
+                List<EntityBusinessTransaction> businessTransactionsForThisRule = new List<EntityBusinessTransaction>();
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName == businessTransactionEntryRule.RuleName).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal == businessTransactionEntryRule.RuleName).ToList());
+                businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
+                businessTransactionsForThisRule = businessTransactionsForThisRule.Distinct().ToList();
+                businessTransactionEntryRule.NumDetectedBTs = businessTransactionsForThisRule.Count;
+                if (businessTransactionsForThisRule.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder(32 * businessTransactionsForThisRule.Count);
+                    foreach (EntityBusinessTransaction bt in businessTransactionsForThisRule)
+                    {
+                        sb.AppendFormat("{0}/{1};\n", bt.TierName, bt.BTName);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    businessTransactionEntryRule.DetectedBTs = sb.ToString();
+                }
+            }
+
+            businessTransactionEntryRule.RuleRawValue = makeXMLFormattedAndIndented(ruleConfigurationNode);
+
+            return businessTransactionEntryRule;
+        }
+
+        private static List<BusinessTransactionDiscoveryRule20> fillBusinessTransactionDiscoveryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransaction> businessTransactionsList)
+        {
+            List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20List = new List<BusinessTransactionDiscoveryRule20>();
+
+            JObject txRuleSettings = JObject.Parse(getStringValueFromXmlNode(ruleConfigurationNode.SelectSingleNode("tx-match-rule")));
+            if (txRuleSettings != null)
+            {
+                if (txRuleSettings["type"].ToString() != "AUTOMATIC_DISCOVERY")
+                {
+                    // This is not an autodiscovery rule, do not fill it out and bail
+                    return null;
+                }
+
+                JArray txDiscoveryConfigs = (JArray)txRuleSettings["txautodiscoveryrule"]["autodiscoveryconfigs"];
+                if (txDiscoveryConfigs != null && txDiscoveryConfigs.Count > 0)
+                {
+                    foreach (JToken txDiscoveryConfig in txDiscoveryConfigs)
+                    {
+                        BusinessTransactionDiscoveryRule20 businessTransactionDiscoveryRule20 = new BusinessTransactionDiscoveryRule20();
+
+                        businessTransactionDiscoveryRule20.Controller = applicationConfiguration.Controller;
+                        businessTransactionDiscoveryRule20.ControllerLink = applicationConfiguration.ControllerLink;
+                        businessTransactionDiscoveryRule20.ApplicationName = applicationConfiguration.ApplicationName;
+                        businessTransactionDiscoveryRule20.ApplicationID = applicationConfiguration.ApplicationID;
+                        businessTransactionDiscoveryRule20.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+                        businessTransactionDiscoveryRule20.AgentType = ruleConfigurationNode.Attributes["agent-type"].Value;
+                        businessTransactionDiscoveryRule20.RuleName = ruleConfigurationNode.Attributes["rule-name"].Value;
+                        businessTransactionDiscoveryRule20.Description = ruleConfigurationNode.Attributes["rule-description"].Value;
+                        businessTransactionDiscoveryRule20.Version = Convert.ToInt32(ruleConfigurationNode.Attributes["version"].Value);
+
+                        businessTransactionDiscoveryRule20.IsEnabled = Convert.ToBoolean(ruleConfigurationNode.Attributes["enabled"].Value);
+                        businessTransactionDiscoveryRule20.Priority = Convert.ToInt32(ruleConfigurationNode.Attributes["priority"].Value);
+
+                        businessTransactionDiscoveryRule20.EntryPointType = txDiscoveryConfig["txentrypointtype"].ToString();
+                        businessTransactionDiscoveryRule20.IsMonitoringEnabled = (bool)txDiscoveryConfig["monitoringenabled"];
+                        businessTransactionDiscoveryRule20.IsDiscoveryEnabled = (bool)txDiscoveryConfig["discoveryenabled"];
+                        businessTransactionDiscoveryRule20.NamingConfigType = txDiscoveryConfig["namingschemetype"].ToString();
+
+                        businessTransactionDiscoveryRule20.HTTPAutoDiscovery = txDiscoveryConfig["httpautodiscovery"].ToString();
+
+                        // I really want to do it, but some of our rules have apostrophes
+                        // Spring WS - Base servlet for Spring's web framework
+                        // And the query for scope-rule-mapping/rule[@rule-name='Spring WS - Base servlet for Spring's web framework'] breaks
+                        // So going to do it the hard way
+                        //XmlNode scopeForThisRuleNode = scopeToRuleMappingConfigurationNode.SelectSingleNode(String.Format("scope-rule-mapping/rule[@rule-name='{0}']", businessTransactionEntryRule.RuleName));
+                        foreach (XmlNode scopeNode in scopeToRuleMappingConfigurationNode.SelectNodes("scope-rule-mapping/rule"))
+                        {
+                            if (scopeNode.Attributes["rule-name"].Value == businessTransactionDiscoveryRule20.RuleName)
+                            {
+                                businessTransactionDiscoveryRule20.ScopeName = scopeNode.ParentNode.Attributes["scope-name"].Value;
+                                break;
+                            }
+                        }
+
+                        businessTransactionDiscoveryRule20List.Add(businessTransactionDiscoveryRule20);
+                    }
+                }
+            }
+
+            return businessTransactionDiscoveryRule20List;
+        }
+
         private static BackendDiscoveryRule fillBackendDiscoveryRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode backendDiscoveryConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBackend> backendsList)
         {
             BackendDiscoveryRule backendDiscoveryRule = new BackendDiscoveryRule();
@@ -12924,10 +13490,13 @@ namespace AppDynamics.Dexter
             entityTierConfiguration.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
             entityTierConfiguration.TierDescription = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("description"));
             entityTierConfiguration.TierType = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("component-type"));
-            EntityTier tier = tiersList.Where(t => t.TierName == entityTierConfiguration.TierName).FirstOrDefault();
-            if (tier != null)
+            if (tiersList != null)
             {
-                entityTierConfiguration.TierID = tier.TierID;
+                EntityTier tier = tiersList.Where(t => t.TierName == entityTierConfiguration.TierName).FirstOrDefault();
+                if (tier != null)
+                {
+                    entityTierConfiguration.TierID = tier.TierID;
+                }
             }
 
             entityTierConfiguration.IsDynamicScalingEnabled = getBoolValueFromXmlNode(applicationComponentNode.SelectSingleNode("dynamic-scaling-enabled"));
@@ -12959,18 +13528,24 @@ namespace AppDynamics.Dexter
             entityBusinessTransactionConfiguration.ApplicationLink = applicationConfiguration.ApplicationLink;
 
             entityBusinessTransactionConfiguration.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
-            EntityTier tier = tiersList.Where(t => t.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
-            if (tier != null)
+            if (tiersList != null)
             {
-                entityBusinessTransactionConfiguration.TierID = tier.TierID;
+                EntityTier tier = tiersList.Where(t => t.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+                if (tier != null)
+                {
+                    entityBusinessTransactionConfiguration.TierID = tier.TierID;
+                }
             }
 
             entityBusinessTransactionConfiguration.BTName = getStringValueFromXmlNode(businessTransactionConfigurationtNode.SelectSingleNode("name"));
             entityBusinessTransactionConfiguration.BTType = businessTransactionConfigurationtNode.Attributes["transaction-entry-point-type"].Value;
-            EntityBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTName == entityBusinessTransactionConfiguration.BTName && b.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
-            if (businessTransaction != null)
+            if (businessTransactionsList != null)
             {
-                entityBusinessTransactionConfiguration.BTID = businessTransaction.BTID;
+                EntityBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTName == entityBusinessTransactionConfiguration.BTName && b.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+                if (businessTransaction != null)
+                {
+                    entityBusinessTransactionConfiguration.BTID = businessTransaction.BTID;
+                }
             }
 
             entityBusinessTransactionConfiguration.IsExcluded = Convert.ToBoolean(businessTransactionConfigurationtNode.Attributes["excluded"].Value);
@@ -16259,11 +16834,10 @@ namespace AppDynamics.Dexter
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
-                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID));
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16277,12 +16851,11 @@ namespace AppDynamics.Dexter
                 EntityTier tierRow = (EntityTier)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID));
+                    getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16296,12 +16869,11 @@ namespace AppDynamics.Dexter
                 EntityNode nodeRow = (EntityNode)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID));
+                    getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16315,12 +16887,11 @@ namespace AppDynamics.Dexter
                 EntityBackend backendRow = (EntityBackend)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID));
+                    getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16334,12 +16905,11 @@ namespace AppDynamics.Dexter
                 EntityBusinessTransaction businessTransactionRow = (EntityBusinessTransaction)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID));
+                    getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16353,12 +16923,11 @@ namespace AppDynamics.Dexter
                 EntityServiceEndpoint serviceEndpointRow = (EntityServiceEndpoint)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(serviceEndpointRow.SEPName, serviceEndpointRow.SEPID));
+                    getShortenedEntityNameForFileSystem(serviceEndpointRow.SEPName, serviceEndpointRow.SEPID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16372,12 +16941,11 @@ namespace AppDynamics.Dexter
                 EntityError errorRow = (EntityError)entityRow;
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    programOptions.JobName,
-                    jobConfiguration.Input.ExpandedTimeRange.From,
-                    jobConfiguration.Input.ExpandedTimeRange.To,
                     getFileSystemSafeString(new Uri(entityRow.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
-                    getShortenedEntityNameForFileSystem(errorRow.ErrorName, errorRow.ErrorID));
+                    getShortenedEntityNameForFileSystem(errorRow.ErrorName, errorRow.ErrorID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
                     REPORTS_FOLDER_NAME,
@@ -16628,7 +17196,7 @@ namespace AppDynamics.Dexter
             sheet.Cells[2, 1].Value = "See Table";
             sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS);
             sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 2, 1);
+            sheet.View.FreezePanes(REPORT_ENTITY_DETAILS_PIVOT_SHEET_START_PIVOT_AT + 1, 1);
 
             sheet = excelEntityDetail.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS);
             sheet.Cells[1, 1].Value = "Table of Contents";
@@ -17859,7 +18427,7 @@ namespace AppDynamics.Dexter
                         sheet.Cells[2, columnIndexTimeRangeStart + 24].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["EPM"].Position + 1].Value.ToString();
                     }
                 }
-                7
+                
                 sheet.Cells[4, columnIndexTimeRangeStart + 0].Value = "Calls";
                 sheet.Cells[4, columnIndexTimeRangeStart + 0].StyleName = "MinuteHeadingStyle";
                 sheet.Cells[4, columnIndexTimeRangeStart + 56].Value = "Response";

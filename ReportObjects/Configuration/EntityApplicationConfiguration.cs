@@ -15,6 +15,10 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumBTEntryRules { get; set; }
         public int NumBTExcludeRules { get; set; }
         public int NumBTDiscoveryRules { get; set; }
+        public int NumBT20Scopes { get; set; }
+        public int NumBT20EntryRules { get; set; }
+        public int NumBT20ExcludeRules { get; set; }
+        public int NumBT20DiscoveryRules { get; set; }
         public int NumBackendRules { get; set; }
         public int NumInfoPointRules { get; set; }
         public int NumAgentProps { get; set; }
@@ -25,12 +29,10 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumMIDCVariablesCollected { get; set; }
         public int NumMIDCs { get; set; }
         public int NumBaselines { get; set; }
-        public int NumMDSScopes { get; set; }
-        public int NumMDSRules { get; set; }
         public int NumTiers { get; set; }
         public int NumBTs { get; set; }
 
-        public bool IsMDSEnabled { get; set; }
+        public bool IsBT20ConfigEnabled { get; set; }
         public bool IsHREngineEnabled { get; set; }
         public bool IsDeveloperModeEnabled { get; set; }
         public bool IsBTLockdownEnabled { get; set; }

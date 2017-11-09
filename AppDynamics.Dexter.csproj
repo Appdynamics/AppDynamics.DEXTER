@@ -109,9 +109,15 @@
     <Compile Include="DataObjects\ProgramOptions\ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportObjects\Configuration\AgentCallGraphSetting.cs" />
+    <Compile Include="ReportObjects\Configuration\BusinessTransactionDiscoveryRule20.cs" />
+    <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryRule20.cs" />
+    <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryScope.cs" />
     <Compile Include="ReportObjects\Configuration\HealthRule.cs" />
     <Compile Include="ReportObjects\Configuration\EntityBusinessTransactionConfiguration.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\AgentCallGraphSettingReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BusinessTransactionDiscoveryRule20ReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BusinessTransactionEntryRule20ReportMap.cs" />
+    <Compile Include="ReportObjects\Configuration\Maps\BusinessTransactionEntryScopeReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\HealthRuleReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\EntityBusinessTransactionConfigurationReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\EntityTierConfigurationReportMap.cs" />
