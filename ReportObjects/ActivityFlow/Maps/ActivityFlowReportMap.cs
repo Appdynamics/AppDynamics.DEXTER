@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ActivityFlowReportMap : CsvClassMap<ActivityFlow>
+    public class ActivityFlowReportMap : ClassMap<ActivityFlow>
     {
         public ActivityFlowReportMap()
         {

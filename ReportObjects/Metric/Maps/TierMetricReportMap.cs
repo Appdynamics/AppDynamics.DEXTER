@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class TierMetricReportMap : CsvClassMap<EntityTier>
+    public class TierMetricReportMap : ClassMap<EntityTier>
     {
         public TierMetricReportMap()
         {

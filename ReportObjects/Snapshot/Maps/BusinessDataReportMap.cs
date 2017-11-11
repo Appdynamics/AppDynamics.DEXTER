@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class BusinessDataReportMap: CsvClassMap<BusinessData>
+    public class BusinessDataReportMap: ClassMap<BusinessData>
     {
         public BusinessDataReportMap()
         {

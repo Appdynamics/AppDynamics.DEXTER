@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class MethodInvocationDataCollectorReportMap : CsvClassMap<MethodInvocationDataCollector>
+    public class MethodInvocationDataCollectorReportMap : ClassMap<MethodInvocationDataCollector>
     {
         public MethodInvocationDataCollectorReportMap()
         {

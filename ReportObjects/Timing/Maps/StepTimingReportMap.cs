@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class StepTimingReportMap : CsvClassMap<StepTiming>
+    public class StepTimingReportMap : ClassMap<StepTiming>
     {
         public StepTimingReportMap()
         {

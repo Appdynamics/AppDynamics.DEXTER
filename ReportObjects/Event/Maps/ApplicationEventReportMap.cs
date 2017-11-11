@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ApplicationEventReportMap: CsvClassMap<EntityApplication>
+    public class ApplicationEventReportMap: ClassMap<EntityApplication>
     {
         public ApplicationEventReportMap()
         {

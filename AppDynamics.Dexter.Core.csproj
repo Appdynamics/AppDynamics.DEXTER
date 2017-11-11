@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp2.0;net462</TargetFrameworks>
+    <ApplicationIcon>SearchContract.ico</ApplicationIcon>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyName>AppDynamics.Dexter</AssemblyName>
+    <RootNamespace>AppDynamics.Dexter</RootNamespace>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AssemblyOriginatorKeyFile>AppDynamics DEXTER.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="EPPlus\**" />
+    <Compile Remove="Images\**" />
+    <Compile Remove="lib\**" />
+    <Compile Remove="obj_netfx\**" />
+    <Compile Remove="packages_private\**" />
+    <EmbeddedResource Remove="EPPlus\**" />
+    <EmbeddedResource Remove="Images\**" />
+    <EmbeddedResource Remove="lib\**" />
+    <EmbeddedResource Remove="obj_netfx\**" />
+    <EmbeddedResource Remove="packages_private\**" />
+    <None Remove="EPPlus\**" />
+    <None Remove="Images\**" />
+    <None Remove="lib\**" />
+    <None Remove="obj_netfx\**" />
+    <None Remove="packages_private\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitattributes" />
+    <None Remove=".gitignore" />
+    <None Remove="App.config" />
+    <None Remove="packages.config" />
+    <None Remove="README.md" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="CsvHelper" Version="6.0.0" />
+    <PackageReference Include="EPPlus" Version="4.5.0-beta" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="NLog" Version="4.5.0-beta07" />
+    <PackageReference Include="NLog.Config" Version="4.5.0-beta07" />
+    <PackageReference Include="NLog.Schema" Version="4.5.0-beta07" />
+    <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="1.0.1-beta004" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Net.Http" Condition="'$(TargetFramework)'=='net462'" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="DefaultJob.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  
+</Project>

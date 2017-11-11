@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class DetectedErrorReportMap : CsvClassMap<DetectedError>
+    public class DetectedErrorReportMap : ClassMap<DetectedError>
     {
         public DetectedErrorReportMap()
         {

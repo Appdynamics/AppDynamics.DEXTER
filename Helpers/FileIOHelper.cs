@@ -331,12 +331,12 @@ namespace AppDynamics.Dexter
 
         #region CSV reading and writing
 
-        public static bool writeListToCSVFile<T>(List<T> listToWrite, CsvClassMap<T> classMap, string csvFilePath)
+        public static bool writeListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath)
         {
             return writeListToCSVFile(listToWrite, classMap, csvFilePath, false);
         }
 
-        public static bool writeListToCSVFile<T>(List<T> listToWrite, CsvClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
+        public static bool writeListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
         {
             string folderPath = Path.GetDirectoryName(csvFilePath);
 
@@ -380,7 +380,7 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, CsvClassMap<T> classMap)
+        public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, ClassMap<T> classMap)
         {
             try
             {
@@ -408,7 +408,7 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static List<T> readListFromCSVFile<T>(string csvFilePath, CsvClassMap<T> classMap)
+        public static List<T> readListFromCSVFile<T>(string csvFilePath, ClassMap<T> classMap)
         {
             try
             {

@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class AgentConfigurationPropertyReportMap : CsvClassMap<AgentConfigurationProperty>
+    public class AgentConfigurationPropertyReportMap : ClassMap<AgentConfigurationProperty>
     {
         public AgentConfigurationPropertyReportMap()
         {

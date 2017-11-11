@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ControllerSettingReportMap : CsvClassMap<ControllerSetting>
+    public class ControllerSettingReportMap : ClassMap<ControllerSetting>
     {
         public ControllerSettingReportMap()
         {

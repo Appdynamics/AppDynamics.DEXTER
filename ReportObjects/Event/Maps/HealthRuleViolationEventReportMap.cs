@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class HealthRuleViolationEventReportMap : CsvClassMap<HealthRuleViolationEvent>
+    public class HealthRuleViolationEventReportMap : ClassMap<HealthRuleViolationEvent>
     {
         public HealthRuleViolationEventReportMap()
         {

@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class EventReportMap : CsvClassMap<Event>
+    public class EventReportMap : ClassMap<Event>
     {
         public EventReportMap()
         {

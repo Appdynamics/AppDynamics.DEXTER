@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class AgentCallGraphSettingReportMap : CsvClassMap<AgentCallGraphSetting>
+    public class AgentCallGraphSettingReportMap : ClassMap<AgentCallGraphSetting>
     {
         public AgentCallGraphSettingReportMap()
         {

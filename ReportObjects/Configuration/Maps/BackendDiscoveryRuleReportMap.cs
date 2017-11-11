@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class BackendDiscoveryRuleReportMap : CsvClassMap<BackendDiscoveryRule>
+    public class BackendDiscoveryRuleReportMap : ClassMap<BackendDiscoveryRule>
     {
         public BackendDiscoveryRuleReportMap()
         {

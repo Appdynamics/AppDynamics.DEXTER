@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class SegmentReportMap: CsvClassMap<Segment>
+    public class SegmentReportMap: ClassMap<Segment>
     {
         public SegmentReportMap()
         {

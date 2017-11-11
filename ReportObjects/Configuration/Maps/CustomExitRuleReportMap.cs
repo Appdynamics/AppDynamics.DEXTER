@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class CustomExitRuleReportMap : CsvClassMap<CustomExitRule>
+    public class CustomExitRuleReportMap : ClassMap<CustomExitRule>
     {
         public CustomExitRuleReportMap()
         {

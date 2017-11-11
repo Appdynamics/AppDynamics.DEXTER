@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class HTTPDataCollectorReportMap : CsvClassMap<HTTPDataCollector>
+    public class HTTPDataCollectorReportMap : ClassMap<HTTPDataCollector>
     {
         public HTTPDataCollectorReportMap()
         {

@@ -39,7 +39,6 @@ namespace AppDynamics.Dexter
             this.UserName = userName;
             this.Password = userPassword;
 
-            //CookieContainer cookieContainer = new CookieContainer();
             this._cookieContainer = new CookieContainer();
             HttpClientHandler handler = new HttpClientHandler();
             handler.UseCookies = true;
@@ -53,8 +52,13 @@ namespace AppDynamics.Dexter
 
             // If customer controller certificates are not in trusted store, let's not fail
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
+
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
+#if (NETCOREAPP2_0)
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+#else
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
+#endif
 
             this._httpClient = httpClient;
         }

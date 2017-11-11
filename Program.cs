@@ -96,7 +96,7 @@ namespace AppDynamics.Dexter
                 //    .ToList()
                 //    .ForEach(b => b.Flush(e =>
                 //    {
-                //        //do nothing here
+                //        do nothing here
                 //    }));
             }
         }
@@ -107,12 +107,12 @@ namespace AppDynamics.Dexter
             ProgramOptions programOptions = new ProgramOptions();
             if (Parser.Default.ParseArguments(args, programOptions) == false)
             {
-                logger.Error("Could not parse command line arguments into ProgramOptions");
+                //logger.Error("Could not parse command line arguments into ProgramOptions");
                 return null;
             }
             else
             {
-                logger.Trace("Parsed ProgramOptions\r\n{0}", programOptions);
+                //logger.Trace("Parsed ProgramOptions\r\n{0}", programOptions);
                 return programOptions;
             }
         }

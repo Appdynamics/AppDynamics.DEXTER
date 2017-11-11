@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ErrorMetricReportMap : CsvClassMap<EntityError>
+    public class ErrorMetricReportMap : ClassMap<EntityError>
     {
         public ErrorMetricReportMap()
         {

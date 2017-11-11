@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ExitCallReportMap: CsvClassMap<ExitCall>
+    public class ExitCallReportMap: ClassMap<ExitCall>
     {
         public ExitCallReportMap()
         {

@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class BusinessTransactionDiscoveryRule20ReportMap : CsvClassMap<BusinessTransactionDiscoveryRule20>
+    public class BusinessTransactionDiscoveryRule20ReportMap : ClassMap<BusinessTransactionDiscoveryRule20>
     {
         public BusinessTransactionDiscoveryRule20ReportMap()
         {

@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class SnapshotReportMap: CsvClassMap<Snapshot>
+    public class SnapshotReportMap: ClassMap<Snapshot>
     {
         public SnapshotReportMap()
         {

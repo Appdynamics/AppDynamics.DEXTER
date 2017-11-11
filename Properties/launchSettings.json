@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "AppDynamics.Dexter.Core": {
+      "commandName": "Project",
+      "commandLineArgs": "--jobfile \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\demo1demo2ECommerce.json\" -o D:\\AppD.Dexter.Out"
+    },
+    "newProfile1": {
+      "commandName": "Executable"
+    }
+  }
+}

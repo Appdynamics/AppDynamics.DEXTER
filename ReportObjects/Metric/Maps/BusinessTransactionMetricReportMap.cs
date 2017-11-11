@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class BusinessTransactionMetricReportMap : CsvClassMap<EntityBusinessTransaction>
+    public class BusinessTransactionMetricReportMap : ClassMap<EntityBusinessTransaction>
     {
         public BusinessTransactionMetricReportMap()
         {

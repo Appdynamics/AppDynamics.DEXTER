@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class MetricValueMetricReportMap : CsvClassMap<MetricValue>
+    public class MetricValueMetricReportMap : ClassMap<MetricValue>
     {
         public MetricValueMetricReportMap()
         {
@@ -17,7 +17,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.Occurences).Index(i); i++;
             Map(m => m.Sum).Index(i); i++;
             Map(m => m.MetricID).Index(i); i++;
-            Map(m => m.MetricResolution).Index(i).TypeConverterOption("g"); i++;
+            Map(m => m.MetricResolution);
         }
     }
 }

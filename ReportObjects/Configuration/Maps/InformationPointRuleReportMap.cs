@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class InformationPointRuleReportMap : CsvClassMap<InformationPointRule>
+    public class InformationPointRuleReportMap : ClassMap<InformationPointRule>
     {
         public InformationPointRuleReportMap()
         {

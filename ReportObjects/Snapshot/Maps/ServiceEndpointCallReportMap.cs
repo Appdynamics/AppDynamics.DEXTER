@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class ServiceEndpointCallReportMap : CsvClassMap<ServiceEndpointCall>
+    public class ServiceEndpointCallReportMap : ClassMap<ServiceEndpointCall>
     {
         public ServiceEndpointCallReportMap()
         {
