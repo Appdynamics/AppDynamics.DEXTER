@@ -417,6 +417,7 @@ namespace AppDynamics.Dexter
 
         public string GetListOfSnapshotsNextPage_Type_handle(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows, long serverCursorId)
         {
+            // This was build for 4.2.3 and earlier. I can't figure out what endRequestId is supposed to be. So this will only ever retrieve maxRows rows max
             string requestJSONTemplate =
 @"{{
     ""firstInChain"": true,
@@ -428,7 +429,7 @@ namespace AppDynamics.Dexter
         ""endTime"": ""{2:o}"",
         ""durationInMinutes"": {3}
     }},
-	""startingRequestId"": 1,
+    ""startingRequestId"": 1,
     ""endRequestId"": 1,
     ""handle"": {5}
 }}";

@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 namespace AppDynamics.Dexter
 {
@@ -19,9 +20,13 @@ namespace AppDynamics.Dexter
 
             try
             {
-                #region Parse input parameters
-
                 logger.Trace("Starting at {0:o}, Version={1}, Parameters={2}", DateTime.Now, Assembly.GetEntryAssembly().GetName().Version, String.Join(" ", args));
+                logger.Trace("Framework {0}", RuntimeInformation.FrameworkDescription);
+                logger.Trace("OS Architecture {0}", RuntimeInformation.OSArchitecture);
+                logger.Trace("OS {0}", RuntimeInformation.OSDescription);
+                logger.Trace("Process Architecture {0}", RuntimeInformation.ProcessArchitecture);
+
+                #region Parse input parameters
 
                 // Parse parameters
                 ProgramOptions programOptions = parseProgramOptions(args);

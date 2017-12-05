@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace AppDynamics.Dexter
 {
@@ -41,8 +42,16 @@ namespace AppDynamics.Dexter
                 // If output folder isn't specified, assume output folder to be a child of local folder
                 if (programOptions.OutputFolderPath == null || programOptions.OutputFolderPath.Length == 0)
                 {
-                    programOptions.OutputFolderPath = "out";
+                    if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) == true)
+                    {
+                        programOptions.OutputFolderPath = @"C:\AppD.Dexter.Out";
+                    }
+                    else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) == true || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) == true)
+                    {
+                        programOptions.OutputFolderPath = Path.Combine(Environment.GetEnvironmentVariable("HOME"), "AppD.Dexter.Out");
+                    }
                 }
+
                 // Expand the output folder to valid path
                 programOptions.OutputFolderPath = Path.GetFullPath(programOptions.OutputFolderPath);
             }

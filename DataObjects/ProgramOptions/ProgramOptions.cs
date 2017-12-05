@@ -12,7 +12,7 @@ namespace AppDynamics.Dexter
         [Option('r', "restart", Required = false, DefaultValue = false, HelpText = "If true, restart processing of job file if it is in the middle of processing already.")]
         public bool RestartJobFromBeginning { get; set; }
 
-        [Option('o', "outputfolder", Required = false, DefaultValue = @"C:\AppD.Dexter.Out", HelpText = "Output folder where to store results of jobs.")]
+        [Option('o', "outputfolder", Required = false, DefaultValue = @"", HelpText = "Output folder where to store results of jobs.")]
         public string OutputFolderPath { get; set; }
 
         [Option('s', "sequential", Required = false, DefaultValue = false, HelpText = "If true, process items during extraction and conversion sequentially.")]

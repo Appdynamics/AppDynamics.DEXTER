@@ -272,3 +272,5 @@ __pycache__/
 /JobFiles/lds.json
 /JobFiles/demo1ECommerceEvenLongerAgo.json
 /JobFiles/demo1ECommerceAWhileAgo.json
+
+packages/*
