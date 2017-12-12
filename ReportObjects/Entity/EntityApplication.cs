@@ -9,6 +9,7 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumBackends { get; set; }
         public int NumBTs { get; set; }
         public int NumErrors { get; set; }
+        public int NumIPs { get; set; }
         public int NumNodes { get; set; }
         public int NumSEPs { get; set; }
         public int NumTiers { get; set; }

@@ -204,6 +204,21 @@ namespace AppDynamics.Dexter
             return this.GetListOfErrorsInTier(applicationID.ToString(), tierName);
         }
 
+        public string GetListOfInformationPoints(string applicationName)
+        {
+            return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Information Points|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
+        }
+
+        public string GetListOfInformationPoints(int applicationID)
+        {
+            return this.GetListOfInformationPoints(applicationID.ToString());
+        }
+
+        public string GetListOfInformationPointsAdditionalDetail(int applicationID)
+        {
+            return this.apiGET(String.Format("controller/restui/informationPointUiService/getAllInfoPointsListViewData/{0}?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
+        }
+
         #endregion
 
         #region Flowmap retrieval
