@@ -22,6 +22,8 @@ namespace AppDynamics.Dexter
 
         public string OutputJobFilePath { get; set; }
 
+        public string ProgramLocationFolderPath { get; set; }
+
         public string JobName { get; set; }
 
         [ParserState]
@@ -36,7 +38,7 @@ namespace AppDynamics.Dexter
 
         public override string ToString()
         {
-            return String.Format("ProgramOptions:\r\nInputJobFilePath='{0}'\r\nRestartJobFromBeginning='{1}'\r\nOutputFolderPath='{2}'\r\nOutputJobFolderPath='{3}'\r\nOutputJobFilePath='{4}'\r\nProcessSequentially='{5}'", this.InputJobFilePath, this.RestartJobFromBeginning, this.OutputFolderPath, this.OutputJobFolderPath, this.OutputJobFilePath, this.ProcessSequentially);
+            return String.Format("ProgramOptions:\r\nInputJobFilePath='{0}'\r\nRestartJobFromBeginning='{1}'\r\nOutputFolderPath='{2}'\r\nOutputJobFolderPath='{3}'\r\nOutputJobFilePath='{4}'\r\nProcessSequentially='{5}'\r\nProgramLocationFolderPath='{6}'", this.InputJobFilePath, this.RestartJobFromBeginning, this.OutputFolderPath, this.OutputJobFolderPath, this.OutputJobFilePath, this.ProcessSequentially, this.ProgramLocationFolderPath);
         }
     }
 }

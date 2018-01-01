@@ -14,13 +14,17 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.BTName).Index(i); i++;
             Map(m => m.RequestID).Index(i); i++;
             Map(m => m.SegmentID).Index(i); i++;
+            Map(m => m.SequenceNumber).Index(i); i++;
             Map(m => m.ToEntityName).Index(i); i++;
             Map(m => m.ToEntityType).Index(i); i++;
+            Map(m => m.ToSegmentID).Index(i); i++;
 
             Map(m => m.Occured).Index(i); i++;
             Map(m => m.OccuredUtc).Index(i); i++;
 
             Map(m => m.Duration).Index(i); i++;
+            Map(m => m.DurationRange).Index(i); i++;
+
             Map(m => m.ExitType).Index(i); i++;
             Map(m => m.Detail).Index(i); i++;
             Map(m => m.Method).Index(i); i++;
@@ -60,11 +64,6 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.BTID).Index(i); i++;
             Map(m => m.ToEntityID).Index(i); i++;
 
-            //Map(m => m.ControllerLink).Index(i); i++;
-            //Map(m => m.ApplicationLink).Index(i); i++;
-            //Map(m => m.TierLink).Index(i); i++;
-            //Map(m => m.NodeLink).Index(i); i++;
-            //Map(m => m.BTLink).Index(i); i++;
             Map(m => m.ToLink).Index(i); i++;
         }
     }

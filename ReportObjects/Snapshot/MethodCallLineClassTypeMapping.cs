@@ -1,0 +1,18 @@
+﻿using System;
+
+namespace AppDynamics.Dexter.DataObjects
+{
+    public class MethodCallLineClassTypeMapping
+    {
+        public string ClassPrefix { get; set; }
+        public string FrameworkType { get; set; }
+
+        public override String ToString()
+        {
+            return String.Format(
+                "MethodCallLineClassTypeMapping: {0}->{1}",
+                this.ClassPrefix,
+                this.FrameworkType);
+        }
+    }
+}

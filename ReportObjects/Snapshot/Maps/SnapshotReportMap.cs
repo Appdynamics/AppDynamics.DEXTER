@@ -19,6 +19,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.OccuredUtc).Index(i); i++;
 
             Map(m => m.Duration).Index(i); i++;
+            Map(m => m.DurationRange).Index(i); i++;
 
             Map(m => m.URL).Index(i); i++;
             Map(m => m.CallChains).Index(i); i++;

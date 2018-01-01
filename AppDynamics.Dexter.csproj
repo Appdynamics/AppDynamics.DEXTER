@@ -159,12 +159,19 @@
     <Compile Include="ReportObjects\Entity\Maps\InformationPointEntityReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\InformationPointMetricReportMap.cs" />
+    <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
+    <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
+    <Compile Include="ReportObjects\Snapshot\ExecTimeRange.cs" />
+    <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineOccurrenceReportMap.cs" />
+    <Compile Include="ReportObjects\Snapshot\MethodCallLineElementType.cs" />
+    <Compile Include="ReportObjects\Snapshot\MethodCallLine.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\ApplicationSnapshotReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\BusinessDataReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\BusinessData.cs" />
     <Compile Include="ReportObjects\Snapshot\ExitCall.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\DetectedErrorReportMap.cs" />
+    <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\ServiceEndpointCallReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\ExitCallReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Segment.cs" />
@@ -224,6 +231,9 @@
     </Content>
     <None Include="AppDynamics DEXTER.pfx" />
     <None Include="DefaultJob.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="MethodNamespaceTypeMapping.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="NLog.xsd">

@@ -15,8 +15,8 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.UserExperience).Index(i); i++;
             Map(m => m.RequestID).Index(i); i++;
             Map(m => m.SegmentID).Index(i); i++;
-            Map(m => m.ParentSegmentID).Index(i); i++;
-            Map(m => m.ParentTierName).Index(i); i++;
+            Map(m => m.FromSegmentID).Index(i); i++;
+            Map(m => m.FromTierName).Index(i); i++;
 
             Map(m => m.Occured).Index(i); i++;
             Map(m => m.OccuredUtc).Index(i); i++;
@@ -25,6 +25,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ThreadName).Index(i); i++;
 
             Map(m => m.Duration).Index(i); i++;
+            Map(m => m.DurationRange).Index(i); i++;
             Map(m => m.CPUDuration).Index(i); i++;
             Map(m => m.WaitDuration).Index(i); i++;
             Map(m => m.BlockDuration).Index(i); i++;

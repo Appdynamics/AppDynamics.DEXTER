@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AppDynamics.Dexter.DataObjects
 {
@@ -31,6 +29,7 @@ namespace AppDynamics.Dexter.DataObjects
         public string RequestID { get; set; }
         public string UserExperience { get; set; }
         public long Duration { get; set; }
+        public string DurationRange { get; set; }
         public string DiagSessionID { get; set; }
         public string URL { get; set; }
 

@@ -1,0 +1,137 @@
+ClassPrefix,FrameworkType
+ActivityFeeds,Microsoft Dynamics CRM
+antrl,ANTLR Parser
+ASP,.NET ASP.NET
+Asynchronous,.NET ASP.NET
+ch.qos.logback,Logback
+com.amazonaws,Amazon Core
+com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client
+com.amazonaws.auth,Amazon Auth
+com.amazonaws.http,Amazon Http
+com.amazonaws.services.sns,Amazon SNS
+com.amazonaws.services.sqs,Amazon SQS
+com.appdynamics,AppDynamics
+com.appdynamicspilot,AppDynamics
+com.arjuna.ats,JBoss Arjuna
+com.aspose,Aspose Components
+com.atomikos,Atomicos Transactions
+com.bea,BEA Core
+com.blazesoft,FICO BlazeAdvisor
+com.blazesoft.engines,FICO BlazeAdvisor Rules Engine
+com.crossview.commerce,IBM WebSphere Commerce
+com.ctc.wstx,Sun Woodstox
+com.cybersource,CyberSource ECommerce
+com.entrust,Entrust ECommerce
+com.fasterxml.jackson,Jackson Core
+com.fasterxml.jackson.annotation,Jackson Annotation
+com.fasterxml.jackson.core,Jackson Core
+com.fasterxml.jackson.databind,Jackson DataBind
+com.google,Google Core
+com.ibm,IBM Core
+com.informix,Informix
+com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling
+com.microsoft,Microsoft
+com.microsoft.sqlserver,Microsoft SQL Server Driver
+com.mysql,MySQL Driver
+com.nimbusds,NimbusDS
+com.opensymphony,OpenSymphony J2EE
+com.oracle,Oracle Core
+com.paypal,PayPal
+com.pointbase,Pointbase Driver
+com.rsa,RSA Security
+com.singularity,AppDynamics
+com.softwareag,Software AG
+com.sun,JDK Core
+com.sun.jersey,Jersey REST Framework
+com.sun.xml.ws,Sun Web Services
+com.sybase.jdbc2,Sybase JDBC2
+com.sybase.jdbc3,Sybase JDBC3
+com.sybase.jdbc4,Sybase JDBC3
+com.terracotta,Terracota DB
+com.terracottatech,Terracota DB
+com.thoughtworks,ThoughWorks
+com.weblogic,WebLogic Core
+com.webmethods,Software AG webMethods
+Corillian,Corillian/Voyager Banking
+Fiserv,FiServ Financial
+freemarker,Apache FreeMarker
+io.undertow,JBoss Undertow
+java,Java Core
+java.io,Java IO
+java.lang.reflect,Java Reflection
+javax,Java Extension
+jersey,Jersey REST Framework
+jrockit,JRockit JVM
+log4net,Log4Net Logging
+Microsoft,Microsoft
+Microsoft.Azure.KeyVault,Microsoft Azure KeyVault
+Microsoft.Crm,Microsoft Dynamics CRM
+Microsoft.CSharp,.NET C#
+Microsoft.Dynamics,Microsoft Dynamics CRM
+Microsoft.OData,Microsoft OData
+Microsoft.Owin,Microsoft Owin
+Microsoft.Practices,Microsoft Patterns and Practices
+Microsoft.ServiceBus,Microsoft Service Bus
+Microsoft.ServiceFabric,Microsoft Service Fabric
+Microsoft.SharePoint,Microsoft SharePoint
+Microsoft.SqlServer,Microsoft SQL Server
+Microsoft.VisualBasic,.NET VB.NET
+Microsoft.WindowsAzure.Storage,Microsoft Azure Storage
+Microsoft.Xrm,Microsoft Dynamics CRM
+MobileMoney.Voyager,Corillian/Voyager Banking
+MS.Internal.Xaml,.NET XAML
+MS.Internal.Xml,.NET XML
+MySQL,MySQL Driver
+net.sf,SourceForge
+netscape,Netscape
+Newtonsoft.Json,Newtonsoft JSON
+Novell,Novell
+NLog,NLog Framework
+ognl,Apache OGNL
+oracle,Oracle Core
+org.acegisecurity,Acegi Security
+org.apache,Apache
+org.apache.camel.components.seda,Apache Camel Seda
+org.apache.camel.example,Apache Camel Example
+org.apache.cassandra,Apache Cassandra
+org.apache.kafka,Apache Kafka
+org.apache.openejb,Apache OpenEJB
+org.apache.ws,Apache Web Services
+org.apache.xmlbeans,Apache XML Beans
+Org.BouncyCastle,Bouncy Castle Encryption
+org.eclipse.jetty,Eclipse Jetty
+org.glassfish,GlassFish
+org.jboss,JBoss
+org.jboss.soa.esb.client,JBoss ESB
+org.mule.processor,Mule ESB
+org.springframework,Spring
+org.springframework.integration,Spring Integration
+org.springframework.jms,Spring JMS
+persistence.antlr,TopLink JPA
+redis,Redis Cache
+redis.clients,Redis Cache Client
+SNINativeMethodWrapper,.NET ADO.NET
+StackExchange.Redis,Redis StackExchange
+StructureMap,StructureMap IoC/DI
+sun,JDK Core
+sun.reflect,Java Reflection
+System,.NET System
+System.Activities,.NET WF
+System.Collections,.NET Collections
+System.Data,.NET Data
+System.Data.Linq,.NET Data Linq
+System.Diagnostics,.NET Diagnostics
+System.IO,.NET IO
+System.Linq,.NET Linq
+System.Net,.NET Network
+System.Reflection,.NET Reflection
+System.Runtime,.NET Runtime
+System.Security,.NET Security
+System.ServiceModel,.NET WCF
+System.Text,.NET Text
+System.Threading,.NET Threading
+System.Web,.NET ASP.NET
+System.Web.Mvc,.NET ASP.NET MVC
+System.Xaml,.NET XAML
+System.Xml,.NET XML
+weblogic,WebLogic Core

@@ -319,6 +319,8 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME = "snapshots.serviceendpoints.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshots.errors.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshots.businessdata.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshots.methodcalllines.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshots.methodcalllinesoccurrences.csv";
 
         private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME = "snapshot.segments.csv";
@@ -326,6 +328,8 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME = "snapshot.serviceendpoints.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshot.errors.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshot.businessdata.csv";
+        private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshot.methodcalllines.csv";
+        private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshot.methodcalllinesoccurrences.csv";
 
         // Settings report list
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
@@ -346,6 +350,9 @@ namespace AppDynamics.Dexter
         private const string APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
         private const string APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME = "healthrules.csv";
 
+        // Settings for method and call mapping
+        private const string METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME = "MethodNamespaceTypeMapping.csv";
+
         #endregion
 
         #region Constants for the folder and file names of data reports
@@ -359,6 +366,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
         private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
         private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
+        private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "Snapshots.MethodCallLines.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
 
         // Per entity report names
@@ -462,6 +470,7 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_METRICS_ALL_ENTITIES_TABLE_TOC = "t_TOC";
         private const string REPORT_METRICS_ALL_ENTITIES_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
+
         private const string REPORT_METRICS_ALL_ENTITIES_TABLE_CONTROLLERS = "t_Controllers";
         private const string REPORT_METRICS_ALL_ENTITIES_TABLE_APPLICATIONS_FULL = "t_Applications_Full";
         private const string REPORT_METRICS_ALL_ENTITIES_TABLE_APPLICATIONS_HOURLY = "t_Applications_Hourly";
@@ -504,6 +513,10 @@ namespace AppDynamics.Dexter
         private const string REPORT_METRICS_GRAPHS_SHEET_INFORMATION_POINTS_METRICS = "11.Information Points.Metrics";
         private const string REPORT_METRICS_GRAPHS_SHEET_INFORMATION_POINTS_GRAPHS = "11.Information Points.Graphs";
 
+        private const string REPORT_METRICS_GRAPHS_TABLE_TOC = "t_TOC";
+        private const string REPORT_METRICS_GRAPHS_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
+        private const string REPORT_METRICS_GRAPHS_TABLE_CONTROLLERS = "t_Controllers";
+
         // Description tables from metric.summary.csv
         private const string REPORT_METRICS_GRAPHS_METRIC_TABLE_METRIC_DESCRIPTION = "t_Metric_Description_{0}_{1}_{2}";
         // Metric data tables from metric.values.csv
@@ -529,6 +542,9 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_DETECTED_EVENTS_TABLE_CONTROLLERS = "t_Controllers";
         private const string REPORT_DETECTED_EVENTS_TABLE_APPLICATIONS = "t_Applications";
+
+        private const string REPORT_DETECTED_EVENTS_TABLE_TOC = "t_TOC";
+        private const string REPORT_DETECTED_EVENTS_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
 
         private const string REPORT_DETECTED_EVENTS_TABLE_EVENTS = "t_Events";
         private const string REPORT_DETECTED_EVENTS_TABLE_HEALTH_RULE_VIOLATION_EVENTS = "t_HealthRuleViolationEvents";
@@ -644,6 +660,17 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA = "10.Business Data";
         private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_PIVOT = "10.Business Data.Type";
 
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES = "11.Method Calls";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT = "11.Method Calls.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT = "11.Method Calls.Location";
+
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES = "12.Method Occurrences";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT = "12.Method Occurrences.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT = "12.Method Occurrences.Location";
+
+        private const string REPORT_SNAPSHOTS_TABLE_TOC = "t_TOC";
+        private const string REPORT_SNAPSHOTS_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
+
         private const string REPORT_SNAPSHOTS_TABLE_CONTROLLERS = "t_Controllers";
         private const string REPORT_SNAPSHOTS_TABLE_APPLICATIONS = "t_Applications";
 
@@ -653,6 +680,8 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_TABLE_SERVICE_ENDPOINT_CALLS = "t_ServiceEndpointCalls";
         private const string REPORT_SNAPSHOTS_TABLE_DETECTED_ERRORS = "t_DetectedErrors";
         private const string REPORT_SNAPSHOTS_TABLE_BUSINESS_DATA = "t_BusinessData";
+        private const string REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES = "t_MethodCallLines";
+        private const string REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES_OCCURRENCES = "t_MethodCallLinesOccurrences";
 
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS = "p_Snapshots";
         private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS = "p_Segments";
@@ -660,6 +689,10 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION = "p_ExitCallsDetailsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS = "p_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA = "p_BusinessData";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE = "p_MethodCallLinesType";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION = "p_MethodCallLinesDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE = "p_MethodCallLinesOccurrencesType";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_LOCATION = "p_MethodCallLinesOccurrencesLocation";
 
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_GRAPH = "g_Snapshots";
         private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS_GRAPH = "g_Segments";
@@ -667,6 +700,10 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION_GRAPH = "g_ExitCallsDetailsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_GRAPH = "g_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_GRAPH = "g_BusinessData";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE = "g_MethodCallLinesType";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION = "g_MethodCallLinesLocation";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_TYPE = "g_MethodCallLinesOccurrencesType";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_LOCATION = "g_MethodCallLinesOccurrencesLocation";
 
         private const int REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT = 8;
@@ -705,6 +742,7 @@ namespace AppDynamics.Dexter
         private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "19.Call Graph Settings";
 
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_TOC = "t_TOC";
+        private const string REPORT_CONFIGURATION_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_CONTROLLERS = "t_Controllers";
 
         // Full and hourly metric data
@@ -876,6 +914,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportApplicationAndEntityMetricGraphs,
                 JobStatus.ReportEventsAndHealthRuleViolations,
                 JobStatus.ReportSnapshots,
+                JobStatus.ReportSnapshotsMethodCallLines,
                 JobStatus.ReportIndividualApplicationAndEntityDetails,
                 //JobStatus.ReportFlameGraphs,
 
@@ -1231,6 +1270,26 @@ namespace AppDynamics.Dexter
                         if (jobConfiguration.Input.Snapshots == true && jobConfiguration.Output.Snapshots == true)
                         {
                             if (stepReportSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Debug("Skipping report of snapshots");
+                        }
+                        break;
+
+                    case JobStatus.ReportSnapshotsMethodCallLines:
+                        if (jobConfiguration.Input.Snapshots == true && jobConfiguration.Output.Snapshots == true)
+                        {
+                            if (stepReportSnapshotsMethodCallLines(programOptions, jobConfiguration, jobConfiguration.Status) == true)
                             {
                                 jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
                             }
@@ -3425,7 +3484,7 @@ namespace AppDynamics.Dexter
 
                         List<AppDRESTMetric> informationPointsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(informationPointsFilePath);
                         List<EntityInformationPoint> informationPointsList = null;
-                        if (serviceEndpointsRESTList != null)
+                        if (informationPointsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Information points ({0} entities)", informationPointsRESTList.Count);
 
@@ -6449,6 +6508,7 @@ namespace AppDynamics.Dexter
                         string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
                         string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
                         string snapshotsAllFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
+                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
 
                         // Previosly rendered report files
                         string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
@@ -6456,6 +6516,8 @@ namespace AppDynamics.Dexter
                         string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
                         string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
                         string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string methodCallLinesToFrameworkTypeMappingFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME);
 
                         // Report files
                         string snapshotsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
@@ -6464,6 +6526,8 @@ namespace AppDynamics.Dexter
                         string serviceEndpointCallsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
                         string detectedErrorsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                         string businessDataReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string methodCallLinesReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                        string methodCallLinesOccurrencesReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
                         string applicationSnapshotsSummaryReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         // Report files for All
@@ -6473,6 +6537,8 @@ namespace AppDynamics.Dexter
                         string serviceEndpointCallsAllReporFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
                         string detectedErrorsAllReporFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                         string businessDataAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string methodCallLinesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                        string methodCallLinesOccurrencesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
                         string applicationSnapshotsSummaryAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         #endregion
@@ -6486,6 +6552,38 @@ namespace AppDynamics.Dexter
                         List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
                         List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.readListFromCSVFile<MethodInvocationDataCollector>(methodInvocationDataCollectorsReportFilePath, new MethodInvocationDataCollectorReportMap());
+
+                        // Load and bucketize the framework mappings
+                        List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = FileIOHelper.readListFromCSVFile<MethodCallLineClassTypeMapping>(methodCallLinesToFrameworkTypeMappingFilePath, new MethodCallLineClassTypeMappingReportMap());
+                        methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingList.OrderByDescending(m => m.ClassPrefix).ToList();
+                        Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = new Dictionary<string, List<MethodCallLineClassTypeMapping>>(26);
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("a", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "a").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("b", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "b").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("c", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "c").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("d", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "d").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("e", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "e").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("f", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "f").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("g", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "g").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("h", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "h").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("i", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "i").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("j", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "j").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("k", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "k").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("l", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "l").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("m", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "m").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("n", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "n").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("o", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "o").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("p", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "p").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("q", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "q").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("r", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "r").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("s", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "s").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("t", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "t").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("u", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "u").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("v", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "v").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("w", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "w").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("x", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "x").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("y", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "y").ToList());
+                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("z", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "z").ToList());
 
                         int totalNumberOfSnapshots = 0;
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
@@ -6510,7 +6608,7 @@ namespace AppDynamics.Dexter
                                         () => 0,
                                         (listOfSnapshotsInHourChunk, loop, subtotal) =>
                                         {
-                                            subtotal += indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHourChunk, tiersList, backendsList, serviceEndpointsList, errorsList, false);
+                                            subtotal += indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHourChunk, tiersList, backendsList, serviceEndpointsList, errorsList, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, false);
                                             return subtotal;
                                         },
                                         (finalResult) =>
@@ -6522,7 +6620,7 @@ namespace AppDynamics.Dexter
                                 }
                                 else
                                 {
-                                    j = indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHour.ToList<JToken>(), tiersList, backendsList, serviceEndpointsList, errorsList, true);
+                                    j = indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHour.ToList<JToken>(), tiersList, backendsList, serviceEndpointsList, errorsList, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, true);
                                 }
 
                                 loggerConsole.Info("{0} snapshots", j);
@@ -6544,6 +6642,8 @@ namespace AppDynamics.Dexter
                         FileIOHelper.deleteFile(serviceEndpointCallsReportFilePath);
                         FileIOHelper.deleteFile(detectedErrorsReportFilePath);
                         FileIOHelper.deleteFile(businessDataReportFilePath);
+                        FileIOHelper.deleteFile(methodCallLinesReportFilePath);
+                        FileIOHelper.deleteFile(methodCallLinesOccurrencesReportFilePath);
                         FileIOHelper.deleteFile(applicationSnapshotsSummaryReportFilePath);
 
                         List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
@@ -6584,74 +6684,84 @@ namespace AppDynamics.Dexter
                                                 {
                                                     using (FileStream businessDataReportFileStream = File.Open(businessDataReportFilePath, FileMode.Append))
                                                     {
-                                                        foreach (JToken snapshot in listOfSnapshotsInHour)
+                                                        using (FileStream methodCallLinesReportFileStream = File.Open(methodCallLinesReportFilePath, FileMode.Append))
                                                         {
-                                                            if (requestIDs.ContainsKey(snapshot["requestGUID"].ToString()) == true)
+                                                            using (FileStream methodCallLinesOccurrencesReportFileStream = File.Open(methodCallLinesOccurrencesReportFilePath, FileMode.Append))
                                                             {
-                                                                logger.Warn("Snapshot {0} is a duplicate, skipping", snapshot["requestGUID"]);
-                                                                continue;
-                                                            }
-                                                            requestIDs.Add(snapshot["requestGUID"].ToString(), true);
-
-                                                            // Count the snapshot
-                                                            if (applicationsRow != null)
-                                                            {
-                                                                applicationsRow.NumSnapshots++;
-                                                                switch (snapshot["userExperience"].ToString())
+                                                                foreach (JToken snapshot in listOfSnapshotsInHour)
                                                                 {
-                                                                    case "NORMAL":
-                                                                        applicationsRow.NumSnapshotsNormal++;
-                                                                        break;
+                                                                    if (requestIDs.ContainsKey(snapshot["requestGUID"].ToString()) == true)
+                                                                    {
+                                                                        logger.Warn("Snapshot {0} is a duplicate, skipping", snapshot["requestGUID"]);
+                                                                        continue;
+                                                                    }
+                                                                    requestIDs.Add(snapshot["requestGUID"].ToString(), true);
 
-                                                                    case "SLOW":
-                                                                        applicationsRow.NumSnapshotsSlow++;
-                                                                        break;
+                                                                    // Count the snapshot
+                                                                    if (applicationsRow != null)
+                                                                    {
+                                                                        applicationsRow.NumSnapshots++;
+                                                                        switch (snapshot["userExperience"].ToString())
+                                                                        {
+                                                                            case "NORMAL":
+                                                                                applicationsRow.NumSnapshotsNormal++;
+                                                                                break;
 
-                                                                    case "VERY_SLOW":
-                                                                        applicationsRow.NumSnapshotsVerySlow++;
-                                                                        break;
+                                                                            case "SLOW":
+                                                                                applicationsRow.NumSnapshotsSlow++;
+                                                                                break;
 
-                                                                    case "STALL":
-                                                                        applicationsRow.NumSnapshotsStall++;
-                                                                        break;
+                                                                            case "VERY_SLOW":
+                                                                                applicationsRow.NumSnapshotsVerySlow++;
+                                                                                break;
 
-                                                                    case "ERROR":
-                                                                        applicationsRow.NumSnapshotsError++;
-                                                                        break;
+                                                                            case "STALL":
+                                                                                applicationsRow.NumSnapshotsStall++;
+                                                                                break;
 
-                                                                    default:
-                                                                        break;
+                                                                            case "ERROR":
+                                                                                applicationsRow.NumSnapshotsError++;
+                                                                                break;
+
+                                                                            default:
+                                                                                break;
+                                                                        }
+                                                                    }
+
+                                                                    DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
+
+                                                                    string snapshotFolderPath = Path.Combine(
+                                                                        snapshotsFolderPath,
+                                                                        getShortenedEntityNameForFileSystem(snapshot["applicationComponentName"].ToString(), (long)snapshot["applicationComponentId"]),
+                                                                        getShortenedEntityNameForFileSystem(snapshot["businessTransactionName"].ToString(), (long)snapshot["businessTransactionId"]),
+                                                                        String.Format("{0:yyyyMMddHH}", snapshotTime),
+                                                                        userExperienceFolderNameMapping[snapshot["userExperience"].ToString()],
+                                                                        String.Format(SNAPSHOT_FOLDER_NAME, snapshot["requestGUID"], snapshotTime));
+
+                                                                    string thisSnapshotSnapshotsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_FILE_NAME);
+                                                                    string thisSnapshotSegmentsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
+                                                                    string thisSnapshotExitCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                                                                    string thisSnapshotServiceEndpointCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME);
+                                                                    string thisSnapshotDetectedErrorsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                                                                    string thisSnapshotBusinessDataFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                                                                    string thisSnapshotMethodCallLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                                                                    string thisSnapshotMethodCallOccurrencesLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
+
+                                                                    FileIOHelper.appendTwoCSVFiles(snapshotsReportFileStream, thisSnapshotSnapshotsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(segmentsReportFileStream, thisSnapshotSegmentsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(callExitsReportFileStream, thisSnapshotExitCallsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsReportFileStream, thisSnapshotServiceEndpointCallsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(detectedErrorsReportFileStream, thisSnapshotDetectedErrorsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(businessDataReportFileStream, thisSnapshotBusinessDataFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesReportFileStream, thisSnapshotMethodCallLinesFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesReportFileStream, thisSnapshotMethodCallOccurrencesLinesFileName);
+
+                                                                    j++;
+                                                                    if (j % 200 == 0)
+                                                                    {
+                                                                        Console.Write("[{0}].", j);
+                                                                    }
                                                                 }
-                                                            }
-
-                                                            DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
-
-                                                            string snapshotFolderPath = Path.Combine(
-                                                                snapshotsFolderPath,
-                                                                getShortenedEntityNameForFileSystem(snapshot["applicationComponentName"].ToString(), (long)snapshot["applicationComponentId"]),
-                                                                getShortenedEntityNameForFileSystem(snapshot["businessTransactionName"].ToString(), (long)snapshot["businessTransactionId"]),
-                                                                String.Format("{0:yyyyMMddHH}", snapshotTime),
-                                                                userExperienceFolderNameMapping[snapshot["userExperience"].ToString()],
-                                                                String.Format(SNAPSHOT_FOLDER_NAME, snapshot["requestGUID"], snapshotTime));
-
-                                                            string thisSnapshotSnapshotsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_FILE_NAME);
-                                                            string thisSnapshotSegmentsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
-                                                            string thisSnapshotExitCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME);
-                                                            string thisSnapshotServiceEndpointCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME);
-                                                            string thisSnapshotDetectedErrorsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-                                                            string thisSnapshotBusinessDataFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
-
-                                                            FileIOHelper.appendTwoCSVFiles(snapshotsReportFileStream, thisSnapshotSnapshotsFileName);
-                                                            FileIOHelper.appendTwoCSVFiles(segmentsReportFileStream, thisSnapshotSegmentsFileName);
-                                                            FileIOHelper.appendTwoCSVFiles(callExitsReportFileStream, thisSnapshotExitCallsFileName);
-                                                            FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsReportFileStream, thisSnapshotServiceEndpointCallsFileName);
-                                                            FileIOHelper.appendTwoCSVFiles(detectedErrorsReportFileStream, thisSnapshotDetectedErrorsFileName);
-                                                            FileIOHelper.appendTwoCSVFiles(businessDataReportFileStream, thisSnapshotBusinessDataFileName);
-
-                                                            j++;
-                                                            if (j % 100 == 0)
-                                                            {
-                                                                Console.Write("[{0}].", j);
                                                             }
                                                         }
                                                     }
@@ -6694,6 +6804,8 @@ namespace AppDynamics.Dexter
                         FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsAllReporFilePath, serviceEndpointCallsReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(detectedErrorsAllReporFilePath, detectedErrorsReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(businessDataAllReportFilePath, businessDataReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(methodCallLinesAllReportFilePath, methodCallLinesReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesAllReportFilePath, methodCallLinesOccurrencesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryAllReportFilePath, applicationSnapshotsSummaryReportFilePath);
 
                         #endregion
@@ -7169,6 +7281,7 @@ namespace AppDynamics.Dexter
                 readCSVFileIntoExcelRange(informationPointsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
+
                 loggerConsole.Info("Finalize Detected Entities Report File");
 
                 #region Controllers sheet
@@ -7209,25 +7322,25 @@ namespace AppDynamics.Dexter
 
                     adjustColumnsOfEntityRowTableInEntitiesReport(APPLICATION_TYPE_SHORT, sheet, table);
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumIPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumIPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumIPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumIPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
                 }
 
@@ -7250,16 +7363,16 @@ namespace AppDynamics.Dexter
 
                     adjustColumnsOfEntityRowTableInEntitiesReport(TIERS_TYPE_SHORT, sheet, table);
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     // Make pivot
@@ -7855,7 +7968,7 @@ namespace AppDynamics.Dexter
                                                                                 ApplicationID = jobTarget.ApplicationID,
                                                                                 Status = jobTarget.Status.ToString()
                                                                             }, true);
-                ExcelTable table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_PARAMETERS_TARGETS);
+                ExcelTable table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_PARAMETERS_TARGETS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -7877,7 +7990,7 @@ namespace AppDynamics.Dexter
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONTROLLERS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -8118,8 +8231,8 @@ namespace AppDynamics.Dexter
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
-                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLERS];
+                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8128,7 +8241,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Controller Settings");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS];
-                readCSVFileIntoExcelRange(controllerSettingsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(controllerSettingsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8137,7 +8250,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Application Configuration");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION];
-                readCSVFileIntoExcelRange(applicationConfigurationAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(applicationConfigurationAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8146,7 +8259,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transaction Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES];
-                readCSVFileIntoExcelRange(businessTransactionDiscoveryRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionDiscoveryRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8155,7 +8268,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transaction Entry Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
-                readCSVFileIntoExcelRange(businessTransactionEntryRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionEntryRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8164,7 +8277,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transaction Scopes");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES];
-                readCSVFileIntoExcelRange(businessTransactionEntryScopesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionEntryScopesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8173,7 +8286,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transaction 2.0 Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20];
-                readCSVFileIntoExcelRange(businessTransactionDiscoveryRules20AllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionDiscoveryRules20AllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8182,7 +8295,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transaction 2.0 Entry Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20];
-                readCSVFileIntoExcelRange(businessTransactionEntryRules20AllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionEntryRules20AllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8191,7 +8304,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Backend Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES];
-                readCSVFileIntoExcelRange(backendDiscoveryRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(backendDiscoveryRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8200,7 +8313,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Custom Exit Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES];
-                readCSVFileIntoExcelRange(customExitRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(customExitRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8209,7 +8322,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Information Point Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES];
-                readCSVFileIntoExcelRange(informationPointRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(informationPointRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8218,7 +8331,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Agent Configuration Properties");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES];
-                readCSVFileIntoExcelRange(agentConfigurationPropertiesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(agentConfigurationPropertiesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8227,12 +8340,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Method Invocation Data Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS];
-                readCSVFileIntoExcelRange(methodInvocationDataCollectorsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(methodInvocationDataCollectorsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of HTTP Data Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS];
-                readCSVFileIntoExcelRange(httpDataCollectorsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(httpDataCollectorsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8241,7 +8354,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Tier Settings");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_TIER_SETTINGS];
-                readCSVFileIntoExcelRange(entityTierConfigurationsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(entityTierConfigurationsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8250,7 +8363,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Detected Business Transaction and Assigned Data Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS];
-                readCSVFileIntoExcelRange(entityBusinessTransactionConfigurationsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(entityBusinessTransactionConfigurationsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8259,7 +8372,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Agent Call Graph Settings");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS];
-                readCSVFileIntoExcelRange(agentCallGraphSettingsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(agentCallGraphSettingsAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8268,7 +8381,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Health Rules");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
-                readCSVFileIntoExcelRange(healthRulesAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(healthRulesAllReportFilePath, 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -8277,7 +8390,7 @@ namespace AppDynamics.Dexter
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLERS];
                 logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
@@ -8336,62 +8449,62 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTDiscoveryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTDiscoveryRules"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTDiscoveryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTDiscoveryRules"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTEntryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTEntryRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTEntryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTEntryRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTExcludeRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTExcludeRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20Scopes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20Scopes"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20Scopes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20Scopes"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20DiscoveryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20DiscoveryRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20DiscoveryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20DiscoveryRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20EntryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20EntryRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20EntryRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20EntryRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20ExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20ExcludeRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBT20ExcludeRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBT20ExcludeRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBackendRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBackendRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBackendRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBackendRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumInfoPointRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumInfoPointRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumInfoPointRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumInfoPointRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumAgentProps"].Position + 1, sheet.Dimension.Rows, table.Columns["NumAgentProps"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumAgentProps"].Position + 1, sheet.Dimension.Rows, table.Columns["NumAgentProps"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHealthRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHealthRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHealthRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHealthRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrorRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrorRules"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrorRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrorRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCVariablesCollected"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCVariablesCollected"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCVariablesCollected"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCVariablesCollected"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCVariablesCollected"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCVariablesCollected"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCVariablesCollected"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCVariablesCollected"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBaselines"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBaselines"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBaselines"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBaselines"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars); 
                 }
 
@@ -9348,8 +9461,8 @@ namespace AppDynamics.Dexter
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
-                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_CONTROLLERS];
+                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9358,12 +9471,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Applications (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_FULL];
-                readCSVFileIntoExcelRange(applicationsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(applicationsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Applications (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_APPLICATIONS_HOURLY];
-                readCSVFileIntoExcelRange(applicationsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(applicationsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9372,12 +9485,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Tiers (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_FULL];
-                readCSVFileIntoExcelRange(tiersAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(tiersAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Tiers (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_TIERS_HOURLY];
-                readCSVFileIntoExcelRange(tiersAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(tiersAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9386,12 +9499,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Nodes (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_FULL];
-                readCSVFileIntoExcelRange(nodesAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(nodesAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Nodes (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_NODES_HOURLY];
-                readCSVFileIntoExcelRange(nodesAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(nodesAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9400,12 +9513,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Backends (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BACKENDS_FULL];
-                readCSVFileIntoExcelRange(backendsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(backendsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Backends (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BACKENDS_HOURLY];
-                readCSVFileIntoExcelRange(backendsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(backendsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9414,12 +9527,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Transactions (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_FULL];
-                readCSVFileIntoExcelRange(businessTransactionsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Business Transactions (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_HOURLY];
-                readCSVFileIntoExcelRange(businessTransactionsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessTransactionsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9428,12 +9541,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Service Endpoints (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_SERVICE_ENDPOINTS_FULL];
-                readCSVFileIntoExcelRange(serviceEndpointsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(serviceEndpointsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Service Endpoints (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_SERVICE_ENDPOINTS_HOURLY];
-                readCSVFileIntoExcelRange(serviceEndpointsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(serviceEndpointsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9442,12 +9555,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Errors (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_ERRORS_FULL];
-                readCSVFileIntoExcelRange(errorsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(errorsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Errors (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_ERRORS_HOURLY];
-                readCSVFileIntoExcelRange(errorsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(errorsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -9456,12 +9569,12 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Information Points (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_INFORMATION_POINTS_FULL];
-                readCSVFileIntoExcelRange(informationPointsAllFullReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(informationPointsAllFullReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Information Points (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_METRICS_ALL_ENTITIES_SHEET_INFORMATION_POINTS_HOURLY];
-                readCSVFileIntoExcelRange(informationPointsAllHourlyReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(informationPointsAllHourlyReportFilePath, 0, sheet, REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -10387,7 +10500,7 @@ namespace AppDynamics.Dexter
                                                                                 ApplicationID = jobTarget.ApplicationID,
                                                                                 Status = jobTarget.Status.ToString()
                                                                             }, true);
-                ExcelTable table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_PARAMETERS_TARGETS);
+                ExcelTable table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_PARAMETERS_TARGETS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -10413,7 +10526,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -10480,8 +10593,8 @@ namespace AppDynamics.Dexter
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
-                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS];
+                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -10490,7 +10603,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
-                readCSVFileIntoExcelRange(applicationEventsSummaryAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(applicationEventsSummaryAllReportFilePath, 0, sheet, REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -10499,7 +10612,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Events");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS];
-                readCSVFileIntoExcelRange(eventsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(eventsAllReportFilePath, 0, sheet, REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -10508,7 +10621,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Health Rule Violation Events");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS];
-                readCSVFileIntoExcelRange(healthRuleViolationEventsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(healthRuleViolationEventsAllReportFilePath, 0, sheet, REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -10541,9 +10654,9 @@ namespace AppDynamics.Dexter
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
                 logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT)
+                if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
                 {
-                    range = sheet.Cells[REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    range = sheet.Cells[REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                     table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_APPLICATIONS);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
@@ -10552,25 +10665,25 @@ namespace AppDynamics.Dexter
 
                     adjustColumnsOfEntityRowTableInMetricReport(APPLICATION_TYPE_SHORT, sheet, table);
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEvents"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEvents"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEvents"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEvents"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsInfo"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsInfo"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsInfo"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsInfo"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsWarning"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsWarning"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsWarning"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsWarning"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsError"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumEventsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumEventsError"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolations"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolations"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolations"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolations"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolationsWarning"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolationsWarning"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolationsWarning"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolationsWarning"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolationsCritical"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolationsCritical"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHRViolationsCritical"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHRViolationsCritical"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
                 }
 
@@ -10720,7 +10833,7 @@ namespace AppDynamics.Dexter
                     }
                 }
                 range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_TOC);
+                table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_TOC);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -10824,7 +10937,7 @@ namespace AppDynamics.Dexter
 
                 // Parameters sheet
                 ExcelWorksheet sheet = excelReport.Workbook.Worksheets.Add(REPORT_SHEET_PARAMETERS);
-
+                
                 var hyperLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("HyperLinkStyle");
                 hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
                 hyperLinkStyle.Style.Font.Color.SetColor(colorBlueForHyperlinks);
@@ -10886,7 +10999,7 @@ namespace AppDynamics.Dexter
                                                                                 ApplicationID = jobTarget.ApplicationID,
                                                                                 Status = jobTarget.Status.ToString()
                                                                             }, true);
-                ExcelTable table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_PARAMETERS_TARGETS);
+                ExcelTable table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_PARAMETERS_TARGETS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -10981,13 +11094,13 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -11052,8 +11165,8 @@ namespace AppDynamics.Dexter
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
-                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_CONTROLLERS];
+                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11062,7 +11175,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_APPLICATIONS];
-                readCSVFileIntoExcelRange(applicationSnapshotsSummaryAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(applicationSnapshotsSummaryAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11071,7 +11184,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Snapshots");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS];
-                readCSVFileIntoExcelRange(snapshotsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(snapshotsAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11079,7 +11192,7 @@ namespace AppDynamics.Dexter
 
                 loggerConsole.Info("List of Segments");
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS];
-                readCSVFileIntoExcelRange(segmentsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(segmentsAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11088,7 +11201,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Exit Calls");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS];
-                readCSVFileIntoExcelRange(callExitsAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(callExitsAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11097,7 +11210,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Service Endpoint Calls");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS];
-                readCSVFileIntoExcelRange(serviceEndpointCallsAllReporFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(serviceEndpointCallsAllReporFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11106,7 +11219,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Detected Errors");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS];
-                readCSVFileIntoExcelRange(detectedErrorsAllReporFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(detectedErrorsAllReporFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11115,7 +11228,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Business Data");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA];
-                readCSVFileIntoExcelRange(businessDataAllReportFilePath, 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(businessDataAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -11159,22 +11272,22 @@ namespace AppDynamics.Dexter
 
                     adjustColumnsOfEntityRowTableInMetricReport(APPLICATION_TYPE_SHORT, sheet, table);
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshots"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshots"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshots"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshots"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsNormal"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsNormal"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsNormal"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsNormal"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsVerySlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsVerySlow"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsVerySlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsVerySlow"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsStall"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsStall"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsStall"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsStall"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsSlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsSlow"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsSlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsSlow"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsError"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsError"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
                 }
 
@@ -11206,7 +11319,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
-                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
+                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
                     cfUserExperience.Style.Font.Color.Color = Color.White;
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorGreenForNormalSnapshots;
@@ -11232,7 +11345,7 @@ namespace AppDynamics.Dexter
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorRedForErrorSnapshots;
                     cfUserExperience.Formula = @"=""ERROR""";
 
-                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                     var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                     cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                     cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -11240,43 +11353,44 @@ namespace AppDynamics.Dexter
                     cfDuration.MiddleValue.Color = colorYellowFor3ColorScales;
                     cfDuration.HighValue.Color = colorRedFor3ColorScales;
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallGraphs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallGraphs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallGraphs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallGraphs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -11324,13 +11438,13 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["ParentSegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["ParentTierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
 
-                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
+                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
                     cfUserExperience.Style.Font.Color.Color = Color.White;
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorGreenForNormalSnapshots;
@@ -11356,7 +11470,7 @@ namespace AppDynamics.Dexter
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorRedForErrorSnapshots;
                     cfUserExperience.Formula = @"=""ERROR""";
 
-                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                     var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                     cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                     cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -11364,40 +11478,41 @@ namespace AppDynamics.Dexter
                     cfDuration.MiddleValue.Color = colorYellowFor3ColorScales;
                     cfDuration.HighValue.Color = colorRedFor3ColorScales;
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_SEGMENTS);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -11444,15 +11559,16 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
 
-                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                     var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                     cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                     cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -11461,17 +11577,18 @@ namespace AppDynamics.Dexter
                     cfDuration.HighValue.Color = colorRedFor3ColorScales;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityName"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Detail"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
@@ -11501,6 +11618,7 @@ namespace AppDynamics.Dexter
                     pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ExitType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -11537,7 +11655,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["SepName"].Position + 1).Width = 20;
                 }
 
@@ -11564,7 +11682,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
@@ -11617,7 +11735,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;
@@ -11673,7 +11791,7 @@ namespace AppDynamics.Dexter
                     }
                 }
                 range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_TOC);
+                table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_TOC);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -11689,6 +11807,607 @@ namespace AppDynamics.Dexter
                 // Report files
                 string reportFileName = String.Format(
                     REPORT_SNAPSHOTS_FILE_NAME,
+                    programOptions.JobName,
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+
+                string folderPath = Path.GetDirectoryName(reportFilePath);
+                if (Directory.Exists(folderPath) == false)
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                logger.Info("Saving Excel report {0}", reportFilePath);
+                loggerConsole.Info("Saving Excel report {0}", reportFilePath);
+
+                try
+                {
+                    // Save full report Excel files
+                    excelReport.SaveAs(new FileInfo(reportFilePath));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.Warn("Unable to save Excel file {0}", reportFilePath);
+                    logger.Warn(ex);
+                    loggerConsole.Warn("Unable to save Excel file {0}", reportFilePath);
+                }
+
+                #endregion
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                loggerConsole.Error(ex);
+
+                return false;
+            }
+            finally
+            {
+                stopWatch.Stop();
+
+                logger.Info("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+
+                stepTimingFunction.EndTime = DateTime.Now;
+                stepTimingFunction.Duration = stopWatch.Elapsed;
+                stepTimingFunction.DurationMS = stopWatch.ElapsedMilliseconds;
+
+                List<StepTiming> stepTimings = new List<StepTiming>(1);
+                stepTimings.Add(stepTimingFunction);
+                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+            }
+        }
+
+        private static bool stepReportSnapshotsMethodCallLines(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            StepTiming stepTimingFunction = new StepTiming();
+            stepTimingFunction.JobFileName = programOptions.OutputJobFilePath;
+            stepTimingFunction.StepName = jobStatus.ToString();
+            stepTimingFunction.StepID = (int)jobStatus;
+            stepTimingFunction.StartTime = DateTime.Now;
+            stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
+
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+
+            try
+            {
+                loggerConsole.Info("Prepare Snapshots Method Calls Report File");
+
+                #region Prepare the report package
+
+                // Prepare package
+                ExcelPackage excelReport = new ExcelPackage();
+                excelReport.Workbook.Properties.Author = String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version);
+                excelReport.Workbook.Properties.Title = "AppDynamics DEXTER Snapshots Method Call Lines Report";
+                excelReport.Workbook.Properties.Subject = programOptions.JobName;
+
+                excelReport.Workbook.Properties.Comments = String.Format("Targets={0}\nFrom={1:o}\nTo={2:o}", jobConfiguration.Target.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+
+                #endregion
+
+                #region Parameters sheet
+
+                // Parameters sheet
+                ExcelWorksheet sheet = excelReport.Workbook.Worksheets.Add(REPORT_SHEET_PARAMETERS);
+
+                var hyperLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("HyperLinkStyle");
+                hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
+                hyperLinkStyle.Style.Font.Color.SetColor(colorBlueForHyperlinks);
+
+                int l = 1;
+                sheet.Cells[l, 1].Value = "Table of Contents";
+                sheet.Cells[l, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                l++; l++;
+                sheet.Cells[l, 1].Value = "AppDynamics DEXTER Snapshots Method Call Lines Report";
+                l++;
+                sheet.Cells[l, 1].Value = "Version";
+                sheet.Cells[l, 2].Value = Assembly.GetEntryAssembly().GetName().Version;
+                l++; l++;
+                sheet.Cells[l, 1].Value = "From";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.From.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "To";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.To.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded From (UTC)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.From.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded From (Local)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime().ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded To (UTC)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.To.ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Expanded To (Local)";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime().ToString("G");
+                l++;
+                sheet.Cells[l, 1].Value = "Number of Hours Intervals";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.HourlyTimeRanges.Count;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Metrics";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Metrics;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Snapshots";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Snapshots;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Flowmaps";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Flowmaps;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Configuration";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Configuration;
+                l++;
+                sheet.Cells[l, 1].Value = "Export Events";
+                sheet.Cells[l, 2].Value = jobConfiguration.Input.Events;
+                l++;
+                sheet.Cells[l, 1].Value = "Targets:";
+                l++; l++;
+                ExcelRangeBase range = sheet.Cells[l, 1].LoadFromCollection(from jobTarget in jobConfiguration.Target
+                                                                            select new
+                                                                            {
+                                                                                Controller = jobTarget.Controller,
+                                                                                UserName = jobTarget.UserName,
+                                                                                Application = jobTarget.Application,
+                                                                                ApplicationID = jobTarget.ApplicationID,
+                                                                                Status = jobTarget.Status.ToString()
+                                                                            }, true);
+                ExcelTable table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_PARAMETERS_TARGETS);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(1).Width = 25;
+                sheet.Column(2).Width = 25;
+                sheet.Column(3).Width = 25;
+
+                #endregion
+
+                #region TOC sheet
+
+                // Navigation sheet with link to other sheets
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SHEET_TOC);
+
+                #endregion
+
+                #region Entity sheets and their associated pivot
+
+                // Entity sheets
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_CONTROLLERS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_APPLICATIONS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Pivot Type";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Pivot Location";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Pivot Type";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Pivot Location";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 4, 1);
+
+                #endregion
+
+                #region Report file variables
+
+                // Various folders
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
+                string snapshotsAllFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+                // Report files for All
+                string controllersAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_CONTROLLERS_FILE_NAME);
+                string methodCallLinesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                string methodCallLinesOccurrencesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
+                string applicationSnapshotsSummaryAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
+
+                #endregion
+
+                loggerConsole.Info("Fill Snapshots Method Call Lines Report File");
+
+                #region Controllers
+
+                loggerConsole.Info("List of Controllers");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
+                readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Applications
+
+                loggerConsole.Info("List of Applications");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
+                readCSVFileIntoExcelRange(applicationSnapshotsSummaryAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Method Call Lines
+
+                loggerConsole.Info("List of Method Call Lines");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES];
+                readCSVFileIntoExcelRange(methodCallLinesAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Method Call Occurrences
+
+                loggerConsole.Info("List of Method Call Occurrences");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES];
+                readCSVFileIntoExcelRange(methodCallLinesOccurrencesAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                loggerConsole.Info("Finalize Snapshots Method Call Lines Report File");
+
+                #region Controllers sheet
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
+                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_CONTROLLERS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["UserName"].Position + 1).Width = 25;
+                }
+
+                #endregion
+
+                #region Applications
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
+                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_APPLICATIONS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    adjustColumnsOfEntityRowTableInMetricReport(APPLICATION_TYPE_SHORT, sheet, table);
+
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshots"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshots"].Position + 1);
+                    var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsNormal"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsNormal"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsVerySlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsVerySlow"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsStall"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsStall"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsSlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsSlow"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+
+                    cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsError"].Position + 1);
+                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+                }
+
+                #endregion
+
+                #region Method Call Lines
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES];
+                logger.Info("Method Call Lines Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Method Call Lines Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+                    
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["FullNameIndent"].Position + 1).Width = 45;
+                    sheet.Column(table.Columns["ExitCalls"].Position + 1).Width = 15;
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Average;
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+                    fieldD.Name = "Number of Items";
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Average;
+                    fieldD.Name = "Average Duration";
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+                    fieldD.Name = "Total Duration";
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+                }
+
+                #endregion
+
+                #region Method Call Occurrences
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES];
+                logger.Info("Method Call Occurrences Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Method Call Occurrences Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES_OCCURRENCES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["FullName"].Position + 1).Width = 45;
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["NumCalls"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_LOCATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["ExecRange"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["NumCalls"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_LOCATION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+                }
+
+                #endregion
+
+                #region TOC sheet
+
+                // TOC sheet again
+                sheet = excelReport.Workbook.Worksheets[REPORT_SHEET_TOC];
+                sheet.Cells[1, 1].Value = "Sheet Name";
+                sheet.Cells[1, 2].Value = "# Entities";
+                sheet.Cells[1, 3].Value = "Link";
+                int rowNum = 1;
+                foreach (ExcelWorksheet s in excelReport.Workbook.Worksheets)
+                {
+                    rowNum++;
+                    sheet.Cells[rowNum, 1].Value = s.Name;
+                    sheet.Cells[rowNum, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", s.Name);
+                    sheet.Cells[rowNum, 3].StyleName = "HyperLinkStyle";
+                    if (s.Tables.Count > 0)
+                    {
+                        table = s.Tables[0];
+                        sheet.Cells[rowNum, 2].Value = table.Address.Rows - 1;
+                    }
+                }
+                range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_TOC);
+                table.ShowHeader = true;
+                table.TableStyle = TableStyles.Medium2;
+                table.ShowFilter = true;
+                table.ShowTotal = false;
+
+                sheet.Column(table.Columns["Sheet Name"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["# Entities"].Position + 1).Width = 25;
+
+                #endregion
+
+                #region Save file 
+
+                // Report files
+                string reportFileName = String.Format(
+                    REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME,
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
@@ -13472,7 +14191,7 @@ namespace AppDynamics.Dexter
                 metricValue.Count = mv.count;
                 metricValue.Min = mv.min;
                 metricValue.Max = mv.max;
-                metricValue.Occurences = mv.occurrences;
+                metricValue.Occurrences = mv.occurrences;
                 metricValue.Sum = mv.sum;
                 metricValue.Value = mv.value;
 
@@ -14194,7 +14913,10 @@ namespace AppDynamics.Dexter
                         businessTransactionDiscoveryRule20.IsDiscoveryEnabled = (bool)txDiscoveryConfig["discoveryenabled"];
                         businessTransactionDiscoveryRule20.NamingConfigType = txDiscoveryConfig["namingschemetype"].ToString();
 
-                        businessTransactionDiscoveryRule20.HTTPAutoDiscovery = txDiscoveryConfig["httpautodiscovery"].ToString();
+                        if (txDiscoveryConfig["httpautodiscovery"] != null)
+                        {
+                            businessTransactionDiscoveryRule20.HTTPAutoDiscovery = txDiscoveryConfig["httpautodiscovery"].ToString();
+                        }
 
                         // I really want to do it, but some of our rules have apostrophes
                         // Spring WS - Base servlet for Spring's web framework
@@ -16048,7 +16770,19 @@ namespace AppDynamics.Dexter
 
         #region Snapshot conversion functions
 
-        private static int indexSnapshots(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, JobTimeRange jobTimeRange, List<JToken> entityList, List<EntityTier> tiersList, List<EntityBackend> backendsList, List<EntityServiceEndpoint> serviceEndpointsList, List<EntityError> errorsList, bool progressToConsole)
+        private static int indexSnapshots(
+            ProgramOptions programOptions, 
+            JobConfiguration jobConfiguration, 
+            JobTarget jobTarget, 
+            JobTimeRange jobTimeRange, 
+            List<JToken> entityList, 
+            List<EntityTier> tiersList, 
+            List<EntityBackend> backendsList, 
+            List<EntityServiceEndpoint> serviceEndpointsList, 
+            List<EntityError> errorsList, 
+            List<MethodInvocationDataCollector> methodInvocationDataCollectorsList,
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary, 
+            bool progressToConsole)
         {
             int j = 0;
 
@@ -16091,7 +16825,10 @@ namespace AppDynamics.Dexter
                 string serviceEndpointCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME);
                 string detectedErrorsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
                 string businessDataFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                string methodCallLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                string methodCallLinesOccurrencesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
 
+                
                 #endregion
 
                 if (File.Exists(snapshotsFileName) == false ||
@@ -16099,7 +16836,9 @@ namespace AppDynamics.Dexter
                     File.Exists(exitCallsFileName) == false ||
                     File.Exists(serviceEndpointCallsFileName) == false ||
                     File.Exists(detectedErrorsFileName) == false ||
-                    File.Exists(businessDataFileName) == false)
+                    File.Exists(businessDataFileName) == false ||
+                    File.Exists(methodCallLinesFileName) == false || 
+                    File.Exists(methodCallLinesOccurrencesFileName) == false)
                 {
                     #region Fill in Snapshot data
 
@@ -16120,6 +16859,7 @@ namespace AppDynamics.Dexter
                     snapshot.RequestID = snapshotToken["requestGUID"].ToString();
                     snapshot.UserExperience = snapshotToken["userExperience"].ToString();
                     snapshot.Duration = (long)snapshotToken["timeTakenInMilliSecs"];
+                    snapshot.DurationRange = getDurationRangeAsString(snapshot.Duration);
                     snapshot.DiagSessionID = snapshotToken["diagnosticSessionGUID"].ToString();
                     if (snapshotToken["url"] != null) { snapshot.URL = snapshotToken["url"].ToString(); }
 
@@ -16221,33 +16961,49 @@ namespace AppDynamics.Dexter
                     List<ServiceEndpointCall> serviceEndpointCallsList = null;
                     List<DetectedError> detectedErrorsList = null;
                     List<BusinessData> businessDataList = null;
+                    List<MethodCallLine> methodCallLinesList = null;
+                    List<MethodCallLine> methodCallLinesOccurrencesList = null;
 
                     JArray snapshotSegmentsList = FileIOHelper.loadJArrayFromFile(snapshotSegmentsDataFilePath);
                     if (snapshotSegmentsList != null)
                     {
-                        // Prepare elements for storage
+                        #region Prepare elements for storage of indexed data from segments
+                        
+                        // Number of segments is known
                         segmentsList = new List<Segment>(snapshotSegmentsList.Count);
+                        
                         // Eyeball each segment to have 3 exits on average
                         exitCallsList = new List<ExitCall>(snapshotSegmentsList.Count * 3);
+
+                        // Let's assume that each segment has a SEP
                         serviceEndpointCallsList = new List<ServiceEndpointCall>(snapshotSegmentsList.Count);
-                        // Don't know how long this is going to be, so let's just do it
+                        
+                        // Don't know how long this is going to be
                         detectedErrorsList = new List<DetectedError>();
+                        
                         // Don't know how long this one is going to be either
                         businessDataList = new List<BusinessData>();
 
+                        // Assume each call graph is 250 items long
+                        methodCallLinesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 250);
+
+                        // Some methods repeat though
+                        methodCallLinesOccurrencesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 50);
+
                         SortedDictionary<string, CallChainContainer> callChainsSnapshot = new SortedDictionary<string, CallChainContainer>();
+
+                        #endregion
 
                         foreach (JToken snapshotSegmentToken in snapshotSegmentsList)
                         {
                             string snapshotSegmentDataFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME, snapshotSegmentToken["id"]));
-                            string snapshotSegmentErrorFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegmentToken["id"]));
-
                             JObject snapshotSegmentDetail = FileIOHelper.loadJObjectFromFile(snapshotSegmentDataFilePath);
                             if (snapshotSegmentDetail != null)
                             {
                                 #region Fill in Segment data
 
                                 Segment segment = new Segment();
+
                                 segment.Controller = snapshot.Controller;
                                 segment.ApplicationName = snapshot.ApplicationName;
                                 segment.ApplicationID = snapshot.ApplicationID;
@@ -16265,6 +17021,7 @@ namespace AppDynamics.Dexter
                                 segment.SegmentID = (long)snapshotSegmentDetail["id"];
                                 segment.UserExperience = snapshotSegmentDetail["userExperience"].ToString();
                                 segment.Duration = (long)snapshotSegmentDetail["timeTakenInMilliSecs"];
+                                segment.DurationRange = getDurationRangeAsString(segment.Duration);
                                 // The value here is not in milliseconds, contrary to the name
                                 segment.CPUDuration = Math.Round((double)snapshotSegmentDetail["cpuTimeTakenInMilliSecs"] / 1000000, 2);
                                 segment.E2ELatency = (long)snapshotSegmentDetail["endToEndLatency"];
@@ -16336,26 +17093,25 @@ namespace AppDynamics.Dexter
                                 segment.IsFirstInChain = (bool)snapshotSegmentDetail["firstInChain"];
 
                                 // What is the relationship to the root segment
-                                segment.ParentSegmentID = 0;
+                                segment.FromSegmentID = 0;
                                 if (segment.IsFirstInChain == false)
                                 {
                                     if (snapshotSegmentDetail["snapshotExitSequence"] != null)
                                     {
-                                        // Parent snapshot has snapshotSequenceCounter in exitCalls array
-                                        // Child snapshot has snapshotExitSequence value that binds the child snapshot to the parent
-                                        //JToken parentSegment = snapshotSegmentsList.Where(s => s["exitCalls"]["snapshotSequenceCounter"].ToString() == snapshotSegmentDetail["snapshotExitSequence"].ToString()).FirstOrDefault();
+                                        // Parent exit has snapshotSequenceCounter in exitCalls array
+                                        // Child exit has snapshotExitSequence value that binds the child snapshot to the parent
                                         List<JToken> possibleParentSegments = snapshotSegmentsList.Where(s => s["exitCalls"].Count() > 0).ToList();
                                         foreach (JToken possibleParentSegment in possibleParentSegments)
                                         {
                                             List<JToken> possibleExits = possibleParentSegment["exitCalls"].Where(e => e["snapshotSequenceCounter"].ToString() == snapshotSegmentDetail["snapshotExitSequence"].ToString()).ToList();
                                             if (possibleExits.Count > 0)
                                             {
-                                                segment.ParentSegmentID = (long)possibleParentSegment["id"];
+                                                segment.FromSegmentID = (long)possibleParentSegment["id"];
                                                 break;
                                             }
                                         }
                                     }
-                                    if (segment.ParentSegmentID == 0)
+                                    if (segment.FromSegmentID == 0)
                                     {
                                         // Some async snapshots can have no initiating parent
                                         // Do nothing
@@ -16364,7 +17120,7 @@ namespace AppDynamics.Dexter
                                         // But sometimes non-async ones have funny parenting
                                     }
                                 }
-                                segment.ParentTierName = snapshotSegmentToken["callingComponent"].ToString();
+                                segment.FromTierName = snapshotSegmentToken["callingComponent"].ToString();
 
                                 #endregion
 
@@ -16486,7 +17242,11 @@ namespace AppDynamics.Dexter
 
                                     exitCall.ExitType = exitCallToken["exitPointName"].ToString();
 
+                                    exitCall.SequenceNumber = exitCallToken["snapshotSequenceCounter"].ToString();
+
                                     exitCall.Duration = (long)exitCallToken["timeTakenInMillis"];
+                                    exitCall.DurationRange = getDurationRangeAsString(exitCall.Duration);
+
                                     exitCall.IsAsync = ((bool)exitCallToken["exitPointCall"]["synchronous"] == false);
 
                                     // Create pretty call chain
@@ -16665,6 +17425,19 @@ namespace AppDynamics.Dexter
                                     exitCall.NumErrors = (int)exitCallToken["errorCount"];
                                     exitCall.HasErrors = exitCall.NumErrors != 0;
 
+                                    // Which Segment are we going to
+                                    exitCall.ToSegmentID = 0;
+                                    if (exitCallToken["snapshotSequenceCounter"] != null)
+                                    {
+                                        // Parent segment has snapshotSequenceCounter in exitCalls array
+                                        // Child snapshot has snapshotExitSequence value that binds the child snapshot to the parent
+                                        JToken childSegment = snapshotSegmentsList.Where(s => s["triggerCall"].HasValues == true && s["triggerCall"]["snapshotSequenceCounter"].ToString() == exitCallToken["snapshotSequenceCounter"].ToString()).FirstOrDefault();
+                                        if (childSegment != null)
+                                        {
+                                            exitCall.ToSegmentID = (long)childSegment["id"];
+                                        }
+                                    }
+
                                     #endregion
 
                                     #region Fill in the deeplinks for the exit
@@ -16798,6 +17571,7 @@ namespace AppDynamics.Dexter
                                     }
 
                                     // Second, populate the list of the details of errors
+                                    string snapshotSegmentErrorFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegmentToken["id"]));
                                     JArray snapshotSegmentErrorDetail = FileIOHelper.loadJArrayFromFile(snapshotSegmentErrorFilePath);
                                     if (snapshotSegmentErrorDetail != null)
                                     {
@@ -17127,6 +17901,192 @@ namespace AppDynamics.Dexter
 
                                 #endregion
 
+                                #region Process Call Graphs in Segment
+
+                                string snapshotSegmentCallGraphFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME, snapshotSegmentToken["id"]));
+                                JArray snapshotSegmentCallGraphs = FileIOHelper.loadJArrayFromFile(snapshotSegmentCallGraphFilePath);
+
+                                // Can't use recursion for some of the snapshots because of StackOverflowException
+                                // We run out of stack when we go 400+ deep into call stack, which apparently happens
+                                //List<MethodCallLine> methodCallLinesInSegmentList = new List<MethodCallLine>(250);
+                                //if (snapshotSegmentCallGraphs != null && snapshotSegmentCallGraphs.HasValues == true)
+                                //{
+                                //    int methodLineCallSequenceNumber = 0;
+                                //    // Make a copy of this list because we are going to slowly strip it down and we don't want the parent list modified
+                                //    List<ExitCall> exitCallsListInThisSegmentCopy = new List<ExitCall>(exitCallsListInThisSegment.Count);
+                                //    exitCallsListInThisSegmentCopy.AddRange(exitCallsListInThisSegment);
+                                //    convertCallGraphChildren_Recursion(snapshotSegmentCallGraphs[0], 0, ref methodLineCallSequenceNumber, methodCallLinesInSegmentList, serviceEndpointCallsListInThisSegment, exitCallsListInThisSegmentCopy);
+                                //}
+
+                                // Instead, let's call it using stack-based algorithm
+
+                                // Make a copy of this list because we are going to slowly strip it down and we don't want the parent list modified
+                                List<MethodCallLine> methodCallLinesInSegmentList = null;
+                                if (snapshotSegmentCallGraphs != null && snapshotSegmentCallGraphs.HasValues == true)
+                                {
+                                    List<ExitCall> exitCallsListInThisSegmentCopy = new List<ExitCall>(exitCallsListInThisSegment.Count);
+                                    exitCallsListInThisSegmentCopy.AddRange(exitCallsListInThisSegment);
+                                    methodCallLinesInSegmentList = convertCallGraphChildren_Stack(snapshotSegmentCallGraphs[0], serviceEndpointCallsListInThisSegment, exitCallsListInThisSegmentCopy);
+                                }
+                                if (methodCallLinesInSegmentList == null)
+                                {
+                                    methodCallLinesInSegmentList = new List<MethodCallLine>(0);
+                                }
+
+                                // Fill in common values and look up framework
+                                foreach (MethodCallLine methodCallLine in methodCallLinesInSegmentList)
+                                {
+                                    methodCallLine.Controller = snapshot.Controller;
+                                    methodCallLine.ApplicationName = snapshot.ApplicationName;
+                                    methodCallLine.ApplicationID = snapshot.ApplicationID;
+                                    methodCallLine.TierID = (long)snapshotSegmentToken["applicationComponentId"];
+                                    methodCallLine.TierName = snapshotSegmentToken["applicationComponentName"].ToString();
+                                    methodCallLine.BTID = snapshot.BTID;
+                                    methodCallLine.BTName = snapshot.BTName;
+                                    methodCallLine.NodeID = (long)snapshotSegmentToken["applicationComponentNodeId"];
+                                    methodCallLine.NodeName = snapshotSegmentToken["applicationComponentNodeName"].ToString();
+
+                                    methodCallLine.RequestID = snapshotSegmentToken["requestGUID"].ToString();
+                                    methodCallLine.SegmentID = (long)snapshotSegmentToken["id"];
+
+                                    // Index Method->Framework type
+                                    if (methodCallLine.Class.Length == 0)
+                                    {
+                                        methodCallLine.Framework = "Empty class name";
+                                    }
+                                    else
+                                    {
+                                        string keyLetterOfMappingList = methodCallLine.Class.Substring(0, 1).ToLower();
+                                        if (methodCallLineClassToFrameworkTypeMappingDictionary.ContainsKey(keyLetterOfMappingList) == false)
+                                        {
+                                            methodCallLine.Framework = String.Format("No mapping for {0}", keyLetterOfMappingList);
+                                        }
+                                        else
+                                        {
+                                            List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary[keyLetterOfMappingList];
+
+                                            bool frameworkMappingFound = false;
+                                            foreach (MethodCallLineClassTypeMapping mapping in methodCallLineClassToFrameworkTypeMappingList)
+                                            {
+                                                if (methodCallLine.Class.StartsWith(mapping.ClassPrefix, StringComparison.Ordinal) == true)
+                                                {
+                                                    methodCallLine.Framework = String.Format("{0} ({1})", mapping.ClassPrefix, mapping.FrameworkType);
+                                                    frameworkMappingFound = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (frameworkMappingFound == false)
+                                            {
+                                                // Grab just the namespace of the class
+                                                int indexOfPeriodBeforeClassName = methodCallLine.Class.LastIndexOf('.');
+                                                if (indexOfPeriodBeforeClassName > 0)
+                                                {
+                                                    methodCallLine.Framework = methodCallLine.Class.Substring(0, indexOfPeriodBeforeClassName);
+                                                }
+                                                else
+                                                {
+                                                    methodCallLine.Framework = "No class name determined";
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Calculate the duration range
+                                    methodCallLine.ExecRange = getDurationRangeAsString(methodCallLine.Exec);
+                                }
+
+                                // Fill in data collectors
+                                // Choose only the MIDC data collectors
+                                List<BusinessData> businessDataCodeListInThisSegment = businessDataListInThisSegment.Where(b => b.DataType == "Code").ToList();
+                                // Only fill in MIDCs if there are rules in places and values
+                                if (businessDataCodeListInThisSegment.Count > 0 && methodInvocationDataCollectorsList != null && methodInvocationDataCollectorsList.Count > 0)
+                                {
+                                    var midcSettingGroups = methodInvocationDataCollectorsList.GroupBy(m => new { m.MatchClass, m.MatchMethod });
+
+                                    foreach (var midcSettingGroup in midcSettingGroups)
+                                    {
+                                        List<MethodInvocationDataCollector> methodInvocationDataCollectors = midcSettingGroup.ToList();
+                                        MethodInvocationDataCollector methodInvocationDataCollector = methodInvocationDataCollectors[0];
+                                        // Find the methods matching this data collector setting
+                                        List<MethodCallLine> methodCallLinesMatchingMIDC = methodCallLinesInSegmentList.Where(m => m.Class == methodInvocationDataCollector.MatchClass && m.Method == methodInvocationDataCollector.MatchMethod).ToList();
+                                        if (methodCallLinesMatchingMIDC.Count > 0)
+                                        {
+                                            // Found some lines, let's enumerate data collectors that were actually collected and match them
+                                            List<string> businessDataReferenceList = new List<string>(methodInvocationDataCollectors.Count);
+                                            foreach (BusinessData businessData in businessDataCodeListInThisSegment)
+                                            {
+                                                if (methodInvocationDataCollectors.Count(m => m.DataGathererName == businessData.DataName) > 0)
+                                                {
+                                                    businessDataReferenceList.Add(String.Format("{0}={1} ({2})", businessData.DataName, businessData.DataValue, methodInvocationDataCollector.CollectorName));
+                                                }
+                                            }
+
+                                            // Now that we have the list of those data collectors, put them into the method line
+                                            foreach (MethodCallLine methodCallLine in methodCallLinesMatchingMIDC)
+                                            {
+                                                methodCallLine.NumMIDCs = businessDataReferenceList.Count;
+
+                                                if (methodCallLine.NumMIDCs == 1)
+                                                {
+                                                    methodCallLine.MIDCs = businessDataReferenceList[0];
+                                                }
+                                                else
+                                                {
+                                                    if (businessDataReferenceList.Count > 0)
+                                                    {
+                                                        StringBuilder sb = new StringBuilder(64 * methodCallLine.NumMIDCs);
+                                                        foreach (string businessDataReference in businessDataReferenceList)
+                                                        {
+                                                            sb.AppendFormat("{0};\n", businessDataReference);
+                                                        }
+                                                        sb.Remove(sb.Length - 1, 1);
+                                                        methodCallLine.MIDCs = sb.ToString();
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Process all method call lines to generate Occurrences list, finding and counting all the unique values
+                                Dictionary<string, MethodCallLine> methodCallLinesOccurrencesInSegmentDictionary = new Dictionary<string, MethodCallLine>(methodCallLinesInSegmentList.Count);
+                                foreach (MethodCallLine methodCallLine in methodCallLinesInSegmentList)
+                                {
+                                    if (methodCallLinesOccurrencesInSegmentDictionary.ContainsKey(methodCallLine.FullName) == false)
+                                    {
+                                        // Add new
+                                        MethodCallLine methodCallLineOccurrence = methodCallLine.Clone();
+                                        methodCallLineOccurrence.NumCalls = 1;
+                                        methodCallLinesOccurrencesInSegmentDictionary.Add(methodCallLine.FullName, methodCallLineOccurrence);
+                                    }
+                                    else
+                                    {
+                                        // Adjust existing
+                                        MethodCallLine methodCallLineOccurrence = methodCallLinesOccurrencesInSegmentDictionary[methodCallLine.FullName];
+
+                                        methodCallLineOccurrence.NumCalls++;
+
+                                        methodCallLineOccurrence.Exec = methodCallLineOccurrence.Exec + methodCallLine.Exec;
+                                        methodCallLineOccurrence.Wait = methodCallLineOccurrence.Wait + methodCallLine.Wait;
+                                        methodCallLineOccurrence.Block = methodCallLineOccurrence.Block + methodCallLine.Block;
+                                        methodCallLineOccurrence.CPU = methodCallLineOccurrence.CPU + methodCallLine.CPU;
+
+                                        methodCallLineOccurrence.NumExits = methodCallLineOccurrence.NumExits + methodCallLine.NumExits;
+                                        methodCallLineOccurrence.NumSEPs = methodCallLineOccurrence.NumSEPs + methodCallLine.NumSEPs;
+                                        methodCallLineOccurrence.NumMIDCs = methodCallLineOccurrence.NumMIDCs + methodCallLine.NumMIDCs;
+                                        methodCallLineOccurrence.NumChildren = methodCallLineOccurrence.NumChildren + methodCallLine.NumChildren;
+                                    }
+                                }
+                                List<MethodCallLine> methodCallLinesOccurrencesInSegmentList = new List<MethodCallLine>(methodCallLinesOccurrencesInSegmentDictionary.Count);
+                                methodCallLinesOccurrencesInSegmentList = methodCallLinesOccurrencesInSegmentDictionary.Values.ToList();
+                                methodCallLinesOccurrencesInSegmentList = methodCallLinesOccurrencesInSegmentList.OrderBy(m => m.FullName).ToList();
+                                foreach (MethodCallLine methodCallLine in methodCallLinesOccurrencesInSegmentList)
+                                {
+                                    methodCallLine.ExecRange = getDurationRangeAsString(methodCallLine.Exec);
+                                }
+
+                                #endregion
+
                                 #region Update call chains and call types from exits into segment
 
                                 SortedDictionary<string, int> exitTypesSegment = new SortedDictionary<string, int>();
@@ -17178,6 +18138,8 @@ namespace AppDynamics.Dexter
                                 serviceEndpointCallsList.AddRange(serviceEndpointCallsListInThisSegment);
                                 detectedErrorsList.AddRange(detectedErrorsListInThisSegment);
                                 businessDataList.AddRange(businessDataListInThisSegment);
+                                methodCallLinesList.AddRange(methodCallLinesInSegmentList);
+                                methodCallLinesOccurrencesList.AddRange(methodCallLinesOccurrencesInSegmentList);
                             }
                         }
 
@@ -17270,6 +18232,16 @@ namespace AppDynamics.Dexter
                         FileIOHelper.writeListToCSVFile(businessDataList, new BusinessDataReportMap(), businessDataFileName);
                     }
 
+                    if (methodCallLinesList != null)
+                    {
+                        FileIOHelper.writeListToCSVFile(methodCallLinesList, new MethodCallLineReportMap(), methodCallLinesFileName);
+                    }
+
+                    if (methodCallLinesOccurrencesList != null)
+                    {
+                        FileIOHelper.writeListToCSVFile(methodCallLinesOccurrencesList, new MethodCallLineOccurrenceReportMap(), methodCallLinesOccurrencesFileName);
+                    }
+
                     List<Snapshot> snapshotRows = new List<Snapshot>(1);
                     snapshotRows.Add(snapshot);
                     FileIOHelper.writeListToCSVFile(snapshotRows, new SnapshotReportMap(), snapshotsFileName);
@@ -17288,6 +18260,762 @@ namespace AppDynamics.Dexter
             }
 
             return entityList.Count;
+        }
+
+        private static MethodCallLine convertCallGraphChildren_Recursion(
+            JToken methodCallLineJSON, 
+            int currentDepth, 
+            ref int methodLineCallSequenceNumber, 
+            List<MethodCallLine> methodCallLinesList, 
+            List<ServiceEndpointCall> serviceEndpointCallsList, 
+            List<ExitCall> exitCallsList)
+        {
+            MethodCallLine methodCallLine = new MethodCallLine();
+
+            methodCallLine.SequenceNumber = methodLineCallSequenceNumber;
+            methodLineCallSequenceNumber++;
+
+            // Populate current method call class, methods and types
+            methodCallLine.Type = methodCallLineJSON["type"].ToString();
+            methodCallLine.PrettyName = methodCallLineJSON["name"].ToString();
+            methodCallLine.Class = methodCallLineJSON["className"].ToString();
+            methodCallLine.Method = methodCallLineJSON["methodName"].ToString();
+            methodCallLine.LineNumber = (int)methodCallLineJSON["lineNumber"];
+            if (methodCallLine.LineNumber > 0)
+            {
+                methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
+            }
+            else
+            {
+                methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.Class, methodCallLine.Method);
+            }
+            methodCallLine.FullNameIndent = String.Format("{0}{1}", new string(' ', currentDepth), methodCallLine.FullName);
+
+            // Fill in Service Endpoints
+            if (methodCallLineJSON["serviceEndPointIds"].HasValues == true && serviceEndpointCallsList.Count > 0)
+            {
+                methodCallLine.NumSEPs = methodCallLineJSON["serviceEndPointIds"].Count();
+
+                List<string> serviceEndpointReferenceList = new List<string>(methodCallLine.NumSEPs);
+                foreach (long sepID in methodCallLineJSON["serviceEndPointIds"])
+                {
+                    ServiceEndpointCall serviceEndpointCall = serviceEndpointCallsList.Where(s => s.SEPID == sepID).FirstOrDefault();
+                    if (serviceEndpointCall != null)
+                    {
+                        serviceEndpointReferenceList.Add(String.Format("{0} ({1})", serviceEndpointCall.SEPName, serviceEndpointCall.SEPType));
+                    }
+                }
+
+                if (methodCallLine.NumSEPs == 1)
+                {
+                    methodCallLine.SEPs = serviceEndpointReferenceList[0];
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder(32 * methodCallLine.NumSEPs);
+                    foreach (string serviceEndpointReference in serviceEndpointReferenceList)
+                    {
+                        sb.AppendFormat("{0};\n", serviceEndpointReference);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    methodCallLine.SEPs = sb.ToString();
+                }
+            }
+
+            // Fill in Durations
+            // We first assume that duration is equal to duration with children. Then when adding children, recalculate, subtracting child's duration
+            methodCallLine.ExecTotal = (long)methodCallLineJSON["timeSpentInMilliSec"];
+            methodCallLine.Exec = methodCallLine.ExecTotal;
+            methodCallLine.WaitTotal = (long)methodCallLineJSON["waitTime"];
+            methodCallLine.Wait = methodCallLine.WaitTotal;
+            methodCallLine.BlockTotal = (long)methodCallLineJSON["blockTime"];
+            methodCallLine.Block = methodCallLine.BlockTotal;
+            methodCallLine.CPUTotal = (long)methodCallLineJSON["cpuTime"];
+            methodCallLine.CPU = methodCallLine.CPUTotal;
+            
+            // Count children
+            if (methodCallLineJSON["children"].HasValues == false)
+            {
+                methodCallLine.NumChildren = 0;
+            }
+            else
+            {
+                methodCallLine.NumChildren = methodCallLineJSON["children"].Count();
+            }
+
+            // Specify depth
+            methodCallLine.Depth = currentDepth;
+
+            // Determine type of this element in the call graph tree
+            if (currentDepth == 0)
+            {
+                methodCallLine.ElementType = MethodCallLineElementType.Root;
+            }
+            else
+            {
+                if (methodCallLine.NumChildren == 0)
+                {
+                    methodCallLine.ElementType = MethodCallLineElementType.Leaf;
+                }
+                else if (methodCallLine.NumChildren == 1)
+                {
+                    methodCallLine.ElementType = MethodCallLineElementType.Stem;
+                }
+                else
+                {
+                    methodCallLine.ElementType = MethodCallLineElementType.Branch;
+                }
+            }
+
+            // Fill in exits
+            // Frequently, the exits in the list from Segments (passed via exitCallsList parameter to the function), are ordered
+            // in the same sequence as the exits encountered during unrolling the call graph tree
+            // However, that is not always the case
+            // Exceptions appear to be 
+            // a) .NET applications 
+            // and 
+            // b) the database connection acquisition backend calls that are grouped together into number of calls >1 and duration being the Sum(of all)
+            // So the logic is to find the Exit by the ordinal location, if that doesn't work, find it by SequenceNumber, and if that doesn't work, by the detail string 
+            // The ExitCall.SequenceNumber can look like that:
+            // "snapshotSequenceCounter" : "1|6|5"
+            // Most of the time the sequence number from segment matches just great to that in the exit call
+            // But sometimes there can be an exit that is to the same query, and so its ExitCall.NumCalls will be > 1
+            // For those, the UI displays the exit with total number of those, and the call graph has detail
+            // Typically these are the calls to database pooling
+            if (methodCallLineJSON["exitCalls"].HasValues == true && exitCallsList.Count > 0)
+            {
+                methodCallLine.NumExits = methodCallLineJSON["exitCalls"].Count();
+
+                List<string> exitCallsReferenceList = new List<string>(methodCallLine.NumExits);
+
+                foreach (JToken exitCallToken in methodCallLineJSON["exitCalls"])
+                {
+                    ExitCall exitCallForThisExit = null;
+
+                    bool adjustCallDurationInCallChain = false;
+
+                    // First, try by the ordinal value
+                    if (exitCallsList.Count > 0)
+                    {
+                        exitCallForThisExit = exitCallsList[0];
+                        if (exitCallForThisExit.SequenceNumber == exitCallToken["snapshotSequenceCounter"].ToString())
+                        {
+                            if (exitCallForThisExit.NumCalls > 1)
+                            {
+                                // Found it and it is used more than once
+                                adjustCallDurationInCallChain = true;
+                            }
+                            else
+                            {
+                                // Found it and it is a singular one
+                                exitCallsList.Remove(exitCallForThisExit);
+                            }
+                        }
+                        else
+                        {
+                            // Not the right one
+                            exitCallForThisExit = null;
+                        }
+                    }
+
+                    // Second, try looking it up by the sequence number
+                    if (exitCallForThisExit == null)
+                    {
+                        exitCallForThisExit = exitCallsList.Where(e => e.SequenceNumber == exitCallToken["snapshotSequenceCounter"].ToString()).FirstOrDefault();
+                        if (exitCallForThisExit != null)
+                        {
+                            if (exitCallForThisExit.NumCalls > 1)
+                            {
+                                // Found it and it is used more than once
+                                adjustCallDurationInCallChain = true;
+                            }
+                            else
+                            {
+                                // Found it and it is a singular one
+                                exitCallsList.Remove(exitCallForThisExit);
+                            }
+                        }
+                    }
+
+                    // Third, try looking up up by the exact properties
+                    if (exitCallForThisExit == null)
+                    {
+                        adjustCallDurationInCallChain = true;
+
+                        // This must be one of those calls that has more then 1 call, and is grouped
+                        // Make up the exit details using the values in the call graph information
+                        exitCallForThisExit = exitCallsList.Where(
+                            e => e.NumCalls > 1 &&
+                            e.Detail == exitCallToken["detailString"].ToString() &&
+                            e.PropsAll == exitCallToken["propertiesAsString"].ToString()).FirstOrDefault();
+                    }
+
+                    // Fourth, still don't have an exit from segment data
+                    // Manually create an exit from the Call Graph value
+                    if (exitCallForThisExit == null)
+                    {
+                        adjustCallDurationInCallChain = false;
+
+                        exitCallForThisExit = new ExitCall();
+                        exitCallForThisExit.Duration = (long)exitCallToken["timeTakenInMillis"];
+                        exitCallForThisExit.IsAsync = ((bool)exitCallToken["exitPointCall"]["synchronous"] == false);
+                        exitCallForThisExit.ExitType = exitCallToken["type"].ToString();
+                        exitCallForThisExit.Detail = exitCallToken["detailString"].ToString();
+
+                        JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "to").FirstOrDefault();
+                        if (goingToProperty != null)
+                        {
+                            exitCallForThisExit.ToEntityName = goingToProperty["value"].ToString();
+                        }
+                        goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "from").FirstOrDefault();
+                        string callChainForThisSegment = "(Generated From Call Graph:Unknown)";
+                        if (goingToProperty != null)
+                        {
+                            callChainForThisSegment = String.Format("(Generated From Call Graph:{0})", goingToProperty["value"].ToString());
+                        }
+                        if (exitCallForThisExit.IsAsync == false)
+                        {
+                            exitCallForThisExit.CallChain = String.Format("{0}->[{1}]:[{3} ms]-><{2}>", callChainForThisSegment, exitCallForThisExit.ExitType, exitCallForThisExit.ToEntityName, exitCallForThisExit.Duration);
+                        }
+                        else
+                        {
+                            exitCallForThisExit.CallChain = String.Format("{0}->[{1}]:[{3} ms async]-><{2}>", callChainForThisSegment, exitCallForThisExit.ExitType, exitCallForThisExit.ToEntityName, exitCallForThisExit.Duration);
+                        }
+                    }
+
+                    // Finally, here we should have an exit from the segment data
+                    string callChain = exitCallForThisExit.CallChain;
+                    if (adjustCallDurationInCallChain == true)
+                    {
+                        // Call duration in the exit that has more then one call (typically database connection acquisition
+                        // would have this call chain
+                        // (ECommerce-Services)->[WEB_SERVICE]->(Inventory-Services)->[JDBC]:[20 ms]-><INVENTORY-MySQL DB-DB-5.7.13-0ubuntu0.16.04.2>
+                        // Here we replace this                                               ^^, which is a sum of all the calls in the call graph
+                        // with the value from the exit in the call graph
+
+                        Regex regexDuration = new Regex(@"(.*\[)(\d*)( ms.*\].*)", RegexOptions.IgnoreCase);
+                        callChain = regexDuration.Replace(callChain,
+                            m => String.Format(
+                                "{0}{1}{2}",
+                                m.Groups[1].Value,
+                                exitCallToken["timeTakenInMillis"],
+                                m.Groups[3].Value));
+                    }
+
+                    // Prepare the rendered value
+                    if (exitCallForThisExit.HasErrors == false)
+                    {
+                        if (exitCallForThisExit.ToSegmentID != 0)
+                        {
+                            exitCallsReferenceList.Add(String.Format("{0}->/{1}/ {2}", callChain, exitCallForThisExit.ToSegmentID, exitCallForThisExit.Detail));
+                        }
+                        else
+                        {
+                            exitCallsReferenceList.Add(String.Format("{0} {1}", callChain, exitCallForThisExit.Detail));
+                        }
+                    }
+                    else
+                    {
+                        exitCallsReferenceList.Add(String.Format("{0} {1} Error {2}", callChain, exitCallForThisExit.Detail, exitCallForThisExit.ErrorDetail));
+                        methodCallLine.HasErrors = true;
+                    }
+                }
+
+                // Finally, render the value out of all the exits in here
+                if (methodCallLine.NumExits == 1 && exitCallsReferenceList.Count > 0)
+                {
+                    methodCallLine.ExitCalls = exitCallsReferenceList[0];
+                }
+                else
+                {
+                    StringBuilder sb = new StringBuilder(32 * methodCallLine.NumExits);
+                    foreach (string exitCallsReference in exitCallsReferenceList)
+                    {
+                        sb.AppendFormat("{0};\n", exitCallsReference);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    methodCallLine.ExitCalls = sb.ToString();
+                }
+            }
+
+            // Add to total list
+            methodCallLinesList.Add(methodCallLine);
+
+            // Go through the children, recursively. Love recursion
+            if (methodCallLine.NumChildren > 0)
+            {
+                List<MethodCallLine> methodCallLinesAllChildren = new List<MethodCallLine>(10);
+                foreach (JToken childMethodCallLineJSON in (JArray)methodCallLineJSON["children"])
+                {
+                    currentDepth++;
+
+                    MethodCallLine methodCallLineChild = convertCallGraphChildren_Recursion(childMethodCallLineJSON, currentDepth, ref methodLineCallSequenceNumber, methodCallLinesList, serviceEndpointCallsList, exitCallsList);
+
+                    // Now that we measured child, subtract its duration from the current node
+                    methodCallLine.Exec = methodCallLine.Exec - methodCallLineChild.ExecTotal;
+                    methodCallLine.Wait = methodCallLine.Wait - methodCallLineChild.WaitTotal;
+                    methodCallLine.Block = methodCallLine.Block - methodCallLineChild.BlockTotal;
+                    methodCallLine.CPU = methodCallLine.CPU - methodCallLineChild.CPUTotal;
+
+                    currentDepth--;
+                }
+            }
+            
+            // Calculate the duration range
+            methodCallLine.ExecRange = getDurationRangeAsString(methodCallLine.Exec);
+
+            return methodCallLine;
+        }
+
+        private static List<MethodCallLine> convertCallGraphChildren_Stack(
+            JToken methodCallLineJSONRoot,
+            List<ServiceEndpointCall> serviceEndpointCallsList,
+            List<ExitCall> exitCallsList)
+        {
+            List<MethodCallLine> methodCallLinesList = new List<MethodCallLine>(500);
+            List<MethodCallLine> methodCallLinesLeafList = new List<MethodCallLine>(10);
+
+            if (methodCallLineJSONRoot == null)
+            {
+                return methodCallLinesList;
+            }
+
+            // Assume depth of at least 100
+            Stack<JToken> stackOfMethodCallLineJSONs = new Stack<JToken>(100);
+            Stack<MethodCallLine> stackOfParentMethodCallLines = new Stack<MethodCallLine>(100);
+
+            // Add the first one 
+            stackOfMethodCallLineJSONs.Push(methodCallLineJSONRoot);
+
+            int methodLineCallSequenceNumber = 0;
+
+            // Let's scroll through, it is just like a binary tree, except with multiple children, meaning that it has left and right, and right again
+            while (stackOfMethodCallLineJSONs.Count > 0)
+            {
+                JToken methodCallLineJSON = stackOfMethodCallLineJSONs.Pop();
+                MethodCallLine methodCallLineParent = null;
+                if (stackOfParentMethodCallLines.Count > 0)
+                {
+                    methodCallLineParent = stackOfParentMethodCallLines.Pop();
+                }
+
+                #region Populate MethodCallLine
+
+                MethodCallLine methodCallLine = new MethodCallLine();
+
+                methodCallLine.Parent = methodCallLineParent;
+
+                methodCallLine.SequenceNumber = methodLineCallSequenceNumber;
+                methodLineCallSequenceNumber++;
+
+                // Populate current method call class, methods and types
+                methodCallLine.Type = methodCallLineJSON["type"].ToString();
+                methodCallLine.PrettyName = methodCallLineJSON["name"].ToString();
+                methodCallLine.Class = methodCallLineJSON["className"].ToString();
+                methodCallLine.Method = methodCallLineJSON["methodName"].ToString();
+                methodCallLine.LineNumber = (int)methodCallLineJSON["lineNumber"];
+                if (methodCallLine.LineNumber > 0)
+                {
+                    methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
+                }
+                else
+                {
+                    methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.Class, methodCallLine.Method);
+                }
+
+                // Specify depth
+                if (methodCallLine.Parent == null)
+                {
+                    methodCallLine.Depth = 0;
+                }
+                else
+                {
+                    methodCallLine.Depth = methodCallLine.Parent.Depth + 1;
+                }
+
+                methodCallLine.FullNameIndent = String.Format("{0}{1}", new string(' ', methodCallLine.Depth), methodCallLine.FullName);
+
+                // Fill in Service Endpoints
+                if (methodCallLineJSON["serviceEndPointIds"].HasValues == true && serviceEndpointCallsList.Count > 0)
+                {
+                    methodCallLine.NumSEPs = methodCallLineJSON["serviceEndPointIds"].Count();
+
+                    List<string> serviceEndpointReferenceList = new List<string>(methodCallLine.NumSEPs);
+                    foreach (long sepID in methodCallLineJSON["serviceEndPointIds"])
+                    {
+                        ServiceEndpointCall serviceEndpointCall = serviceEndpointCallsList.Where(s => s.SEPID == sepID).FirstOrDefault();
+                        if (serviceEndpointCall != null)
+                        {
+                            serviceEndpointReferenceList.Add(String.Format("{0} ({1})", serviceEndpointCall.SEPName, serviceEndpointCall.SEPType));
+                        }
+                    }
+
+                    if (methodCallLine.NumSEPs == 1)
+                    {
+                        methodCallLine.SEPs = serviceEndpointReferenceList[0];
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder(32 * methodCallLine.NumSEPs);
+                        foreach (string serviceEndpointReference in serviceEndpointReferenceList)
+                        {
+                            sb.AppendFormat("{0};\n", serviceEndpointReference);
+                        }
+                        sb.Remove(sb.Length - 1, 1);
+                        methodCallLine.SEPs = sb.ToString();
+                    }
+                }
+
+                // Fill in Durations
+                // We first assume that duration is equal to duration with children. Then when adding children, recalculate, subtracting child's duration
+                methodCallLine.ExecTotal = (long)methodCallLineJSON["timeSpentInMilliSec"];
+                methodCallLine.Exec = methodCallLine.ExecTotal;
+                methodCallLine.WaitTotal = (long)methodCallLineJSON["waitTime"];
+                methodCallLine.Wait = methodCallLine.WaitTotal;
+                methodCallLine.BlockTotal = (long)methodCallLineJSON["blockTime"];
+                methodCallLine.Block = methodCallLine.BlockTotal;
+                methodCallLine.CPUTotal = (long)methodCallLineJSON["cpuTime"];
+                methodCallLine.CPU = methodCallLine.CPUTotal;
+
+                if (methodCallLineParent != null)
+                {
+                    methodCallLineParent.Exec = methodCallLineParent.Exec - methodCallLine.ExecTotal;
+                    methodCallLineParent.Wait = methodCallLineParent.Wait - methodCallLine.WaitTotal;
+                    methodCallLineParent.Block = methodCallLineParent.Block - methodCallLine.BlockTotal;
+                    methodCallLineParent.CPU = methodCallLineParent.CPU - methodCallLine.CPUTotal;
+                }
+
+                // Count children
+                if (methodCallLineJSON["children"].HasValues == false)
+                {
+                    methodCallLine.NumChildren = 0;
+                }
+                else
+                {
+                    methodCallLine.NumChildren = methodCallLineJSON["children"].Count();
+                }
+
+                // Determine type of this element in the call graph tree
+                if (methodCallLine.Depth == 0)
+                {
+                    methodCallLine.ElementType = MethodCallLineElementType.Root;
+                }
+                else
+                {
+                    if (methodCallLine.NumChildren == 0)
+                    {
+                        methodCallLine.ElementType = MethodCallLineElementType.Leaf;
+                        // Remember this as the bottom of call graph so we can walk from up here calculating durations
+                        methodCallLinesLeafList.Add(methodCallLine);
+                    }
+                    else if (methodCallLine.NumChildren == 1)
+                    {
+                        methodCallLine.ElementType = MethodCallLineElementType.Stem;
+                    }
+                    else
+                    {
+                        methodCallLine.ElementType = MethodCallLineElementType.Branch;
+                    }
+                }
+
+                // Fill in exits
+                // Frequently, the exits in the list from Segments (passed via exitCallsList parameter to the function), are ordered
+                // in the same sequence as the exits encountered during unrolling the call graph tree
+                // However, that is not always the case
+                // Exceptions appear to be 
+                // a) .NET applications 
+                // and 
+                // b) the database connection acquisition backend calls that are grouped together into number of calls >1 and duration being the Sum(of all)
+                // So the logic is to find the Exit by the ordinal location, if that doesn't work, find it by SequenceNumber, and if that doesn't work, by the detail string 
+                // The ExitCall.SequenceNumber can look like that:
+                // "snapshotSequenceCounter" : "1|6|5"
+                // Most of the time the sequence number from segment matches just great to that in the exit call
+                // But sometimes there can be an exit that is to the same query, and so its ExitCall.NumCalls will be > 1
+                // For those, the UI displays the exit with total number of those, and the call graph has detail
+                // Typically these are the calls to database pooling
+                if (methodCallLineJSON["exitCalls"].HasValues == true && exitCallsList.Count > 0)
+                {
+                    methodCallLine.NumExits = methodCallLineJSON["exitCalls"].Count();
+
+                    List<string> exitCallsReferenceList = new List<string>(methodCallLine.NumExits);
+
+                    foreach (JToken exitCallToken in methodCallLineJSON["exitCalls"])
+                    {
+                        ExitCall exitCallForThisExit = null;
+
+                        bool adjustCallDurationInCallChain = false;
+
+                        // First, try by the ordinal value
+                        if (exitCallsList.Count > 0)
+                        {
+                            exitCallForThisExit = exitCallsList[0];
+                            if (exitCallForThisExit.SequenceNumber == exitCallToken["snapshotSequenceCounter"].ToString())
+                            {
+                                if (exitCallForThisExit.NumCalls > 1)
+                                {
+                                    // Found it and it is used more than once
+                                    adjustCallDurationInCallChain = true;
+                                }
+                                else
+                                {
+                                    // Found it and it is a singular one
+                                    exitCallsList.Remove(exitCallForThisExit);
+                                }
+                            }
+                            else
+                            {
+                                // Not the right one
+                                exitCallForThisExit = null;
+                            }
+                        }
+
+                        // Second, try looking it up by the sequence number
+                        if (exitCallForThisExit == null)
+                        {
+                            exitCallForThisExit = exitCallsList.Where(e => e.SequenceNumber == exitCallToken["snapshotSequenceCounter"].ToString()).FirstOrDefault();
+                            if (exitCallForThisExit != null)
+                            {
+                                if (exitCallForThisExit.NumCalls > 1)
+                                {
+                                    // Found it and it is used more than once
+                                    adjustCallDurationInCallChain = true;
+                                }
+                                else
+                                {
+                                    // Found it and it is a singular one
+                                    exitCallsList.Remove(exitCallForThisExit);
+                                }
+                            }
+                        }
+
+                        // Third, try looking up up by the exact properties
+                        if (exitCallForThisExit == null)
+                        {
+                            adjustCallDurationInCallChain = true;
+
+                            // This must be one of those calls that has more then 1 call, and is grouped
+                            // Make up the exit details using the values in the call graph information
+                            exitCallForThisExit = exitCallsList.Where(
+                                e => e.NumCalls > 1 &&
+                                e.Detail == exitCallToken["detailString"].ToString() &&
+                                e.PropsAll == exitCallToken["propertiesAsString"].ToString()).FirstOrDefault();
+                        }
+
+                        // Fourth, still don't have an exit from segment data
+                        // Manually create an exit from the Call Graph value
+                        if (exitCallForThisExit == null)
+                        {
+                            adjustCallDurationInCallChain = false;
+
+                            exitCallForThisExit = new ExitCall();
+                            exitCallForThisExit.Duration = (long)exitCallToken["timeTakenInMillis"];
+                            exitCallForThisExit.IsAsync = ((bool)exitCallToken["exitPointCall"]["synchronous"] == false);
+                            exitCallForThisExit.ExitType = exitCallToken["type"].ToString();
+                            exitCallForThisExit.Detail = exitCallToken["detailString"].ToString();
+
+                            JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "to").FirstOrDefault();
+                            if (goingToProperty != null)
+                            {
+                                exitCallForThisExit.ToEntityName = goingToProperty["value"].ToString();
+                            }
+                            goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "from").FirstOrDefault();
+                            string callChainForThisSegment = "(Generated From Call Graph:Unknown)";
+                            if (goingToProperty != null)
+                            {
+                                callChainForThisSegment = String.Format("(Generated From Call Graph:{0})", goingToProperty["value"].ToString());
+                            }
+                            if (exitCallForThisExit.IsAsync == false)
+                            {
+                                exitCallForThisExit.CallChain = String.Format("{0}->[{1}]:[{3} ms]-><{2}>", callChainForThisSegment, exitCallForThisExit.ExitType, exitCallForThisExit.ToEntityName, exitCallForThisExit.Duration);
+                            }
+                            else
+                            {
+                                exitCallForThisExit.CallChain = String.Format("{0}->[{1}]:[{3} ms async]-><{2}>", callChainForThisSegment, exitCallForThisExit.ExitType, exitCallForThisExit.ToEntityName, exitCallForThisExit.Duration);
+                            }
+                        }
+
+                        // Finally, here we should have an exit from the segment data
+                        string callChain = exitCallForThisExit.CallChain;
+                        if (adjustCallDurationInCallChain == true)
+                        {
+                            // Call duration in the exit that has more then one call (typically database connection acquisition
+                            // would have this call chain
+                            // (ECommerce-Services)->[WEB_SERVICE]->(Inventory-Services)->[JDBC]:[20 ms]-><INVENTORY-MySQL DB-DB-5.7.13-0ubuntu0.16.04.2>
+                            // Here we replace this                                               ^^, which is a sum of all the calls in the call graph
+                            // with the value from the exit in the call graph
+
+                            Regex regexDuration = new Regex(@"(.*\[)(\d*)( ms.*\].*)", RegexOptions.IgnoreCase);
+                            callChain = regexDuration.Replace(callChain,
+                                m => String.Format(
+                                    "{0}{1}{2}",
+                                    m.Groups[1].Value,
+                                    exitCallToken["timeTakenInMillis"],
+                                    m.Groups[3].Value));
+                        }
+
+                        // Prepare the rendered value
+                        if (exitCallForThisExit.HasErrors == false)
+                        {
+                            if (exitCallForThisExit.ToSegmentID != 0)
+                            {
+                                exitCallsReferenceList.Add(String.Format("{0}->/{1}/ {2}", callChain, exitCallForThisExit.ToSegmentID, exitCallForThisExit.Detail));
+                            }
+                            else
+                            {
+                                exitCallsReferenceList.Add(String.Format("{0} {1}", callChain, exitCallForThisExit.Detail));
+                            }
+                        }
+                        else
+                        {
+                            exitCallsReferenceList.Add(String.Format("{0} {1} Error {2}", callChain, exitCallForThisExit.Detail, exitCallForThisExit.ErrorDetail));
+                            methodCallLine.HasErrors = true;
+                        }
+                    }
+
+                    // Finally, render the value out of all the exits in here
+                    if (methodCallLine.NumExits == 1 && exitCallsReferenceList.Count > 0)
+                    {
+                        methodCallLine.ExitCalls = exitCallsReferenceList[0];
+                    }
+                    else
+                    {
+                        StringBuilder sb = new StringBuilder(32 * methodCallLine.NumExits);
+                        foreach (string exitCallsReference in exitCallsReferenceList)
+                        {
+                            sb.AppendFormat("{0};\n", exitCallsReference);
+                        }
+                        sb.Remove(sb.Length - 1, 1);
+                        methodCallLine.ExitCalls = sb.ToString();
+                    }
+                }
+
+                #endregion
+
+                // Add to total list
+                methodCallLinesList.Add(methodCallLine);
+
+                // Move to next sibling
+                if (methodCallLineJSON.Next != null)
+                {
+                    JToken methodCallLineNextJSON = methodCallLineJSON.Next;
+                    stackOfMethodCallLineJSONs.Push(methodCallLineNextJSON);
+                    stackOfParentMethodCallLines.Push(methodCallLine.Parent);
+                }
+
+                // Move to next child, if exists, will take precedence of the sibling
+                if (methodCallLine.NumChildren > 0)
+                {
+                    JToken methodCallLineNextJSON = methodCallLineJSON["children"];
+                    if (methodCallLineNextJSON.HasValues == true)
+                    {
+                        methodCallLineNextJSON = methodCallLineNextJSON[0];
+                        stackOfMethodCallLineJSONs.Push(methodCallLineNextJSON);
+                        stackOfParentMethodCallLines.Push(methodCallLine);
+                    }
+                }
+            }
+
+            // Now calculate durations by walking up from each of the leafs, which are the bottom-most entries in the call graph
+            // Actual duration of the parent is the value reported minus the value of its child(ren)
+            //foreach (MethodCallLine methodCallLine in methodCallLinesLeafList)
+            //{
+            //    MethodCallLine methodCallLineChild = methodCallLine;
+            //    // Walk until we hit up
+            //    while (methodCallLineChild.Parent != null)
+            //    {
+            //        MethodCallLine methodCallLineParent = methodCallLineChild.Parent;
+
+            //        if (methodCallLineParent.ExecAdjusted == false || methodCallLineParent.ElementType == MethodCallLineElementType.Branch)
+            //        {
+            //            methodCallLineParent.Exec = methodCallLineParent.Exec - methodCallLineChild.ExecTotal;
+            //            methodCallLineParent.Wait = methodCallLineParent.Wait - methodCallLineChild.WaitTotal;
+            //            methodCallLineParent.Block = methodCallLineParent.Block - methodCallLineChild.BlockTotal;
+            //            methodCallLineParent.CPU = methodCallLineParent.CPU - methodCallLineChild.CPUTotal;
+            //            methodCallLineParent.ExecAdjusted = true;
+            //        }
+                    
+            //        methodCallLineChild = methodCallLineParent;
+            //    }
+            //}
+
+            return methodCallLinesList;
+        }
+
+        private static string getDurationRangeAsString(long duration)
+        {
+            if (duration < 0)
+            {
+                return "-1: t<0";
+            }
+            else if (duration == 0)
+            {
+                return "00: t=0";
+            }
+            else if (duration > 0 && duration <= 10)
+            {
+                return "01: 0<t<=10";
+            }
+            else if (duration > 10 && duration <= 50)
+            {
+                return "02: 10<t<=50";
+            }
+            else if (duration > 50 && duration <= 100)
+            {
+                return "03: 50<t<=100";
+            }
+            else if (duration > 100 && duration <= 200)
+            {
+                return "04: 100<t<=200";
+            }
+            else if (duration > 200 && duration <= 500)
+            {
+                return "05: 200<t<=500";
+            }
+            else if (duration > 500 && duration <= 1000)
+            {
+                return "06: 500<t<=1000";
+            }
+            else if (duration > 1000 && duration <= 2000)
+            {
+                return "07: 1000<t<=2000";
+            }
+            else if (duration > 2000 && duration <= 5000)
+            {
+                return "08: 2000<t<=5000";
+            }
+            else if (duration > 5000 && duration <= 10000)
+            {
+                return "09: 5000<t<=10000";
+            }
+            else if (duration > 10000 && duration <= 15000)
+            {
+                return "10: 10000<t<=15000";
+            }
+            else if (duration > 15000 && duration <= 20000)
+            {
+                return "11: 15000<t<=20000";
+            }
+            else if (duration > 20000 && duration <= 50000)
+            {
+                return "12: 20000<t<=50000";
+            }
+            else if (duration > 50000 && duration <= 100000)
+            {
+                return "13: 50000<t<=100000";
+            }
+            else if (duration > 100000 && duration <= 150000)
+            {
+                return "14: 100000<t<=150000";
+            }
+            else if (duration > 150000 && duration <= 200000)
+            {
+                return "15: 150000<t<=200000";
+            }
+            else if (duration > 200000 && duration <= 300000)
+            {
+                return "16: 200000<t<=300000";
+            }
+            return "17: t>300000"; ;
         }
 
         #endregion
@@ -17482,7 +19210,7 @@ namespace AppDynamics.Dexter
                                                                             ApplicationID = jobTarget.ApplicationID,
                                                                             Status = jobTarget.Status.ToString()
                                                                         }, true);
-            ExcelTable table = sheet.Tables.Add(range, REPORT_METRICS_ALL_ENTITIES_TABLE_PARAMETERS_TARGETS);
+            ExcelTable table = sheet.Tables.Add(range, REPORT_METRICS_GRAPHS_TABLE_PARAMETERS_TARGETS);
             table.ShowHeader = true;
             table.TableStyle = TableStyles.Medium2;
             table.ShowFilter = true;
@@ -17503,7 +19231,7 @@ namespace AppDynamics.Dexter
 
             #region Controller sheet
 
-            sheet = excelMetricGraphs.Workbook.Worksheets.Add(REPORT_ENTITY_DETAILS_SHEET_CONTROLLERS);
+            sheet = excelMetricGraphs.Workbook.Worksheets.Add(REPORT_METRICS_GRAPHS_SHEET_CONTROLLERS);
             sheet.Cells[1, 1].Value = "Table of Contents";
             sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
             sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -17512,7 +19240,7 @@ namespace AppDynamics.Dexter
             range = readCSVFileIntoExcelRange(controllersAllReportFilePath, 0, sheet, REPORT_METRICS_GRAPHS_LIST_SHEET_START_TABLE_AT, 1);
             if (range != null)
             {
-                table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_CONTROLLERS);
+                table = sheet.Tables.Add(range, REPORT_METRICS_GRAPHS_TABLE_CONTROLLERS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
                 table.ShowFilter = true;
@@ -17772,7 +19500,7 @@ namespace AppDynamics.Dexter
 
             if (sheetMetrics.Dimension.Rows == 2)
             {
-                fromRow = REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT;
+                fromRow = REPORT_METRICS_GRAPHS_LIST_SHEET_START_TABLE_AT;
             }
             else
             {
@@ -20935,7 +22663,7 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SUMMARY];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
                 table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_ENTITY_HOURLY];
                 if (table != null)
@@ -20980,9 +22708,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_ACTIVITY_GRID);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21006,7 +22734,7 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EVENTS];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
                 table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_EVENTS];
                 if (table != null)
@@ -21070,9 +22798,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_HEALTH_RULE_VIOLATIONS];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_HEALTH_RULE_VIOLATION_EVENTS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21122,7 +22850,7 @@ namespace AppDynamics.Dexter
             #region Snapshots sheet
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS];
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
                 table = sheet.Tables[REPORT_ENTITY_DETAILS_TABLE_SNAPSHOTS];
                 if (table != null)
@@ -21143,7 +22871,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
-                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
+                    ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
                     cfUserExperience.Style.Font.Color.Color = Color.White;
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorGreenForNormalSnapshots;
@@ -21169,7 +22897,7 @@ namespace AppDynamics.Dexter
                     cfUserExperience.Style.Fill.BackgroundColor.Color = colorRedForErrorSnapshots;
                     cfUserExperience.Formula = @"=""ERROR""";
 
-                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                    ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                     var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                     cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                     cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -21177,37 +22905,37 @@ namespace AppDynamics.Dexter
                     cfDuration.MiddleValue.Color = colorYellowFor3ColorScales;
                     cfDuration.HighValue.Color = colorRedFor3ColorScales;
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                    ExcelAddress cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallGraphs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallGraphs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallGraphs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallGraphs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
+                    cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SNAPSHOTS_PIVOT];
@@ -21241,9 +22969,9 @@ namespace AppDynamics.Dexter
             #region Segments sheet
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SEGMENTS];
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SEGMENTS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21257,13 +22985,13 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["ParentSegmentID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["ParentTierName"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
 
-                ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
+                ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                 var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
                 cfUserExperience.Style.Font.Color.Color = Color.White;
                 cfUserExperience.Style.Fill.BackgroundColor.Color = colorGreenForNormalSnapshots;
@@ -21289,7 +23017,7 @@ namespace AppDynamics.Dexter
                 cfUserExperience.Style.Fill.BackgroundColor.Color = colorRedForErrorSnapshots;
                 cfUserExperience.Formula = @"=""ERROR""";
 
-                ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                 var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                 cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                 cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -21297,34 +23025,34 @@ namespace AppDynamics.Dexter
                 cfDuration.MiddleValue.Color = colorYellowFor3ColorScales;
                 cfDuration.HighValue.Color = colorRedFor3ColorScales;
 
-                ExcelAddress cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
+                ExcelAddress cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrors"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrors"].Position + 1);
                 var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledBackends"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledTiers"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCalledApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCalledApplications"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToBackends"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToBackends"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToTiers"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumCallsToApplications"].Position + 1, sheet.Dimension.Rows, table.Columns["NumCallsToApplications"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCs"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                cfAddressNum = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
+                cfAddressNum = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumMIDCs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumMIDCs"].Position + 1);
                 cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                 sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SEGMENTS_PIVOT];
@@ -21355,9 +23083,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_EXIT_CALLS];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_EXIT_CALLS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21370,13 +23098,16 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
 
-                ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_METRICS_ALL_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
+                ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                 var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
                 cfDuration.LowValue.Color = colorGreenFor3ColorScales;
                 cfDuration.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;
@@ -21422,9 +23153,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_SERVICE_ENDPOINT_CALLS];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_SERVICE_ENDPOINT_CALLS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21437,7 +23168,7 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["SepName"].Position + 1).Width = 20;
             }
 
@@ -21447,9 +23178,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_DETECTED_ERRORS];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_DETECTED_ERRORS);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21462,7 +23193,7 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
@@ -21495,9 +23226,9 @@ namespace AppDynamics.Dexter
 
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_BUSINESS_DATA];
 
-            if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+            if (sheet.Dimension.Rows > REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT)
             {
-                range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                range = sheet.Cells[REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                 table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_BUSINESS_DATA);
                 table.ShowHeader = true;
                 table.TableStyle = TableStyles.Medium2;
@@ -21510,7 +23241,7 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
+                sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;

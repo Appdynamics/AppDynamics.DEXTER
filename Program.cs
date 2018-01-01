@@ -48,7 +48,7 @@ namespace AppDynamics.Dexter
                 programOptions.JobName = Path.GetFileNameWithoutExtension(programOptions.InputJobFilePath);
                 programOptions.OutputJobFolderPath = Path.Combine(programOptions.OutputFolderPath, programOptions.JobName);
                 programOptions.OutputJobFilePath = Path.Combine(programOptions.OutputJobFolderPath, "jobparameters.json");
-
+                programOptions.ProgramLocationFolderPath = AppDomain.CurrentDomain.BaseDirectory;
                 logger.Trace("Adjusted ProgramOptions are now:\r\n{0}", programOptions);
                 loggerConsole.Trace("Adjusted ProgramOptions are now:\r\n{0}", programOptions);
 

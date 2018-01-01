@@ -27,12 +27,14 @@ namespace AppDynamics.Dexter.DataObjects
         public string ToLink { get; set; }
         public string ToEntityName { get; set; }
         public string ToEntityType { get; set; }
+        public long ToSegmentID { get; set; }
 
         public DateTime Occured { get; set; }
         public DateTime OccuredUtc { get; set; }
 
         public string RequestID { get; set; }
         public long SegmentID { get; set; }
+        public string SequenceNumber { get; set; }
 
         public string ExitType { get; set; }
         public string Detail { get; set; }
@@ -40,6 +42,8 @@ namespace AppDynamics.Dexter.DataObjects
         public bool IsAsync { get; set; }
 
         public long Duration { get; set; }
+        public string DurationRange { get; set; }
+
         public string CallChain { get; set; }
 
         public bool HasErrors { get; set; }

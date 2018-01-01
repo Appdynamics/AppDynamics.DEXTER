@@ -14,7 +14,7 @@ namespace AppDynamics.Dexter.DataObjects
         public long Count { get; set; }
         public long Min { get; set; }
         public long Max { get; set; }
-        public long Occurences { get; set; }
+        public long Occurrences { get; set; }
         public long Sum { get; set; }
         public long Value { get; set; }
 

@@ -23,11 +23,6 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.BTID).Index(i); i++;
             Map(m => m.SEPID).Index(i); i++;
 
-            //Map(m => m.ControllerLink).Index(i); i++;
-            //Map(m => m.ApplicationLink).Index(i); i++;
-            //Map(m => m.TierLink).Index(i); i++;
-            //Map(m => m.NodeLink).Index(i); i++;
-            //Map(m => m.BTLink).Index(i); i++;
             Map(m => m.SEPLink).Index(i); i++;
         }
     }

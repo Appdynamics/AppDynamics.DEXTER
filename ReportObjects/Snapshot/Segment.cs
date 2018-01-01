@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AppDynamics.Dexter.DataObjects
 {
@@ -32,10 +30,12 @@ namespace AppDynamics.Dexter.DataObjects
         public long SegmentID { get; set; }
         public string UserExperience { get; set; }
         public long Duration { get; set; }
+        public string DurationRange { get; set; }
+
         public long E2ELatency { get; set; }
         public double CPUDuration { get; set; }
-        public double WaitDuration { get; set; }
-        public double BlockDuration { get; set; }
+        public long WaitDuration { get; set; }
+        public long BlockDuration { get; set; }
         public string DiagSessionID { get; set; }
         public string URL { get; set; }
         public string ThreadID { get; set; }
@@ -50,8 +50,8 @@ namespace AppDynamics.Dexter.DataObjects
         public string WarningThreshold { get; set; }
         public string CriticalThreshold { get; set; }
 
-        public long ParentSegmentID { get; set; }
-        public string ParentTierName { get; set; }
+        public long FromSegmentID { get; set; }
+        public string FromTierName { get; set; }
 
         public string CallGraphType { get; set; }
         public bool IsArchived { get; set; }
