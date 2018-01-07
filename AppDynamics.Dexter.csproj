@@ -162,7 +162,6 @@
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
-    <Compile Include="ReportObjects\Snapshot\ExecTimeRange.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineOccurrenceReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineElementType.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLine.cs" />

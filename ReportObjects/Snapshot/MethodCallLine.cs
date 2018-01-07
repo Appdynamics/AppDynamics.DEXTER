@@ -32,6 +32,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public long Exec { get; set; }
         public long ExecTotal { get; set; }
+        public long ExecToHere { get; set; }
         public long Wait { get; set; }
         public long WaitTotal { get; set; }
         public long Block { get; set; }

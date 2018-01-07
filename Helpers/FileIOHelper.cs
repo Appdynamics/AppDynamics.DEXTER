@@ -351,6 +351,8 @@ namespace AppDynamics.Dexter
                         // Append without header
                         using (StreamWriter sw = File.AppendText(csvFilePath))
                         {
+                            // Always use single New Line character as line separator. Otherwise on Mac and Linux report combination gets messed up
+                            sw.NewLine = "\n";
                             CsvWriter csvWriter = new CsvWriter(sw);
                             csvWriter.Configuration.RegisterClassMap(classMap);
                             csvWriter.Configuration.HasHeaderRecord = false;
@@ -362,6 +364,7 @@ namespace AppDynamics.Dexter
                         // Create new
                         using (StreamWriter sw = File.CreateText(csvFilePath))
                         {
+                            sw.NewLine = "\n";
                             CsvWriter csvWriter = new CsvWriter(sw);
                             csvWriter.Configuration.RegisterClassMap(classMap);
                             csvWriter.WriteRecords(listToWrite);
@@ -461,14 +464,13 @@ namespace AppDynamics.Dexter
                                     char c = (char)sr.ReadByte();
                                     if (c == '\n' || c == '\r')
                                     {
-                                        sr.ReadByte();
                                         break;
                                     }
                                 }
 
-                                using (FileStream sw = File.Open(csvToAppendToFilePath, FileMode.Append))
+                                using (FileStream csvToAppendToSW = File.Open(csvToAppendToFilePath, FileMode.Append))
                                 {
-                                    copyStream(sr, sw);
+                                    copyStream(sr, csvToAppendToSW);
                                 }
                             }
                         }
@@ -510,6 +512,7 @@ namespace AppDynamics.Dexter
                         // If the stream to append to is already ahead, that means we don't need headers anymore
                         if (csvToAppendToSW.Position > 0)
                         {
+                            // Go through the first line to remove the header
                             while (true)
                             {
                                 if (sr.Position == sr.Length) break;
@@ -517,7 +520,7 @@ namespace AppDynamics.Dexter
                                 char c = (char)sr.ReadByte();
                                 if (c == '\n' || c == '\r')
                                 {
-                                    sr.ReadByte();
+                                    // Found the end of the first lne
                                     break;
                                 }
                             }

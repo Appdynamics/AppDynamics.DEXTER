@@ -536,6 +536,7 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS = "5.Events";
         private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT = "5.Events.Type";
+        private const string REPORT_DETECTED_EVENTS_SHEET_EVENTS_DURATION_PIVOT = "5.Events.Duration";
 
         private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS = "6.Health Rule Violations";
         private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "6.Health Rule Violations.Type";
@@ -550,9 +551,11 @@ namespace AppDynamics.Dexter
         private const string REPORT_DETECTED_EVENTS_TABLE_HEALTH_RULE_VIOLATION_EVENTS = "t_HealthRuleViolationEvents";
 
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE = "p_EventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_DURATION = "p_EventsDuration";
         private const string REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE = "p_HealthRuleViolationEventsType";
 
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE_GRAPH = "g_EventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_DURATION_GRAPH = "g_EventsDuration";
         private const string REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE_GRAPH = "g_HealthRuleViolationEventsType";
 
         private const int REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT = 4;
@@ -644,9 +647,11 @@ namespace AppDynamics.Dexter
 
         private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS = "5.Snapshots";
         private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT = "5.Snapshots.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_DURATION_PIVOT = "5.Snapshots.Duration";
 
         private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS = "6.Segments";
         private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT = "6.Segments.Type";
+        private const string REPORT_SNAPSHOTS_SHEET_SEGMENTS_DURATION_PIVOT = "6.Segments.Duration";
 
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS = "7.Exit Calls";
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT = "7.Exit Calls.Type";
@@ -684,9 +689,11 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES_OCCURRENCES = "t_MethodCallLinesOccurrences";
 
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS = "p_Snapshots";
+        private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_DURATION = "p_SnapshotsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS = "p_Segments";
+        private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS_DURATION = "p_SegmentsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS = "p_ExitCalls";
-        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION = "p_ExitCallsDetailsDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DURATION = "p_ExitCallsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS = "p_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA = "p_BusinessData";
         private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE = "p_MethodCallLinesType";
@@ -695,9 +702,11 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_LOCATION = "p_MethodCallLinesOccurrencesLocation";
 
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_GRAPH = "g_Snapshots";
+        private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_DURATION_GRAPH = "g_SnapshotsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS_GRAPH = "g_Segments";
+        private const string REPORT_SNAPSHOTS_PIVOT_SEGMENTS_DURATION_GRAPH = "g_SegmentsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_GRAPH = "g_ExitCalls";
-        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION_GRAPH = "g_ExitCallsDetailsDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DURATION_GRAPH = "g_ExitCallsDuration";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_GRAPH = "g_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_GRAPH = "g_BusinessData";
         private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE = "g_MethodCallLinesType";
@@ -2792,6 +2801,14 @@ namespace AppDynamics.Dexter
                         // Extract individual snapshots
                         loggerConsole.Info("Extract Individual Snapshots");
 
+                        // Identify Node.JS tiers that will extact call graph using a different call
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTTier> tiersNodeJSList = null;
+                        if (tiersList != null)
+                        {
+                            tiersNodeJSList = tiersList.Where(t => t.agentType == "NODEJS_APP_AGENT").ToList();
+                        }
+
                         // Process each hour at a time
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
@@ -2815,7 +2832,7 @@ namespace AppDynamics.Dexter
                                         () => 0,
                                         (listOfSnapshotsInHourChunk, loop, subtotal) =>
                                         {
-                                            subtotal += extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourChunk, snapshotsFolderPath, false);
+                                            subtotal += extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourChunk, tiersNodeJSList, snapshotsFolderPath, false);
                                             return subtotal;
                                         },
                                         (finalResult) =>
@@ -2827,7 +2844,7 @@ namespace AppDynamics.Dexter
                                 }
                                 else
                                 {
-                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHour.ToList<JToken>(), snapshotsFolderPath, true);
+                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHour.ToList<JToken>(), tiersNodeJSList, snapshotsFolderPath, true);
                                 }
 
                                 loggerConsole.Info("{0} snapshots", numSnapshots);
@@ -6254,8 +6271,8 @@ namespace AppDynamics.Dexter
                                         eventRow.ApplicationID = jobTarget.ApplicationID;
 
                                         eventRow.EventID = (long)interestingEvent["id"];
-                                        eventRow.OccuredUtc = convertFromUnixTimestamp((long)interestingEvent["eventTime"]);
-                                        eventRow.Occured = eventRow.OccuredUtc.ToLocalTime();
+                                        eventRow.OccurredUtc = convertFromUnixTimestamp((long)interestingEvent["eventTime"]);
+                                        eventRow.Occurred = eventRow.OccurredUtc.ToLocalTime();
                                         eventRow.Type = interestingEvent["type"].ToString();
                                         eventRow.SubType = interestingEvent["subType"].ToString();
                                         eventRow.Severity = interestingEvent["severity"].ToString();
@@ -6343,7 +6360,7 @@ namespace AppDynamics.Dexter
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + eventsList.Count;
 
                         // Sort them
-                        eventsList = eventsList.OrderBy(o => o.Type).ThenBy(o => o.Occured).ThenBy(o => o.Severity).ToList();
+                        eventsList = eventsList.OrderBy(o => o.Type).ThenBy(o => o.Occurred).ThenBy(o => o.Severity).ToList();
 
                         FileIOHelper.writeListToCSVFile<Event>(eventsList, new EventReportMap(), eventsReportFilePath);
 
@@ -10541,6 +10558,9 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Duration";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS_DURATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS_PIVOT);
@@ -10551,6 +10571,15 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_EVENTS_DURATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_EVENTS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 7, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -10750,6 +10779,33 @@ namespace AppDynamics.Dexter
                     ExcelChart chart = sheet.Drawings.AddChart(REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE_GRAPH, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_EVENTS_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1], range, REPORT_DETECTED_EVENTS_PIVOT_EVENTS_DURATION);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["TierName"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["TriggeredEntityName"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["TriggeredEntityType"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["SubType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_DETECTED_EVENTS_PIVOT_EVENTS_DURATION_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
                 }
 
                 #endregion
@@ -10942,6 +10998,10 @@ namespace AppDynamics.Dexter
                 hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
                 hyperLinkStyle.Style.Font.Color.SetColor(colorBlueForHyperlinks);
 
+                var timelineStyle = sheet.Workbook.Styles.CreateNamedStyle("TimelineStyle");
+                timelineStyle.Style.Font.Name = "Consolas";
+                timelineStyle.Style.Font.Size = 8;
+
                 int l = 1;
                 sheet.Cells[l, 1].Value = "Table of Contents";
                 sheet.Cells[l, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
@@ -11040,9 +11100,21 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Duration";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_DURATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SNAPSHOTS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_DURATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -11058,9 +11130,21 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Duration";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SEGMENTS_DURATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SEGMENTS_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SEGMENTS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SEGMENTS_DURATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -11076,6 +11160,9 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Duration";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_PIVOT);
@@ -11085,7 +11172,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -11412,6 +11499,25 @@ namespace AppDynamics.Dexter
                     ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_GRAPH, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_DURATION_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
                 }
 
                 #endregion
@@ -11443,6 +11549,10 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+
+                    // Make timeline fixed width
+                    ExcelRangeBase rangeTimeline = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Timeline"].Position + 1, sheet.Dimension.Rows, table.Columns["Timeline"].Position + 1];
+                    rangeTimeline.StyleName = "TimelineStyle";
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
@@ -11534,6 +11644,25 @@ namespace AppDynamics.Dexter
                     ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_SEGMENTS_GRAPH, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_SEGMENTS_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_SEGMENTS_DURATION_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
                 }
 
                 #endregion
@@ -11615,19 +11744,22 @@ namespace AppDynamics.Dexter
                     chart.SetSize(800, 300);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_DURATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION);
-                    fieldF = pivot.PageFields.Add(pivot.Fields["ExitType"]);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
-                    fieldR.AddDateGrouping(eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ExitType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
 
-                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DETAILS_DURATION_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_DURATION_GRAPH, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
                 }
@@ -13370,7 +13502,7 @@ namespace AppDynamics.Dexter
 
         #region Snapshot extraction functions
 
-        private static int extractSnapshots(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<JToken> entityList, string snapshotsFolderPath, bool progressToConsole)
+        private static int extractSnapshots(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<JToken> entityList, List<AppDRESTTier> tiersNodeJSList, string snapshotsFolderPath, bool progressToConsole)
         {
            int j = 0;
 
@@ -13451,7 +13583,7 @@ namespace AppDynamics.Dexter
                         {
                             string snapshotSegmentErrorFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegment["id"]));
 
-                            if ((bool)snapshotSegment["errorOccurred"] == true && File.Exists(snapshotSegmentErrorFilePath) == false)
+                            if (File.Exists(snapshotSegmentErrorFilePath) == false && (bool)snapshotSegment["errorOccurred"] == true)
                             {
                                 string snapshotSegmentJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
                                 if (snapshotSegmentJson != String.Empty)
@@ -13470,10 +13602,50 @@ namespace AppDynamics.Dexter
                         {
                             string snapshotSegmentCallGraphFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME, snapshotSegment["id"]));
 
-                            if (((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true) && File.Exists(snapshotSegmentCallGraphFilePath) == false)
+                            if (File.Exists(snapshotSegmentCallGraphFilePath) == false && ((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true))
                             {
-                                string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                // If the tier is Node.JS, the call graphs come from Process Snapshot
+                                bool getProcessCallGraph = false;
+                                string processRequestGUID = String.Empty;
+                                if (tiersNodeJSList != null && tiersNodeJSList.Count > 0)
+                                {
+                                    // Is this a Node.JS tier?
+                                    if (tiersNodeJSList.Count(t => t.id == (long)snapshotSegment["applicationComponentId"]) > 0)
+                                    {
+                                        // Yes, it is
+
+                                        // Is there a process snapshot? Check Transaction Properties for its value
+                                        string snapshotSegmentDataFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME, snapshotSegment["id"]));
+                                        JObject snapshotSegmentDetail = FileIOHelper.loadJObjectFromFile(snapshotSegmentDataFilePath);
+                                        if (snapshotSegmentDetail != null)
+                                        {
+                                            if (snapshotSegmentDetail["transactionProperties"].HasValues == true)
+                                            {
+                                                foreach (JToken transactionPropertyToken in snapshotSegmentDetail["transactionProperties"])
+                                                {
+                                                    if (transactionPropertyToken["name"].ToString() == "Process Snapshot GUIDs")
+                                                    {
+                                                        getProcessCallGraph = true;
+                                                        processRequestGUID = transactionPropertyToken["value"].ToString();
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // Ok, now either get call graph the usual way or process snapshot call graph
+                                if (getProcessCallGraph == true && processRequestGUID.Length > 0)
+                                {
+                                    string snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                }
+                                else
+                                {
+                                    string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                }
                             }
                         }
                     }
@@ -16831,14 +17003,7 @@ namespace AppDynamics.Dexter
                 
                 #endregion
 
-                if (File.Exists(snapshotsFileName) == false ||
-                    File.Exists(segmentsFileName) == false ||
-                    File.Exists(exitCallsFileName) == false ||
-                    File.Exists(serviceEndpointCallsFileName) == false ||
-                    File.Exists(detectedErrorsFileName) == false ||
-                    File.Exists(businessDataFileName) == false ||
-                    File.Exists(methodCallLinesFileName) == false || 
-                    File.Exists(methodCallLinesOccurrencesFileName) == false)
+                if (File.Exists(snapshotsFileName) == false)
                 {
                     #region Fill in Snapshot data
 
@@ -16853,8 +17018,8 @@ namespace AppDynamics.Dexter
                     snapshot.NodeID = (long)snapshotToken["applicationComponentNodeId"];
                     snapshot.NodeName = snapshotToken["applicationComponentNodeName"].ToString();
 
-                    snapshot.OccuredUtc = convertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
-                    snapshot.Occured = snapshot.OccuredUtc.ToLocalTime();
+                    snapshot.OccurredUtc = convertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
+                    snapshot.Occurred = snapshot.OccurredUtc.ToLocalTime();
 
                     snapshot.RequestID = snapshotToken["requestGUID"].ToString();
                     snapshot.UserExperience = snapshotToken["userExperience"].ToString();
@@ -16924,8 +17089,8 @@ namespace AppDynamics.Dexter
                     snapshot.BTLink = String.Format(DEEPLINK_BUSINESS_TRANSACTION, snapshot.Controller, snapshot.ApplicationID, snapshot.BTID, DEEPLINK_THIS_TIMERANGE);
 
                     // The snapshot link requires to have the time range is -30 < occuredtime < +30 minutes
-                    long fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccuredUtc.AddMinutes(-30));
-                    long toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccuredUtc.AddMinutes(+30));
+                    long fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(-30));
+                    long toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(+30));
                     long differenceInMinutesSnapshot = (toTimeUnixSnapshot - fromTimeUnixSnapshot) / (60000);
                     string DEEPLINK_THIS_TIMERANGE_SNAPSHOT = String.Format(DEEPLINK_TIMERANGE_BETWEEN_TIMES, toTimeUnixSnapshot, fromTimeUnixSnapshot, differenceInMinutesSnapshot);
                     snapshot.SnapshotLink = String.Format(DEEPLINK_SNAPSHOT_OVERVIEW, snapshot.Controller, snapshot.ApplicationID, snapshot.RequestID, DEEPLINK_THIS_TIMERANGE_SNAPSHOT);
@@ -16940,7 +17105,7 @@ namespace AppDynamics.Dexter
                         getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
                         getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
                         userExperienceFolderNameMapping[snapshot.UserExperience],
-                        snapshot.Occured,
+                        snapshot.Occurred,
                         snapshot.RequestID);
                     string reportFilePath = Path.Combine(
                         reportsFolderPath,
@@ -17014,8 +17179,8 @@ namespace AppDynamics.Dexter
                                 segment.NodeID = (long)snapshotSegmentToken["applicationComponentNodeId"];
                                 segment.NodeName = snapshotSegmentToken["applicationComponentNodeName"].ToString();
 
-                                segment.OccuredUtc = convertFromUnixTimestamp((long)snapshotSegmentDetail["serverStartTime"]);
-                                segment.Occured = segment.OccuredUtc.ToLocalTime();
+                                segment.OccurredUtc = convertFromUnixTimestamp((long)snapshotSegmentDetail["serverStartTime"]);
+                                segment.Occurred = segment.OccurredUtc.ToLocalTime();
 
                                 segment.RequestID = snapshotSegmentDetail["requestGUID"].ToString();
                                 segment.SegmentID = (long)snapshotSegmentDetail["id"];
@@ -17133,8 +17298,8 @@ namespace AppDynamics.Dexter
                                 segment.BTLink = snapshot.BTLink;
 
                                 // The snapshot link requires to have the time range is -30 < occuredtime < +30 minutes
-                                fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccuredUtc.AddMinutes(-30));
-                                toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccuredUtc.AddMinutes(+30));
+                                fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(-30));
+                                toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(+30));
                                 differenceInMinutesSnapshot = (toTimeUnixSnapshot - fromTimeUnixSnapshot) / (60000);
                                 DEEPLINK_THIS_TIMERANGE_SNAPSHOT = String.Format(DEEPLINK_TIMERANGE_BETWEEN_TIMES, toTimeUnixSnapshot, fromTimeUnixSnapshot, differenceInMinutesSnapshot);
                                 segment.SegmentLink = String.Format(DEEPLINK_SNAPSHOT_SEGMENT, segment.Controller, segment.ApplicationID, segment.RequestID, segment.SegmentID, DEEPLINK_THIS_TIMERANGE_SNAPSHOT);
@@ -17237,8 +17402,8 @@ namespace AppDynamics.Dexter
                                     exitCall.RequestID = segment.RequestID;
                                     exitCall.SegmentID = segment.SegmentID;
 
-                                    exitCall.OccuredUtc = segment.OccuredUtc;
-                                    exitCall.Occured = segment.Occured;
+                                    exitCall.OccurredUtc = segment.OccurredUtc;
+                                    exitCall.Occurred = segment.Occurred;
 
                                     exitCall.ExitType = exitCallToken["exitPointName"].ToString();
 
@@ -17881,10 +18046,19 @@ namespace AppDynamics.Dexter
                                     businessData.RequestID = segment.RequestID;
                                     businessData.SegmentID = segment.SegmentID;
 
-                                    businessData.DataType = "Code";
-
                                     businessData.DataName = transactionPropertyToken["name"].ToString();
                                     businessData.DataValue = transactionPropertyToken["value"].ToString().Trim('[', ']');
+
+                                    if (businessData.DataName.StartsWith("Exit ") == true)
+                                    {
+                                        // Exits from the call graphs
+                                        businessData.DataType = "Exit";
+                                    }
+                                    else
+                                    {
+                                        // Most likely MIDC although not always
+                                        businessData.DataType = "Code";
+                                    }
 
                                     #region Fill in the deeplinks for the Business Data
 
@@ -17918,14 +18092,17 @@ namespace AppDynamics.Dexter
                                 //    convertCallGraphChildren_Recursion(snapshotSegmentCallGraphs[0], 0, ref methodLineCallSequenceNumber, methodCallLinesInSegmentList, serviceEndpointCallsListInThisSegment, exitCallsListInThisSegmentCopy);
                                 //}
 
-                                // Instead, let's call it using stack-based algorithm
+                                // Instead, let's unwrap it using stack-based algorithm
 
                                 // Make a copy of this list because we are going to slowly strip it down and we don't want the parent list modified
-                                List<MethodCallLine> methodCallLinesInSegmentList = null;
+                                List<MethodCallLine> methodCallLinesInSegmentList = new List<MethodCallLine>();
                                 if (snapshotSegmentCallGraphs != null && snapshotSegmentCallGraphs.HasValues == true)
                                 {
                                     List<ExitCall> exitCallsListInThisSegmentCopy = new List<ExitCall>(exitCallsListInThisSegment.Count);
                                     exitCallsListInThisSegmentCopy.AddRange(exitCallsListInThisSegment);
+
+                                    // For vast majority of snapshots, there is only one element off the root that is an entry
+                                    // However, for process snapshots (Node.JS tiers), there can be multiple of those
                                     methodCallLinesInSegmentList = convertCallGraphChildren_Stack(snapshotSegmentCallGraphs[0], serviceEndpointCallsListInThisSegment, exitCallsListInThisSegmentCopy);
                                 }
                                 if (methodCallLinesInSegmentList == null)
@@ -17934,6 +18111,7 @@ namespace AppDynamics.Dexter
                                 }
 
                                 // Fill in common values and look up framework
+                                long execTimeTotal = 0;
                                 foreach (MethodCallLine methodCallLine in methodCallLinesInSegmentList)
                                 {
                                     methodCallLine.Controller = snapshot.Controller;
@@ -17949,50 +18127,47 @@ namespace AppDynamics.Dexter
                                     methodCallLine.RequestID = snapshotSegmentToken["requestGUID"].ToString();
                                     methodCallLine.SegmentID = (long)snapshotSegmentToken["id"];
 
+                                    methodCallLine.Framework = String.Empty;
                                     // Index Method->Framework type
-                                    if (methodCallLine.Class.Length == 0)
+                                    if (methodCallLine.Class.Length > 0)
                                     {
-                                        methodCallLine.Framework = "Empty class name";
-                                    }
-                                    else
-                                    {
+                                        // Find mapping
                                         string keyLetterOfMappingList = methodCallLine.Class.Substring(0, 1).ToLower();
-                                        if (methodCallLineClassToFrameworkTypeMappingDictionary.ContainsKey(keyLetterOfMappingList) == false)
-                                        {
-                                            methodCallLine.Framework = String.Format("No mapping for {0}", keyLetterOfMappingList);
-                                        }
-                                        else
+                                        if (methodCallLineClassToFrameworkTypeMappingDictionary.ContainsKey(keyLetterOfMappingList) == true)
                                         {
                                             List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary[keyLetterOfMappingList];
-
-                                            bool frameworkMappingFound = false;
                                             foreach (MethodCallLineClassTypeMapping mapping in methodCallLineClassToFrameworkTypeMappingList)
                                             {
                                                 if (methodCallLine.Class.StartsWith(mapping.ClassPrefix, StringComparison.Ordinal) == true)
                                                 {
                                                     methodCallLine.Framework = String.Format("{0} ({1})", mapping.ClassPrefix, mapping.FrameworkType);
-                                                    frameworkMappingFound = true;
                                                     break;
                                                 }
                                             }
-                                            if (frameworkMappingFound == false)
+                                        }
+
+                                        // If we haven't found framework, get it out of the class name
+                                        if (methodCallLine.Framework.Length == 0)
+                                        {
+                                            // Grab just the namespace of the class
+                                            int indexOfPeriodBeforeClassName = methodCallLine.Class.LastIndexOf('.');
+                                            if (indexOfPeriodBeforeClassName > 0)
                                             {
-                                                // Grab just the namespace of the class
-                                                int indexOfPeriodBeforeClassName = methodCallLine.Class.LastIndexOf('.');
-                                                if (indexOfPeriodBeforeClassName > 0)
-                                                {
-                                                    methodCallLine.Framework = methodCallLine.Class.Substring(0, indexOfPeriodBeforeClassName);
-                                                }
-                                                else
-                                                {
-                                                    methodCallLine.Framework = "No class name determined";
-                                                }
+                                                methodCallLine.Framework = methodCallLine.Class.Substring(0, indexOfPeriodBeforeClassName);
+                                            }
+                                            else
+                                            {
+                                                methodCallLine.Framework = methodCallLine.Class;
                                             }
                                         }
                                     }
 
                                     // Calculate the duration range
                                     methodCallLine.ExecRange = getDurationRangeAsString(methodCallLine.Exec);
+
+                                    // Calculate elapsed time
+                                    methodCallLine.ExecToHere = execTimeTotal;
+                                    execTimeTotal = execTimeTotal + methodCallLine.Exec;
                                 }
 
                                 // Fill in data collectors
@@ -18144,11 +18319,190 @@ namespace AppDynamics.Dexter
                         }
 
                         // Sort things prettily
-                        segmentsList = segmentsList.OrderByDescending(s => s.IsFirstInChain).ThenBy(s => s.Occured).ThenBy(s => s.UserExperience).ToList();
+                        segmentsList = segmentsList.OrderByDescending(s => s.IsFirstInChain).ThenBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
                         exitCallsList = exitCallsList.OrderBy(c => c.RequestID).ThenBy(c => c.SegmentID).ThenBy(c => c.ExitType).ToList();
                         serviceEndpointCallsList = serviceEndpointCallsList.OrderBy(s => s.RequestID).ThenBy(s => s.SegmentID).ThenBy(s => s.SEPName).ToList();
                         detectedErrorsList = detectedErrorsList.OrderBy(e => e.RequestID).ThenBy(e => e.SegmentID).ThenBy(e => e.ErrorName).ToList();
                         businessDataList = businessDataList.OrderBy(b => b.DataType).ThenBy(b => b.DataName).ToList();
+
+                        #region Calculate End to End Duration time
+
+                        if (segmentsList.Count == 0)
+                        {
+                            snapshot.DurationEndToEnd = snapshot.Duration;
+                        }
+                        else if (segmentsList.Count == 1)
+                        {
+                            snapshot.DurationEndToEnd = segmentsList[0].Duration;
+                        }
+                        else
+                        {
+                            Segment segmentFirst = segmentsList[0];
+                            Segment segmentLast = segmentsList[segmentsList.Count - 1];
+                            snapshot.DurationEndToEnd = Math.Abs((long)(segmentLast.Occurred - segmentFirst.Occurred).TotalMilliseconds) + segmentLast.Duration;
+                            if (snapshot.DurationEndToEnd < snapshot.Duration)
+                            {
+                                snapshot.DurationEndToEnd = snapshot.Duration;
+                            }
+                        }
+                        snapshot.DurationEndToEndRange = getDurationRangeAsString(snapshot.DurationEndToEnd);
+
+                        #endregion
+
+                        #region Build call timeline for the Segments
+
+                        foreach (Segment segment in segmentsList)
+                        {
+                            // Timeline looks like that:
+                            //^ ---------------^ ---1------------ ^ ------2-------- -^ ---------3---- -^ -------------4 -^
+                            //-
+                            //-
+                            //-
+                            //-
+                            //^ ---------------
+                            //                -
+                            //                -
+                            //                ^ ---------------
+                            //                                 -
+                            //                                 -
+                            //                                 -
+                            //                                 ^ ---------------
+                            //                                                  -
+                            //                                                  -
+                            //                                                  ^ ---------------
+                            //                                                                  -
+                            //                                                                  ^ ---------------
+                            //                                                                                   -
+                            //                                                                                   -
+                            //                                                                                   -
+                            //                                                                                   ^
+                            //                                                                                   -
+                            //                                                                                   -
+                            // Where: 
+                            //      - each dash - character is a certain duration, resolution is determined by the overall duration of the snapshot
+                            //      - space character begins is offset between the time of Segment and time of Snapshot
+                            //      - exits are signified by caret mark ^ character
+                            //      - numbers are either 1 second or 10 second marks, depending on resolution
+                            // To calculate
+                            // 1) Evaluate interval range based on overall size of snapshot
+                            // 2) For each interval, put dash - characters to signify exec time
+                            // 3) For each of the exit calls in MethodCallLine, replace = character with caret mark ^ character
+                            // 4) Go from beginning of Snapshot time to beginning of Segment, putting space character for each interval to signify time offset
+
+                            // Assume duration of segment to be max 2 minutes. Of course, StringBuilder will adjust if it is longer
+                            StringBuilder sbTimeline = new StringBuilder(120);
+
+                            // Determine Timeline resolution
+                            int timelineResolutionInMS = 0;
+                            int timelineSignificantMarksAt = 0;
+
+                            if (snapshot.DurationEndToEnd <= 1000)
+                            {
+                                timelineResolutionInMS = 10;
+                                timelineSignificantMarksAt = 100;
+                            }
+                            else if (snapshot.DurationEndToEnd <= 5000)
+                            {
+                                timelineResolutionInMS = 50;
+                                timelineSignificantMarksAt = 20;
+                            }
+                            else if (snapshot.DurationEndToEnd <= 10000)
+                            {
+                                timelineResolutionInMS = 100;
+                                timelineSignificantMarksAt = 10;
+                            }
+                            else if (snapshot.DurationEndToEnd <= 25000)
+                            {
+                                timelineResolutionInMS = 250;
+                                timelineSignificantMarksAt = 40;
+                            }
+                            else if (snapshot.DurationEndToEnd <= 50000)
+                            {
+                                timelineResolutionInMS = 500;
+                                timelineSignificantMarksAt = 20;
+                            }
+                            else
+                            {
+                                timelineResolutionInMS = 1000;
+                                timelineSignificantMarksAt = 10;
+                            }
+                            segment.TimelineResolution = timelineResolutionInMS;
+
+                            // Display this Segment's execution time as line of dashes -
+                            int numIntervalsSegmentDuration = (int)Math.Round((double)(segment.Duration / timelineResolutionInMS), 0);
+                            if (numIntervalsSegmentDuration == 0)
+                            {
+                                numIntervalsSegmentDuration = 1;
+                            }
+                            sbTimeline.Append(new String('-', numIntervalsSegmentDuration));
+
+                            // Put significant area marks at 1 or 10 second intervals
+                            int intervalCounter = 1;
+                            for (int i = timelineSignificantMarksAt; i < sbTimeline.Length; i = i + timelineSignificantMarksAt)
+                            {
+                                // Calculate number of seconds
+                                int secondsElapsed = (timelineResolutionInMS * timelineSignificantMarksAt) / 1000 * intervalCounter;
+                                string secondsElapsedString = secondsElapsed.ToString();
+
+                                // Insert number of seconds, aligned left
+                                sbTimeline.Insert(i - 1, secondsElapsedString);
+
+                                // Now remove the same number of characters
+                                sbTimeline.Remove(i - 1 + secondsElapsedString.Length, secondsElapsedString.Length);
+
+                                // Go to next counter
+                                intervalCounter++;
+                            }
+
+                            // Represent the exits from MethodCallLines with caret ^ characters
+                            List<MethodCallLine> methodCallLinesOccurrencesExits = methodCallLinesList.Where(m => m.SegmentID == segment.SegmentID && m.NumExits > 0).ToList();
+                            foreach (MethodCallLine methodCallLineExit in methodCallLinesOccurrencesExits)
+                            {
+                                int numIntervalsOffsetFromSegmentStartToExit = (int)Math.Round((double)(methodCallLineExit.ExecToHere / timelineResolutionInMS), 0);
+                                if (numIntervalsOffsetFromSegmentStartToExit > sbTimeline.Length - 1)
+                                {
+                                    numIntervalsOffsetFromSegmentStartToExit = sbTimeline.Length - 1;
+                                }
+                                sbTimeline[numIntervalsOffsetFromSegmentStartToExit] = '^';
+                            }
+
+                            // Add indent away from the beginning of Snapshot time to this Segment
+                            int numIntervalsBetweenSnapshotStartandSegmentStart = (int)Math.Round((segment.Occurred - snapshot.Occurred).TotalMilliseconds / timelineResolutionInMS, 0);
+                            if (numIntervalsBetweenSnapshotStartandSegmentStart > 0)
+                            {
+                                sbTimeline.Insert(0, new String(' ', numIntervalsBetweenSnapshotStartandSegmentStart));
+                            }
+                            else if (numIntervalsBetweenSnapshotStartandSegmentStart < 0)
+                            {
+                                // This segment happened earlier then Snapshot
+                                // Happens sometimes when the clock on originating Tier is behind the clocks on the downstream tiers
+                                // Indicate that this segment came from earlier using < character
+                                for (int i = 0; i < Math.Abs(numIntervalsBetweenSnapshotStartandSegmentStart) - 1; i++)
+                                {
+                                    if (sbTimeline.Length > 0)
+                                    {
+                                        sbTimeline.Remove(0, 1);
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                if (sbTimeline.Length > 0)
+                                {
+                                    sbTimeline[0] = '<';
+                                }
+                                else if (sbTimeline.Length == 0)
+                                {
+                                    sbTimeline.Append('-');
+                                }
+                            }
+
+                            // Finally, render the timeline as a pretty string. Whew.
+                            segment.Timeline = sbTimeline.ToString();
+                        }
+
+                        #endregion
 
                         #region Update call chains from segments into snapshot
 
@@ -18614,13 +18968,28 @@ namespace AppDynamics.Dexter
                 methodCallLine.Class = methodCallLineJSON["className"].ToString();
                 methodCallLine.Method = methodCallLineJSON["methodName"].ToString();
                 methodCallLine.LineNumber = (int)methodCallLineJSON["lineNumber"];
-                if (methodCallLine.LineNumber > 0)
+                if (methodCallLine.Type == "JS")
                 {
-                    methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
+                    // Node.js call graphs should use pretty name
+                    if (methodCallLine.LineNumber > 0)
+                    {
+                        methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.PrettyName, methodCallLine.LineNumber);
+                    }
+                    else
+                    {
+                        methodCallLine.FullName = methodCallLine.PrettyName;
+                    }
                 }
                 else
                 {
-                    methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.Class, methodCallLine.Method);
+                    if (methodCallLine.LineNumber > 0)
+                    {
+                        methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
+                    }
+                    else
+                    {
+                        methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.Class, methodCallLine.Method);
+                    }
                 }
 
                 // Specify depth
@@ -18914,29 +19283,6 @@ namespace AppDynamics.Dexter
                     }
                 }
             }
-
-            // Now calculate durations by walking up from each of the leafs, which are the bottom-most entries in the call graph
-            // Actual duration of the parent is the value reported minus the value of its child(ren)
-            //foreach (MethodCallLine methodCallLine in methodCallLinesLeafList)
-            //{
-            //    MethodCallLine methodCallLineChild = methodCallLine;
-            //    // Walk until we hit up
-            //    while (methodCallLineChild.Parent != null)
-            //    {
-            //        MethodCallLine methodCallLineParent = methodCallLineChild.Parent;
-
-            //        if (methodCallLineParent.ExecAdjusted == false || methodCallLineParent.ElementType == MethodCallLineElementType.Branch)
-            //        {
-            //            methodCallLineParent.Exec = methodCallLineParent.Exec - methodCallLineChild.ExecTotal;
-            //            methodCallLineParent.Wait = methodCallLineParent.Wait - methodCallLineChild.WaitTotal;
-            //            methodCallLineParent.Block = methodCallLineParent.Block - methodCallLineChild.BlockTotal;
-            //            methodCallLineParent.CPU = methodCallLineParent.CPU - methodCallLineChild.CPUTotal;
-            //            methodCallLineParent.ExecAdjusted = true;
-            //        }
-                    
-            //        methodCallLineChild = methodCallLineParent;
-            //    }
-            //}
 
             return methodCallLinesList;
         }
@@ -22373,14 +22719,14 @@ namespace AppDynamics.Dexter
                     {
                         JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
-                        List<Event> eventsInThisTimeRangeList = eventsAllGrouped[i].Where(e => e.OccuredUtc >= jobTimeRange.From && e.OccuredUtc < jobTimeRange.To).ToList();
+                        List<Event> eventsInThisTimeRangeList = eventsAllGrouped[i].Where(e => e.OccurredUtc >= jobTimeRange.From && e.OccurredUtc < jobTimeRange.To).ToList();
 
                         // Now we finally have all the events for this type in this hour. Output
                         int columnIndexTimeRangeStart = columnOffsetBegin + j * columnOffsetBetweenRanges + j * 60;
                         foreach (Event interestingEvent in eventsInThisTimeRangeList)
                         {
                             // Find Column
-                            int columnInThisTimeRange = columnIndexTimeRangeStart + interestingEvent.OccuredUtc.Minute;
+                            int columnInThisTimeRange = columnIndexTimeRangeStart + interestingEvent.OccurredUtc.Minute;
                             // Find Row
                             int rowToOutputThisEventTo = fromRow;
                             while (true)
@@ -22525,14 +22871,14 @@ namespace AppDynamics.Dexter
                     {
                         JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
-                        List<Snapshot> snapshotsInThisTimeRangeList = snapshotsAllGrouped[i].Where(s => s.OccuredUtc >= jobTimeRange.From && s.OccuredUtc < jobTimeRange.To).ToList();
+                        List<Snapshot> snapshotsInThisTimeRangeList = snapshotsAllGrouped[i].Where(s => s.OccurredUtc >= jobTimeRange.From && s.OccurredUtc < jobTimeRange.To).ToList();
 
                         // Now we finally have all the events for this type in this hour. Output
                         int columnIndexTimeRangeStart = columnOffsetBegin + j * columnOffsetBetweenRanges + j * 60;
                         foreach (Snapshot interestingSnapshot in snapshotsInThisTimeRangeList)
                         {
                             // Find Column
-                            int columnInThisTimeRange = columnIndexTimeRangeStart + interestingSnapshot.OccuredUtc.Minute;
+                            int columnInThisTimeRange = columnIndexTimeRangeStart + interestingSnapshot.OccurredUtc.Minute;
                             // Find Row
                             int rowToOutputThisEventTo = fromRow;
                             while (true)

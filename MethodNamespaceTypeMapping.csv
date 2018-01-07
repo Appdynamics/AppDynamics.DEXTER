@@ -47,6 +47,7 @@ com.sun.xml.ws,Sun Web Services
 com.sybase.jdbc2,Sybase JDBC2
 com.sybase.jdbc3,Sybase JDBC3
 com.sybase.jdbc4,Sybase JDBC3
+com.teradata,Teradata Database
 com.terracotta,Terracota DB
 com.terracottatech,Terracota DB
 com.thoughtworks,ThoughWorks
@@ -60,6 +61,7 @@ java,Java Core
 java.io,Java IO
 java.lang.reflect,Java Reflection
 javax,Java Extension
+jdk.xml,Java XML
 jersey,Jersey REST Framework
 jrockit,JRockit JVM
 log4net,Log4Net Logging

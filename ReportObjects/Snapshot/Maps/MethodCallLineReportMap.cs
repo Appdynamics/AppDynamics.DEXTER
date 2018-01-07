@@ -21,6 +21,7 @@ namespace AppDynamics.Dexter.DataObjects
 
             Map(m => m.Exec).Index(i); i++;
             Map(m => m.ExecTotal).Index(i); i++;
+            Map(m => m.ExecToHere).Index(i); i++;
             Map(m => m.Wait).Index(i); i++;
             Map(m => m.WaitTotal).Index(i); i++;
             Map(m => m.Block).Index(i); i++;

@@ -31,8 +31,8 @@ namespace AppDynamics.Dexter.DataObjects
         public string TriggeredEntityName { get; set; }
 
         public long EventID { get; set; }
-        public DateTime Occured { get; set; }
-        public DateTime OccuredUtc { get; set; }
+        public DateTime Occurred { get; set; }
+        public DateTime OccurredUtc { get; set; }
         public string Summary { get; set; }
         public string Type { get; set; }
         public string SubType { get; set; }
@@ -52,7 +52,7 @@ namespace AppDynamics.Dexter.DataObjects
                 this.Type,
                 this.SubType,
                 this.Severity,
-                this.Occured);
+                this.Occurred);
         }
     }
 }

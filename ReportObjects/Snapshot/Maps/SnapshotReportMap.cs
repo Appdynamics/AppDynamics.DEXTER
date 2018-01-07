@@ -15,11 +15,13 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.UserExperience).Index(i); i++;
             Map(m => m.RequestID).Index(i); i++;
 
-            Map(m => m.Occured).Index(i); i++;
-            Map(m => m.OccuredUtc).Index(i); i++;
+            Map(m => m.Occurred).Index(i); i++;
+            Map(m => m.OccurredUtc).Index(i); i++;
 
             Map(m => m.Duration).Index(i); i++;
             Map(m => m.DurationRange).Index(i); i++;
+            Map(m => m.DurationEndToEnd).Index(i); i++;
+            Map(m => m.DurationEndToEndRange).Index(i); i++;
 
             Map(m => m.URL).Index(i); i++;
             Map(m => m.CallChains).Index(i); i++;
@@ -54,7 +56,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.NodeID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
 
-            Map(m => m.DetailLink).Index(i); i++;
+            //Map(m => m.DetailLink).Index(i); i++;
             Map(m => m.SnapshotLink).Index(i); i++;
 
             Map(m => m.ControllerLink).Index(i); i++;

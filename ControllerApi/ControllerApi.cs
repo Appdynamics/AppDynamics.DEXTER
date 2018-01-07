@@ -524,6 +524,18 @@ namespace AppDynamics.Dexter
                 true);
         }
 
+        public string GetProcessSnapshotCallGraph(string requestGUID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, int durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/restui/processSnapshot/getProcessCallGraphRoot?processSnapshotGUID={0}&timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
+                    requestGUID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
         #endregion
 
         #region Metric retrieval

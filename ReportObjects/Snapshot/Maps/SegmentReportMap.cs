@@ -18,11 +18,11 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.FromSegmentID).Index(i); i++;
             Map(m => m.FromTierName).Index(i); i++;
 
-            Map(m => m.Occured).Index(i); i++;
-            Map(m => m.OccuredUtc).Index(i); i++;
+            Map(m => m.Occurred).Index(i); i++;
+            Map(m => m.OccurredUtc).Index(i); i++;
 
-            Map(m => m.ThreadID).Index(i); i++;
-            Map(m => m.ThreadName).Index(i); i++;
+            Map(m => m.Timeline).Index(i); i++;
+            Map(m => m.TimelineResolution).Index(i); i++;
 
             Map(m => m.Duration).Index(i); i++;
             Map(m => m.DurationRange).Index(i); i++;
@@ -36,6 +36,9 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.ExitTypes).Index(i); i++;
             Map(m => m.UserPrincipal).Index(i); i++;
             Map(m => m.HTTPSessionID).Index(i); i++;
+
+            Map(m => m.ThreadID).Index(i); i++;
+            Map(m => m.ThreadName).Index(i); i++;
 
             Map(m => m.CallGraphType).Index(i); i++;
             Map(m => m.IsArchived).Index(i); i++;

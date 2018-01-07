@@ -23,8 +23,11 @@ namespace AppDynamics.Dexter.DataObjects
         public string BTLink { get; set; }
         public string BTName { get; set; }
 
-        public DateTime Occured { get; set; }
-        public DateTime OccuredUtc { get; set; }
+        public DateTime Occurred { get; set; }
+        public DateTime OccurredUtc { get; set; }
+
+        public string Timeline { get; set; }
+        public int TimelineResolution { get; set; }
 
         public string RequestID { get; set; }
         public long SegmentID { get; set; }
@@ -89,7 +92,7 @@ namespace AppDynamics.Dexter.DataObjects
                 this.BTName,
                 this.TierName,
                 this.NodeName,
-                this.Occured);
+                this.Occurred);
         }
     }
 }
