@@ -10736,8 +10736,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EventID"].Position + 1).Width = 25;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Summary"].Position + 1).Width = 35;
                     sheet.Column(table.Columns["Type"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["SubType"].Position + 1).Width = 20;
@@ -10787,7 +10787,7 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["TriggeredEntityName"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["TriggeredEntityType"]);
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -11402,8 +11402,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
@@ -11505,7 +11505,7 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -11547,8 +11547,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                     // Make timeline fixed width
                     ExcelRangeBase rangeTimeline = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Timeline"].Position + 1, sheet.Dimension.Rows, table.Columns["Timeline"].Position + 1];
@@ -11650,7 +11650,7 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -11694,8 +11694,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                     ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                     var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
@@ -11748,7 +11748,7 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Occured"]);
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -17088,7 +17088,7 @@ namespace AppDynamics.Dexter
                     snapshot.NodeLink = String.Format(DEEPLINK_NODE, snapshot.Controller, snapshot.ApplicationID, snapshot.NodeID, DEEPLINK_THIS_TIMERANGE);
                     snapshot.BTLink = String.Format(DEEPLINK_BUSINESS_TRANSACTION, snapshot.Controller, snapshot.ApplicationID, snapshot.BTID, DEEPLINK_THIS_TIMERANGE);
 
-                    // The snapshot link requires to have the time range is -30 < occuredtime < +30 minutes
+                    // The snapshot link requires to have the time range is -30 < Occurredtime < +30 minutes
                     long fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(-30));
                     long toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(+30));
                     long differenceInMinutesSnapshot = (toTimeUnixSnapshot - fromTimeUnixSnapshot) / (60000);
@@ -17252,7 +17252,7 @@ namespace AppDynamics.Dexter
                                     segment.CallGraphType = "NONE";
                                 }
 
-                                segment.HasErrors = (bool)snapshotSegmentDetail["errorOccured"];
+                                segment.HasErrors = (bool)snapshotSegmentDetail["errorOccurred"];
                                 segment.IsArchived = (bool)snapshotSegmentDetail["archived"];
                                 segment.IsAsync = (bool)snapshotSegmentDetail["async"];
                                 segment.IsFirstInChain = (bool)snapshotSegmentDetail["firstInChain"];
@@ -17297,7 +17297,7 @@ namespace AppDynamics.Dexter
                                 segment.NodeLink = String.Format(DEEPLINK_NODE, segment.Controller, segment.ApplicationID, segment.NodeID, DEEPLINK_THIS_TIMERANGE);
                                 segment.BTLink = snapshot.BTLink;
 
-                                // The snapshot link requires to have the time range is -30 < occuredtime < +30 minutes
+                                // The snapshot link requires to have the time range is -30 < Occurredtime < +30 minutes
                                 fromTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(-30));
                                 toTimeUnixSnapshot = convertToUnixTimestamp(snapshot.OccurredUtc.AddMinutes(+30));
                                 differenceInMinutesSnapshot = (toTimeUnixSnapshot - fromTimeUnixSnapshot) / (60000);
@@ -17773,7 +17773,7 @@ namespace AppDynamics.Dexter
                                     // Now reconcile them both
                                     #region Explanation of all of this nonsense to parse the errors
 
-                                    // The IDs of the errors give us what errors occured
+                                    // The IDs of the errors give us what errors Occurred
                                     // But the segment JSON does not include all the errors
                                     // The JSON in segment error detailsdoesn't include error number
                                     // However, we get multipe error instances for each of the errors
@@ -23093,8 +23093,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EventID"].Position + 1).Width = 25;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Summary"].Position + 1).Width = 35;
                     sheet.Column(table.Columns["Type"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["SubType"].Position + 1).Width = 20;
@@ -23213,8 +23213,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
@@ -23334,8 +23334,8 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                 ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                 var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
@@ -23450,8 +23450,8 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
-                sheet.Column(table.Columns["Occured"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["OccuredUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                 ExcelAddress cfAddressDuration = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Duration"].Position + 1, sheet.Dimension.Rows, table.Columns["Duration"].Position + 1);
                 var cfDuration = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressDuration);
