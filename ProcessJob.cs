@@ -11404,7 +11404,6 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
@@ -17252,7 +17251,7 @@ namespace AppDynamics.Dexter
                                     segment.CallGraphType = "NONE";
                                 }
 
-                                segment.HasErrors = (bool)snapshotSegmentDetail["errorOccurred"];
+                                segment.HasErrors = (bool)snapshotSegmentDetail["errorOccured"];
                                 segment.IsArchived = (bool)snapshotSegmentDetail["archived"];
                                 segment.IsAsync = (bool)snapshotSegmentDetail["async"];
                                 segment.IsFirstInChain = (bool)snapshotSegmentDetail["firstInChain"];
@@ -23215,7 +23214,6 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressUserExperience);
