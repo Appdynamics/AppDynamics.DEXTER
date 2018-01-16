@@ -23,14 +23,15 @@ namespace AppDynamics.Dexter.DataObjects
         public string BTLink { get; set; }
         public string BTName { get; set; }
 
+        public string RequestID { get; set; }
+        public long SegmentID { get; set; }
+
         public DateTime Occurred { get; set; }
         public DateTime OccurredUtc { get; set; }
 
         public string Timeline { get; set; }
         public int TimelineResolution { get; set; }
 
-        public string RequestID { get; set; }
-        public long SegmentID { get; set; }
         public string UserExperience { get; set; }
         public long Duration { get; set; }
         public string DurationRange { get; set; }

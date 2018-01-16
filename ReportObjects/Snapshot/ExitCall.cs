@@ -38,6 +38,7 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string ExitType { get; set; }
         public string Detail { get; set; }
+        public string Framework { get; set; }
         public string Method { get; set; }
         public bool IsAsync { get; set; }
 

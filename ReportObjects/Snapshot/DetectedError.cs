@@ -23,6 +23,12 @@ namespace AppDynamics.Dexter.DataObjects
         public string BTLink { get; set; }
         public string BTName { get; set; }
 
+        public string RequestID { get; set; }
+        public long SegmentID { get; set; }
+
+        public DateTime Occurred { get; set; }
+        public DateTime OccurredUtc { get; set; }
+
         public long ErrorID { get; set; }
         public string ErrorLink { get; set; }
         public string ErrorName { get; set; }
@@ -32,9 +38,6 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string ErrorMessage { get; set; }
         public string ErrorDetail { get; set; }
-
-        public string RequestID { get; set; }
-        public long SegmentID { get; set; }
 
         public override String ToString()
         {

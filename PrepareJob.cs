@@ -323,6 +323,10 @@ namespace AppDynamics.Dexter
                 IEnumerable<JToken> applicationsMatchingCriteria = null;
                 if (jobTarget.NameRegex == true)
                 {
+                    if (jobTarget.Application == "*")
+                    {
+                        jobTarget.Application = ".*";
+                    }
                     Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
                     applicationsMatchingCriteria = applicationsInTarget.Where(
                         app => regexApplication.Match(app["name"].ToString()).Success == true);

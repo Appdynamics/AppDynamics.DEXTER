@@ -27,6 +27,7 @@ namespace AppDynamics.Dexter.DataObjects
 
             Map(m => m.ExitType).Index(i); i++;
             Map(m => m.Detail).Index(i); i++;
+            Map(m => m.Framework).Index(i); i++;
             Map(m => m.Method).Index(i); i++;
             Map(m => m.IsAsync).Index(i); i++;
 

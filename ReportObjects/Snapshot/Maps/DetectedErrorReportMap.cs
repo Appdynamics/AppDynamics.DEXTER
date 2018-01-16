@@ -14,6 +14,10 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.BTName).Index(i); i++;
             Map(m => m.RequestID).Index(i); i++;
             Map(m => m.SegmentID).Index(i); i++;
+
+            Map(m => m.Occurred).Index(i); i++;
+            Map(m => m.OccurredUtc).Index(i); i++;
+
             Map(m => m.ErrorName).Index(i); i++;
             Map(m => m.ErrorType).Index(i); i++;
 

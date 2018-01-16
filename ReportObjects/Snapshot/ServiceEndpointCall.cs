@@ -23,13 +23,16 @@ namespace AppDynamics.Dexter.DataObjects
         public string BTLink { get; set; }
         public string BTName { get; set; }
 
+        public string RequestID { get; set; }
+        public long SegmentID { get; set; }
+
+        public DateTime Occurred { get; set; }
+        public DateTime OccurredUtc { get; set; }
+
         public long SEPID { get; set; }
         public string SEPLink { get; set; }
         public string SEPName { get; set; }
         public string SEPType { get; set; }
-
-        public string RequestID { get; set; }
-        public long SegmentID { get; set; }
 
         public override String ToString()
         {

@@ -383,6 +383,39 @@ namespace AppDynamics.Dexter
             return false;
         }
 
+        public static bool writeFoldedCallStackToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath)
+        {
+            string folderPath = Path.GetDirectoryName(csvFilePath);
+
+            if (createFolder(folderPath) == true)
+            {
+                try
+                {
+                    logger.Trace("Writing list with {0} elements containing type {1} to file {2}", listToWrite.Count, typeof(T), csvFilePath);
+
+                    // Create new
+                    using (StreamWriter sw = File.CreateText(csvFilePath))
+                    {
+                        sw.NewLine = "\n";
+                        CsvWriter csvWriter = new CsvWriter(sw);
+                        csvWriter.Configuration.RegisterClassMap(classMap);
+                        csvWriter.Configuration.HasHeaderRecord = false;
+                        csvWriter.Configuration.Delimiter = " ";
+                        csvWriter.WriteRecords(listToWrite);
+                    }
+
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Unable to write CSV to file {0}", csvFilePath);
+                    logger.Error(ex);
+                }
+            }
+
+            return false;
+        }
+
         public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, ClassMap<T> classMap)
         {
             try

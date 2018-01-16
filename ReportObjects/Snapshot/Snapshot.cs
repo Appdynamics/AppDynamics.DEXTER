@@ -30,8 +30,8 @@ namespace AppDynamics.Dexter.DataObjects
         public string UserExperience { get; set; }
         public long Duration { get; set; }
         public string DurationRange { get; set; }
-        public long DurationEndToEnd { get; set; }
-        public string DurationEndToEndRange { get; set; }
+        public long EndToEndDuration { get; set; }
+        public string EndToEndDurationRange { get; set; }
         public string DiagSessionID { get; set; }
         public string URL { get; set; }
 

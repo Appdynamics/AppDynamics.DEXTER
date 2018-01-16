@@ -160,6 +160,8 @@
     <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\InformationPointMetricReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
+    <Compile Include="ReportObjects\Snapshot\FoldedCallStack.cs" />
+    <Compile Include="ReportObjects\Snapshot\Maps\FoldedCallStackReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineOccurrenceReportMap.cs" />
