@@ -312,7 +312,7 @@ namespace AppDynamics.Dexter
         private const string CONVERT_EVENTS_FILE_NAME = "events.csv";
         private const string CONVERT_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
 
-        // Snapshot files
+        // Snapshots files
         private const string CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME = "application.snapshots.csv";
         private const string CONVERT_SNAPSHOTS_FILE_NAME = "snapshots.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME = "snapshots.segments.csv";
@@ -322,8 +322,11 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshots.businessdata.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshots.methodcalllines.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshots.methodcalllinesoccurrences.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.csv";
 
+        // Folded call stacks rollups
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.txt";
+
+        // Snapshot files
         private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME = "snapshot.segments.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME = "snapshot.exits.csv";
@@ -332,7 +335,9 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshot.businessdata.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshot.methodcalllines.csv";
         private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshot.methodcalllinesoccurrences.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshot.foldedcallstacks.csv";
+
+        // Folded call stacks for single snapshot
+        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshot.foldedcallstacks.txt";
 
         // Settings report list
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
@@ -356,6 +361,8 @@ namespace AppDynamics.Dexter
         // Settings for method and call mapping
         private const string METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME = "MethodNamespaceTypeMapping.csv";
 
+        private const string FLAME_GRAPH_TEMPLATE_FILE_NAME = "FlameGraphTemplate.svg";
+
         #endregion
 
         #region Constants for the folder and file names of data reports
@@ -373,10 +380,16 @@ namespace AppDynamics.Dexter
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
 
         // Per entity report names
-        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "{0}.{1}.{2:yyyyMMddHH}-{3:yyyyMMddHH}.xlsx";
-        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHH}-{3:yyyyMMddHH}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "EntityDetails.{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.xlsx";
         private const string REPORT_METRICS_GRAPHS_FILE_NAME = "EntityMetricGraphs.{0}.{1}.{2:yyyyMMddHH}-{3:yyyyMMddHH}.xlsx";
-        private const string REPORT_SNAPSHOT_DETAILS_FILE_NAME = "{3}.{4}.{5}.{6}.{7:yyyyMMddHHmmss}.{8}.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
+
+        // Per entity flame graph report name
+        private const string REPORT_FLAME_GRAPH_APPLICATION_FILE_NAME = "Flame.Application.{0}.{1}.{2:yyyyMMddHH}-{3:yyyyMMddHH}.svg";
+        private const string REPORT_FLAME_GRAPH_TIER_FILE_NAME = "Flame.Tier.{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.svg";
+        private const string REPORT_FLAME_GRAPH_NODE_FILE_NAME = "Flame.Node.{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.svg";
+        private const string REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME = "Flame.BT.{0}.{1}.{2}.{3:yyyyMMddHH}-{4:yyyyMMddHH}.svg";
+        private const string REPORT_FLAME_GRAPH_SNAPSHOT_FILE_NAME = "Flame.Snapshot.{0}.{1:yyyyMMddHHmmss}.{2}.svg";
 
         #endregion
 
@@ -879,6 +892,12 @@ namespace AppDynamics.Dexter
         // Color for the invisible text on graphs report
         private static Color colorGrayForRepeatedText = Color.LightGray;
 
+        // Colors for Flame Graphs
+        // This color is kind of reddish orange
+        private static Color colorFlameGraphStackStart = Color.FromArgb(0xFE, 0x58, 0x10);
+        // This color is kind of egg yolk yellow
+        private static Color colorFlameGraphStackEnd = Color.FromArgb(0xFA, 0xF4, 0x38);
+
         #endregion
 
         #region Constants for Deeplinks
@@ -918,6 +937,7 @@ namespace AppDynamics.Dexter
         private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS = 5;
 
         private const int SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 100;
+        private const int SNAPSHOTS_FLAMEGRAPH_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 1000;
 
         private const int METRIC_DETAILS_REPORT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 10;
 
@@ -963,7 +983,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportSnapshots,
                 JobStatus.ReportSnapshotsMethodCallLines,
                 JobStatus.ReportIndividualApplicationAndEntityDetails,
-                //JobStatus.ReportFlameGraphs,
+                JobStatus.ReportFlameGraphs,
 
                 // Done 
                 JobStatus.Done,
@@ -1349,7 +1369,7 @@ namespace AppDynamics.Dexter
                         {
                             jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
-                            loggerConsole.Debug("Skipping report of snapshots");
+                            loggerConsole.Debug("Skipping report of snapshot method call lines");
                         }
                         break;
 
@@ -1376,6 +1396,25 @@ namespace AppDynamics.Dexter
                         }
                         break;
 
+                    case JobStatus.ReportFlameGraphs:
+                        if (jobConfiguration.Input.Snapshots == true && jobConfiguration.Output.FlameGraphs == true)
+                        {
+                            if (stepReportFlameGraphs(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Debug("Skipping report of flame graphs");
+                        }
+                        break;
 
                     default:
                         jobConfiguration.Status = JobStatus.Error;
@@ -1486,7 +1525,7 @@ namespace AppDynamics.Dexter
                             loggerConsole.Info("List of Applications");
 
                             string applicationsJSON = controllerApi.GetListOfApplications();
-                            if (applicationsJSON != String.Empty) FileIOHelper.saveFileToFolder(applicationsJSON, applicationsFilePath);
+                            if (applicationsJSON != String.Empty) FileIOHelper.saveFileToPath(applicationsJSON, applicationsFilePath);
                         }
 
                         #endregion
@@ -1496,7 +1535,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("This Application");
 
                         string applicationJSON = controllerApi.GetSingleApplication(jobTarget.ApplicationID);
-                        if (applicationJSON != String.Empty) FileIOHelper.saveFileToFolder(applicationJSON, applicationFilePath);
+                        if (applicationJSON != String.Empty) FileIOHelper.saveFileToPath(applicationJSON, applicationFilePath);
 
                         #endregion
 
@@ -1505,7 +1544,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Tiers");
 
                         string tiersJSON = controllerApi.GetListOfTiers(jobTarget.ApplicationID);
-                        if (tiersJSON != String.Empty) FileIOHelper.saveFileToFolder(tiersJSON, tiersFilePath);
+                        if (tiersJSON != String.Empty) FileIOHelper.saveFileToPath(tiersJSON, tiersFilePath);
 
                         #endregion
 
@@ -1514,7 +1553,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Nodes");
 
                         string nodesJSON = controllerApi.GetListOfNodes(jobTarget.ApplicationID);
-                        if (nodesJSON != String.Empty) FileIOHelper.saveFileToFolder(nodesJSON, nodesFilePath);
+                        if (nodesJSON != String.Empty) FileIOHelper.saveFileToPath(nodesJSON, nodesFilePath);
 
                         #endregion
 
@@ -1523,11 +1562,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Backends");
 
                         string backendsJSON = controllerApi.GetListOfBackends(jobTarget.ApplicationID);
-                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToFolder(backendsJSON, backendsFilePath);
+                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsFilePath);
 
                         controllerApi.PrivateApiLogin();
                         backendsJSON = controllerApi.GetListOfBackendsAdditionalDetail(jobTarget.ApplicationID);
-                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToFolder(backendsJSON, backendsDetailFilePath);
+                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsDetailFilePath);
                         
                         #endregion
 
@@ -1536,7 +1575,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Business Transactions");
 
                         string businessTransactionsJSON = controllerApi.GetListOfBusinessTransactions(jobTarget.ApplicationID);
-                        if (businessTransactionsJSON != String.Empty) FileIOHelper.saveFileToFolder(businessTransactionsJSON, businessTransactionsFilePath);
+                        if (businessTransactionsJSON != String.Empty) FileIOHelper.saveFileToPath(businessTransactionsJSON, businessTransactionsFilePath);
 
                         #endregion
 
@@ -1545,11 +1584,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Service Endpoints");
 
                         string serviceEndPointsJSON = controllerApi.GetListOfServiceEndpoints(jobTarget.ApplicationID);
-                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(serviceEndPointsJSON, serviceEndPointsFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsFilePath);
 
                         controllerApi.PrivateApiLogin();
                         serviceEndPointsJSON = controllerApi.GetListOfServiceEndpointsAdditionalDetail(jobTarget.ApplicationID);
-                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(serviceEndPointsJSON, serviceEndPointsDetailFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsDetailFilePath);
 
                         #endregion
 
@@ -1558,7 +1597,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Errors");
 
                         string errorsJSON = controllerApi.GetListOfErrors(jobTarget.ApplicationID);
-                        if (errorsJSON != String.Empty) FileIOHelper.saveFileToFolder(errorsJSON, errorsFilePath);
+                        if (errorsJSON != String.Empty) FileIOHelper.saveFileToPath(errorsJSON, errorsFilePath);
 
                         #endregion
 
@@ -1567,11 +1606,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Information Points");
 
                         string informationPointsJSON = controllerApi.GetListOfInformationPoints(jobTarget.ApplicationID);
-                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(informationPointsJSON, informationPointsFilePath);
+                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsFilePath);
 
                         controllerApi.PrivateApiLogin();
                         informationPointsJSON = controllerApi.GetListOfInformationPointsAdditionalDetail(jobTarget.ApplicationID);
-                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToFolder(informationPointsJSON, informationPointsDetailFilePath);
+                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsDetailFilePath);
 
                         #endregion
                     }
@@ -1702,7 +1741,7 @@ namespace AppDynamics.Dexter
                             loggerConsole.Info("Controller Settings");
 
                             string controllerSettingsJSON = controllerApi.GetControllerConfiguration();
-                            if (controllerSettingsJSON != String.Empty) FileIOHelper.saveFileToFolder(controllerSettingsJSON, controllerSettingsFilePath);
+                            if (controllerSettingsJSON != String.Empty) FileIOHelper.saveFileToPath(controllerSettingsJSON, controllerSettingsFilePath);
                         }
 
                         #endregion
@@ -1713,7 +1752,7 @@ namespace AppDynamics.Dexter
 
                         // Application configuration
                         string applicationConfigXml = controllerApi.GetApplicationConfiguration(jobTarget.ApplicationID);
-                        if (applicationConfigXml != String.Empty) FileIOHelper.saveFileToFolder(applicationConfigXml, applicationConfigFilePath);
+                        if (applicationConfigXml != String.Empty) FileIOHelper.saveFileToPath(applicationConfigXml, applicationConfigFilePath);
 
                         #endregion
                     }
@@ -6704,7 +6743,9 @@ namespace AppDynamics.Dexter
                         // Previosly rendered report files
                         string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
                         string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
                         string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
                         string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
                         string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
                         string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
@@ -6740,7 +6781,9 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Index Snapshots");
 
                         List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
                         List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
                         List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.readListFromCSVFile<MethodInvocationDataCollector>(methodInvocationDataCollectorsReportFilePath, new MethodInvocationDataCollectorReportMap());
@@ -6998,6 +7041,189 @@ namespace AppDynamics.Dexter
                         FileIOHelper.appendTwoCSVFiles(methodCallLinesAllReportFilePath, methodCallLinesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesAllReportFilePath, methodCallLinesOccurrencesReportFilePath);
                         FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryAllReportFilePath, applicationSnapshotsSummaryReportFilePath);
+
+                        #endregion
+
+                        #region Combine folded Flame Graphs stacks from individual Snapshots
+
+                        if (tiersList!= null && nodesList != null && businessTransactionsList != null)
+                        {
+                            Dictionary<long, Dictionary<string, int>> foldedCallStacksNodesList = new Dictionary<long, Dictionary<string, int>>(nodesList.Count);
+                            Dictionary<long, Dictionary<string, int>> foldedCallStacksBusinessTransactionsList = new Dictionary<long, Dictionary<string, int>>(businessTransactionsList.Count);
+                            Dictionary<long, Dictionary<string, int>> foldedCallStacksTiersList = new Dictionary<long, Dictionary<string, int>>(tiersList.Count);
+                            Dictionary<string, int> foldedCallStacksApplication = new Dictionary<string, int>(25);
+
+                            #region Build Node and BT rollups first from the list of snapshots
+
+                            loggerConsole.Info("Fold Stacks for Nodes and Business Transactions");
+
+                            foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
+                            {
+                                int j = 0;
+
+                                string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                                JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
+
+                                if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
+                                {
+                                    loggerConsole.Info("Fold Stacks for Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+
+                                    foreach (JToken snapshotToken in listOfSnapshotsInHour)
+                                    {
+                                        if ((bool)snapshotToken["firstInChain"] == false)
+                                        {
+                                            continue;
+                                        }
+
+                                        // Look up the folded stack for Node
+                                        long nodeID = (long)snapshotToken["applicationComponentNodeId"];
+                                        if (foldedCallStacksNodesList.ContainsKey(nodeID) == false)
+                                        {
+                                            foldedCallStacksNodesList[nodeID] = new Dictionary<string, int>(25);
+                                        }
+
+                                        // Look up the folded stack for Business Transaction
+                                        long btID = (long)snapshotToken["businessTransactionId"];
+                                        if (foldedCallStacksBusinessTransactionsList.ContainsKey(btID) == false)
+                                        {
+                                            foldedCallStacksBusinessTransactionsList[btID] = new Dictionary<string, int>(25);
+                                        }
+
+                                        // Load folded call stack
+                                        DateTime snapshotTime = convertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
+
+                                        string snapshotFolderPath = Path.Combine(
+                                            snapshotsFolderPath,
+                                            getShortenedEntityNameForFileSystem(snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"]),
+                                            getShortenedEntityNameForFileSystem(snapshotToken["businessTransactionName"].ToString(), btID),
+                                            String.Format("{0:yyyyMMddHH}", snapshotTime),
+                                            userExperienceFolderNameMapping[snapshotToken["userExperience"].ToString()],
+                                            String.Format(SNAPSHOT_FOLDER_NAME, snapshotToken["requestGUID"], snapshotTime));
+
+                                        string snapshotFoldedCallStacksFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                        if (File.Exists(snapshotFoldedCallStacksFileName) == true)
+                                        {
+                                            Dictionary<string, int> foldedCallStacksSnapshotList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(snapshotFoldedCallStacksFileName));
+
+                                            addFoldedStacks(foldedCallStacksNodesList[nodeID], foldedCallStacksSnapshotList);
+                                            addFoldedStacks(foldedCallStacksBusinessTransactionsList[btID], foldedCallStacksSnapshotList);
+                                        }
+
+                                        j++;
+                                        if (j % 500 == 0)
+                                        {
+                                            Console.Write("[{0}].", j);
+                                        }
+                                    }
+                                }
+
+                                loggerConsole.Info("{0} snapshots", j);
+                            }
+
+                            // Save Node and BT rollups
+                            foreach (EntityNode node in nodesList)
+                            {
+                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true)
+                                {
+                                    string nodeFoldedCallStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        NODES_TYPE_SHORT,
+                                        getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
+                                        getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksNodesList[node.NodeID]), nodeFoldedCallStacksFilePath, false);
+                                }
+                            }
+
+                            foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                            {
+                                if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true)
+                                {
+                                    string businessTransactionFoldedCallStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                                        getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID]), businessTransactionFoldedCallStacksFilePath, false);
+                                }
+                            }
+
+                            #endregion
+
+                            #region Build Tier rollups second using Nodes that are part of Tier rollups
+
+                            loggerConsole.Info("Fold Stacks for Tiers");
+
+                            foreach (EntityTier tier in tiersList)
+                            {
+                                if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == false)
+                                {
+                                    foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, int>(25);
+                                }
+
+                                foreach (EntityNode node in nodesList)
+                                {
+                                    if (node.TierID == tier.TierID)
+                                    {
+                                        string nodeFoldedCallStacksFilePath = Path.Combine(
+                                            snapshotsFolderPath,
+                                            NODES_TYPE_SHORT,
+                                            getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
+                                            getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                                            CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                        if (File.Exists(nodeFoldedCallStacksFilePath) == true)
+                                        {
+                                            Dictionary<string, int> foldedCallStacksNodeList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(nodeFoldedCallStacksFilePath));
+
+                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedCallStacksNodeList);
+                                        }
+                                    }
+                                }
+
+                                if (foldedCallStacksTiersList[tier.TierID].Count > 0)
+                                {
+                                    string tierFoldedStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksTiersList[tier.TierID]), tierFoldedStacksFilePath, false);
+                                }
+                            }
+
+                            #endregion
+
+                            #region Build Application level rollups using all Tiers
+
+                            loggerConsole.Info("Fold Stacks for Application");
+
+                            foreach (EntityTier tier in tiersList)
+                            {
+                                string tierFoldedStacksFilePath = Path.Combine(
+                                    snapshotsFolderPath,
+                                    getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
+                                    CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                if (File.Exists(tierFoldedStacksFilePath) == true)
+                                {
+                                    Dictionary<string, int> foldedCallStacksTierList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(tierFoldedStacksFilePath));
+
+                                    addFoldedStacks(foldedCallStacksApplication, foldedCallStacksTierList);
+                                }
+                            }
+
+                            string applicationFoldedStacksFilePath = Path.Combine(
+                                snapshotsFolderPath,
+                                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                            FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksApplication), applicationFoldedStacksFilePath, false);
+
+                            #endregion
+                        }
 
                         #endregion
                     }
@@ -11060,7 +11286,7 @@ namespace AppDynamics.Dexter
                 stepTimings.Add(stepTimingFunction);
                 FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
             }
-        }
+        }   
 
         private static bool stepReportEventsAndHealthRuleViolations(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
         {
@@ -11470,9 +11696,9 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EventID"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                    sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                    sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["HealthRuleName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EntityName"].Position + 1).Width = 20;
         
@@ -12235,7 +12461,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
@@ -12381,7 +12607,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
@@ -12481,7 +12707,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
@@ -12554,7 +12780,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
@@ -12631,7 +12857,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;
@@ -13116,11 +13342,13 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FullNameIndent"].Position + 1).Width = 45;
                     sheet.Column(table.Columns["ExitCalls"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE);
@@ -13251,7 +13479,7 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FullName"].Position + 1).Width = 45;
@@ -13516,6 +13744,15 @@ namespace AppDynamics.Dexter
                         List<ServiceEndpointCall> serviceEndpointCallsAllList = FileIOHelper.readListFromCSVFile<ServiceEndpointCall>(serviceEndpointCallsFilePath, new ServiceEndpointCallReportMap());
                         List<DetectedError> detectedErrorsAllList = FileIOHelper.readListFromCSVFile<DetectedError>(detectedErrorsFilePath, new DetectedErrorReportMap());
                         List<BusinessData> businessDataAllList = FileIOHelper.readListFromCSVFile<BusinessData>(businessDataFilePath, new BusinessDataReportMap());
+
+                        string relativePathToReportsToRemoveFromLinks = Path.Combine(
+                            getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                            getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+
+                        foreach (Snapshot snapshot in snapshotsAllList)
+                        {
+                            snapshot.FlameGraphLink = snapshot.FlameGraphLink.Replace(relativePathToReportsToRemoveFromLinks, "..");
+                        }
 
                         #endregion
 
@@ -14038,6 +14275,425 @@ namespace AppDynamics.Dexter
             }
         }
 
+        private static bool stepReportFlameGraphs(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobStatus jobStatus)
+        {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            StepTiming stepTimingFunction = new StepTiming();
+            stepTimingFunction.JobFileName = programOptions.OutputJobFilePath;
+            stepTimingFunction.StepName = jobStatus.ToString();
+            stepTimingFunction.StepID = (int)jobStatus;
+            stepTimingFunction.StartTime = DateTime.Now;
+            stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
+
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+
+            try
+            {
+                // Process each target
+                for (int i = 0; i < jobConfiguration.Target.Count; i++)
+                {
+                    Stopwatch stopWatchTarget = new Stopwatch();
+                    stopWatchTarget.Start();
+
+                    JobTarget jobTarget = jobConfiguration.Target[i];
+
+                    StepTiming stepTimingTarget = new StepTiming();
+                    stepTimingTarget.Controller = jobTarget.Controller;
+                    stepTimingTarget.ApplicationName = jobTarget.Application;
+                    stepTimingTarget.ApplicationID = jobTarget.ApplicationID;
+                    stepTimingTarget.JobFileName = programOptions.OutputJobFilePath;
+                    stepTimingTarget.StepName = jobStatus.ToString();
+                    stepTimingTarget.StepID = (int)jobStatus;
+                    stepTimingTarget.StartTime = DateTime.Now;
+
+                    try
+                    {
+                        #region Output status
+
+                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
+                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
+
+                        #endregion
+
+                        #region Target state check
+
+                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
+                        {
+                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
+
+                            continue;
+                        }
+
+                        #endregion
+
+                        #region Target step variables
+
+                        // Various folders
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
+                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+                        // Report files
+                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+
+                        string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+
+                        string flameGraphTemplateFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, FLAME_GRAPH_TEMPLATE_FILE_NAME);
+                        string flameGraphTemplateString = FileIOHelper.readFileFromPath(flameGraphTemplateFilePath);
+
+                        #endregion
+
+                        #region Application
+
+                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+
+                        if (applicationList != null && applicationList.Count > 0)
+                        {
+                            loggerConsole.Info("Flame Graphs for Application");
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
+
+                            EntityApplication application = applicationList[0];
+
+                            string applicationFoldedStacksFilePath = Path.Combine(
+                                snapshotsFolderPath,
+                                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                            if (File.Exists(applicationFoldedStacksFilePath) == true)
+                            {
+                                createFlameGraph(
+                                    applicationFoldedStacksFilePath, 
+                                    getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, applicationList[0]), 
+                                    String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                    flameGraphTemplateString, 
+                                    true);
+                            }
+
+                        }
+
+                        #endregion
+
+                        #region Tier
+
+                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+
+                        if (tiersList != null)
+                        {
+                            loggerConsole.Info("Flame Graphs for Tiers ({0} entities)", tiersList.Count);
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + tiersList.Count;
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                Parallel.ForEach<EntityTier>(
+                                    tiersList,
+                                    tier =>
+                                    {
+                                        string tierFoldedStacksFilePath = Path.Combine(
+                                            snapshotsFolderPath,
+                                            getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
+                                            CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                        if (File.Exists(tierFoldedStacksFilePath) == true)
+                                        {
+                                            createFlameGraph(
+                                                tierFoldedStacksFilePath,
+                                                getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, tier),
+                                                String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                                flameGraphTemplateString, 
+                                                false);
+                                        }
+                                    });
+
+                                j = tiersList.Count;
+                            }
+                            else
+                            {
+                                foreach (EntityTier tier in tiersList)
+                                {
+                                    string tierFoldedStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    if (File.Exists(tierFoldedStacksFilePath) == true)
+                                    {
+                                        createFlameGraph(
+                                            tierFoldedStacksFilePath,
+                                            getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, tier),
+                                            String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                            flameGraphTemplateString, 
+                                            true);
+                                    }
+
+                                    j++;
+                                    if (j % 10 == 0)
+                                    {
+                                        Console.Write("[{0}].", j);
+                                    }
+                                }
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Nodes
+
+                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+
+                        if (nodesList != null)
+                        {
+                            loggerConsole.Info("Flame Graphs for Nodes ({0} entities)", nodesList.Count);
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + nodesList.Count;
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                Parallel.ForEach<EntityNode>(
+                                    nodesList,
+                                    node =>
+                                    {
+                                        string nodeFoldedCallStacksFilePath = Path.Combine(
+                                            snapshotsFolderPath,
+                                            NODES_TYPE_SHORT,
+                                            getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
+                                            getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                                            CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                        if (File.Exists(nodeFoldedCallStacksFilePath) == true)
+                                        {
+                                            createFlameGraph(
+                                                nodeFoldedCallStacksFilePath,
+                                                getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, node),
+                                                String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                                flameGraphTemplateString,
+                                                false);
+                                        }
+                                    });
+
+                                j = nodesList.Count;
+                            }
+                            else
+                            {
+                                foreach (EntityNode node in nodesList)
+                                {
+                                    string nodeFoldedCallStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        NODES_TYPE_SHORT,
+                                        getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
+                                        getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    if (File.Exists(nodeFoldedCallStacksFilePath) == true)
+                                    {
+                                        createFlameGraph(
+                                            nodeFoldedCallStacksFilePath,
+                                            getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, node),
+                                            String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                            flameGraphTemplateString,
+                                            true);
+                                    }
+
+                                    j++;
+                                    if (j % 10 == 0)
+                                    {
+                                        Console.Write("[{0}].", j);
+                                    }
+                                }
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Business Transactions
+
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+
+                        if (businessTransactionsList != null)
+                        {
+                            loggerConsole.Info("Flame Graphs for Business Transactions ({0} entities)", businessTransactionsList.Count);
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionsList.Count;
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                Parallel.ForEach<EntityBusinessTransaction>(
+                                    businessTransactionsList,
+                                    businessTransaction =>
+                                    {
+                                        string businessTransactionFoldedCallStacksFilePath = Path.Combine(
+                                            snapshotsFolderPath,
+                                            getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                                            getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                                            CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                        if (File.Exists(businessTransactionFoldedCallStacksFilePath) == true)
+                                        {
+                                            createFlameGraph(
+                                                businessTransactionFoldedCallStacksFilePath,
+                                                getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, businessTransaction),
+                                                String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                                flameGraphTemplateString, 
+                                                false);
+                                        }
+                                    });
+
+                                j = businessTransactionsList.Count;
+                            }
+                            else
+                            {
+                                foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                                {
+                                    string businessTransactionFoldedCallStacksFilePath = Path.Combine(
+                                        snapshotsFolderPath,
+                                        getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                                        getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                                        CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                                    if (File.Exists(businessTransactionFoldedCallStacksFilePath) == true)
+                                    {
+                                        createFlameGraph(
+                                            businessTransactionFoldedCallStacksFilePath,
+                                            getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, businessTransaction),
+                                            String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
+                                            flameGraphTemplateString,
+                                            true);
+                                    }
+
+                                    j++;
+                                    if (j % 10 == 0)
+                                    {
+                                        Console.Write("[{0}].", j);
+                                    }
+                                }
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                        #region Snapshots
+
+                        List<Snapshot> snapshotsList = FileIOHelper.readListFromCSVFile<Snapshot>(snapshotsFilePath, new SnapshotReportMap());
+
+                        if (snapshotsList != null)
+                        {
+                            loggerConsole.Info("Flame Graphs for Snapshots ({0} entities)", snapshotsList.Count);
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + snapshotsList.Count;
+
+                            int j = 0;
+
+                            if (programOptions.ProcessSequentially == false)
+                            {
+                                var snapshotsListChunks = snapshotsList.BreakListIntoChunks(SNAPSHOTS_FLAMEGRAPH_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+
+                                Parallel.ForEach<List<Snapshot>, int>(
+                                    snapshotsListChunks,
+                                    () => 0,
+                                    (snapshotsListChunk, loop, subtotal) =>
+                                    {
+                                        subtotal += reportFlameGraphsSnapshots(
+                                            programOptions,
+                                            jobConfiguration,
+                                            jobTarget,
+                                            snapshotsListChunk, 
+                                            snapshotsFolderPath,
+                                            flameGraphTemplateString,
+                                            false);
+                                        return subtotal;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        j = Interlocked.Add(ref j, finalResult);
+                                        Console.Write("[{0}].", j);
+                                    }
+                                );
+                            }
+                            else
+                            {
+                                j = reportFlameGraphsSnapshots(
+                                        programOptions,
+                                        jobConfiguration,
+                                        jobTarget,
+                                        snapshotsList,
+                                        snapshotsFolderPath,
+                                        flameGraphTemplateString,
+                                        true);
+                            }
+
+                            loggerConsole.Info("{0} entities", j);
+                        }
+
+                        #endregion
+
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Warn(ex);
+                        loggerConsole.Warn(ex);
+                    }
+                    finally
+                    {
+                        stopWatchTarget.Stop();
+
+                        logger.Info("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+                        loggerConsole.Trace("{0}({0:d}): [{1}/{2}], {3} {4} duration {5:c} ({6} ms)", jobStatus, i + 1, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, stopWatchTarget.Elapsed, stopWatchTarget.ElapsedMilliseconds);
+
+                        stepTimingTarget.EndTime = DateTime.Now;
+                        stepTimingTarget.Duration = stopWatchTarget.Elapsed;
+                        stepTimingTarget.DurationMS = stopWatchTarget.ElapsedMilliseconds;
+
+                        List<StepTiming> stepTimings = new List<StepTiming>(1);
+                        stepTimings.Add(stepTimingTarget);
+                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                loggerConsole.Error(ex);
+
+                return false;
+            }
+            finally
+            {
+                stopWatch.Stop();
+
+                logger.Info("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+                loggerConsole.Trace("{0}({0:d}): total duration {1:c} ({2} ms)", jobStatus, stopWatch.Elapsed, stopWatch.ElapsedMilliseconds);
+
+                stepTimingFunction.EndTime = DateTime.Now;
+                stepTimingFunction.Duration = stopWatch.Elapsed;
+                stepTimingFunction.DurationMS = stopWatch.ElapsedMilliseconds;
+
+                List<StepTiming> stepTimings = new List<StepTiming>(1);
+                stepTimings.Add(stepTimingFunction);
+                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+            }
+        }
+
         #endregion
 
 
@@ -14070,7 +14726,7 @@ namespace AppDynamics.Dexter
                     convertToUnixTimestamp(jobTimeRange.To),
                     true);
 
-                if (metricsJson != String.Empty) FileIOHelper.saveFileToFolder(metricsJson, metricsDataFilePath);
+                if (metricsJson != String.Empty) FileIOHelper.saveFileToPath(metricsJson, metricsDataFilePath);
             }
 
             // Get the hourly time ranges
@@ -14097,7 +14753,7 @@ namespace AppDynamics.Dexter
                         convertToUnixTimestamp(jobTimeRange.To),
                         false);
 
-                    if (metricsJson != String.Empty) FileIOHelper.saveFileToFolder(metricsJson, metricsDataFilePath);
+                    if (metricsJson != String.Empty) FileIOHelper.saveFileToPath(metricsJson, metricsDataFilePath);
                 }
             }
         }
@@ -14120,7 +14776,7 @@ namespace AppDynamics.Dexter
             if (File.Exists(flowmapDataFilePath) == false)
             {
                 flowmapJson = controllerApi.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                if (flowmapJson != String.Empty) FileIOHelper.saveFileToPath(flowmapJson, flowmapDataFilePath);
             }
 
             return 1;
@@ -14143,7 +14799,7 @@ namespace AppDynamics.Dexter
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapTier(tier.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToPath(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -14177,7 +14833,7 @@ namespace AppDynamics.Dexter
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapNode(node.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToPath(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -14210,7 +14866,7 @@ namespace AppDynamics.Dexter
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapBackend(backend.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToPath(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -14244,7 +14900,7 @@ namespace AppDynamics.Dexter
                 if (File.Exists(flowmapDataFilePath) == false)
                 {
                     string flowmapJson = controllerApi.GetFlowmapBusinessTransaction(jobTarget.ApplicationID, businessTransaction.id, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToFolder(flowmapJson, flowmapDataFilePath);
+                    if (flowmapJson != String.Empty) FileIOHelper.saveFileToPath(flowmapJson, flowmapDataFilePath);
                 }
 
                 if (progressToConsole == true)
@@ -14367,7 +15023,7 @@ namespace AppDynamics.Dexter
                     if (File.Exists(snapshotFlowmapDataFilePath) == false)
                     {
                         string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
-                        if (snapshotFlowmapJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
+                        if (snapshotFlowmapJson != String.Empty) FileIOHelper.saveFileToPath(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
                     }
 
                     #endregion
@@ -14380,7 +15036,7 @@ namespace AppDynamics.Dexter
                     if (File.Exists(snapshotSegmentsDataFilePath) == false)
                     {
                         string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshot["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
-                        if (snapshotSegmentsJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentsJson, snapshotSegmentsDataFilePath);
+                        if (snapshotSegmentsJson != String.Empty) FileIOHelper.saveFileToPath(snapshotSegmentsJson, snapshotSegmentsDataFilePath);
                     }
 
                     #endregion
@@ -14398,7 +15054,7 @@ namespace AppDynamics.Dexter
                             if (File.Exists(snapshotSegmentDataFilePath) == false)
                             {
                                 string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentDataFilePath);
+                                if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToPath(snapshotSegmentJson, snapshotSegmentDataFilePath);
                             }
                         }
 
@@ -14415,7 +15071,7 @@ namespace AppDynamics.Dexter
                                     // "[ ]" == empty data. Don't create the file
                                     if (snapshotSegmentJson.Length > 3)
                                     {
-                                        FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentErrorFilePath);
+                                        FileIOHelper.saveFileToPath(snapshotSegmentJson, snapshotSegmentErrorFilePath);
                                     }
                                 }
                             }
@@ -14463,12 +15119,12 @@ namespace AppDynamics.Dexter
                                 if (getProcessCallGraph == true && processRequestGUID.Length > 0)
                                 {
                                     string snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToPath(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
                                 }
                                 else
                                 {
                                     string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToFolder(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.saveFileToPath(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
                                 }
                             }
                         }
@@ -15074,6 +15730,7 @@ namespace AppDynamics.Dexter
             {
                 EntityBase entityRow = entityList[i];
                 entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
+                entityRow.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -15088,6 +15745,7 @@ namespace AppDynamics.Dexter
             {
                 EntityBase entityRow = entityList[i];
                 entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
+                entityRow.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -15102,6 +15760,7 @@ namespace AppDynamics.Dexter
             {
                 EntityBase entityRow = entityList[i];
                 entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
+                entityRow.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -15130,6 +15789,7 @@ namespace AppDynamics.Dexter
             {
                 EntityBase entityRow = entityList[i];
                 entityRow.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", getEntityMetricReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
+                entityRow.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, entityRow).Substring(reportsFolderPath.Length + 1));
             }
         }
 
@@ -17771,7 +18431,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             JobTimeRange jobTimeRange, 
-            List<JToken> entityList, 
+            List<JToken> snapshotTokenList, 
             List<EntityTier> tiersList, 
             List<EntityBackend> backendsList, 
             List<EntityServiceEndpoint> serviceEndpointsList, 
@@ -17791,7 +18451,7 @@ namespace AppDynamics.Dexter
 
             #endregion
 
-            foreach (JToken snapshotToken in entityList)
+            foreach (JToken snapshotToken in snapshotTokenList)
             {
                 // Only do first in chain
                 if ((bool)snapshotToken["firstInChain"] == false)
@@ -17919,25 +18579,10 @@ namespace AppDynamics.Dexter
                     string DEEPLINK_THIS_TIMERANGE_SNAPSHOT = String.Format(DEEPLINK_TIMERANGE_BETWEEN_TIMES, toTimeUnixSnapshot, fromTimeUnixSnapshot, differenceInMinutesSnapshot);
                     snapshot.SnapshotLink = String.Format(DEEPLINK_SNAPSHOT_OVERVIEW, snapshot.Controller, snapshot.ApplicationID, snapshot.RequestID, DEEPLINK_THIS_TIMERANGE_SNAPSHOT);
 
-                    // This is the snapshot report link
-                    string reportFileName = String.Format(
-                        REPORT_SNAPSHOT_DETAILS_FILE_NAME,
-                        programOptions.JobName,
-                        jobConfiguration.Input.ExpandedTimeRange.From,
-                        jobConfiguration.Input.ExpandedTimeRange.To,
-                        getFileSystemSafeString(new Uri(snapshot.Controller).Host),
-                        getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
-                        getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
-                        userExperienceFolderNameMapping[snapshot.UserExperience],
-                        snapshot.Occurred,
-                        snapshot.RequestID);
-                    string reportFilePath = Path.Combine(
-                        reportsFolderPath,
-                        SNAPSHOTS_FOLDER_NAME,
-                        reportFileName);
-
-                    reportFilePath = reportFilePath.Substring(reportsFolderPath.Length + 1);
-                    snapshot.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", reportFilePath);
+                    if (snapshot.CallGraphType != "NONE")
+                    {
+                        snapshot.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, snapshot).Substring(reportsFolderPath.Length + 1));
+                    }
 
                     #endregion
 
@@ -17952,7 +18597,7 @@ namespace AppDynamics.Dexter
                     List<BusinessData> businessDataList = null;
                     List<MethodCallLine> methodCallLinesList = null;
                     List<MethodCallLine> methodCallLinesOccurrencesList = null;
-                    Dictionary<string, FoldedCallStack> foldedCallStacksList = null; ;
+                    Dictionary<string, int> foldedCallStacksList = null; ;
 
                     JArray snapshotSegmentsList = FileIOHelper.loadJArrayFromFile(snapshotSegmentsDataFilePath);
                     if (snapshotSegmentsList != null)
@@ -17981,7 +18626,7 @@ namespace AppDynamics.Dexter
                         methodCallLinesOccurrencesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 50);
 
                         // Assume 25 distinct call stacks in each segment
-                        foldedCallStacksList = new Dictionary<string, FoldedCallStack>(snapshotSegmentsList.Count * 25);
+                        foldedCallStacksList = new Dictionary<string, int>(snapshotSegmentsList.Count * 25);
 
                         SortedDictionary<string, CallChainContainer> callChainsSnapshot = new SortedDictionary<string, CallChainContainer>();
 
@@ -19097,7 +19742,7 @@ namespace AppDynamics.Dexter
                                         // Allocate some characters per class/method pair
                                         StringBuilder sbFoldedCallStack = new StringBuilder(128 * methodCallLineLeaf.Depth);
 
-                                        // Walk from the leaf up to the parent
+                                        // Walk from the leaf up to the parent, building the flattened stack with frames separated by ;
                                         MethodCallLine methodCallLine = methodCallLineLeaf;
                                         while (methodCallLine != null)
                                         {
@@ -19106,18 +19751,15 @@ namespace AppDynamics.Dexter
                                             methodCallLine = methodCallLine.Parent;
                                         }
 
-                                        // Now count the unique call stack
+                                        // Now count the unique call stacks
                                         string foldedCallStackString = sbFoldedCallStack.ToString();
                                         if (foldedCallStacksList.ContainsKey(foldedCallStackString) == true)
                                         {
-                                            foldedCallStacksList[foldedCallStackString].Count++;
+                                            foldedCallStacksList[foldedCallStackString]++;
                                         }
                                         else
                                         {
-                                            FoldedCallStack foldedCallStack = new FoldedCallStack();
-                                            foldedCallStack.CallStack = foldedCallStackString;
-                                            foldedCallStack.Count = 1;
-                                            foldedCallStacksList.Add(foldedCallStackString, foldedCallStack);
+                                            foldedCallStacksList.Add(foldedCallStackString, 1);
                                         }
                                     }
                                 }
@@ -19468,7 +20110,7 @@ namespace AppDynamics.Dexter
 
                     if (foldedCallStacksList != null)
                     {
-                        FileIOHelper.writeFoldedCallStackToCSVFile(foldedCallStacksList.Values.ToList(), new FoldedCallStackReportMap(), foldedCallStacksFileName);
+                        FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksList), foldedCallStacksFileName, false);
                     }
 
                     List<Snapshot> snapshotRows = new List<Snapshot>(1);
@@ -19488,7 +20130,7 @@ namespace AppDynamics.Dexter
                 }
             }
 
-            return entityList.Count;
+            return snapshotTokenList.Count;
         }
 
         private static MethodCallLine convertCallGraphChildren_Recursion(
@@ -20279,6 +20921,68 @@ namespace AppDynamics.Dexter
             return "17: t>300000"; ;
         }
 
+        public static string writeFoldedStackFramesToString(Dictionary<string, int> foldedCallStacksList)
+        {
+            if (foldedCallStacksList != null)
+            {
+                StringBuilder sb = new StringBuilder(256 * foldedCallStacksList.Count);
+                foreach (KeyValuePair<string, int> foldedCallStack in foldedCallStacksList)
+                {
+                    sb.Append(foldedCallStack.Key);
+                    sb.Append(" ");
+                    sb.Append(foldedCallStack.Value);
+                    sb.AppendLine();
+                    //sb.Append("\n");
+                }
+
+                return sb.ToString();
+            }
+
+            return String.Empty;
+        }
+
+        public static Dictionary<string, int> readFoldedStackFramesFromString(string foldedCallStacksString)
+        {
+            Dictionary<string, int> foldedCallStacksList = new Dictionary<string, int>(25);
+            StringReader sr = new StringReader(foldedCallStacksString);
+            while (true)
+            {
+                string foldedCallGraphLine = sr.ReadLine();
+                if (foldedCallGraphLine != null)
+                {
+                    int indexOfNumberOfOccurrences = foldedCallGraphLine.LastIndexOf(' ');
+                    if (indexOfNumberOfOccurrences > 0)
+                    {
+                        foldedCallStacksList.Add(foldedCallGraphLine.Substring(0, indexOfNumberOfOccurrences), Convert.ToInt32(foldedCallGraphLine.Substring(indexOfNumberOfOccurrences + 1)));
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return foldedCallStacksList;
+        }
+
+        public static void addFoldedStacks(Dictionary<string, int> foldedCallStacksAddToList, Dictionary<string, int> foldedCallStacksAddFromList)
+        {
+            if (foldedCallStacksAddToList != null && foldedCallStacksAddFromList != null)
+            {
+                foreach (KeyValuePair<string, int> foldedCallStack in foldedCallStacksAddFromList)
+                {
+                    if (foldedCallStacksAddToList.ContainsKey(foldedCallStack.Key) == true)
+                    {
+                        foldedCallStacksAddToList[foldedCallStack.Key] = foldedCallStacksAddToList[foldedCallStack.Key] + foldedCallStack.Value;
+                    }
+                    else
+                    {
+                        foldedCallStacksAddToList.Add(foldedCallStack.Key, foldedCallStack.Value);
+                    }
+                }
+            }
+        }
+
         #endregion
 
 
@@ -20290,7 +20994,6 @@ namespace AppDynamics.Dexter
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == TIERS_TYPE_SHORT)
             {
@@ -20299,7 +21002,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["TierType"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == NODES_TYPE_SHORT)
             {
@@ -20311,7 +21013,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["AgentVersion"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["MachineName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["MachineAgentVersion"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == BACKENDS_TYPE_SHORT)
             {
@@ -20329,7 +21030,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["Prop3Value"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Prop4Value"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Prop5Value"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == BUSINESS_TRANSACTIONS_TYPE_SHORT)
             {
@@ -20339,7 +21039,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTNameOriginal"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == SERVICE_ENDPOINTS_TYPE_SHORT)
             {
@@ -20348,7 +21047,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["SEPType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == ERRORS_TYPE_SHORT)
             {
@@ -20364,7 +21062,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ErrorLevel3"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorLevel4"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorLevel5"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
             else if (entityType == INFORMATION_POINTS_TYPE_SHORT)
             {
@@ -20372,7 +21069,6 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["IPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["IPType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
             }
         }
 
@@ -22809,6 +23505,10 @@ namespace AppDynamics.Dexter
 
             #region Full ranges
 
+            string relativePathToReportsToRemoveFromLinks = Path.Combine(
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID));
+
             // Full range table
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
             entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
@@ -22818,6 +23518,15 @@ namespace AppDynamics.Dexter
                 if (range != null)
                 {
                     table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_FULL);
+
+                    // Now loop through all lines and strip out references from Flame link
+                    if (table.Columns["FlameGraphLink"] != null)
+                    {
+                        for (int i = range.Start.Row + 1; i <= range.End.Row; i++)
+                        {
+                            sheet.Cells[i, table.Columns["FlameGraphLink"].Position + 1].Formula = sheet.Cells[i, table.Columns["FlameGraphLink"].Position + 1].Formula.Replace(relativePathToReportsToRemoveFromLinks, "..");
+                        }
+                    }
 
                     fromRow = fromRow + range.Rows + 2;
                 }
@@ -22837,6 +23546,15 @@ namespace AppDynamics.Dexter
                 if (range != null)
                 {
                     table = sheet.Tables.Add(range, REPORT_ENTITY_DETAILS_TABLE_ENTITY_HOURLY);
+
+                    // Now loop through all lines and strip out references from Flame link
+                    if (table.Columns["FlameGraphLink"] != null)
+                    {
+                        for (int i = range.Start.Row + 1; i <= range.End.Row; i++)
+                        {
+                            sheet.Cells[i, table.Columns["FlameGraphLink"].Position + 1].Formula = sheet.Cells[i, table.Columns["FlameGraphLink"].Position + 1].Formula.Replace(relativePathToReportsToRemoveFromLinks, "..");
+                        }
+                    }
                 }
             }
 
@@ -24132,8 +24850,8 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ToName"].Position + 1).Width = 35;
                 sheet.Column(table.Columns["From"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
 
             #endregion
@@ -24337,11 +25055,10 @@ namespace AppDynamics.Dexter
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == TIERS_TYPE_SHORT)
             {
@@ -24350,11 +25067,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["TierType"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == NODES_TYPE_SHORT)
             {
@@ -24363,11 +25079,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == BACKENDS_TYPE_SHORT)
             {
@@ -24375,11 +25090,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BackendName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BackendType"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == BUSINESS_TRANSACTIONS_TYPE_SHORT)
             {
@@ -24388,11 +25102,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == SERVICE_ENDPOINTS_TYPE_SHORT)
             {
@@ -24401,11 +25114,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["SEPType"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == ERRORS_TYPE_SHORT)
             {
@@ -24413,11 +25125,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
             else if (entityType == INFORMATION_POINTS_TYPE_SHORT)
             {
@@ -24425,11 +25136,10 @@ namespace AppDynamics.Dexter
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["IPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["IPType"].Position + 1).Width = 20;
-                sheet.Column(table.Columns["From"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["To"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 25;
-                sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 25;
+                sheet.Column(table.Columns["From"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["To"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
+                sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
         }
 
@@ -24595,10 +25305,618 @@ namespace AppDynamics.Dexter
 
         #endregion
 
+        #region Flame Graph report functions
+
+        private static string getFlameGraphReportFilePath(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBase entityRow)
+        {
+            string reportFileName = String.Empty;
+            string reportFilePath = String.Empty;
+
+            if (entityRow is EntityApplication)
+            {
+                reportFileName = String.Format(
+                    REPORT_FLAME_GRAPH_APPLICATION_FILE_NAME,
+                    getFileSystemSafeString(new Uri(entityRow.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                reportFilePath = Path.Combine(
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    APPLICATION_TYPE_SHORT,
+                    reportFileName);
+            }
+            else if (entityRow is EntityTier)
+            {
+                EntityTier tierRow = (EntityTier)entityRow;
+                reportFileName = String.Format(
+                    REPORT_FLAME_GRAPH_TIER_FILE_NAME,
+                    getFileSystemSafeString(new Uri(entityRow.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                reportFilePath = Path.Combine(
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    TIERS_TYPE_SHORT,
+                    reportFileName);
+            }
+            else if (entityRow is EntityNode)
+            {
+                EntityNode nodeRow = (EntityNode)entityRow;
+                reportFileName = String.Format(
+                    REPORT_FLAME_GRAPH_NODE_FILE_NAME,
+                    getFileSystemSafeString(new Uri(entityRow.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                reportFilePath = Path.Combine(
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    NODES_TYPE_SHORT,
+                    reportFileName);
+            }
+            else if (entityRow is EntityBackend)
+            {
+                reportFilePath = String.Empty;
+            }
+            else if (entityRow is EntityBusinessTransaction)
+            {
+                EntityBusinessTransaction businessTransactionRow = (EntityBusinessTransaction)entityRow;
+                reportFileName = String.Format(
+                    REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME,
+                    getFileSystemSafeString(new Uri(entityRow.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID),
+                    jobConfiguration.Input.ExpandedTimeRange.From,
+                    jobConfiguration.Input.ExpandedTimeRange.To);
+                reportFilePath = Path.Combine(
+                    programOptions.OutputJobFolderPath,
+                    REPORTS_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
+                    BUSINESS_TRANSACTIONS_TYPE_SHORT,
+                    reportFileName);
+            }
+            else if (entityRow is EntityServiceEndpoint)
+            {
+                reportFilePath = String.Empty;
+            }
+            else if (entityRow is EntityError)
+            {
+                reportFilePath = String.Empty;
+            }
+            else if (entityRow is EntityInformationPoint)
+            {
+                reportFilePath = String.Empty;
+            }
+
+            return reportFilePath;
+        }
+
+        private static string getFlameGraphReportFilePath(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, Snapshot snapshot)
+        {
+            string reportFileName = String.Format(
+                REPORT_FLAME_GRAPH_SNAPSHOT_FILE_NAME, 
+                snapshot.UserExperience, 
+                snapshot.OccurredUtc, 
+                snapshot.RequestID);
+
+            string reportFilePath = Path.Combine(
+                programOptions.OutputJobFolderPath,
+                REPORTS_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                reportFileName);
+
+            return reportFilePath;
+        }
+
+        private static int reportFlameGraphsSnapshots(
+            ProgramOptions programOptions,
+            JobConfiguration jobConfiguration,
+            JobTarget jobTarget, 
+            List<Snapshot> snapshotsList, 
+            string snapshotsFolderPath, 
+            string flameGraphTemplateString,
+            bool progressToConsole)
+        {
+            int j = 0;
+
+            foreach (Snapshot snapshot in snapshotsList)
+            {
+                string snapshotFolderPath = Path.Combine(
+                    snapshotsFolderPath,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    String.Format("{0:yyyyMMddHH}", snapshot.OccurredUtc),
+                    userExperienceFolderNameMapping[snapshot.UserExperience],
+                    String.Format(SNAPSHOT_FOLDER_NAME, snapshot.RequestID, snapshot.OccurredUtc));
+
+                string snapshotFoldedCallStacksFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+
+                if (File.Exists(snapshotFoldedCallStacksFileName) == true)
+                {
+                    createFlameGraph(
+                        snapshotFoldedCallStacksFileName,
+                        getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, snapshot),
+                        String.Format("{0}/{1}/{2}, BT {3} {4:G} {5} {6}", snapshot.Controller, snapshot.ApplicationName, snapshot.TierName, snapshot.BTName, snapshot.Occurred, snapshot.UserExperience, snapshot.RequestID),
+                        flameGraphTemplateString,
+                        progressToConsole);
+                }
+
+                if (progressToConsole == true)
+                {
+                    j++;
+                    if (j % 1000 == 0)
+                    {
+                        Console.Write("[{0}].", j);
+                    }
+                }
+            }
+
+            return snapshotsList.Count;
+        }
+
+        /// <summary>
+        /// Review http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html
+        /// Review http://techblog.netflix.com/2015/07/java-in-flames.html
+        ///        http://techblog.netflix.com/2014/11/nodejs-in-flames.html
+        /// Implementation courtesy of learning how https://github.com/davepacheco/node-stackvis does it
+        /// </summary>
+        /// <param name="foldedStackFilePath"></param>
+        /// <param name="flameGraphFilePath"></param>
+        /// <param name="descriptionText"></param>
+        /// <param name="flameGraphTemplate"></param>
+        /// <returns></returns>
+        private static bool createFlameGraph(string foldedStackFilePath, string flameGraphFilePath, string descriptionText, string flameGraphTemplate, bool progressToConsole)
+        {
+            // If it already been rendered, bail
+            if (File.Exists(flameGraphFilePath) == true)
+            {
+                return false;
+            }
+
+            // Check to see if the input data exists
+            if (File.Exists(foldedStackFilePath) == false)
+            {
+                logger.Warn("Flame graph file {0} does not exist", foldedStackFilePath);
+                return false;
+            }
+
+            logger.Trace("Rendering flame graph {0} from {1}", flameGraphFilePath, foldedStackFilePath);
+
+            #region Brendan Gregg's Perl version
+
+            if (false)
+            {
+                string foldedStackPerlFilePath = String.Format("{0}.pl.svg", flameGraphFilePath);
+
+                // Use Brendan Gregg's script but only in debug mode
+                // http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html
+                if (File.Exists(foldedStackPerlFilePath) == false)
+                {
+                    Process p = new Process();
+                    // Redirect the output stream of the child process.
+                    p.StartInfo.UseShellExecute = false;
+                    p.StartInfo.RedirectStandardOutput = true;
+                    p.StartInfo.RedirectStandardError = true;
+                    p.StartInfo.FileName = @"C:\Perl64\bin\perl.exe";
+                    p.StartInfo.Arguments = String.Format(@"""C:\appdynamics\FlameGraph\FlameGraph-master\flamegraph.pl"" -width 1600 --title ""{1}"" ""{0}""", foldedStackFilePath, descriptionText);
+                    p.Start();
+                    string output = p.StandardOutput.ReadToEnd();
+                    p.WaitForExit();
+
+                    if (output.Contains("ERROR:") == true)
+                    {
+                        // Do nothing
+                        return false;
+                    }
+                    else
+                    {
+                        FileIOHelper.saveFileToPath(output, foldedStackPerlFilePath);
+                    }
+                }
+            }
+
+            #endregion
+
+            #region Create object representation of Flame Graph
+
+            // Read folded call stacks with counts of occurrences
+            Dictionary<string, int> foldedCallStacksList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(foldedStackFilePath));
+            if (foldedCallStacksList.Count == 0)
+            {
+                logger.Warn("Flame graph file {0} contains no folded frames", foldedStackFilePath);
+                return false;
+            }
+
+            // Sort the call stacks by the string portion alphabetically
+            SortedDictionary<string, int> sortedFoldedCallStacksList = new SortedDictionary<string, int>(foldedCallStacksList);
+
+            // Depth of the tallest call stack, used to measure the height of final canvas
+            int maxFrameDepth = 0;
+            // Width of the samples, used to measure the width of the frames relative to width of the final canvas
+            int maxSampleWidth = 0;
+            // List of boxes that last call stack consists of, to compare the current call stack with
+            List<FlameGraphBox> lastCallStack = new List<FlameGraphBox>();
+            // All boxes that should be displayed on the Flame Graph. Assume 15 frames per call stack on average
+            List<FlameGraphBox> flameGraphBoxes = new List<FlameGraphBox>(sortedFoldedCallStacksList.Count * 15);
+
+            // Process call stacks one by one, stacking frames from left to right in alphabetical order, and stacking them from bottom up
+            foreach (KeyValuePair<string, int> foldedCallStack in sortedFoldedCallStacksList)
+            {
+                // Add an empty frame for frame representing "all samples" frame. 
+                // Parse the folded stack into array of frames, prepended with empty frame to account for all items
+                string[] stackFrames = String.Format("all;{0}", foldedCallStack.Key).Split(';');
+
+                // Calculate maximum depth for later measurement of the overall canvas
+                if (stackFrames.Length > maxFrameDepth)
+                {
+                    maxFrameDepth = stackFrames.Length;
+                }
+
+                // This becomes the current call stack
+                List<FlameGraphBox> thisCallStack = new List<FlameGraphBox>(stackFrames.Length);
+
+                // If not the first stack processed, compare this new stack frames to the previous stack frames, going up 
+                // Keep comparing until you see no differences or hit the top
+                // measure that hight 
+                int depthOfSameFrames = 0;
+                for (int i = 0; i < lastCallStack.Count && i < stackFrames.Length; i++)
+                {
+                    // Compare frames at the same level
+                    if (String.Compare(lastCallStack[i].FullName, stackFrames[i], true) == 0)
+                    {
+                        // Same frame. Make it wider by adding the number of samples to the already existing flame graph box
+                        FlameGraphBox flameGraphBox = lastCallStack[i];
+                        flameGraphBox.Samples = flameGraphBox.Samples + foldedCallStack.Value;
+
+                        // Add this frame to the current call stack
+                        thisCallStack.Add(flameGraphBox);
+
+                        // Measure the depth of the frames that are the same 
+                        depthOfSameFrames++;
+                    }
+                    else
+                    {
+                        // Not the same level, time to break out to move to next step
+                        break;
+                    }
+                }
+
+                // Each of these stack frames was present in previous stack but not this one
+                // Using last frame output, go from height measured in step 3 down to the bottom, and mark them as ended
+                for (int i = lastCallStack.Count - 1; i >= depthOfSameFrames; i--)
+                {
+                    FlameGraphBox flameGraphBox = lastCallStack[i];
+                    // TODO not sure what to do
+                }
+
+                // Each of these frames was not present in the previous stack, so start them
+                // Using this frame output, go from height measured in step 3 up to the top, marking them as having started
+                for (int i = depthOfSameFrames; i < stackFrames.Length; i++)
+                {
+                    FlameGraphBox flameGraphBox = new FlameGraphBox();
+                    flameGraphBox.FullName = stackFrames[i];
+                    flameGraphBox.Start = maxSampleWidth;
+                    flameGraphBox.Samples = foldedCallStack.Value;
+                    flameGraphBox.Depth = i;
+
+                    // Add this frame to the current call stack
+                    thisCallStack.Add(flameGraphBox);
+
+                    // Add it to all boxes
+                    flameGraphBoxes.Add(flameGraphBox);
+                }
+
+
+                //    If items at the same level are idenfical in MethodCall, make the leftmost item wider in adding this 
+                //    frames' number of samples to the leftmost. Discard the new frame, and use the left one, wider instead
+                //    If items at the same level are not identical in MethodCall, use this frame, adjusting its start to be
+                //    right after the leftmost one's end
+
+                // Move the starting point for next call stack right by the value of the current call stack sample rate
+                maxSampleWidth = maxSampleWidth + foldedCallStack.Value;
+
+                // Make this call stack last and move on to next folded call stack
+                lastCallStack = thisCallStack;
+            }
+
+            #endregion
+
+            #region Output Flame Graph SVG file
+
+            // Height of the single frame
+            int frameHeight = 16;
+            // Minimum width of the frame, beyond which it isn't output
+            decimal minFrameWidth = 0.1m;
+
+            // Area to pad from the top to get the frames
+            int flameGraphHeightPaddingTop = 30;
+            // Area to pad from the bottom to get the frames
+            int flameGraphHeightPaddingBottom = 30;
+
+            // The height of the flame graph
+            int flameGraphHeight = maxFrameDepth * frameHeight + flameGraphHeightPaddingTop + flameGraphHeightPaddingBottom;
+
+            // Width of 1 sample relative to the total width
+            decimal widthPerSample = 1600 / (decimal)maxSampleWidth;
+
+            XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+            xmlWriterSettings.Indent = true;
+
+            XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
+            xmlReaderSettings.DtdProcessing = DtdProcessing.Parse;
+            xmlReaderSettings.IgnoreComments = false;
+
+            FileIOHelper.createFolder(Path.GetDirectoryName(flameGraphFilePath));
+
+            using (StringReader stringReader = new StringReader(flameGraphTemplate))
+            {
+                using (XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings))
+                {
+                    using (XmlWriter xmlWriter = XmlWriter.Create(flameGraphFilePath, xmlWriterSettings))
+                    {
+                        xmlWriter.WriteDocType("svg", "-//W3C//DTD SVG 1.1//EN", "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd", null);
+                        while (xmlReader.Read())
+                        {
+                            // Adjust SVG element
+                            if (xmlReader.IsStartElement("svg") == true)
+                            {
+                                xmlWriter.WriteStartElement("svg", "http://www.w3.org/2000/svg");
+
+                                while (xmlReader.MoveToNextAttribute())
+                                {
+                                    if (xmlReader.LocalName == "height")
+                                    {
+                                        xmlWriter.WriteAttributeString("height", flameGraphHeight.ToString());
+                                    }
+                                    else if (xmlReader.LocalName == "viewBox")
+                                    {
+                                        xmlWriter.WriteAttributeString("viewBox", xmlReader.Value.Replace("1200", flameGraphHeight.ToString()));
+                                    }
+                                    else if (xmlReader.LocalName == "xmlns")
+                                    {
+                                        // Skip that one
+                                    }
+                                    else
+                                    {
+                                        XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                    }
+                                }
+                            }
+                            // Adjust the size of the background rectangle
+                            else if (xmlReader.IsStartElement("rect") == true && xmlReader.GetAttribute("id") == "background")
+                            {
+                                xmlWriter.WriteStartElement("rect");
+
+                                while (xmlReader.MoveToNextAttribute())
+                                {
+                                    if (xmlReader.LocalName == "height")
+                                    {
+                                        xmlWriter.WriteAttributeString("height", flameGraphHeight.ToString());
+                                    }
+                                    else
+                                    {
+                                        XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                    }
+                                }
+
+                                xmlWriter.WriteEndElement();
+                            }
+                            // Set Title
+                            else if (xmlReader.IsStartElement("text") == true && xmlReader.GetAttribute("id") == "title")
+                            {
+                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                while (xmlReader.MoveToNextAttribute())
+                                {
+                                    XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                }
+                                xmlWriter.WriteString(descriptionText);
+                                xmlWriter.WriteEndElement();
+
+                                // Read the template string and closing /text tag to move the reader forward
+                                xmlReader.Read();
+                                xmlReader.Read();
+                            }
+                            // Set Mouseover Function display area location
+                            else if (xmlReader.IsStartElement("text") == true && xmlReader.GetAttribute("id") == "details")
+                            {
+                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                while (xmlReader.MoveToNextAttribute())
+                                {
+                                    if (xmlReader.LocalName == "y")
+                                    {
+                                        xmlWriter.WriteAttributeString("y", (flameGraphHeight - 12).ToString());
+                                    }
+                                    else
+                                    {
+                                        XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                    }
+                                }
+                                xmlReader.Read();
+
+                                XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                xmlWriter.WriteEndElement();
+
+                                // Read the template string and closing /text tag to move the reader forward
+                                xmlReader.Read();
+                            }
+                            // Adjust version
+                            else if (xmlReader.IsStartElement("text") == true && xmlReader.GetAttribute("id") == "version")
+                            {
+                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                while (xmlReader.MoveToNextAttribute())
+                                {
+                                    if (xmlReader.LocalName == "y")
+                                    {
+                                        xmlWriter.WriteAttributeString("y", (flameGraphHeight - 12).ToString());
+                                    }
+                                    else
+                                    {
+                                        XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                                    }
+                                }
+                                xmlReader.Read();
+
+                                xmlWriter.WriteString(String.Format(xmlReader.Value, Assembly.GetEntryAssembly().GetName().Version));
+                                xmlWriter.WriteEndElement();
+
+                                // Read the template string and closing /text tag to move the reader forward
+                                xmlReader.Read();
+                            }
+                            // Found content placeholder, let's output all the flame graphs
+                            else if (xmlReader.IsStartElement("g") == true && xmlReader.GetAttribute("id") == "contentPlaceholder")
+                            {
+                                if (progressToConsole == true && flameGraphBoxes.Count >= 10000)
+                                {
+                                    loggerConsole.Info("Outputing Flame Graph Boxes {0}", flameGraphBoxes.Count);
+                                }
+
+                                // Output each flame graph element one by one
+                                //<g onmouseover="s(this)" onmouseout="c()" onclick="zoom(this)">
+                                //  <title>AALevel4 (4 samples, 22.22%)</title>
+                                //  <rect x="403.3" y="69" width="262.3" height="15.0" fill="rgb(237,67,16)" rx="2" ry="2" />
+                                //  <text text-anchor="" x="406.33" y="79.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)">AALevel4</text>
+                                //</g>
+                                for (int i = 0; i < flameGraphBoxes.Count; i++)
+                                {
+                                    FlameGraphBox flameGraphBox = flameGraphBoxes[i];
+
+                                    // Measure the flame graph frame
+                                    decimal x1 = Math.Round(flameGraphBox.Start * widthPerSample, 2);
+                                    decimal y1 = flameGraphHeight - flameGraphHeightPaddingBottom - (flameGraphBox.Depth + 1) * frameHeight + 1;
+                                    decimal x2 = Math.Round(flameGraphBox.End * widthPerSample, 2);
+                                    decimal y2 = flameGraphHeight - flameGraphHeightPaddingBottom - flameGraphBox.Depth * frameHeight;
+
+                                    decimal boxWidth = x2 - x1;
+
+                                    // Is the sample very narrow?
+                                    if (boxWidth <= minFrameWidth)
+                                    {
+                                        // Skip this really narrow frame
+                                        continue;
+                                    }
+
+                                    // Output container with mouseover and mouseout
+                                    xmlWriter.WriteStartElement("g");
+                                    xmlWriter.WriteAttributeString("class", "func_g");
+                                    xmlWriter.WriteAttributeString("id", String.Format("flameGraphBox_{0}", i));
+                                    xmlWriter.WriteAttributeString("onmouseover", "s(this)");
+                                    xmlWriter.WriteAttributeString("onmouseout", "c()");
+                                    xmlWriter.WriteAttributeString("onclick", "zoom(this)");
+
+                                    // Output mouseover hint
+                                    xmlWriter.WriteStartElement("title");
+                                    xmlWriter.WriteString(String.Format("{0} ({1} samples, {2:P})", flameGraphBox.FullName, flameGraphBox.Samples, flameGraphBox.Samples / (decimal)maxSampleWidth));
+                                    xmlWriter.WriteEndElement();
+
+                                    // Output the rectangle with pretty colors
+                                    xmlWriter.WriteStartElement("rect");
+                                    xmlWriter.WriteAttributeString("x", x1.ToString());
+                                    xmlWriter.WriteAttributeString("y", y1.ToString());
+                                    xmlWriter.WriteAttributeString("width", (x2 - x1).ToString());
+                                    xmlWriter.WriteAttributeString("height", (y2 - y1).ToString());
+                                    xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(flameGraphBox.Depth, maxFrameDepth));
+                                    xmlWriter.WriteAttributeString("rx", "2");
+                                    xmlWriter.WriteAttributeString("ry", "2");
+                                    xmlWriter.WriteEndElement();
+
+                                    // Output text label that is visible and positioned right over the rectanlge
+                                    xmlWriter.WriteStartElement("text");
+                                    xmlWriter.WriteAttributeString("text-anchor", "left");
+                                    xmlWriter.WriteAttributeString("x", (x1 + 2).ToString());
+                                    xmlWriter.WriteAttributeString("y", (y1 + 11).ToString());
+                                    xmlWriter.WriteAttributeString("font-size", "11");
+                                    xmlWriter.WriteAttributeString("font-family", "monospace");
+                                    // Is the box big enough for the text?
+                                    if (boxWidth > 25)
+                                    {
+                                        // Measure the text and put .. if it won't fit
+                                        int numberOfCharactersThatWillFit = (int)Math.Round(Decimal.Divide(boxWidth, 8.4m), 0);
+
+                                        if (flameGraphBox.FullName.Length > numberOfCharactersThatWillFit)
+                                        {
+                                            xmlWriter.WriteString(String.Format("{0}..", flameGraphBox.FullName.Substring(0, numberOfCharactersThatWillFit)));
+                                        }
+                                        else
+                                        {
+                                            xmlWriter.WriteString(flameGraphBox.FullName);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        xmlWriter.WriteString(String.Empty);
+                                    }
+                                    xmlWriter.WriteEndElement();
+
+                                    xmlWriter.WriteEndElement();
+
+                                    // Show progress
+                                    if (progressToConsole == true)
+                                    {
+                                        if (i != 0 && i % 10000 == 0)
+                                        {
+                                            Console.Write("[{0}].", i);
+                                        }
+                                    }
+                                }
+
+                                if (progressToConsole == true && flameGraphBoxes.Count >= 10000)
+                                {
+                                    Console.WriteLine();
+                                }
+
+                                // Move off the content placeholder
+                                xmlReader.Read();
+                                xmlReader.Read();
+                            }
+                            // All other nodes
+                            else
+                            {
+                                XmlWriterHelper.WriteShallowNode(xmlReader, xmlWriter);
+                            }
+                        }
+                    }
+                }
+            }
+
+            #endregion
+
+            return true;
+        }
+
+        private static string getFlameGraphBoxColorAsRGBString(int thisDepth, int maxDepth)
+        {
+            double rStep = (colorFlameGraphStackEnd.R - colorFlameGraphStackStart.R) / (double)maxDepth;
+            double gStep = (colorFlameGraphStackEnd.G - colorFlameGraphStackStart.G) / (double)maxDepth;
+            double bStep = (colorFlameGraphStackEnd.B - colorFlameGraphStackStart.B) / (double)maxDepth;
+
+            var rActual = colorFlameGraphStackStart.R + (int)(rStep * thisDepth);
+            var gActual = colorFlameGraphStackStart.G + (int)(gStep * thisDepth);
+            var bActual = colorFlameGraphStackStart.B + (int)(bStep * thisDepth);
+
+            return String.Format("#{0:X2}{1:X2}{2:X2}", rActual, gActual, bActual);
+        }
+
+        #endregion
+
 
         #region Helper functions for reading CSV into Excel worksheet
 
-        private static ExcelRangeBase readCSVFileIntoExcelRange(MemoryStream csvStream, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
+            private static ExcelRangeBase readCSVFileIntoExcelRange(MemoryStream csvStream, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
         {
             logger.Trace("Reading CSV file from memory stream to Excel Worksheet {0} at (row {1}, column {2})", sheet.Name, startRow, startColumn);
 

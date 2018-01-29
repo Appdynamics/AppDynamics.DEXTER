@@ -56,7 +56,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.NodeID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
 
-            //Map(m => m.DetailLink).Index(i); i++;
+            Map(m => m.FlameGraphLink).Index(i); i++;
             Map(m => m.SnapshotLink).Index(i); i++;
 
             Map(m => m.ControllerLink).Index(i); i++;

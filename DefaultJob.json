@@ -18,6 +18,7 @@
         "EntityMetrics": false,
         "EntityDetails": false,
         "Snapshots": false,
+        "FlameGraphs": false,
         "Events": false,
         "Configuration": false
     },
@@ -25,14 +26,14 @@
         {
             "Controller": "https://your.controller.here",
             "UserName": "username@customer1",
-            "UserPassword": "yourpassword or leave blank to be prompted",
+            "UserPassword": "your password or leave blank to be prompted",
             "Application": "YourApplication",
             "NameRegex": false
         },
         {
             "Controller": "https://your.other.controller.here",
             "UserName": "username@customer2",
-            "UserPassword": "yourpassword or leave blank to be prompted. Or remove this element if you just want to query one controller",
+            "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
             "Application": ".*",
             "NameRegex": true
         }

@@ -120,6 +120,7 @@ namespace AppDynamics.Dexter
 
                 return false;
             }
+
             // Validate input time range selection
             if (jobConfiguration.Input.TimeRange == null || jobConfiguration.Input.TimeRange.From == null || jobConfiguration.Input.TimeRange.From == DateTime.MinValue)
             {

@@ -106,7 +106,12 @@ namespace AppDynamics.Dexter
             return true;
         }
 
-        public static bool saveFileToFolder(string fileContents, string filePath)
+        public static bool saveFileToPath(string fileContents, string filePath)
+        {
+            return saveFileToPath(fileContents, filePath, true);
+        }
+
+        public static bool saveFileToPath(string fileContents, string filePath, bool writeUTF8BOM)
         {
             string folderPath = Path.GetDirectoryName(filePath);
 
@@ -115,8 +120,16 @@ namespace AppDynamics.Dexter
                 try
                 {
                     logger.Trace("Writing string length {0} to file {1}", fileContents.Length, filePath);
-                    File.WriteAllText(filePath, fileContents, Encoding.UTF8);
 
+                    if (writeUTF8BOM == true)
+                    {
+                        File.WriteAllText(filePath, fileContents, Encoding.UTF8);
+                    }
+                    else
+                    {
+                        Encoding utf8WithoutBom = new UTF8Encoding(false);
+                        File.WriteAllText(filePath, fileContents, utf8WithoutBom);
+                    }
                     return true;
                 }
                 catch (Exception ex)
@@ -129,6 +142,21 @@ namespace AppDynamics.Dexter
             return false;
         }
 
+        public static string readFileFromPath(string filePath)
+        {
+            try
+            {
+                logger.Trace("Reading file {0}", filePath);
+                return File.ReadAllText(filePath, Encoding.UTF8);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Unable to read from file {0}", filePath);
+                logger.Error(ex);
+            }
+
+            return String.Empty;
+        }
         #endregion
 
         #region JSON file reading and writing
@@ -383,39 +411,6 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static bool writeFoldedCallStackToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath)
-        {
-            string folderPath = Path.GetDirectoryName(csvFilePath);
-
-            if (createFolder(folderPath) == true)
-            {
-                try
-                {
-                    logger.Trace("Writing list with {0} elements containing type {1} to file {2}", listToWrite.Count, typeof(T), csvFilePath);
-
-                    // Create new
-                    using (StreamWriter sw = File.CreateText(csvFilePath))
-                    {
-                        sw.NewLine = "\n";
-                        CsvWriter csvWriter = new CsvWriter(sw);
-                        csvWriter.Configuration.RegisterClassMap(classMap);
-                        csvWriter.Configuration.HasHeaderRecord = false;
-                        csvWriter.Configuration.Delimiter = " ";
-                        csvWriter.WriteRecords(listToWrite);
-                    }
-
-                    return true;
-                }
-                catch (Exception ex)
-                {
-                    logger.Error("Unable to write CSV to file {0}", csvFilePath);
-                    logger.Error(ex);
-                }
-            }
-
-            return false;
-        }
-
         public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, ClassMap<T> classMap)
         {
             try
@@ -583,10 +578,6 @@ namespace AppDynamics.Dexter
                 output.Write(buffer, 0, bytesRead);
             }
         }
-
-        #endregion
-
-        #region File stream appending
 
         #endregion
 

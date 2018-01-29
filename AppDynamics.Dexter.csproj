@@ -116,6 +116,7 @@
     <Compile Include="Helpers\AESEncryptionHelper.cs" />
     <Compile Include="Helpers\FileIOHelper.cs" />
     <Compile Include="Helpers\IEnumerableExtensions.cs" />
+    <Compile Include="Helpers\XmlWriterHelper.cs" />
     <Compile Include="PrepareJob.cs" />
     <Compile Include="ProcessJob.cs" />
     <Compile Include="Program.cs" />
@@ -158,10 +159,9 @@
     <Compile Include="ReportObjects\Entity\EntityInformationPoint.cs" />
     <Compile Include="ReportObjects\Entity\Maps\InformationPointEntityReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
+    <Compile Include="ReportObjects\FlameGraph\FlameGraphBox.cs" />
     <Compile Include="ReportObjects\Metric\Maps\InformationPointMetricReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
-    <Compile Include="ReportObjects\Snapshot\FoldedCallStack.cs" />
-    <Compile Include="ReportObjects\Snapshot\Maps\FoldedCallStackReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineOccurrenceReportMap.cs" />
@@ -220,6 +220,10 @@
     <Compile Include="ReportObjects\Timing\StepTiming.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="FlameGraphTemplate.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="SearchContract.ico" />
     <None Include="Apache License 2.0.rtf" />
     <None Include="App.config">

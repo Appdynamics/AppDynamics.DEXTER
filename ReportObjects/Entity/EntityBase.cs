@@ -43,5 +43,7 @@ namespace AppDynamics.Dexter.DataObjects
         public bool HasActivity { get; set; }
 
         public string DetailLink { get; set; }
+
+        public string FlameGraphLink { get; set; }
     }
 }
