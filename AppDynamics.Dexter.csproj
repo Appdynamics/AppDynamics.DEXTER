@@ -96,7 +96,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControllerApi\ControllerApi.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobSnapshotType.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobUserExperience.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobBusinessTransactionType.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobTierType.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobOutput.cs" />
+    <Compile Include="DataObjects\JobConfiguration\JobSnapshotSelectionCriteria.cs" />
     <Compile Include="DataObjects\JobConfiguration\JobTarget.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTControllerSetting.cs" />
     <Compile Include="DataObjects\RestApi\AppDRESTBackend.cs" />

@@ -151,6 +151,52 @@ namespace AppDynamics.Dexter
                 return false;
             }
 
+            // Validate Snapshot selection
+            if (jobConfiguration.Input.SnapshotSelectionCriteria == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria = new JobSnapshotSelectionCriteria();
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.Tiers == null )
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.Tiers = new string[0];
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions = new string[0];
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.TierType == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.TierType = new JobTierType();
+                jobConfiguration.Input.SnapshotSelectionCriteria.TierType.All = true;
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType = new JobBusinessTransactionType();
+                jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.All = true;
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience = new JobUserExperience();
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.VerySlow = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Stall = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Error = true;
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType = new JobSnapshotType();
+                jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial = true;
+                jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None = true;
+            }
+
             #endregion
 
             #region Validate Output

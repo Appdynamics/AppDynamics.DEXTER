@@ -14,8 +14,19 @@ namespace AppDynamics.Dexter
         //        "Flowmaps": true,
         //        "Metrics": true,
         //        "Snapshots": true,
+        //        "Events": false,
         //        "Configuration": true
-        //    }
+        //    },
+        //    "Output": 
+        //    {
+        //      "DetectedEntities": true,
+        //      "EntityMetrics": false,
+        //      "EntityDetails": false,
+        //      "Snapshots": false,
+        //      "FlameGraphs": false,
+        //      "Events": false,
+        //      "Configuration": false
+        //    },
         //    "Target": [
         //        {
         //            "Controller": "http://your.controller.here",

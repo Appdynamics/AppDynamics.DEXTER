@@ -23,7 +23,6 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Schema;
 
 namespace AppDynamics.Dexter
 {
@@ -997,6 +996,39 @@ namespace AppDynamics.Dexter
             loggerConsole.Info("Job status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Job status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', ExpandedTimeRange.From='{2:o}', ExpandedTimeRange.To='{3:o}', Time ranges='{4}', Flowmaps='{5}', Metrics='{6}', Snapshots='{7}', Configuration='{8}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration);
+            if (jobConfiguration.Input.SnapshotSelectionCriteria != null)
+            {
+                PropertyInfo[] pis = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperties();
+                StringBuilder sb = new StringBuilder(16 * pis.Length);
+                foreach (PropertyInfo pi in pis)
+                {
+                    sb.AppendFormat("{0}={1}, ", pi.Name, pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType));
+                }
+                logger.Info("Job input, SnapshotSelectionCriteria: Tiers='{0}', TierTypes='{1}'",
+                    String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.Tiers),
+                    sb.ToString());
+
+                pis = jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.GetType().GetProperties();
+                sb = new StringBuilder(16 * pis.Length);
+                foreach (PropertyInfo pi in pis)
+                {
+                    sb.AppendFormat("{0}={1}, ", pi.Name, pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType));
+                }
+                logger.Info("Job input, SnapshotSelectionCriteria: BusinessTransactions='{0}', BusinessTransactionType='{1}'",
+                    String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions),
+                    sb.ToString());
+                logger.Info("Job input, SnapshotSelectionCriteria: UserExperience.Normal='{0}', UserExperience.Slow='{1}', UserExperience.VerySlow='{2}', UserExperience.Stall='{3}', UserExperience.Error='{4}'",
+                    jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.VerySlow,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Stall,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Error);
+                logger.Info("Job input, SnapshotSelectionCriteria: SnapshotType.Full='{0}', SnapshotType.Partial='{1}', SnapshotType.None='{2}'",
+                    jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial,
+                    jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None);
+            }
+
             logger.Info("Job output: DetectedEntities='{0}', EntityMetrics='{1}', EntityDetails='{2}', Snapshots='{3}', Configuration='{4}', Events='{5}'", jobConfiguration.Output.DetectedEntities, jobConfiguration.Output.EntityMetrics, jobConfiguration.Output.EntityDetails, jobConfiguration.Output.Snapshots, jobConfiguration.Output.Configuration, jobConfiguration.Output.Events);
 
             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
@@ -2852,8 +2884,7 @@ namespace AppDynamics.Dexter
 
                         #endregion
 
-                        #region List of Snapshots in time ranges
-
+                        #region Get list of Snapshots in time ranges
 
                         loggerConsole.Info("Extract List of Snapshots ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -2861,7 +2892,8 @@ namespace AppDynamics.Dexter
                         int totalSnapshotsFound = 0;
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
-                            loggerConsole.Info("Extract List of Snapshots from {0:o} to {1:o}", jobTimeRange.From, jobTimeRange.To);
+                            logger.Info("Extract List of Snapshots from {0:o} to {1:o}", jobTimeRange.From, jobTimeRange.To);
+                            loggerConsole.Info("Extract List of Snapshots from {0:G} to {1:G}", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime());
 
                             string snapshotsFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
 
@@ -2995,7 +3027,7 @@ namespace AppDynamics.Dexter
                                 totalSnapshotsFound = totalSnapshotsFound + listOfSnapshots.Count;
 
                                 logger.Info("{0} snapshots from {1:o} to {2:o}", listOfSnapshots.Count, jobTimeRange.From, jobTimeRange.To);
-                                loggerConsole.Info("{0} snapshots from {1:o} to {2:o}", listOfSnapshots.Count, jobTimeRange.From, jobTimeRange.To);
+                                loggerConsole.Info("{0} snapshots from {1:G} to {2:G}", listOfSnapshots.Count, jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime());
                             }
                         }
 
@@ -3004,13 +3036,15 @@ namespace AppDynamics.Dexter
 
                         #endregion
 
-                        #region Individual Snapshots
+                        #region Get individual Snapshots
 
                         // Extract individual snapshots
                         loggerConsole.Info("Extract Individual Snapshots");
 
-                        // Identify Node.JS tiers that will extact call graph using a different call
                         List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+
+                        // Identify Node.JS tiers that will extact call graph using a different call
                         List<AppDRESTTier> tiersNodeJSList = null;
                         if (tiersList != null)
                         {
@@ -3024,15 +3058,174 @@ namespace AppDynamics.Dexter
                             JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsFilePath);
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
-                                loggerConsole.Info("Extract Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                logger.Info("Filter Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                loggerConsole.Info("Filter Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
-                                stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + listOfSnapshotsInHour.Count;
+                                // Filter the list of snapshots based on SnapshotSelectionCriteria
+                                List<JToken> listOfSnapshotsInHourFiltered = new List<JToken>(listOfSnapshotsInHour.Count);
+                                foreach (JToken snapshotToken in listOfSnapshotsInHour)
+                                {
+                                    logger.Trace("Considering filtering snapshot requestGUID={0}, firstInChain={1}, userExperience={2}, fullCallgraph={3}, delayedCallGraph={4}, applicationComponentName={5}, businessTransactionName={6}",
+                                        snapshotToken["requestGUID"],
+                                        snapshotToken["firstInChain"],
+                                        snapshotToken["userExperience"],
+                                        snapshotToken["fullCallgraph"],
+                                        snapshotToken["delayedCallGraph"],
+                                        snapshotToken["applicationComponentName"],
+                                        snapshotToken["businessTransactionName"]);
+
+                                    // Only grab first in chain snapshots
+                                    if ((bool)snapshotToken["firstInChain"] == false) continue;
+
+                                    // Filter user experience
+                                    switch (snapshotToken["userExperience"].ToString())
+                                    {
+                                        case "NORMAL":
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal != true) continue;
+                                            break;
+                                        case "SLOW":
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow != true) continue;
+                                            break;
+                                        case "VERY_SLOW":
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.VerySlow != true) continue;
+                                            break;
+                                        case "STALL":
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Stall != true) continue;
+                                            break;
+                                        case "ERROR":
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Error != true) continue;
+                                            break;
+                                        default:
+                                            // Not sure what kind of beast it is
+                                            continue;
+                                    }
+
+                                    // Filter call graph
+                                    if ((bool)snapshotToken["fullCallgraph"] == true)
+                                    {
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full != true) continue;
+                                    }
+                                    else if ((bool)snapshotToken["delayedCallGraph"] == true)
+                                    {
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial != true) continue;
+                                    }
+                                    else
+                                    {
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None != true) continue;
+                                    }
+
+                                    // Filter Tier type
+                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.TierType.All != true)
+                                    {
+                                        if (tiersList != null)
+                                        {
+                                            AppDRESTTier tier = tiersList.Where(t => t.id == (long)snapshotToken["applicationComponentId"]).FirstOrDefault();
+                                            if (tier != null)
+                                            {
+                                                PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperty(tier.agentType);
+                                                if (pi != null)
+                                                {
+                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType) == false) continue;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Filter BT type
+                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.All != true)
+                                    {
+                                        if (businessTransactionsList != null)
+                                        {
+                                            AppDRESTBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.id == (long)snapshotToken["businessTransactionId"] && b.tierId == (long)snapshotToken["applicationComponentId"]).FirstOrDefault();
+                                            if (businessTransaction != null)
+                                            {
+                                                PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.GetType().GetProperty(businessTransaction.entryPointType);
+                                                if (pi != null)
+                                                {
+                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType) == false) continue;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Filter Tier name
+                                    bool tierNameMatch = false;
+                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.Tiers.Length == 0) tierNameMatch = true;
+                                    foreach (string matchCriteria in jobConfiguration.Input.SnapshotSelectionCriteria.Tiers)
+                                    {
+                                        if (matchCriteria.Length > 0)
+                                        {
+                                            // Try straight up string compare first
+                                            if (String.Compare(snapshotToken["applicationComponentName"].ToString(), matchCriteria, true) == 0)
+                                            {
+                                                tierNameMatch = true;
+                                                break;
+                                            }
+
+                                            // Try regex compare second
+                                            Regex regexQuery = new Regex(matchCriteria, RegexOptions.IgnoreCase);
+                                            Match regexMatch = regexQuery.Match(snapshotToken["applicationComponentName"].ToString());
+                                            if (regexMatch.Success == true && regexMatch.Index == 0)
+                                            {
+                                                tierNameMatch = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (tierNameMatch == false) continue;
+
+                                    // Filter BT name
+                                    bool businessTransactionNameMatch = false;
+                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions.Length == 0) businessTransactionNameMatch = true;
+                                    foreach (string matchCriteria in jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions)
+                                    {
+                                        if (matchCriteria.Length > 0)
+                                        {
+                                            // Try straight up string compare first
+                                            if (String.Compare(snapshotToken["businessTransactionName"].ToString(), matchCriteria, true) == 0)
+                                            {
+                                                businessTransactionNameMatch = true;
+                                                break;
+                                            }
+
+                                            // Try regex compare second
+                                            Regex regexQuery = new Regex(matchCriteria, RegexOptions.IgnoreCase);
+                                            Match regexMatch = regexQuery.Match(snapshotToken["businessTransactionName"].ToString());
+                                            if (regexMatch.Success == true && regexMatch.Index == 0)
+                                            {
+                                                businessTransactionNameMatch = true;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (businessTransactionNameMatch == false) continue;
+
+                                    // If we got here, then the snapshot passed the filter
+                                    logger.Trace("Keeping snapshot requestGUID={0}, firstInChain={1}, userExperience={2}, fullCallgraph={3}, delayedCallGraph={4}, applicationComponentName={5}, businessTransactionName={6}",
+                                        snapshotToken["requestGUID"],
+                                        snapshotToken["firstInChain"],
+                                        snapshotToken["userExperience"],
+                                        snapshotToken["fullCallgraph"],
+                                        snapshotToken["delayedCallGraph"],
+                                        snapshotToken["applicationComponentName"],
+                                        snapshotToken["businessTransactionName"]);
+
+                                    listOfSnapshotsInHourFiltered.Add(snapshotToken);
+                                }
+
+                                logger.Info("Total Snapshots {0:o} to {1:o} is {2}, after filtered {3}", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count, listOfSnapshotsInHourFiltered.Count);
+
+                                // Now extract things
+                                logger.Info("Extract Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHourFiltered.Count);
+                                loggerConsole.Info("Extract Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHourFiltered.Count);
+
+                                stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + listOfSnapshotsInHourFiltered.Count;
 
                                 int numSnapshots = 0;
 
                                 if (programOptions.ProcessSequentially == false)
                                 {
-                                    var listOfSnapshotsInHourChunks = listOfSnapshotsInHour.BreakListIntoChunks(SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                                    var listOfSnapshotsInHourChunks = listOfSnapshotsInHourFiltered.BreakListIntoChunks(SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
 
                                     Parallel.ForEach<List<JToken>, int>(
                                         listOfSnapshotsInHourChunks,
@@ -3057,7 +3250,7 @@ namespace AppDynamics.Dexter
                                 }
                                 else
                                 {
-                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHour.ToList<JToken>(), tiersNodeJSList, snapshotsFolderPath, true);
+                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourFiltered, tiersNodeJSList, snapshotsFolderPath, true);
                                 }
 
                                 loggerConsole.Info("{0} snapshots", numSnapshots);
@@ -6829,7 +7022,8 @@ namespace AppDynamics.Dexter
 
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
-                                loggerConsole.Info("Index Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                logger.Info("Index Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                loggerConsole.Info("Index Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
                                 stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + listOfSnapshotsInHour.Count;
 
@@ -6904,7 +7098,8 @@ namespace AppDynamics.Dexter
 
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
-                                loggerConsole.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                logger.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                loggerConsole.Info("Combine Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
                                 using (FileStream snapshotsReportFileStream = File.Open(snapshotsReportFilePath, FileMode.Append))
                                 {
@@ -7066,7 +7261,8 @@ namespace AppDynamics.Dexter
 
                                 if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                                 {
-                                    loggerConsole.Info("Fold Stacks for Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                    logger.Info("Fold Stacks for Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                    loggerConsole.Info("Fold Stacks for Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
                                     foreach (JToken snapshotToken in listOfSnapshotsInHour)
                                     {
@@ -7124,7 +7320,7 @@ namespace AppDynamics.Dexter
                             // Save Node and BT rollups
                             foreach (EntityNode node in nodesList)
                             {
-                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true)
+                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
                                 {
                                     string nodeFoldedCallStacksFilePath = Path.Combine(
                                         snapshotsFolderPath,
@@ -7139,7 +7335,7 @@ namespace AppDynamics.Dexter
 
                             foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                             {
-                                if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true)
+                                if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Count > 0)
                                 {
                                     string businessTransactionFoldedCallStacksFilePath = Path.Combine(
                                         snapshotsFolderPath,
@@ -18487,7 +18683,8 @@ namespace AppDynamics.Dexter
 
                 #endregion
 
-                if (File.Exists(snapshotsFileName) == false)
+                // Only process stuff that was previously exported but not indexed yet
+                if (Directory.Exists(snapshotFolderPath) == true && File.Exists(snapshotsFileName) == false)
                 {
                     #region Fill in Snapshot data
 
@@ -25997,92 +26194,107 @@ namespace AppDynamics.Dexter
 
                 // Read row one field at a time
                 int csvFieldIndex = 0;
-                foreach (string fieldValue in rowValues)
+                try
                 {
-                    ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
-                    if (fieldValue.StartsWith("=") == true)
+                    foreach (string fieldValue in rowValues)
                     {
-                        cell.Formula = fieldValue;
+                        ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
+                        if (fieldValue.StartsWith("=") == true)
+                        {
+                            cell.Formula = fieldValue;
 
-                        if (fieldValue.StartsWith("=HYPERLINK") == true)
-                        {
-                            cell.StyleName = "HyperLinkStyle";
-                        }
-                    }
-                    else if (fieldValue.StartsWith("http://") == true || fieldValue.StartsWith("https://") == true)
-                    {
-                        // If it is in the column ending in Link, I want it to be hyperlinked and use the column name
-                        if (headerRowValues[csvFieldIndex] == "Link")
-                        {
-                            // This is the ART summary table, those links are OK, there are not that many of them
-                            cell.Hyperlink = new Uri(fieldValue);
-                            cell.Value = "<Go>";
-                            cell.StyleName = "HyperLinkStyle";
-                        }
-                        // Temporarily commenting out until I figure the large number of rows leading to hyperlink corruption thing
-                        //else if (headerRowValues[csvFieldIndex].EndsWith("Link"))
-                        //{
-                        //    cell.Hyperlink = new Uri(fieldValue);
-                        //    string linkName = String.Format("<{0}>", headerRowValues[csvFieldIndex].Replace("Link", ""));
-                        //    if (linkName == "<>") linkName = "<Go>";
-                        //    cell.Value = linkName;
-                        //    cell.StyleName = "HyperLinkStyle";
-                        //}
-                        else
-                        {
-                            // Otherwise dump it as text
-                            cell.Value = fieldValue;
-                        }
-                    }
-                    else
-                    {
-                        Double numValue;
-                        bool boolValue;
-                        DateTime dateValue;
-
-                        // Try some casting
-                        if (Double.TryParse(fieldValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out numValue) == true)
-                        {
-                            // Number
-                            cell.Value = numValue;
-                        }
-                        else if (Boolean.TryParse(fieldValue, out boolValue) == true)
-                        {
-                            // Boolean
-                            cell.Value = boolValue;
-                        }
-                        else if (DateTime.TryParse(fieldValue, out dateValue))
-                        {
-                            // DateTime
-                            cell.Value = dateValue;
-                            if (headerRowValues[csvFieldIndex] == "EventTime")
+                            if (fieldValue.StartsWith("=HYPERLINK") == true)
                             {
-                                cell.Style.Numberformat.Format = "hh:mm";
+                                cell.StyleName = "HyperLinkStyle";
                             }
+                        }
+                        else if (fieldValue.StartsWith("http://") == true || fieldValue.StartsWith("https://") == true)
+                        {
+                            // If it is in the column ending in Link, I want it to be hyperlinked and use the column name
+                            if (headerRowValues[csvFieldIndex] == "Link")
+                            {
+                                // This is the ART summary table, those links are OK, there are not that many of them
+                                cell.Hyperlink = new Uri(fieldValue);
+                                cell.Value = "<Go>";
+                                cell.StyleName = "HyperLinkStyle";
+                            }
+                            // Temporarily commenting out until I figure the large number of rows leading to hyperlink corruption thing
+                            //else if (headerRowValues[csvFieldIndex].EndsWith("Link"))
+                            //{
+                            //    cell.Hyperlink = new Uri(fieldValue);
+                            //    string linkName = String.Format("<{0}>", headerRowValues[csvFieldIndex].Replace("Link", ""));
+                            //    if (linkName == "<>") linkName = "<Go>";
+                            //    cell.Value = linkName;
+                            //    cell.StyleName = "HyperLinkStyle";
+                            //}
                             else
                             {
-                                cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
-                            }
-                        }
-                        else
-                        {
-                            // Something else, dump as is
-
-                            // https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
-                            // Total number of characters that a cell can contain 32,767 characters
-                            // Must cut off cell value if it is too big, or risk Excel complaining during sheet load
-
-                            if (fieldValue.Length > 32000)
-                            {
-                                cell.Value = fieldValue.Substring(0, 32000);
-                            }
-                            else
-                            {
+                                // Otherwise dump it as text
                                 cell.Value = fieldValue;
                             }
                         }
+                        else
+                        {
+                            Double numValue;
+                            bool boolValue;
+                            DateTime dateValue;
+
+                            // Try some casting
+                            if (Double.TryParse(fieldValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out numValue) == true)
+                            {
+                                // Number
+                                cell.Value = numValue;
+                            }
+                            else if (Boolean.TryParse(fieldValue, out boolValue) == true)
+                            {
+                                // Boolean
+                                cell.Value = boolValue;
+                            }
+                            else if (DateTime.TryParse(fieldValue, out dateValue))
+                            {
+                                // DateTime
+                                cell.Value = dateValue;
+                                if (headerRowValues[csvFieldIndex] == "EventTime")
+                                {
+                                    cell.Style.Numberformat.Format = "hh:mm";
+                                }
+                                else
+                                {
+                                    cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
+                                }
+                            }
+                            else
+                            {
+                                // Something else, dump as is
+
+                                // https://support.office.com/en-us/article/Excel-specifications-and-limits-1672b34d-7043-467e-8e27-269d656771c3
+                                // Total number of characters that a cell can contain 32,767 characters
+                                // Must cut off cell value if it is too big, or risk Excel complaining during sheet load
+
+                                if (fieldValue.Length > 32000)
+                                {
+                                    cell.Value = fieldValue.Substring(0, 32000);
+                                }
+                                else
+                                {
+                                    cell.Value = fieldValue;
+                                }
+                            }
+                        }
+                        csvFieldIndex++;
                     }
-                    csvFieldIndex++;
+                }
+                catch (ArgumentException ex)
+                {
+                    if (ex.Message == "Row out of range")
+                    {
+                        logger.Warn("Max number of rows in sheet {0} reached", sheet.Name);
+                        break;
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
             }
 
