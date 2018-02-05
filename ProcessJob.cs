@@ -702,13 +702,18 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_TIMELINE_PIVOT = "10.Business Data.Timeline";
 
         private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES = "11.Method Calls";
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT = "11.Method Calls.Type";
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT = "11.Method Calls.Location";
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_PIVOT = "11.Method Calls.Timeline";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE_PIVOT = "11.Calls.Type.Average";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_COUNT_PIVOT = "11.Calls.Type.Count";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_DURATION_PIVOT = "11.Calls.Type.Duration";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE_PIVOT = "11.Calls.Location.Average";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_COUNT_PIVOT = "11.Calls.Location.Count";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_DURATION_PIVOT = "11.Calls.Location.Duration";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE_PIVOT = "11.Calls.Timeline.Average";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT_PIVOT = "11.Calls.Timeline.Count";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION_PIVOT = "11.Calls.Timeline.Duration";
 
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES = "12.Method Occurrences";
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT = "12.Method Occurrences.Type";
-        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT = "12.Method Occurrences.Location";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES = "12.Call Occurrences";
+        private const string REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT = "12.Call Occurrences.Type";
 
         private const string REPORT_SNAPSHOTS_TABLE_TOC = "t_TOC";
         private const string REPORT_SNAPSHOTS_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
@@ -737,11 +742,18 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE = "p_DetectedErrorsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA = "p_BusinessData";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_TIMELINE = "p_BusinessDataTimeline";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE = "p_MethodCallLinesType";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION = "p_MethodCallLinesLocation";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE = "p_MethodCallLinesTimeline";
+
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE = "p_MethodCallLinesTypeAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_COUNT = "p_MethodCallLinesTypeCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_DURATION = "p_MethodCallLinesTypeDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE = "p_MethodCallLinesLocationAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_COUNT = "p_MethodCallLinesLocationCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_DURATION = "p_MethodCallLinesLocationDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE = "p_MethodCallLinesTimelineAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT = "p_MethodCallLinesTimelineCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION = "p_MethodCallLinesTimelineDuration";
+
         private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE = "p_MethodCallLinesOccurrencesType";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_LOCATION = "p_MethodCallLinesOccurrencesLocation";
 
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_GRAPH = "g_Snapshots";
         private const string REPORT_SNAPSHOTS_PIVOT_SNAPSHOTS_TIMELINE_GRAPH = "g_SnapshotsTimeline";
@@ -755,11 +767,18 @@ namespace AppDynamics.Dexter
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE_GRAPH = "g_DetectedErrorsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_GRAPH = "g_BusinessData";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_TIMELINE_GRAPH = "g_BusinessDataTimeline";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE = "g_MethodCallLinesType";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION = "g_MethodCallLinesLocation";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE = "g_MethodCallLinesTimeline";
+
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_AVERAGE = "g_MethodCallLinesTypeAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_COUNT = "g_MethodCallLinesTypeCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_DURATION = "g_MethodCallLinesTypeDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_AVERAGE = "g_MethodCallLinesLocationAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_COUNT = "g_MethodCallLinesLocationCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_DURATION = "g_MethodCallLinesLocationDuration";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_AVERAGE = "g_MethodCallLinesTimelineAverage";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_COUNT = "g_MethodCallLinesTimelineCount";
+        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_DURATION = "g_MethodCallLinesTimelineDuration";
+
         private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_TYPE = "g_MethodCallLinesOccurrencesType";
-        private const string REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_LOCATION = "g_MethodCallLinesOccurrencesLocation";
 
         private const int REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT = 8;
@@ -896,6 +915,11 @@ namespace AppDynamics.Dexter
         private static Color colorFlameGraphStackStart = Color.FromArgb(0xFE, 0x58, 0x10);
         // This color is kind of egg yolk yellow
         private static Color colorFlameGraphStackEnd = Color.FromArgb(0xFA, 0xF4, 0x38);
+
+        // This color is kind of grasshopper green
+        private static Color colorFlameGraphStackNodeJSStart = Color.FromArgb(0x80, 0xE5, 0x00);
+        // This color is kind of greenish olive yellow
+        private static Color colorFlameGraphStackNodeJSEnd = Color.FromArgb(0xA0, 0xBF, 0x00);
 
         #endregion
 
@@ -3647,6 +3671,8 @@ namespace AppDynamics.Dexter
                                     JObject backendDetail = (JObject)backendsDetails.Where(b => (long)b["id"] == backendRow.BackendID).FirstOrDefault();
                                     if (backendDetail != null)
                                     {
+                                        bool additionalInfoLookupSucceeded = false;
+
                                         JArray metaInfoArray = (JArray)backendDetail["callInfo"]["metaInfo"];
                                         JToken metaInfoExitPoint = metaInfoArray.Where(m => m["name"].ToString() == "exit-point-type").FirstOrDefault();
                                         if (metaInfoExitPoint != null)
@@ -3655,6 +3681,18 @@ namespace AppDynamics.Dexter
                                             if (betterBackendType != backendRow.BackendType)
                                             {
                                                 backendRow.BackendType = betterBackendType;
+                                                additionalInfoLookupSucceeded = true;
+                                            }
+                                        }
+
+                                        if (additionalInfoLookupSucceeded == false)
+                                        {
+                                            JObject resolutionInfoObject = (JObject)backendDetail["callInfo"]["resolutionInfo"];
+                                            string betterBackendType = resolutionInfoObject["exitPointSubtype"].ToString();
+                                            if (betterBackendType != backendRow.BackendType)
+                                            {
+                                                backendRow.BackendType = betterBackendType;
+                                                additionalInfoLookupSucceeded = true;
                                             }
                                         }
                                     }
@@ -4976,22 +5014,70 @@ namespace AppDynamics.Dexter
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(applicationConfigurationAllReportFilePath, applicationConfigurationReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRulesAllReportFilePath, businessTransactionDiscoveryRulesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRulesAllReportFilePath, businessTransactionEntryRulesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionEntryScopesAllReportFilePath, businessTransactionEntryScopesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRules20AllReportFilePath, businessTransactionDiscoveryRules20ReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRules20AllReportFilePath, businessTransactionEntryRules20ReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(backendDiscoveryRulesAllReportFilePath, backendDiscoveryRulesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(customExitRulesAllReportFilePath, customExitRulesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(informationPointRulesAllReportFilePath, informationPointRulesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(agentConfigurationPropertiesAllReportFilePath, agentConfigurationPropertiesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(methodInvocationDataCollectorsAllReportFilePath, methodInvocationDataCollectorsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(httpDataCollectorsAllReportFilePath, httpDataCollectorsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(entityTierConfigurationsAllReportFilePath, entityTierConfigurationsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(entityBusinessTransactionConfigurationsAllReportFilePath, entityBusinessTransactionConfigurationsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(agentCallGraphSettingsAllReportFilePath, agentCallGraphSettingsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(healthRulesAllReportFilePath, healthRulesReportFilePath);
+                        if (File.Exists(applicationConfigurationReportFilePath) == true && new FileInfo(applicationConfigurationReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(applicationConfigurationAllReportFilePath, applicationConfigurationReportFilePath);
+                        }
+                        if (File.Exists(businessTransactionDiscoveryRulesReportFilePath) == true && new FileInfo(businessTransactionDiscoveryRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRulesAllReportFilePath, businessTransactionDiscoveryRulesReportFilePath);
+                        }
+                        if (File.Exists(businessTransactionEntryRulesReportFilePath) == true && new FileInfo(businessTransactionEntryRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRulesAllReportFilePath, businessTransactionEntryRulesReportFilePath);
+                        }
+                        if (File.Exists(businessTransactionEntryScopesReportFilePath) == true && new FileInfo(businessTransactionEntryScopesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryScopesAllReportFilePath, businessTransactionEntryScopesReportFilePath);
+                        }
+                        if (File.Exists(businessTransactionDiscoveryRules20ReportFilePath) == true && new FileInfo(businessTransactionDiscoveryRules20ReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRules20AllReportFilePath, businessTransactionDiscoveryRules20ReportFilePath);
+                        }
+                        if (File.Exists(businessTransactionEntryRules20ReportFilePath) == true && new FileInfo(businessTransactionEntryRules20ReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRules20AllReportFilePath, businessTransactionEntryRules20ReportFilePath);
+                        }
+                        if (File.Exists(backendDiscoveryRulesReportFilePath) == true && new FileInfo(backendDiscoveryRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(backendDiscoveryRulesAllReportFilePath, backendDiscoveryRulesReportFilePath);
+                        }
+                        if (File.Exists(customExitRulesReportFilePath) == true && new FileInfo(customExitRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(customExitRulesAllReportFilePath, customExitRulesReportFilePath);
+                        }
+                        if (File.Exists(informationPointRulesReportFilePath) == true && new FileInfo(informationPointRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(informationPointRulesAllReportFilePath, informationPointRulesReportFilePath);
+                        }
+                        if (File.Exists(agentConfigurationPropertiesReportFilePath) == true && new FileInfo(agentConfigurationPropertiesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(agentConfigurationPropertiesAllReportFilePath, agentConfigurationPropertiesReportFilePath);
+                        }
+                        if (File.Exists(methodInvocationDataCollectorsReportFilePath) == true && new FileInfo(methodInvocationDataCollectorsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(methodInvocationDataCollectorsAllReportFilePath, methodInvocationDataCollectorsReportFilePath);
+                        }
+                        if (File.Exists(httpDataCollectorsReportFilePath) == true && new FileInfo(httpDataCollectorsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(httpDataCollectorsAllReportFilePath, httpDataCollectorsReportFilePath);
+                        }
+                        if (File.Exists(entityTierConfigurationsReportFilePath) == true && new FileInfo(entityTierConfigurationsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(entityTierConfigurationsAllReportFilePath, entityTierConfigurationsReportFilePath);
+                        }
+                        if (File.Exists(entityBusinessTransactionConfigurationsReportFilePath) == true && new FileInfo(entityBusinessTransactionConfigurationsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(entityBusinessTransactionConfigurationsAllReportFilePath, entityBusinessTransactionConfigurationsReportFilePath);
+                        }
+                        if (File.Exists(agentCallGraphSettingsReportFilePath) == true && new FileInfo(agentCallGraphSettingsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(agentCallGraphSettingsAllReportFilePath, agentCallGraphSettingsReportFilePath);
+                        }
+                        if (File.Exists(healthRulesReportFilePath) == true && new FileInfo(healthRulesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(healthRulesAllReportFilePath, healthRulesReportFilePath);
+                        }
 
                         // If it is the last one, let's append all Controller settings
                         if (i == jobConfiguration.Target.Count - 1)
@@ -5532,6 +5618,10 @@ namespace AppDynamics.Dexter
 
                                     List<EntityBackend> backendsFullList = new List<EntityBackend>(backendsList.Count);
                                     List<EntityBackend> backendsHourlyList = new List<EntityBackend>(backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+
+                                    // TODO add inner Parallel.For loop
+                                    //System.Collections.Concurrent.ConcurrentBag<EntityBackend> backendsFullList1 = new System.Collections.Concurrent.ConcurrentBag<EntityBackend>(backendsList.Count);
+                                    //backendsFullList1.ToList(EntityBackend);
 
                                     string metricsEntitiesFolderPath = Path.Combine(
                                         metricsFolderPath,
@@ -6815,9 +6905,18 @@ namespace AppDynamics.Dexter
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(applicationEventsSummaryAllReportFilePath, applicationEventsSummaryReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(healthRuleViolationEventsAllReportFilePath, healthRuleViolationEventsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(eventsAllReportFilePath, eventsReportFilePath);
+                        if (File.Exists(applicationEventsSummaryReportFilePath) == true && new FileInfo(applicationEventsSummaryReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(applicationEventsSummaryAllReportFilePath, applicationEventsSummaryReportFilePath);
+                        }
+                        if (File.Exists(healthRuleViolationEventsReportFilePath) == true && new FileInfo(healthRuleViolationEventsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(healthRuleViolationEventsAllReportFilePath, healthRuleViolationEventsReportFilePath);
+                        }
+                        if (File.Exists(eventsReportFilePath) == true && new FileInfo(eventsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(eventsAllReportFilePath, eventsReportFilePath);
+                        }
 
                         #endregion
                     }
@@ -6982,35 +7081,7 @@ namespace AppDynamics.Dexter
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.readListFromCSVFile<MethodInvocationDataCollector>(methodInvocationDataCollectorsReportFilePath, new MethodInvocationDataCollectorReportMap());
 
                         // Load and bucketize the framework mappings
-                        List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = FileIOHelper.readListFromCSVFile<MethodCallLineClassTypeMapping>(methodCallLinesToFrameworkTypeMappingFilePath, new MethodCallLineClassTypeMappingReportMap());
-                        methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingList.OrderByDescending(m => m.ClassPrefix).ToList();
-                        Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = new Dictionary<string, List<MethodCallLineClassTypeMapping>>(26);
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("a", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "a").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("b", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "b").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("c", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "c").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("d", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "d").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("e", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "e").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("f", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "f").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("g", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "g").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("h", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "h").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("i", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "i").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("j", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "j").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("k", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "k").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("l", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "l").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("m", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "m").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("n", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "n").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("o", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "o").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("p", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "p").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("q", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "q").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("r", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "r").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("s", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "s").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("t", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "t").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("u", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "u").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("v", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "v").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("w", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "w").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("x", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "x").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("y", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "y").ToList());
-                        methodCallLineClassToFrameworkTypeMappingDictionary.Add("z", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "z").ToList());
+                        Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = populateMethodCallMappingDictionary(methodCallLinesToFrameworkTypeMappingFilePath);
 
                         int totalNumberOfSnapshots = 0;
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
@@ -7209,8 +7280,9 @@ namespace AppDynamics.Dexter
                             {
                                 applicationsRow.HasActivity = true;
                             }
+
+                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), applicationSnapshotsSummaryReportFilePath);
                         }
-                        FileIOHelper.writeListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), applicationSnapshotsSummaryReportFilePath);
 
                         #endregion
 
@@ -7227,15 +7299,42 @@ namespace AppDynamics.Dexter
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(snapshotsAllReportFilePath, snapshotsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(segmentsAllReportFilePath, segmentsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(callExitsAllReportFilePath, callExitsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsAllReporFilePath, serviceEndpointCallsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(detectedErrorsAllReporFilePath, detectedErrorsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessDataAllReportFilePath, businessDataReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(methodCallLinesAllReportFilePath, methodCallLinesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesAllReportFilePath, methodCallLinesOccurrencesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryAllReportFilePath, applicationSnapshotsSummaryReportFilePath);
+                        if (File.Exists(snapshotsReportFilePath) == true && new FileInfo(snapshotsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(snapshotsAllReportFilePath, snapshotsReportFilePath);
+                        }
+                        if (File.Exists(segmentsReportFilePath) == true && new FileInfo(segmentsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(segmentsAllReportFilePath, segmentsReportFilePath);
+                        }
+                        if (File.Exists(callExitsReportFilePath) == true && new FileInfo(callExitsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(callExitsAllReportFilePath, callExitsReportFilePath);
+                        }
+                        if (File.Exists(serviceEndpointCallsReportFilePath) == true && new FileInfo(serviceEndpointCallsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsAllReporFilePath, serviceEndpointCallsReportFilePath);
+                        }
+                        if (File.Exists(detectedErrorsReportFilePath) == true && new FileInfo(detectedErrorsReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(detectedErrorsAllReporFilePath, detectedErrorsReportFilePath);
+                        }
+                        if (File.Exists(businessDataReportFilePath) == true && new FileInfo(businessDataReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(businessDataAllReportFilePath, businessDataReportFilePath);
+                        }
+                        if (File.Exists(methodCallLinesReportFilePath) == true && new FileInfo(methodCallLinesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(methodCallLinesAllReportFilePath, methodCallLinesReportFilePath);
+                        }
+                        if (File.Exists(methodCallLinesOccurrencesReportFilePath) == true && new FileInfo(methodCallLinesOccurrencesReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesAllReportFilePath, methodCallLinesOccurrencesReportFilePath);
+                        }
+                        if (File.Exists(applicationSnapshotsSummaryReportFilePath) == true && new FileInfo(applicationSnapshotsSummaryReportFilePath).Length > 0)
+                        {
+                            FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryAllReportFilePath, applicationSnapshotsSummaryReportFilePath);
+                        }
 
                         #endregion
 
@@ -9712,12 +9811,13 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["RuleType"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["RuleName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["RuleType"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RuleName"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -11836,6 +11936,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -11860,9 +11961,11 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["SubType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -11921,6 +12024,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Severity"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["EventID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -12265,7 +12369,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 1, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS_TIMELINE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -12295,7 +12399,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 1, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_TIMELINE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -12304,7 +12408,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -12325,7 +12429,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 1, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_TIMELINE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -12334,7 +12438,7 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
                 #endregion
 
@@ -12589,6 +12693,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -12604,6 +12709,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -12616,7 +12722,9 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -12624,6 +12732,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
@@ -12736,6 +12845,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -12751,6 +12861,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -12763,7 +12874,9 @@ namespace AppDynamics.Dexter
                     fieldF = pivot.PageFields.Add(pivot.Fields["HasErrors"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["CallGraphType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -12771,6 +12884,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["UserExperience"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
@@ -12824,8 +12938,11 @@ namespace AppDynamics.Dexter
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF.Sort = eSortType.Ascending;
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["ExitType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -12846,7 +12963,7 @@ namespace AppDynamics.Dexter
                     fieldR.Outline = false;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["RequestID"]);
                     fieldD.Function = DataFieldFunctions.Count;
-                    fieldD.Name = "Number of Items";
+                    fieldD.Name = "Number of Calls";
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
@@ -12862,8 +12979,11 @@ namespace AppDynamics.Dexter
                     pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_TIMELINE);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ToEntityType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["Detail"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["DurationRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -12871,6 +12991,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ExitType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Duration"]);
                     fieldD.Function = DataFieldFunctions.Average;
                     fieldD.Name = "Average Duration";
@@ -12910,6 +13031,7 @@ namespace AppDynamics.Dexter
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 2, 1], range, REPORT_SNAPSHOTS_PIVOT_SERVICE_ENDPOINT_CALLS);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -12928,6 +13050,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["SEPType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -12936,8 +13059,9 @@ namespace AppDynamics.Dexter
                     chart.SetSize(800, 300);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS_TIMELINE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT -3, 1], range, REPORT_SNAPSHOTS_PIVOT_SERVICE_ENDPOINT_CALLS_TIMELINE);
-                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 2, 1], range, REPORT_SNAPSHOTS_PIVOT_SERVICE_ENDPOINT_CALLS_TIMELINE);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -12945,6 +13069,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["SEPType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -12984,7 +13109,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 3, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 2, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -13003,6 +13129,7 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["ErrorType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -13011,10 +13138,13 @@ namespace AppDynamics.Dexter
                     chart.SetSize(800, 300);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_TIMELINE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE);
-                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ErrorName"]);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ErrorName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["ErrorDetail"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -13022,6 +13152,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["ErrorType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -13061,7 +13192,8 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 3, 1], range, REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT - 2, 1], range, REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA);
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["RequestID"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -13073,12 +13205,14 @@ namespace AppDynamics.Dexter
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
                     fieldR.Compact = false;
+                    fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["DataName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["DataType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -13087,10 +13221,13 @@ namespace AppDynamics.Dexter
                     chart.SetSize(800, 300);
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA_TIMELINE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_TIMELINE);
-                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["DataName"]);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_TIMELINE);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["DataName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["DataValue"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -13098,6 +13235,7 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["DataType"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["SegmentID"]);
                     fieldD.Function = DataFieldFunctions.Count;
 
@@ -13333,18 +13471,39 @@ namespace AppDynamics.Dexter
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Pivot";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Type";
+                sheet.Cells[2, 2].Value = "Average";
+                sheet.Cells[2, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE_PIVOT);
+                sheet.Cells[2, 3].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 4].Value = "Count";
+                sheet.Cells[2, 5].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_COUNT_PIVOT);
+                sheet.Cells[2, 5].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 6].Value = "Duration";
+                sheet.Cells[2, 7].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_DURATION_PIVOT);
+                sheet.Cells[2, 7].StyleName = "HyperLinkStyle";
                 sheet.Cells[3, 1].Value = "See Location";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT);
-                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 2].Value = "Average";
+                sheet.Cells[3, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE_PIVOT);
+                sheet.Cells[3, 3].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 4].Value = "Count";
+                sheet.Cells[3, 5].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_COUNT_PIVOT);
+                sheet.Cells[3, 5].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 6].Value = "Duration";
+                sheet.Cells[3, 7].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_DURATION_PIVOT);
+                sheet.Cells[3, 7].StyleName = "HyperLinkStyle";
                 sheet.Cells[4, 1].Value = "See Timeline";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_PIVOT);
-                sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[4, 2].Value = "Average";
+                sheet.Cells[4, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE_PIVOT);
+                sheet.Cells[4, 3].StyleName = "HyperLinkStyle";
+                sheet.Cells[4, 4].Value = "Count";
+                sheet.Cells[4, 5].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT_PIVOT);
+                sheet.Cells[4, 5].StyleName = "HyperLinkStyle";
+                sheet.Cells[4, 6].Value = "Duration";
+                sheet.Cells[4, 7].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION_PIVOT);
+                sheet.Cells[4, 7].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 2, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -13353,7 +13512,25 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_COUNT_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_DURATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -13362,7 +13539,43 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_COUNT_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_DURATION_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 9, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 9, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -13378,21 +13591,9 @@ namespace AppDynamics.Dexter
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Location";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT);
-                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
-
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -13443,7 +13644,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Info("List of Method Call Lines");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES];
-                readCSVFileIntoExcelRange(methodCallLinesAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1);
+                readCSVFileIntoExcelRange(methodCallLinesAllReportFilePath, 0, sheet, REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 #endregion
 
@@ -13523,9 +13724,9 @@ namespace AppDynamics.Dexter
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES];
                 logger.Info("Method Call Lines Sheet ({0} rows)", sheet.Dimension.Rows);
                 loggerConsole.Info("Method Call Lines Sheet ({0} rows)", sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
+                if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1)
                 {
-                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                     table = sheet.Tables.Add(range, REPORT_SNAPSHOTS_TABLE_METHOD_CALL_LINES);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
@@ -13539,20 +13740,24 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FullNameIndent"].Position + 1).Width = 45;
                     sheet.Column(table.Columns["ExitCalls"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
 
-                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE);
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -13571,29 +13776,116 @@ namespace AppDynamics.Dexter
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
                     fieldD.Function = DataFieldFunctions.Average;
 
-                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE, eChartType.ColumnClustered, pivot);
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_AVERAGE, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
-                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION);
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_COUNT_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_COUNT);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_COUNT, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TYPE_EXEC_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TYPE_EXEC_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE_EXEC_DURATION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    fieldR.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -13609,31 +13901,120 @@ namespace AppDynamics.Dexter
                     fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
-                    fieldD.Function = DataFieldFunctions.Count;
-                    fieldD.Name = "Number of Items";
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["ExecRange"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
                     fieldD.Function = DataFieldFunctions.Average;
-                    fieldD.Name = "Average Duration";
-                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
-                    fieldD.Function = DataFieldFunctions.Sum;
-                    fieldD.Name = "Total Duration";
 
-                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_AVERAGE, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
-                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 6, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE);
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_COUNT_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_COUNT);
                     fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
-                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["ExecRange"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_COUNT, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_LOCATION_EXEC_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["ExecRange"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_LOCATION_EXEC_DURATION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 6, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["Class"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["Method"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["FullName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
@@ -13641,13 +14022,91 @@ namespace AppDynamics.Dexter
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
                     fieldD.Function = DataFieldFunctions.Average;
 
-                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_AVERAGE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 6, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_COUNT);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Class"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Method"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["FullName"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Count;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_COUNT, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 6, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_DURATION);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ElementType"]);
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Depth"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Class"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["Method"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["FullName"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
+                    fieldC.Compact = false;
+                    fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
+                    fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Sum;
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TIMELINE_EXEC_DURATION, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
                 }
@@ -13676,75 +14135,40 @@ namespace AppDynamics.Dexter
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["Type"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["FullName"].Position + 1).Width = 45;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE);
                     ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["BTName"]);
+                    fieldF.Sort = eSortType.Ascending;
                     fieldF = pivot.PageFields.Add(pivot.Fields["ExecRange"]);
-                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
+                    fieldF.Sort = eSortType.Ascending;
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["NumCalls"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
+                    fieldR.Sort = eSortType.Ascending;
                     fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
+                    fieldR.Sort = eSortType.Ascending;
                     ExcelPivotTableField fieldC = pivot.ColumnFields.Add(pivot.Fields["Type"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
+                    fieldC.Sort = eSortType.Ascending;
                     fieldC = pivot.ColumnFields.Add(pivot.Fields["Framework"]);
                     fieldC.Compact = false;
                     fieldC.Outline = false;
-                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["NumCalls"]);
-                    fieldD.Function = DataFieldFunctions.Sum;
+                    fieldC.Sort = eSortType.Ascending;
+                    ExcelPivotTableDataField fieldD = pivot.DataFields.Add(pivot.Fields["Exec"]);
+                    fieldD.Function = DataFieldFunctions.Count;
 
-                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_GRAPH_TYPE, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
-
-                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_METHOD_CALL_LINES_OCCURRENCES_LOCATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_LOCATION);
-                    fieldF = pivot.PageFields.Add(pivot.Fields["NumChildren"]);
-                    fieldF = pivot.PageFields.Add(pivot.Fields["NumExits"]);
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Type"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Framework"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["FullName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["ApplicationName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["TierName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldR = pivot.RowFields.Add(pivot.Fields["BTName"]);
-                    fieldR.Compact = false;
-                    fieldR.Outline = false;
-                    fieldC = pivot.ColumnFields.Add(pivot.Fields["ExecRange"]);
-                    fieldC.Compact = false;
-                    fieldC.Outline = false;
-                    fieldD = pivot.DataFields.Add(pivot.Fields["NumCalls"]);
-                    fieldD.Function = DataFieldFunctions.Sum;
-
-                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_LOCATION, eChartType.ColumnClustered, pivot);
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_METHOD_CALL_LINES_OCCURRENCES_GRAPH_TYPE, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
                 }
@@ -13945,9 +14369,12 @@ namespace AppDynamics.Dexter
                             getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                             getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
 
-                        foreach (Snapshot snapshot in snapshotsAllList)
+                        if (snapshotsAllList != null)
                         {
-                            snapshot.FlameGraphLink = snapshot.FlameGraphLink.Replace(relativePathToReportsToRemoveFromLinks, "..");
+                            foreach (Snapshot snapshot in snapshotsAllList)
+                            {
+                                snapshot.FlameGraphLink = snapshot.FlameGraphLink.Replace(relativePathToReportsToRemoveFromLinks, "..");
+                            }
                         }
 
                         #endregion
@@ -14538,6 +14965,7 @@ namespace AppDynamics.Dexter
                         string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
                         string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
                         string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string methodCallLinesToFrameworkTypeMappingFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME);
 
                         string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
 
@@ -14547,6 +14975,9 @@ namespace AppDynamics.Dexter
                         #endregion
 
                         #region Application
+
+                        // Load and bucketize the framework mappings
+                        Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = populateMethodCallMappingDictionary(methodCallLinesToFrameworkTypeMappingFilePath);
 
                         List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
 
@@ -14569,6 +15000,7 @@ namespace AppDynamics.Dexter
                                     getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, applicationList[0]), 
                                     String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
                                     flameGraphTemplateString, 
+                                    methodCallLineClassToFrameworkTypeMappingDictionary,
                                     true);
                             }
 
@@ -14605,7 +15037,8 @@ namespace AppDynamics.Dexter
                                                 tierFoldedStacksFilePath,
                                                 getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, tier),
                                                 String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
-                                                flameGraphTemplateString, 
+                                                flameGraphTemplateString,
+                                                methodCallLineClassToFrameworkTypeMappingDictionary,
                                                 false);
                                         }
                                     });
@@ -14627,7 +15060,8 @@ namespace AppDynamics.Dexter
                                             tierFoldedStacksFilePath,
                                             getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, tier),
                                             String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
-                                            flameGraphTemplateString, 
+                                            flameGraphTemplateString,
+                                            methodCallLineClassToFrameworkTypeMappingDictionary,
                                             true);
                                     }
 
@@ -14676,6 +15110,7 @@ namespace AppDynamics.Dexter
                                                 getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, node),
                                                 String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
+                                                methodCallLineClassToFrameworkTypeMappingDictionary,
                                                 false);
                                         }
                                     });
@@ -14700,6 +15135,7 @@ namespace AppDynamics.Dexter
                                             getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, node),
                                             String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
+                                            methodCallLineClassToFrameworkTypeMappingDictionary,
                                             true);
                                     }
 
@@ -14746,7 +15182,8 @@ namespace AppDynamics.Dexter
                                                 businessTransactionFoldedCallStacksFilePath,
                                                 getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, businessTransaction),
                                                 String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
-                                                flameGraphTemplateString, 
+                                                flameGraphTemplateString,
+                                                methodCallLineClassToFrameworkTypeMappingDictionary,
                                                 false);
                                         }
                                     });
@@ -14770,6 +15207,7 @@ namespace AppDynamics.Dexter
                                             getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, businessTransaction),
                                             String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.ExpandedTimeRange.From.ToLocalTime(), jobConfiguration.Input.ExpandedTimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
+                                            methodCallLineClassToFrameworkTypeMappingDictionary,
                                             true);
                                     }
 
@@ -14814,6 +15252,7 @@ namespace AppDynamics.Dexter
                                             snapshotsListChunk, 
                                             snapshotsFolderPath,
                                             flameGraphTemplateString,
+                                            methodCallLineClassToFrameworkTypeMappingDictionary,
                                             false);
                                         return subtotal;
                                     },
@@ -14833,6 +15272,7 @@ namespace AppDynamics.Dexter
                                         snapshotsList,
                                         snapshotsFolderPath,
                                         flameGraphTemplateString,
+                                        methodCallLineClassToFrameworkTypeMappingDictionary,
                                         true);
                             }
 
@@ -15214,13 +15654,14 @@ namespace AppDynamics.Dexter
                     #region Get Snapshot Flowmap
 
                     // Get snapshot flow map
-                    string snapshotFlowmapDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME);
+                    // Commenting this out until the time I decide to build visual representation of it, until then it is not needed
+                    //string snapshotFlowmapDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME);
 
-                    if (File.Exists(snapshotFlowmapDataFilePath) == false)
-                    {
-                        string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
-                        if (snapshotFlowmapJson != String.Empty) FileIOHelper.saveFileToPath(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
-                    }
+                    //if (File.Exists(snapshotFlowmapDataFilePath) == false)
+                    //{
+                    //    string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
+                    //    if (snapshotFlowmapJson != String.Empty) FileIOHelper.saveFileToPath(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
+                    //}
 
                     #endregion
 
@@ -17771,7 +18212,18 @@ namespace AppDynamics.Dexter
                         ActivityFlow activityFlowRow = activityFlowRowTemplate.Clone();
 
                         activityFlowRow.CallType = entityConnectionStat["exitPointCall"]["exitPointType"].ToString();
-                        if (((bool)entityConnectionStat["exitPointCall"]["synchronous"]) == false)
+                        if (activityFlowRow.CallType.Length == 0)
+                        {
+                            activityFlowRow.CallType = entity["backendType"].ToString();
+                            if (activityFlowRow.CallType.Length == 0)
+                            {
+                                if ((bool)entityConnectionStat["exitPointCall"]["customExitPoint"] == true)
+                                {
+                                    activityFlowRow.CallType = "Custom";
+                                }
+                            }
+                        }
+                        if (((bool)entityConnectionStat["async"]) == true)
                         {
                             activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
                         }
@@ -17963,7 +18415,18 @@ namespace AppDynamics.Dexter
                         ActivityFlow activityFlowRow = activityFlowRowTemplate.Clone();
 
                         activityFlowRow.CallType = entityConnectionStat["exitPointCall"]["exitPointType"].ToString();
-                        if (((bool)entityConnectionStat["exitPointCall"]["synchronous"]) == false)
+                        if (activityFlowRow.CallType.Length == 0)
+                        {
+                            activityFlowRow.CallType = entity["backendType"].ToString();
+                            if (activityFlowRow.CallType.Length == 0)
+                            {
+                                if ((bool)entityConnectionStat["exitPointCall"]["customExitPoint"] == true)
+                                {
+                                    activityFlowRow.CallType = "Custom";
+                                }
+                            }
+                        }
+                        if (((bool)entityConnectionStat["async"]) == true)
                         {
                             activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
                         }
@@ -18167,7 +18630,18 @@ namespace AppDynamics.Dexter
                         ActivityFlow activityFlowRow = activityFlowRowTemplate.Clone();
 
                         activityFlowRow.CallType = entityConnectionStat["exitPointCall"]["exitPointType"].ToString();
-                        if (((bool)entityConnectionStat["exitPointCall"]["synchronous"]) == false)
+                        if (activityFlowRow.CallType.Length == 0)
+                        {
+                            activityFlowRow.CallType = entity["backendType"].ToString();
+                            if (activityFlowRow.CallType.Length == 0)
+                            {
+                                if ((bool)entityConnectionStat["exitPointCall"]["customExitPoint"] == true)
+                                {
+                                    activityFlowRow.CallType = "Custom";
+                                }
+                            }
+                        }
+                        if (((bool)entityConnectionStat["async"]) == true)
                         {
                             activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
                         }
@@ -18367,7 +18841,18 @@ namespace AppDynamics.Dexter
                         ActivityFlow activityFlowRow = activityFlowRowTemplate.Clone();
 
                         activityFlowRow.CallType = entityConnectionStat["exitPointCall"]["exitPointType"].ToString();
-                        if (((bool)entityConnectionStat["exitPointCall"]["synchronous"]) == false)
+                        if (activityFlowRow.CallType.Length == 0)
+                        {
+                            activityFlowRow.CallType = entity["backendType"].ToString();
+                            if (activityFlowRow.CallType.Length == 0)
+                            {
+                                if ((bool)entityConnectionStat["exitPointCall"]["customExitPoint"] == true)
+                                {
+                                    activityFlowRow.CallType = "Custom";
+                                }
+                            }
+                        }
+                        if (((bool)entityConnectionStat["async"]) == true)
                         {
                             activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
                         }
@@ -18558,7 +19043,18 @@ namespace AppDynamics.Dexter
                         ActivityFlow activityFlowRow = activityFlowRowTemplate.Clone();
 
                         activityFlowRow.CallType = entityConnectionStat["exitPointCall"]["exitPointType"].ToString();
-                        if (((bool)entityConnectionStat["exitPointCall"]["synchronous"]) == false)
+                        if (activityFlowRow.CallType.Length == 0)
+                        {
+                            activityFlowRow.CallType = entity["backendType"].ToString();
+                            if (activityFlowRow.CallType.Length == 0)
+                            {
+                                if ((bool)entityConnectionStat["exitPointCall"]["customExitPoint"] == true)
+                                {
+                                    activityFlowRow.CallType = "Custom";
+                                }
+                            }
+                        }
+                        if (((bool)entityConnectionStat["async"]) == true)
                         {
                             activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
                         }
@@ -18684,7 +19180,8 @@ namespace AppDynamics.Dexter
                 #endregion
 
                 // Only process stuff that was previously exported but not indexed yet
-                if (Directory.Exists(snapshotFolderPath) == true && File.Exists(snapshotsFileName) == false)
+                if (Directory.Exists(snapshotFolderPath) == true && 
+                    File.Exists(snapshotsFileName) == false)
                 {
                     #region Fill in Snapshot data
 
@@ -20045,6 +20542,11 @@ namespace AppDynamics.Dexter
                             {
                                 snapshot.EndToEndDuration = snapshot.Duration;
                             }
+
+                            if (snapshot.EndToEndDuration != snapshot.Duration)
+                            {
+                                snapshot.IsEndToEndDurationDifferent = true;
+                            }
                         }
                         snapshot.EndToEndDurationRange = getDurationRangeAsString(snapshot.EndToEndDuration);
 
@@ -21178,6 +21680,41 @@ namespace AppDynamics.Dexter
                     }
                 }
             }
+        }
+
+        public static Dictionary<string, List<MethodCallLineClassTypeMapping>> populateMethodCallMappingDictionary(string methodCallLinesToFrameworkTypeMappingFilePath)
+        {
+            List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = FileIOHelper.readListFromCSVFile<MethodCallLineClassTypeMapping>(methodCallLinesToFrameworkTypeMappingFilePath, new MethodCallLineClassTypeMappingReportMap());
+            methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingList.OrderByDescending(m => m.ClassPrefix).ToList();
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = new Dictionary<string, List<MethodCallLineClassTypeMapping>>(26);
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("a", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "a").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("b", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "b").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("c", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "c").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("d", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "d").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("e", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "e").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("f", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "f").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("g", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "g").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("h", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "h").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("i", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "i").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("j", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "j").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("k", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "k").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("l", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "l").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("m", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "m").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("n", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "n").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("o", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "o").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("p", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "p").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("q", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "q").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("r", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "r").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("s", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "s").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("t", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "t").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("u", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "u").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("v", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "v").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("w", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "w").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("x", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "x").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("y", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "y").ToList());
+            methodCallLineClassToFrameworkTypeMappingDictionary.Add("z", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "z").ToList());
+
+            return methodCallLineClassToFrameworkTypeMappingDictionary;
         }
 
         #endregion
@@ -24147,7 +24684,7 @@ namespace AppDynamics.Dexter
                     // Filter snapshots that start elsewhere, but include this tier
                     List<Snapshot> snapshotsCrossingThisEntity = new List<Snapshot>();
                     segmentsFilteredList = new List<Segment>();
-                    if (segmentsAllList != null)
+                    if (segmentsAllList != null && snapshotsAllList != null)
                     {
                         var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == entityRow.TierID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
@@ -24182,7 +24719,7 @@ namespace AppDynamics.Dexter
                     // Filter snapshots starting elsewhere, but including this Tier and Node
                     snapshotsCrossingThisEntity = new List<Snapshot>();
                     segmentsFilteredList = new List<Segment>();
-                    if (segmentsAllList != null)
+                    if (segmentsAllList != null && snapshotsAllList != null)
                     {
                         var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == entityRow.TierID && s.NodeID == entityRow.NodeID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
@@ -25627,6 +26164,7 @@ namespace AppDynamics.Dexter
             List<Snapshot> snapshotsList, 
             string snapshotsFolderPath, 
             string flameGraphTemplateString,
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
             bool progressToConsole)
         {
             int j = 0;
@@ -25650,6 +26188,7 @@ namespace AppDynamics.Dexter
                         getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, snapshot),
                         String.Format("{0}/{1}/{2}, BT {3} {4:G} {5} {6}", snapshot.Controller, snapshot.ApplicationName, snapshot.TierName, snapshot.BTName, snapshot.Occurred, snapshot.UserExperience, snapshot.RequestID),
                         flameGraphTemplateString,
+                        methodCallLineClassToFrameworkTypeMappingDictionary,
                         progressToConsole);
                 }
 
@@ -25677,7 +26216,13 @@ namespace AppDynamics.Dexter
         /// <param name="descriptionText"></param>
         /// <param name="flameGraphTemplate"></param>
         /// <returns></returns>
-        private static bool createFlameGraph(string foldedStackFilePath, string flameGraphFilePath, string descriptionText, string flameGraphTemplate, bool progressToConsole)
+        private static bool createFlameGraph(
+            string foldedStackFilePath, 
+            string flameGraphFilePath, 
+            string descriptionText, 
+            string flameGraphTemplate,
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
+            bool progressToConsole)
         {
             // If it already been rendered, bail
             if (File.Exists(flameGraphFilePath) == true)
@@ -26020,13 +26565,36 @@ namespace AppDynamics.Dexter
                                     xmlWriter.WriteString(String.Format("{0} ({1} samples, {2:P})", flameGraphBox.FullName, flameGraphBox.Samples, flameGraphBox.Samples / (decimal)maxSampleWidth));
                                     xmlWriter.WriteEndElement();
 
+                                    // Determine the color for the box, using the framework lookup
+                                    MethodCallLineClassTypeMapping methodCallLineClassTypeMapping = getMethodCallLineClassTypeMappingFromClassOrFunctionName(flameGraphBox.FullName, methodCallLineClassToFrameworkTypeMappingDictionary);
+                                    Color colorStart = colorFlameGraphStackStart;
+                                    Color colorEnd = colorFlameGraphStackEnd;
+
+                                    // No mapping
+                                    if (methodCallLineClassTypeMapping == null)
+                                    {
+                                        // Could this be Node.JS?
+                                        // it has :: and .js in it
+                                        if (flameGraphBox.FullName.Contains("::") == true &&
+                                            flameGraphBox.FullName.Contains(".js") == true)
+                                        {
+                                            colorStart = colorFlameGraphStackNodeJSStart;
+                                            colorEnd = colorFlameGraphStackNodeJSEnd;
+                                        }
+                                    }
+                                    else if (methodCallLineClassTypeMapping.FlameGraphColorStart.Length != 0 || methodCallLineClassTypeMapping.FlameGraphColorEnd.Length != 0)
+                                    {
+                                        colorStart = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorStart);
+                                        colorEnd = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorEnd);
+                                    }
+
                                     // Output the rectangle with pretty colors
                                     xmlWriter.WriteStartElement("rect");
                                     xmlWriter.WriteAttributeString("x", x1.ToString());
                                     xmlWriter.WriteAttributeString("y", y1.ToString());
                                     xmlWriter.WriteAttributeString("width", (x2 - x1).ToString());
                                     xmlWriter.WriteAttributeString("height", (y2 - y1).ToString());
-                                    xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(flameGraphBox.Depth, maxFrameDepth));
+                                    xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(flameGraphBox.Depth, maxFrameDepth, colorStart, colorEnd));
                                     xmlWriter.WriteAttributeString("rx", "2");
                                     xmlWriter.WriteAttributeString("ry", "2");
                                     xmlWriter.WriteEndElement();
@@ -26095,25 +26663,56 @@ namespace AppDynamics.Dexter
             return true;
         }
 
-        private static string getFlameGraphBoxColorAsRGBString(int thisDepth, int maxDepth)
+        private static string getFlameGraphBoxColorAsRGBString(int thisDepth, int maxDepth, Color startColor, Color endColor)
         {
-            double rStep = (colorFlameGraphStackEnd.R - colorFlameGraphStackStart.R) / (double)maxDepth;
-            double gStep = (colorFlameGraphStackEnd.G - colorFlameGraphStackStart.G) / (double)maxDepth;
-            double bStep = (colorFlameGraphStackEnd.B - colorFlameGraphStackStart.B) / (double)maxDepth;
+            double rStep = (endColor.R - startColor.R) / (double)maxDepth;
+            double gStep = (endColor.G - startColor.G) / (double)maxDepth;
+            double bStep = (endColor.B - startColor.B) / (double)maxDepth;
 
-            var rActual = colorFlameGraphStackStart.R + (int)(rStep * thisDepth);
-            var gActual = colorFlameGraphStackStart.G + (int)(gStep * thisDepth);
-            var bActual = colorFlameGraphStackStart.B + (int)(bStep * thisDepth);
+            var rActual = startColor.R + (int)(rStep * thisDepth);
+            var gActual = startColor.G + (int)(gStep * thisDepth);
+            var bActual = startColor.B + (int)(bStep * thisDepth);
 
             return String.Format("#{0:X2}{1:X2}{2:X2}", rActual, gActual, bActual);
         }
+
+        private static Color getColorFromHexString(string hexColorString)
+        {
+            int r = Convert.ToInt32(hexColorString.Substring(0, 2), 16);
+            int g = Convert.ToInt32(hexColorString.Substring(2, 2), 16);
+            int b = Convert.ToInt32(hexColorString.Substring(4, 2), 16);
+
+            return Color.FromArgb(r, g, b);
+        }
+
+        public static MethodCallLineClassTypeMapping getMethodCallLineClassTypeMappingFromClassOrFunctionName(string classOrFunctionName, Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary)
+        {
+            if (classOrFunctionName.Length > 0)
+            {
+                // Find mapping
+                string keyLetterOfMappingList = classOrFunctionName.Substring(0, 1).ToLower();
+                if (methodCallLineClassToFrameworkTypeMappingDictionary.ContainsKey(keyLetterOfMappingList) == true)
+                {
+                    List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary[keyLetterOfMappingList];
+                    foreach (MethodCallLineClassTypeMapping mapping in methodCallLineClassToFrameworkTypeMappingList)
+                    {
+                        if (classOrFunctionName.StartsWith(mapping.ClassPrefix, StringComparison.Ordinal) == true)
+                        {
+                            return mapping;
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }        
 
         #endregion
 
 
         #region Helper functions for reading CSV into Excel worksheet
 
-            private static ExcelRangeBase readCSVFileIntoExcelRange(MemoryStream csvStream, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
+        private static ExcelRangeBase readCSVFileIntoExcelRange(MemoryStream csvStream, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
         {
             logger.Trace("Reading CSV file from memory stream to Excel Worksheet {0} at (row {1}, column {2})", sheet.Name, startRow, startColumn);
 

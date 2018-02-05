@@ -22,6 +22,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.DurationRange).Index(i); i++;
             Map(m => m.EndToEndDuration).Index(i); i++;
             Map(m => m.EndToEndDurationRange).Index(i); i++;
+            Map(m => m.IsEndToEndDurationDifferent).Index(i); i++;
 
             Map(m => m.URL).Index(i); i++;
             Map(m => m.CallChains).Index(i); i++;

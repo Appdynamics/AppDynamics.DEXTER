@@ -1,139 +1,139 @@
-ClassPrefix,FrameworkType
-ActivityFeeds,Microsoft Dynamics CRM
-antrl,ANTLR Parser
-ASP,.NET ASP.NET
-Asynchronous,.NET ASP.NET
-ch.qos.logback,Logback
-com.amazonaws,Amazon Core
-com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client
-com.amazonaws.auth,Amazon Auth
-com.amazonaws.http,Amazon Http
-com.amazonaws.services.sns,Amazon SNS
-com.amazonaws.services.sqs,Amazon SQS
-com.appdynamics,AppDynamics
-com.appdynamicspilot,AppDynamics
-com.arjuna.ats,JBoss Arjuna
-com.aspose,Aspose Components
-com.atomikos,Atomicos Transactions
-com.bea,BEA Core
-com.blazesoft,FICO BlazeAdvisor
-com.blazesoft.engines,FICO BlazeAdvisor Rules Engine
-com.crossview.commerce,IBM WebSphere Commerce
-com.ctc.wstx,Sun Woodstox
-com.cybersource,CyberSource ECommerce
-com.entrust,Entrust ECommerce
-com.fasterxml.jackson,Jackson Core
-com.fasterxml.jackson.annotation,Jackson Annotation
-com.fasterxml.jackson.core,Jackson Core
-com.fasterxml.jackson.databind,Jackson DataBind
-com.google,Google Core
-com.ibm,IBM Core
-com.informix,Informix
-com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling
-com.microsoft,Microsoft
-com.microsoft.sqlserver,Microsoft SQL Server Driver
-com.mysql,MySQL Driver
-com.nimbusds,NimbusDS
-com.opensymphony,OpenSymphony J2EE
-com.oracle,Oracle Core
-com.paypal,PayPal
-com.pointbase,Pointbase Driver
-com.rsa,RSA Security
-com.singularity,AppDynamics
-com.softwareag,Software AG
-com.sun,JDK Core
-com.sun.jersey,Jersey REST Framework
-com.sun.xml.ws,Sun Web Services
-com.sybase.jdbc2,Sybase JDBC2
-com.sybase.jdbc3,Sybase JDBC3
-com.sybase.jdbc4,Sybase JDBC3
-com.teradata,Teradata Database
-com.terracotta,Terracota DB
-com.terracottatech,Terracota DB
-com.thoughtworks,ThoughWorks
-com.weblogic,WebLogic Core
-com.webmethods,Software AG webMethods
-Corillian,Corillian/Voyager Banking
-Fiserv,FiServ Financial
-freemarker,Apache FreeMarker
-io.undertow,JBoss Undertow
-java,Java Core
-java.io,Java IO
-java.lang.reflect,Java Reflection
-javax,Java Extension
-jdk.xml,Java XML
-jersey,Jersey REST Framework
-jrockit,JRockit JVM
-log4net,Log4Net Logging
-Microsoft,Microsoft
-Microsoft.Azure.KeyVault,Microsoft Azure KeyVault
-Microsoft.Crm,Microsoft Dynamics CRM
-Microsoft.CSharp,.NET C#
-Microsoft.Dynamics,Microsoft Dynamics CRM
-Microsoft.OData,Microsoft OData
-Microsoft.Owin,Microsoft Owin
-Microsoft.Practices,Microsoft Patterns and Practices
-Microsoft.ServiceBus,Microsoft Service Bus
-Microsoft.ServiceFabric,Microsoft Service Fabric
-Microsoft.SharePoint,Microsoft SharePoint
-Microsoft.SqlServer,Microsoft SQL Server
-Microsoft.VisualBasic,.NET VB.NET
-Microsoft.WindowsAzure.Storage,Microsoft Azure Storage
-Microsoft.Xrm,Microsoft Dynamics CRM
-MobileMoney.Voyager,Corillian/Voyager Banking
-MS.Internal.Xaml,.NET XAML
-MS.Internal.Xml,.NET XML
-MySQL,MySQL Driver
-net.sf,SourceForge
-netscape,Netscape
-Newtonsoft.Json,Newtonsoft JSON
-Novell,Novell
-NLog,NLog Framework
-ognl,Apache OGNL
-oracle,Oracle Core
-org.acegisecurity,Acegi Security
-org.apache,Apache
-org.apache.camel.components.seda,Apache Camel Seda
-org.apache.camel.example,Apache Camel Example
-org.apache.cassandra,Apache Cassandra
-org.apache.kafka,Apache Kafka
-org.apache.openejb,Apache OpenEJB
-org.apache.ws,Apache Web Services
-org.apache.xmlbeans,Apache XML Beans
-Org.BouncyCastle,Bouncy Castle Encryption
-org.eclipse.jetty,Eclipse Jetty
-org.glassfish,GlassFish
-org.jboss,JBoss
-org.jboss.soa.esb.client,JBoss ESB
-org.mule.processor,Mule ESB
-org.springframework,Spring
-org.springframework.integration,Spring Integration
-org.springframework.jms,Spring JMS
-persistence.antlr,TopLink JPA
-redis,Redis Cache
-redis.clients,Redis Cache Client
-SNINativeMethodWrapper,.NET ADO.NET
-StackExchange.Redis,Redis StackExchange
-StructureMap,StructureMap IoC/DI
-sun,JDK Core
-sun.reflect,Java Reflection
-System,.NET System
-System.Activities,.NET WF
-System.Collections,.NET Collections
-System.Data,.NET Data
-System.Data.Linq,.NET Data Linq
-System.Diagnostics,.NET Diagnostics
-System.IO,.NET IO
-System.Linq,.NET Linq
-System.Net,.NET Network
-System.Reflection,.NET Reflection
-System.Runtime,.NET Runtime
-System.Security,.NET Security
-System.ServiceModel,.NET WCF
-System.Text,.NET Text
-System.Threading,.NET Threading
-System.Web,.NET ASP.NET
-System.Web.Mvc,.NET ASP.NET MVC
-System.Xaml,.NET XAML
-System.Xml,.NET XML
-weblogic,WebLogic Core
+ClassPrefix,FrameworkType,FlameGraphColorStart,FlameGraphColorEnd
+ActivityFeeds,Microsoft Dynamics CRM,EA3E23,E8998D
+antrl,ANTLR Parser,,
+ASP,.NET ASP.NET,6197FF,00D1C8
+Asynchronous,.NET ASP.NET,6197FF,00D1C8
+ch.qos.logback,Logback,,
+com.amazonaws,Amazon Core,FF9900,FBBB5B
+com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client,FF9900,FBBB5B
+com.amazonaws.auth,Amazon Auth,FF9900,FBBB5B
+com.amazonaws.http,Amazon Http,FF9900,FBBB5B
+com.amazonaws.services.sns,Amazon SNS,FF9900,FBBB5B
+com.amazonaws.services.sqs,Amazon SQS,FF9900,FBBB5B
+com.appdynamics,AppDynamics,7668CF,C4BEE9
+com.appdynamicspilot,AppDynamics,7668CF,C4BEE9
+com.arjuna.ats,JBoss Arjuna,FF0A0A,FFB3B3
+com.aspose,Aspose Components,,
+com.atomikos,Atomicos Transactions,,
+com.bea,BEA Core,,
+com.blazesoft,FICO BlazeAdvisor,,
+com.blazesoft.engines,FICO BlazeAdvisor Rules Engine,,
+com.crossview.commerce,IBM WebSphere Commerce,,
+com.ctc.wstx,Sun Woodstox,,
+com.cybersource,CyberSource ECommerce,,
+com.entrust,Entrust ECommerce,,
+com.fasterxml.jackson,Jackson Core,,
+com.fasterxml.jackson.annotation,Jackson Annotation,,
+com.fasterxml.jackson.core,Jackson Core,,
+com.fasterxml.jackson.databind,Jackson DataBind,,
+com.google,Google Core,FBBC05,FEEDBE
+com.ibm,IBM Core,,
+com.informix,Informix,,
+com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling,,
+com.microsoft,Microsoft,00A1F1,A7D5EC
+com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,A7D5EC
+com.mysql,MySQL Driver,,
+com.nimbusds,NimbusDS,,
+com.opensymphony,OpenSymphony J2EE,,
+com.oracle,Oracle Core,,
+com.paypal,PayPal,,
+com.pointbase,Pointbase Driver,,
+com.rsa,RSA Security,,
+com.singularity,AppDynamics,7668CF,C4BEE9
+com.softwareag,Software AG,,
+com.sun,JDK Core,75E500,BBFA38
+com.sun.jersey,Jersey REST Framework,75E500,BBFA38
+com.sun.xml.ws,Sun Web Services,75E500,BBFA38
+com.sybase.jdbc2,Sybase JDBC2,,
+com.sybase.jdbc3,Sybase JDBC3,,
+com.sybase.jdbc4,Sybase JDBC3,,
+com.teradata,Teradata Database,,
+com.terracotta,Terracota DB,,
+com.terracottatech,Terracota DB,,
+com.thoughtworks,ThoughWorks,,
+com.weblogic,WebLogic Core,,
+com.webmethods,Software AG webMethods,,
+Corillian,Corillian/Voyager Banking,,
+Fiserv,FiServ Financial,,
+freemarker,Apache FreeMarker,FD6DEE,F5CCE7
+io.undertow,JBoss Undertow,FF0A0A,FFB3B3
+java,Java Core,75E500,BBFA38
+java.io,Java IO,75E500,BBFA38
+java.lang.reflect,Java Reflection,75E500,BBFA38
+javax,Java Extension,75E500,BBFA38
+jdk.xml,Java XML,75E500,BBFA38
+jersey,Jersey REST Framework,75E500,BBFA38
+jrockit,JRockit JVM,75E500,BBFA38
+log4net,Log4Net Logging,,
+Microsoft,Microsoft,00A1F1,A7D5EC
+Microsoft.Azure.KeyVault,Microsoft Azure KeyVault,00A1F1,A7D5EC
+Microsoft.Crm,Microsoft Dynamics CRM,EA3E23,E8998D
+Microsoft.CSharp,.NET C#,6197FF,00D1C8
+Microsoft.Dynamics,Microsoft Dynamics CRM,EA3E23,E8998D
+Microsoft.OData,Microsoft OData,00A1F1,A7D5EC
+Microsoft.Owin,Microsoft Owin,00A1F1,A7D5EC
+Microsoft.Practices,Microsoft Patterns and Practices,00A1F1,A7D5EC
+Microsoft.ServiceBus,Microsoft Service Bus,00A1F1,A7D5EC
+Microsoft.ServiceFabric,Microsoft Service Fabric,00A1F1,A7D5EC
+Microsoft.SharePoint,Microsoft SharePoint,00A1F1,A7D5EC
+Microsoft.SqlServer,Microsoft SQL Server,00A1F1,A7D5EC
+Microsoft.VisualBasic,.NET VB.NET,6197FF,00D1C8
+Microsoft.WindowsAzure.Storage,Microsoft Azure Storage,00A1F1,A7D5EC
+Microsoft.Xrm,Microsoft Dynamics CRM,EA3E23,E8998D
+MobileMoney.Voyager,Corillian/Voyager Banking,,
+MS.Internal.Xaml,.NET XAML,6197FF,00D1C8
+MS.Internal.Xml,.NET XML,6197FF,00D1C8
+MySQL,MySQL Driver,,
+net.sf,SourceForge,,
+netscape,Netscape,,
+Newtonsoft.Json,Newtonsoft JSON,6197FF,00D1C8
+Novell,Novell,,
+NLog,NLog Framework,,
+ognl,Apache OGNL,FD6DEE,F5CCE7
+oracle,Oracle Core,,
+org.acegisecurity,Acegi Security,,
+org.apache,Apache,FD6DEE,F5CCE7
+org.apache.camel.components.seda,Apache Camel Seda,FD6DEE,F5CCE7
+org.apache.camel.example,Apache Camel Example,FD6DEE,F5CCE7
+org.apache.cassandra,Apache Cassandra,FD6DEE,F5CCE7
+org.apache.kafka,Apache Kafka,FD6DEE,F5CCE7
+org.apache.openejb,Apache OpenEJB,FD6DEE,F5CCE7
+org.apache.ws,Apache Web Services,FD6DEE,F5CCE7
+org.apache.xmlbeans,Apache XML Beans,FD6DEE,F5CCE7
+org.BouncyCastle,Bouncy Castle Encryption,,
+org.eclipse.jetty,Eclipse Jetty,,
+org.glassfish,GlassFish,,
+org.jboss,JBoss,FF0A0A,FFB3B3
+org.jboss.soa.esb.client,JBoss ESB,FF0A0A,FFB3B3
+org.mule.processor,Mule ESB,,
+org.springframework,Spring,6DB33F,9ACE78
+org.springframework.integration,Spring Integration,6DB33F,9ACE78
+org.springframework.jms,Spring JMS,6DB33F,9ACE78
+persistence.antlr,TopLink JPA,,
+redis,Redis Cache,,
+redis.clients,Redis Cache Client,,
+SNINativeMethodWrapper,.NET ADO.NET,6197FF,00D1C8
+StackExchange.Redis,Redis StackExchange,,
+StructureMap,StructureMap IoC/DI,,
+sun,JDK Core,,
+sun.reflect,Java Reflection,75E500,BBFA38
+System,.NET System,6197FF,00D1C8
+System.Activities,.NET WF,6197FF,00D1C8
+System.Collections,.NET Collections,6197FF,00D1C8
+System.Data,.NET Data,6197FF,00D1C8
+System.Data.Linq,.NET Data Linq,6197FF,00D1C8
+System.Diagnostics,.NET Diagnostics,6197FF,00D1C8
+System.IO,.NET IO,6197FF,00D1C8
+System.Linq,.NET Linq,6197FF,00D1C8
+System.Net,.NET Network,6197FF,00D1C8
+System.Reflection,.NET Reflection,6197FF,00D1C8
+System.Runtime,.NET Runtime,6197FF,00D1C8
+System.Security,.NET Security,6197FF,00D1C8
+System.ServiceModel,.NET WCF,6197FF,00D1C8
+System.Text,.NET Text,6197FF,00D1C8
+System.Threading,.NET Threading,6197FF,00D1C8
+System.Web,.NET ASP.NET,6197FF,00D1C8
+System.Web.Mvc,.NET ASP.NET MVC,6197FF,00D1C8
+System.Xaml,.NET XAML,6197FF,00D1C8
+System.Xml,.NET XML,6197FF,00D1C8
+weblogic,WebLogic Core,,

@@ -6,6 +6,8 @@ namespace AppDynamics.Dexter.DataObjects
     {
         public string ClassPrefix { get; set; }
         public string FrameworkType { get; set; }
+        public string FlameGraphColorStart { get; set; }
+        public string FlameGraphColorEnd { get; set; }
 
         public override String ToString()
         {
