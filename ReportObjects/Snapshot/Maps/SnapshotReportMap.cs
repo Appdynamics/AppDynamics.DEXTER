@@ -10,8 +10,11 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;
+            Map(m => m.TierType).Index(i); i++;
             Map(m => m.NodeName).Index(i); i++;
+            Map(m => m.AgentType).Index(i); i++;
             Map(m => m.BTName).Index(i); i++;
+            Map(m => m.BTType).Index(i); i++;
             Map(m => m.UserExperience).Index(i); i++;
             Map(m => m.RequestID).Index(i); i++;
 
@@ -59,12 +62,6 @@ namespace AppDynamics.Dexter.DataObjects
 
             Map(m => m.FlameGraphLink).Index(i); i++;
             Map(m => m.SnapshotLink).Index(i); i++;
-
-            Map(m => m.ControllerLink).Index(i); i++;
-            Map(m => m.ApplicationLink).Index(i); i++;
-            Map(m => m.TierLink).Index(i); i++;
-            Map(m => m.NodeLink).Index(i); i++;
-            Map(m => m.BTLink).Index(i); i++;
         }
     }
 }

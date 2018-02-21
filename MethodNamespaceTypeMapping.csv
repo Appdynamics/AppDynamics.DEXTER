@@ -1,8 +1,12 @@
 ClassPrefix,FrameworkType,FlameGraphColorStart,FlameGraphColorEnd
 ActivityFeeds,Microsoft Dynamics CRM,EA3E23,E8998D
+Amazon.Runtime,Amazon Core,FF9900,FBBB5B
 antrl,ANTLR Parser,,
 ASP,.NET ASP.NET,6197FF,00D1C8
 Asynchronous,.NET ASP.NET,6197FF,00D1C8
+Autofac,Autofac IoC,,
+AutoMapper,AutoMapper,,
+Castle,Castle Project,,
 ch.qos.logback,Logback,,
 com.amazonaws,Amazon Core,FF9900,FBBB5B
 com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client,FF9900,FBBB5B
@@ -15,13 +19,16 @@ com.appdynamicspilot,AppDynamics,7668CF,C4BEE9
 com.arjuna.ats,JBoss Arjuna,FF0A0A,FFB3B3
 com.aspose,Aspose Components,,
 com.atomikos,Atomicos Transactions,,
+com.autofact,Autofac IoC,,
 com.bea,BEA Core,,
 com.blazesoft,FICO BlazeAdvisor,,
 com.blazesoft.engines,FICO BlazeAdvisor Rules Engine,,
 com.crossview.commerce,IBM WebSphere Commerce,,
 com.ctc.wstx,Sun Woodstox,,
 com.cybersource,CyberSource ECommerce,,
+com.dassault_systemes,3DS,,
 com.entrust,Entrust ECommerce,,
+com.exalead,3DS EXALEAD,,
 com.fasterxml.jackson,Jackson Core,,
 com.fasterxml.jackson.annotation,Jackson Annotation,,
 com.fasterxml.jackson.core,Jackson Core,,
@@ -29,9 +36,11 @@ com.fasterxml.jackson.databind,Jackson DataBind,,
 com.google,Google Core,FBBC05,FEEDBE
 com.ibm,IBM Core,,
 com.informix,Informix,,
+com.matrixone,3DS MatrixOne,,
 com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling,,
 com.microsoft,Microsoft,00A1F1,A7D5EC
 com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,A7D5EC
+com.mongodb,Mongo DB,,
 com.mysql,MySQL Driver,,
 com.nimbusds,NimbusDS,,
 com.opensymphony,OpenSymphony J2EE,,
@@ -54,16 +63,22 @@ com.thoughtworks,ThoughWorks,,
 com.weblogic,WebLogic Core,,
 com.webmethods,Software AG webMethods,,
 Corillian,Corillian/Voyager Banking,,
+Dapper,Dapper,,
 Fiserv,FiServ Financial,,
 freemarker,Apache FreeMarker,FD6DEE,F5CCE7
+Ionic.Crc,Ionic,,
+Ionic.Zlib,Ionic,,
 io.undertow,JBoss Undertow,FF0A0A,FFB3B3
 java,Java Core,75E500,BBFA38
 java.io,Java IO,75E500,BBFA38
 java.lang.reflect,Java Reflection,75E500,BBFA38
 javax,Java Extension,75E500,BBFA38
+jdk.internal.dynalink,Oracle Nashorn,,
+jdk.nashorn,Oracle Nashorn,,
 jdk.xml,Java XML,75E500,BBFA38
 jersey,Jersey REST Framework,75E500,BBFA38
 jrockit,JRockit JVM,75E500,BBFA38
+Kendo,Kendo UI,,
 log4net,Log4Net Logging,,
 Microsoft,Microsoft,00A1F1,A7D5EC
 Microsoft.Azure.KeyVault,Microsoft Azure KeyVault,00A1F1,A7D5EC
@@ -73,6 +88,8 @@ Microsoft.Dynamics,Microsoft Dynamics CRM,EA3E23,E8998D
 Microsoft.OData,Microsoft OData,00A1F1,A7D5EC
 Microsoft.Owin,Microsoft Owin,00A1F1,A7D5EC
 Microsoft.Practices,Microsoft Patterns and Practices,00A1F1,A7D5EC
+Microsoft.Reporting,Microsoft Reporting Services,00A1F1,A7D5EC
+Microsoft.ReportingServices,Microsoft Reporting Services,00A1F1,A7D5EC
 Microsoft.ServiceBus,Microsoft Service Bus,00A1F1,A7D5EC
 Microsoft.ServiceFabric,Microsoft Service Fabric,00A1F1,A7D5EC
 Microsoft.SharePoint,Microsoft SharePoint,00A1F1,A7D5EC
@@ -110,8 +127,11 @@ org.springframework,Spring,6DB33F,9ACE78
 org.springframework.integration,Spring Integration,6DB33F,9ACE78
 org.springframework.jms,Spring JMS,6DB33F,9ACE78
 persistence.antlr,TopLink JPA,,
+RazorEngine,Antaris RazorEngine,,
 redis,Redis Cache,,
 redis.clients,Redis Cache Client,,
+ReportExprHostImpl,Microsoft Reporting Services,00A1F1,A7D5EC
+RestSharp,RestSharp HTTP Client,,
 SNINativeMethodWrapper,.NET ADO.NET,6197FF,00D1C8
 StackExchange.Redis,Redis StackExchange,,
 StructureMap,StructureMap IoC/DI,,
@@ -122,6 +142,7 @@ System.Activities,.NET WF,6197FF,00D1C8
 System.Collections,.NET Collections,6197FF,00D1C8
 System.Data,.NET Data,6197FF,00D1C8
 System.Data.Linq,.NET Data Linq,6197FF,00D1C8
+System.Data.Entity,.NET Entity Framework,6197FF,00D1C8
 System.Diagnostics,.NET Diagnostics,6197FF,00D1C8
 System.IO,.NET IO,6197FF,00D1C8
 System.Linq,.NET Linq,6197FF,00D1C8
@@ -136,4 +157,5 @@ System.Web,.NET ASP.NET,6197FF,00D1C8
 System.Web.Mvc,.NET ASP.NET MVC,6197FF,00D1C8
 System.Xaml,.NET XAML,6197FF,00D1C8
 System.Xml,.NET XML,6197FF,00D1C8
+Telerik,Teleric Web Controls,,
 weblogic,WebLogic Core,,

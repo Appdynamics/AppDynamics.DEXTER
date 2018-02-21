@@ -12,6 +12,22 @@ namespace AppDynamics.Dexter.DataObjects
         public string ApplicationLink { get; set; }
         public string ApplicationName { get; set; }
 
+        public long TierID { get; set; }
+        public string TierLink { get; set; }
+        public string TierName { get; set; }
+
+        public long NodeID { get; set; }
+        public string NodeLink { get; set; }
+        public string NodeName { get; set; }
+
+        public long BTID { get; set; }
+        public string BTLink { get; set; }
+        public string BTName { get; set; }
+
+        public long BackendID { get; set; }
+        public string BackendLink { get; set; }
+        public string BackendName { get; set; }
+
         public int Duration { get; set; }
         public DateTime From { get; set; }
         public DateTime To { get; set; }

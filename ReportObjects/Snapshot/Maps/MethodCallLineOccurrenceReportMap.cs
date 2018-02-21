@@ -10,10 +10,20 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;
+            Map(m => m.TierType).Index(i); i++;
             Map(m => m.NodeName).Index(i); i++;
+            Map(m => m.AgentType).Index(i); i++;
             Map(m => m.BTName).Index(i); i++;
+            Map(m => m.BTType).Index(i); i++;
+
+            Map(m => m.SegmentUserExperience).Index(i); i++;
+            Map(m => m.SnapshotUserExperience).Index(i); i++;
+
             Map(m => m.RequestID).Index(i); i++;
             Map(m => m.SegmentID).Index(i); i++;
+
+            Map(m => m.Occurred).Index(i); i++;
+            Map(m => m.OccurredUtc).Index(i); i++;
 
             Map(m => m.Type).Index(i); i++;
             Map(m => m.Framework).Index(i); i++;

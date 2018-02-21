@@ -127,6 +127,10 @@
     <Compile Include="Program.cs" />
     <Compile Include="DataObjects\ProgramOptions\ProgramOptions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReportObjects\ActivityFlow\Maps\BusinessTransactionActivityFlowReportMap.cs" />
+    <Compile Include="ReportObjects\ActivityFlow\Maps\BackendActivityFlowReportMap.cs" />
+    <Compile Include="ReportObjects\ActivityFlow\Maps\NodeActivityFlowReportMap.cs" />
+    <Compile Include="ReportObjects\ActivityFlow\Maps\TierActivityFlowReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\AgentCallGraphSetting.cs" />
     <Compile Include="ReportObjects\Configuration\BusinessTransactionDiscoveryRule20.cs" />
     <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryRule20.cs" />
@@ -188,7 +192,7 @@
     <Compile Include="ReportObjects\Event\HealthRuleViolationEvent.cs" />
     <Compile Include="ReportObjects\Event\Event.cs" />
     <Compile Include="ReportObjects\ActivityFlow\ActivityFlow.cs" />
-    <Compile Include="ReportObjects\ActivityFlow\Maps\ActivityFlowReportMap.cs" />
+    <Compile Include="ReportObjects\ActivityFlow\Maps\ApplicationActivityFlowReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\EventReportMap.cs" />
     <Compile Include="ReportObjects\Metric\MetricSummary.cs" />
     <Compile Include="ReportObjects\Metric\Maps\MetricSummaryMetricReportMap.cs" />

@@ -11,18 +11,24 @@ namespace AppDynamics.Dexter.DataObjects
 
         public long TierID { get; set; }
         public string TierName { get; set; }
+        public string TierType { get; set; }
 
         public long NodeID { get; set; }
         public string NodeName { get; set; }
+        public string AgentType { get; set; }
 
         public long BTID { get; set; }
         public string BTName { get; set; }
+        public string BTType { get; set; }
 
         public string RequestID { get; set; }
         public long SegmentID { get; set; }
 
         public DateTime Occurred { get; set; }
         public DateTime OccurredUtc { get; set; }
+
+        public string SegmentUserExperience { get; set; }
+        public string SnapshotUserExperience { get; set; }
 
         public string Type { get; set; }
         public string Framework { get; set; }
