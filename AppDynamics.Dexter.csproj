@@ -168,9 +168,11 @@
     <Compile Include="ReportObjects\Entity\EntityInformationPoint.cs" />
     <Compile Include="ReportObjects\Entity\Maps\InformationPointEntityReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
+    <Compile Include="ReportObjects\FlameGraph\FoldedStackLine.cs" />
     <Compile Include="ReportObjects\FlameGraph\FlameGraphBox.cs" />
     <Compile Include="ReportObjects\Metric\Maps\InformationPointMetricReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
+    <Compile Include="ReportObjects\FlameGraph\Map\FoldedStackLineReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
     <Compile Include="ReportObjects\Snapshot\CallChainContainer.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineOccurrenceReportMap.cs" />

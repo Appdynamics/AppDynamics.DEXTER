@@ -96,6 +96,8 @@ namespace AppDynamics.Dexter
 
         #region Constants for the folder and file names of data extract
 
+        private const string DATA_FOLDER_NAME = "Data";
+
         // Parent Folder names
         private const string ENTITIES_FOLDER_NAME = "ENT";
         private const string CONFIGURATION_FOLDER_NAME = "CFG";
@@ -319,6 +321,8 @@ namespace AppDynamics.Dexter
 
         #region Constants for the folder and file names of data index
 
+        private const string INDEX_FOLDER_NAME = "Index";
+
         // Detected entity report conversion file names
         private const string CONVERT_ENTITY_CONTROLLER_FILE_NAME = "controller.csv";
         private const string CONVERT_ENTITY_CONTROLLERS_FILE_NAME = "controllers.csv";
@@ -364,7 +368,7 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshots.methodcalllinesoccurrences.csv";
 
         // Folded call stacks rollups
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.txt";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.csv";
 
         // Snapshot files
         private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
@@ -377,7 +381,7 @@ namespace AppDynamics.Dexter
         private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshot.methodcalllinesoccurrences.csv";
 
         // Folded call stacks for single snapshot
-        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshot.foldedcallstacks.txt";
+        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshot.foldedcallstacks.csv";
 
         // Settings report list
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
@@ -407,7 +411,7 @@ namespace AppDynamics.Dexter
 
         #region Constants for the folder and file names of data reports
 
-        private const string REPORTS_FOLDER_NAME = "Report";
+        private const string REPORT_FOLDER_NAME = "Report";
 
         // Report file names
         private const string REPORT_DETECTED_ENTITIES_FILE_NAME = "DetectedEntities.{0}.{1:yyyyMMddHH}-{2:yyyyMMddHH}.xlsx";
@@ -1299,26 +1303,6 @@ namespace AppDynamics.Dexter
                         }
                         break;
 
-                    case JobStatus.IndexSnapshots:
-                        if (jobConfiguration.Input.Snapshots == true)
-                        {
-                            if (stepIndexSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
-                            {
-                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
-                            }
-                            else
-                            {
-                                jobConfiguration.Status = JobStatus.Error;
-                            }
-                        }
-                        else
-                        {
-                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
-
-                            loggerConsole.Debug("Skipping index of snapshots");
-                        }
-                        break;
-
                     case JobStatus.IndexEventsAndHealthRuleViolations:
                         if (jobConfiguration.Input.Events == true)
                         {
@@ -1336,6 +1320,26 @@ namespace AppDynamics.Dexter
                             jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
 
                             loggerConsole.Debug("Skipping index of events");
+                        }
+                        break;
+
+                    case JobStatus.IndexSnapshots:
+                        if (jobConfiguration.Input.Snapshots == true)
+                        {
+                            if (stepIndexSnapshots(programOptions, jobConfiguration, jobConfiguration.Status) == true)
+                            {
+                                jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+                            }
+                            else
+                            {
+                                jobConfiguration.Status = JobStatus.Error;
+                            }
+                        }
+                        else
+                        {
+                            jobConfiguration.Status = jobStepsLinked.Find(jobConfiguration.Status).Next.Value;
+
+                            loggerConsole.Debug("Skipping index of snapshots");
                         }
                         break;
 
@@ -1554,7 +1558,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportDataFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -1603,35 +1607,36 @@ namespace AppDynamics.Dexter
                         ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
 
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
 
                         // Entity files
-                        string applicationsFilePath = Path.Combine(controllerFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
-                        string applicationFilePath = Path.Combine(applicationFolderPath, EXTRACT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
-                        string nodesFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
-                        string backendsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
-                        string backendsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
-                        string businessTransactionsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string serviceEndPointsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
-                        string errorsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
-                        string informationPointsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
+                        string applicationsDataFilePath = Path.Combine(controllerDataFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
+                        string applicationDataFilePath = Path.Combine(applicationDataFolderPath, EXTRACT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
+                        string nodesDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
+                        string backendsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
+                        string backendsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
+                        string businessTransactionsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string serviceEndPointsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
+                        string errorsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
+                        string informationPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string informationPointsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
 
                         #endregion
 
                         #region Applications
 
                         // Only do it once per controller, if processing multiple applications
-                        if (File.Exists(applicationsFilePath) != true)
+                        if (File.Exists(applicationsDataFilePath) != true)
                         {
                             loggerConsole.Info("List of Applications");
 
                             string applicationsJSON = controllerApi.GetListOfApplications();
-                            if (applicationsJSON != String.Empty) FileIOHelper.saveFileToPath(applicationsJSON, applicationsFilePath);
+                            if (applicationsJSON != String.Empty) FileIOHelper.saveFileToPath(applicationsJSON, applicationsDataFilePath);
                         }
 
                         #endregion
@@ -1641,7 +1646,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("This Application");
 
                         string applicationJSON = controllerApi.GetSingleApplication(jobTarget.ApplicationID);
-                        if (applicationJSON != String.Empty) FileIOHelper.saveFileToPath(applicationJSON, applicationFilePath);
+                        if (applicationJSON != String.Empty) FileIOHelper.saveFileToPath(applicationJSON, applicationDataFilePath);
 
                         #endregion
 
@@ -1650,7 +1655,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Tiers");
 
                         string tiersJSON = controllerApi.GetListOfTiers(jobTarget.ApplicationID);
-                        if (tiersJSON != String.Empty) FileIOHelper.saveFileToPath(tiersJSON, tiersFilePath);
+                        if (tiersJSON != String.Empty) FileIOHelper.saveFileToPath(tiersJSON, tiersDataFilePath);
 
                         #endregion
 
@@ -1659,7 +1664,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Nodes");
 
                         string nodesJSON = controllerApi.GetListOfNodes(jobTarget.ApplicationID);
-                        if (nodesJSON != String.Empty) FileIOHelper.saveFileToPath(nodesJSON, nodesFilePath);
+                        if (nodesJSON != String.Empty) FileIOHelper.saveFileToPath(nodesJSON, nodesDataFilePath);
 
                         #endregion
 
@@ -1668,11 +1673,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Backends");
 
                         string backendsJSON = controllerApi.GetListOfBackends(jobTarget.ApplicationID);
-                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsFilePath);
+                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsDataFilePath);
 
                         controllerApi.PrivateApiLogin();
                         backendsJSON = controllerApi.GetListOfBackendsAdditionalDetail(jobTarget.ApplicationID);
-                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsDetailFilePath);
+                        if (backendsJSON != String.Empty) FileIOHelper.saveFileToPath(backendsJSON, backendsDetailDataFilePath);
                         
                         #endregion
 
@@ -1681,7 +1686,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Business Transactions");
 
                         string businessTransactionsJSON = controllerApi.GetListOfBusinessTransactions(jobTarget.ApplicationID);
-                        if (businessTransactionsJSON != String.Empty) FileIOHelper.saveFileToPath(businessTransactionsJSON, businessTransactionsFilePath);
+                        if (businessTransactionsJSON != String.Empty) FileIOHelper.saveFileToPath(businessTransactionsJSON, businessTransactionsDataFilePath);
 
                         #endregion
 
@@ -1690,11 +1695,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Service Endpoints");
 
                         string serviceEndPointsJSON = controllerApi.GetListOfServiceEndpoints(jobTarget.ApplicationID);
-                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsDataFilePath);
 
                         controllerApi.PrivateApiLogin();
                         serviceEndPointsJSON = controllerApi.GetListOfServiceEndpointsAdditionalDetail(jobTarget.ApplicationID);
-                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsDetailFilePath);
+                        if (serviceEndPointsJSON != String.Empty) FileIOHelper.saveFileToPath(serviceEndPointsJSON, serviceEndPointsDetailDataFilePath);
 
                         #endregion
 
@@ -1703,7 +1708,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Errors");
 
                         string errorsJSON = controllerApi.GetListOfErrors(jobTarget.ApplicationID);
-                        if (errorsJSON != String.Empty) FileIOHelper.saveFileToPath(errorsJSON, errorsFilePath);
+                        if (errorsJSON != String.Empty) FileIOHelper.saveFileToPath(errorsJSON, errorsDataFilePath);
 
                         #endregion
 
@@ -1712,11 +1717,11 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("List of Information Points");
 
                         string informationPointsJSON = controllerApi.GetListOfInformationPoints(jobTarget.ApplicationID);
-                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsFilePath);
+                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsDataFilePath);
 
                         controllerApi.PrivateApiLogin();
                         informationPointsJSON = controllerApi.GetListOfInformationPointsAdditionalDetail(jobTarget.ApplicationID);
-                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsDetailFilePath);
+                        if (informationPointsJSON != String.Empty) FileIOHelper.saveFileToPath(informationPointsJSON, informationPointsDetailDataFilePath);
 
                         #endregion
                     }
@@ -1738,7 +1743,7 @@ namespace AppDynamics.Dexter
 
                         List<StepTiming> stepTimings = new List<StepTiming>(1);
                         stepTimings.Add(stepTimingTarget);
-                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportDataFilePath, true);
                     }
                 }
 
@@ -1764,7 +1769,7 @@ namespace AppDynamics.Dexter
 
                 List<StepTiming> stepTimings = new List<StepTiming>(1);
                 stepTimings.Add(stepTimingFunction);
-                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportDataFilePath, true);
             }
         }
 
@@ -1780,7 +1785,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -1829,25 +1834,26 @@ namespace AppDynamics.Dexter
                         ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
 
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string configDataFolderPath = Path.Combine(applicationDataFolderPath, CONFIGURATION_FOLDER_NAME);
 
                         // Entity files
-                        string applicationsFilePath = Path.Combine(controllerFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
-                        string applicationConfigFilePath = Path.Combine(configFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
-                        string controllerSettingsFilePath = Path.Combine(controllerFolderPath, EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
+                        string applicationsDataFilePath = Path.Combine(controllerDataFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
+                        string applicationConfigDataFilePath = Path.Combine(configDataFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
+                        string controllerSettingsDataFilePath = Path.Combine(controllerDataFolderPath, EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
 
                         #endregion
 
                         #region Controller
 
-                        if (File.Exists(controllerSettingsFilePath) != true)
+                        if (File.Exists(controllerSettingsDataFilePath) != true)
                         {
                             loggerConsole.Info("Controller Settings");
 
                             string controllerSettingsJSON = controllerApi.GetControllerConfiguration();
-                            if (controllerSettingsJSON != String.Empty) FileIOHelper.saveFileToPath(controllerSettingsJSON, controllerSettingsFilePath);
+                            if (controllerSettingsJSON != String.Empty) FileIOHelper.saveFileToPath(controllerSettingsJSON, controllerSettingsDataFilePath);
                         }
 
                         #endregion
@@ -1858,7 +1864,7 @@ namespace AppDynamics.Dexter
 
                         // Application configuration
                         string applicationConfigXml = controllerApi.GetApplicationConfiguration(jobTarget.ApplicationID);
-                        if (applicationConfigXml != String.Empty) FileIOHelper.saveFileToPath(applicationConfigXml, applicationConfigFilePath);
+                        if (applicationConfigXml != String.Empty) FileIOHelper.saveFileToPath(applicationConfigXml, applicationConfigDataFilePath);
 
                         #endregion
                     }
@@ -1922,7 +1928,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -1967,22 +1973,20 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
-                        // Set up controller access
-                        ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string metricsDataFolderPath = Path.Combine(applicationDataFolderPath, METRICS_FOLDER_NAME);
 
                         // Entity files
-                        string tiersFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
-                        string nodesFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
-                        string backendsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
+                        string tiersDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
+                        string nodesDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
+                        string backendsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
 
                         #endregion
 
@@ -1991,7 +1995,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Application ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         string metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             APPLICATION_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -1999,33 +2003,35 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () => 
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                    getMetricDataForMetricForAllRanges(controllerApiParallel, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false); 
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false); 
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_APPLICATION, METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2042,7 +2048,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Tiers ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             TIERS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2050,33 +2056,35 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_TIER, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2093,7 +2101,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Nodes ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             NODES_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2101,33 +2109,35 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_EXCPM_FULLNAME), METRIC_EXCPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_HTTPEPM_FULLNAME), METRIC_HTTPEPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_NODE, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2144,7 +2154,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Backends ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             BACKENDS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2152,23 +2162,25 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BACKEND, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2183,7 +2195,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Business Transactions ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             BUSINESS_TRANSACTIONS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2191,23 +2203,25 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2222,7 +2236,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Service Endpoints ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             SERVICE_ENDPOINTS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2230,23 +2244,25 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_SERVICE_ENDPOINT, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2261,7 +2277,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Errors ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             ERRORS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2269,13 +2285,15 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_ERROR, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_ERROR, "*", "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
 
                             Console.WriteLine();
@@ -2288,7 +2306,7 @@ namespace AppDynamics.Dexter
                         loggerConsole.Info("Extract Metrics for Information Points ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count + 1);
 
                         metricsEntityFolderPath = Path.Combine(
-                            metricsFolderPath,
+                            metricsDataFolderPath,
                             INFORMATION_POINTS_TYPE_SHORT);
 
                         if (programOptions.ProcessSequentially == false)
@@ -2296,23 +2314,25 @@ namespace AppDynamics.Dexter
                             Parallel.Invoke(
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 },
                                 () =>
                                 {
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
                                     getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, false);
                                 }
                             );
                         }
                         else
                         {
+                            ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_ART_FULLNAME), METRIC_ART_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_CPM_FULLNAME), METRIC_CPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
                             getMetricDataForMetricForAllRanges(controllerApi, jobTarget, String.Format(METRIC_PATH_INFORMATION_POINT, "*", METRIC_EPM_FULLNAME), METRIC_EPM_FULLNAME, jobConfiguration, metricsEntityFolderPath, true);
@@ -2382,7 +2402,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -2431,17 +2451,18 @@ namespace AppDynamics.Dexter
                         controllerApi.PrivateApiLogin();
 
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string activityGridDataFolderPath = Path.Combine(applicationDataFolderPath, ACTIVITYGRID_FOLDER_NAME);
 
                         // Entity files
-                        string tiersFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
-                        string nodesFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
-                        string backendsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string tiersDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
+                        string nodesDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
+                        string backendsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
 
                         #endregion
 
@@ -2459,13 +2480,13 @@ namespace AppDynamics.Dexter
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                        extractFlowmapsApplication(jobConfiguration, jobTarget, controllerApi, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                        extractFlowmapsApplication(jobConfiguration, jobTarget, controllerApi, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes);
 
                         #endregion
 
                         #region Tiers
 
-                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersDataFilePath);
                         if (tiersList != null)
                         {
                             loggerConsole.Info("Extract Flowmaps for Tiers ({0} entities)", tiersList.Count);
@@ -2489,7 +2510,7 @@ namespace AppDynamics.Dexter
                                         // Login into private API
                                         controllerApiParallel.PrivateApiLogin();
 
-                                        subtotal += extractFlowmapsTiers(jobConfiguration, jobTarget, controllerApiParallel, tiersListChunk, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
+                                        subtotal += extractFlowmapsTiers(jobConfiguration, jobTarget, controllerApiParallel, tiersListChunk, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
                                         return subtotal;
                                     },
                                     (finalResult) =>
@@ -2501,7 +2522,7 @@ namespace AppDynamics.Dexter
                             }
                             else
                             {
-                                numEntities = extractFlowmapsTiers(jobConfiguration, jobTarget, controllerApi, tiersList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
+                                numEntities = extractFlowmapsTiers(jobConfiguration, jobTarget, controllerApi, tiersList, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
                             loggerConsole.Info("{0} entities", numEntities);
@@ -2511,7 +2532,7 @@ namespace AppDynamics.Dexter
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
+                        List<AppDRESTNode> nodesList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesDataFilePath);
                         if (nodesList != null)
                         {
                             loggerConsole.Info("Extract Flowmaps for Nodes ({0} entities)", nodesList.Count);
@@ -2535,7 +2556,7 @@ namespace AppDynamics.Dexter
                                         // Login into private API
                                         controllerApiParallel.PrivateApiLogin();
 
-                                        subtotal += extractFlowmapsNodes(jobConfiguration, jobTarget, controllerApiParallel, nodesListChunk, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
+                                        subtotal += extractFlowmapsNodes(jobConfiguration, jobTarget, controllerApiParallel, nodesListChunk, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
                                         return subtotal;
                                     },
                                     (finalResult) =>
@@ -2547,7 +2568,7 @@ namespace AppDynamics.Dexter
                             }
                             else
                             {
-                                numEntities = extractFlowmapsNodes(jobConfiguration, jobTarget, controllerApi, nodesList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
+                                numEntities = extractFlowmapsNodes(jobConfiguration, jobTarget, controllerApi, nodesList, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
                             loggerConsole.Info("{0} entities", numEntities);
@@ -2557,7 +2578,7 @@ namespace AppDynamics.Dexter
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
+                        List<AppDRESTBackend> backendsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsDataFilePath);
                         if (backendsList != null)
                         {
                             loggerConsole.Info("Extract Flowmaps for Backends ({0} entities)", backendsList.Count);
@@ -2581,7 +2602,7 @@ namespace AppDynamics.Dexter
                                         // Login into private API
                                         controllerApiParallel.PrivateApiLogin();
 
-                                        subtotal += extractFlowmapsBackends(jobConfiguration, jobTarget, controllerApiParallel, backendsListChunk, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
+                                        subtotal += extractFlowmapsBackends(jobConfiguration, jobTarget, controllerApiParallel, backendsListChunk, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
                                         return subtotal;
                                     },
                                     (finalResult) =>
@@ -2593,7 +2614,7 @@ namespace AppDynamics.Dexter
                             }
                             else
                             {
-                                numEntities = extractFlowmapsBackends(jobConfiguration, jobTarget, controllerApi, backendsList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
+                                numEntities = extractFlowmapsBackends(jobConfiguration, jobTarget, controllerApi, backendsList, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
                             loggerConsole.Info("{0} entities", numEntities);
@@ -2603,7 +2624,7 @@ namespace AppDynamics.Dexter
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsDataFilePath);
                         if (businessTransactionsList != null)
                         {
                             loggerConsole.Info("Extract Flowmaps for Business Transactions ({0} entities)", businessTransactionsList.Count);
@@ -2627,7 +2648,7 @@ namespace AppDynamics.Dexter
                                         // Login into private API
                                         controllerApiParallel.PrivateApiLogin();
 
-                                        subtotal += extractFlowmapsBusinessTransactions(jobConfiguration, jobTarget, controllerApiParallel, businessTransactionsListChunk, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
+                                        subtotal += extractFlowmapsBusinessTransactions(jobConfiguration, jobTarget, controllerApiParallel, businessTransactionsListChunk, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, false);
                                         return subtotal;
                                     },
                                     (finalResult) =>
@@ -2638,7 +2659,7 @@ namespace AppDynamics.Dexter
                                 );
                             }
                             {
-                                numEntities = extractFlowmapsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsList, metricsFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
+                                numEntities = extractFlowmapsBusinessTransactions(jobConfiguration, jobTarget, controllerApi, businessTransactionsList, activityGridDataFolderPath, fromTimeUnix, toTimeUnix, differenceInMinutes, true);
                             }
 
                             loggerConsole.Info("{0} entities", numEntities);
@@ -2706,7 +2727,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -2753,10 +2774,11 @@ namespace AppDynamics.Dexter
                         ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
 
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string eventsDataFolderPath = Path.Combine(applicationDataFolderPath, EVENTS_FOLDER_NAME);
 
                         #endregion
 
@@ -2786,11 +2808,11 @@ namespace AppDynamics.Dexter
 
                         if (listOfHealthRuleViolations.Count > 0)
                         {
-                            string healthRuleViolationsFilePath = Path.Combine(
-                                eventsFolderPath,
+                            string healthRuleViolationsDataFilePath = Path.Combine(
+                                eventsDataFolderPath,
                                 String.Format(HEALTH_RULE_VIOLATIONS_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
-                            FileIOHelper.writeJArrayToFile(listOfHealthRuleViolations, healthRuleViolationsFilePath);
+                            FileIOHelper.writeJArrayToFile(listOfHealthRuleViolations, healthRuleViolationsDataFilePath);
 
                             logger.Info("{0} health rule violations from {1:o} to {2:o}", listOfHealthRuleViolations.Count, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
                             loggerConsole.Info("{0} health rule violations", listOfHealthRuleViolations.Count);
@@ -2812,7 +2834,9 @@ namespace AppDynamics.Dexter
                                 () => 0,
                                 (eventType, loop, subtotal) =>
                                 {
-                                    int numEventsInType = extractEvents(jobConfiguration, jobTarget, controllerApi, eventsFolderPath, eventType, false);
+                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
+                                    int numEventsInType = extractEvents(jobConfiguration, jobTarget, controllerApiParallel, eventsDataFolderPath, eventType, false);
                                     subtotal = subtotal + numEventsInType;
                                     return subtotal;
                                 },
@@ -2827,7 +2851,7 @@ namespace AppDynamics.Dexter
                         {
                             foreach (string eventType in eventTypes)
                             {
-                                int numEventsInType = extractEvents(jobConfiguration, jobTarget, controllerApi, eventsFolderPath, eventType, true);
+                                int numEventsInType = extractEvents(jobConfiguration, jobTarget, controllerApi, eventsDataFolderPath, eventType, true);
                                 numEventsTotal = numEventsTotal + numEventsInType;
                             }
 
@@ -2898,7 +2922,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -2947,14 +2971,15 @@ namespace AppDynamics.Dexter
                         controllerApi.PrivateApiLogin();
 
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string snapshotsDataFolderPath = Path.Combine(applicationDataFolderPath, SNAPSHOTS_FOLDER_NAME);
 
                         // Entity files
-                        string tiersFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
-                        string businessTransactionsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string tiersDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
+                        string businessTransactionsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
 
                         #endregion
 
@@ -2969,11 +2994,11 @@ namespace AppDynamics.Dexter
                             logger.Info("Extract List of Snapshots from {0:o} to {1:o}", jobTimeRange.From, jobTimeRange.To);
                             loggerConsole.Info("Extract List of Snapshots from {0:G} to {1:G}", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime());
 
-                            string snapshotsFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                            string snapshotsDataFilePath = Path.Combine(snapshotsDataFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
 
                             int differenceInMinutes = (int)(jobTimeRange.To - jobTimeRange.From).TotalMinutes;
 
-                            if (File.Exists(snapshotsFilePath) == false)
+                            if (File.Exists(snapshotsDataFilePath) == false)
                             {
                                 JArray listOfSnapshots = new JArray();
 
@@ -3096,7 +3121,7 @@ namespace AppDynamics.Dexter
 
                                 Console.WriteLine();
 
-                                FileIOHelper.writeJArrayToFile(listOfSnapshots, snapshotsFilePath);
+                                FileIOHelper.writeJArrayToFile(listOfSnapshots, snapshotsDataFilePath);
 
                                 totalSnapshotsFound = totalSnapshotsFound + listOfSnapshots.Count;
 
@@ -3115,8 +3140,8 @@ namespace AppDynamics.Dexter
                         // Extract individual snapshots
                         loggerConsole.Info("Extract Individual Snapshots");
 
-                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
-                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTTier> tiersList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersDataFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsDataFilePath);
 
                         // Identify Node.JS tiers that will extact call graph using a different call
                         List<AppDRESTTier> tiersNodeJSList = null;
@@ -3128,8 +3153,8 @@ namespace AppDynamics.Dexter
                         // Process each hour at a time
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
-                            string snapshotsFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
-                            JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsFilePath);
+                            string snapshotsDataFilePath = Path.Combine(snapshotsDataFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                            JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsDataFilePath);
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
                                 logger.Info("Filter Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
@@ -3312,7 +3337,7 @@ namespace AppDynamics.Dexter
                                             // Login into private API
                                             controllerApiParallel.PrivateApiLogin();
 
-                                            subtotal += extractSnapshots(jobConfiguration, jobTarget, controllerApiParallel, listOfSnapshotsInHourChunk, tiersNodeJSList, snapshotsFolderPath, false);
+                                            subtotal += extractSnapshots(jobConfiguration, jobTarget, controllerApiParallel, listOfSnapshotsInHourChunk, tiersNodeJSList, snapshotsDataFolderPath, false);
                                             return subtotal;
                                         },
                                         (finalResult) =>
@@ -3324,7 +3349,7 @@ namespace AppDynamics.Dexter
                                 }
                                 else
                                 {
-                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourFiltered, tiersNodeJSList, snapshotsFolderPath, true);
+                                    numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourFiltered, tiersNodeJSList, snapshotsDataFolderPath, true);
                                 }
 
                                 loggerConsole.Info("{0} snapshots", numSnapshots);
@@ -3397,7 +3422,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -3440,50 +3465,59 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string configDataFolderPath = Path.Combine(applicationDataFolderPath, CONFIGURATION_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+
+                        string entitiesReportFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
 
                         // Entity files
-                        string applicationsFilePath = Path.Combine(controllerFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
-                        string applicationConfigFilePath = Path.Combine(configFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
-                        string tiersFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
-                        string nodesFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
-                        string businessTransactionsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string backendsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
-                        string backendsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
-                        string serviceEndPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string serviceEndPointsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
-                        string errorsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
-                        string informationPointsDetailFilePath = Path.Combine(entitiesFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
+                        string applicationsDataFilePath = Path.Combine(controllerDataFolderPath, EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
+                        string applicationConfigDataFilePath = Path.Combine(configDataFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
+                        string tiersDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_TIERS_FILE_NAME);
+                        string nodesDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_NODES_FILE_NAME);
+                        string businessTransactionsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string backendsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_FILE_NAME);
+                        string backendsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
+                        string serviceEndPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string serviceEndPointsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
+                        string errorsFileDataPath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_ERRORS_FILE_NAME);
+                        string informationPointsDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string informationPointsDetailDataFilePath = Path.Combine(entitiesDataFolderPath, EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
 
                         // Report files
-                        string controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
-                        string applicationsReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string controllerIndexFilePath = Path.Combine(controllerIndexFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
+                        string applicationsIndexFilePath = Path.Combine(controllerIndexFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                        string applicationIndexFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string informationIndexReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
 
                         // Report files for All
-                        string controllersAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_CONTROLLERS_FILE_NAME);
-                        string applicationsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
-                        string tiersAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsAllReportFilePath = Path.Combine(entitiesAllFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string controllersReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_CONTROLLERS_FILE_NAME);
+                        string applicationsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string informationPointsReportFilePath = Path.Combine(entitiesReportFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
 
                         #endregion
 
@@ -3501,7 +3535,7 @@ namespace AppDynamics.Dexter
 
                         // Lookup number of applications
                         // Load JSON file from the file system in case we are continuing the step after stopping
-                        applicationsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTApplication>(applicationsFilePath);
+                        applicationsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTApplication>(applicationsDataFilePath);
                         if (applicationsRESTList != null)
                         {
                             controller.NumApps = applicationsRESTList.Count;
@@ -3509,7 +3543,7 @@ namespace AppDynamics.Dexter
 
                         // Lookup version
                         // Load the configuration.xml from the child to parse the version
-                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationConfigFilePath);
+                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationConfigDataFilePath);
                         if (configXml != null)
                         {
                             string controllerVersion = configXml.SelectSingleNode("application").Attributes["controller-version"].Value;
@@ -3533,16 +3567,16 @@ namespace AppDynamics.Dexter
                         List<EntityController> controllerList = new List<EntityController>(1);
                         controllerList.Add(controller);
 
-                        if (File.Exists(controllerReportFilePath) == false)
+                        if (File.Exists(controllerIndexFilePath) == false)
                         {
-                            FileIOHelper.writeListToCSVFile(controllerList, new ControllerEntityReportMap(), controllerReportFilePath);
+                            FileIOHelper.writeListToCSVFile(controllerList, new ControllerEntityReportMap(), controllerIndexFilePath);
                         }
 
                         #endregion
 
                         #region Nodes
 
-                        List<AppDRESTNode> nodesRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesFilePath);
+                        List<AppDRESTNode> nodesRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTNode>(nodesDataFilePath);
                         List<EntityNode> nodesList = null;
                         if (nodesRESTList != null)
                         {
@@ -3630,15 +3664,15 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksNodes(programOptions, jobConfiguration, jobTarget, nodesList);
 
-                            FileIOHelper.writeListToCSVFile(nodesList, new NodeEntityReportMap(), nodesReportFilePath);
+                            FileIOHelper.writeListToCSVFile(nodesList, new NodeEntityReportMap(), nodesIndexFilePath);
                         }
 
                         #endregion
 
                         #region Backends
 
-                        List<AppDRESTBackend> backendsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsFilePath);
-                        List<AppDRESTTier> tiersRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersFilePath);
+                        List<AppDRESTBackend> backendsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBackend>(backendsDataFilePath);
+                        List<AppDRESTTier> tiersRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTTier>(tiersDataFilePath);
                         List<EntityBackend> backendsList = null;
                         if (backendsRESTList != null)
                         {
@@ -3648,7 +3682,7 @@ namespace AppDynamics.Dexter
 
                             backendsList = new List<EntityBackend>(backendsRESTList.Count);
 
-                            JObject backendsDetailsContainer = FileIOHelper.loadJObjectFromFile(backendsDetailFilePath);
+                            JObject backendsDetailsContainer = FileIOHelper.loadJObjectFromFile(backendsDetailDataFilePath);
                             JArray backendsDetails = null;
                             if (backendsDetailsContainer != null)
                             {
@@ -3757,14 +3791,14 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksBackends(programOptions, jobConfiguration, jobTarget, backendsList);
 
-                            FileIOHelper.writeListToCSVFile(backendsList, new BackendEntityReportMap(), backendsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(backendsList, new BackendEntityReportMap(), backendsIndexFilePath);
                         }
 
                         #endregion
 
                         #region Business Transactions
 
-                        List<AppDRESTBusinessTransaction> businessTransactionsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsFilePath);
+                        List<AppDRESTBusinessTransaction> businessTransactionsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTBusinessTransaction>(businessTransactionsDataFilePath);
                         List<EntityBusinessTransaction> businessTransactionList = null;
                         if (businessTransactionsRESTList != null)
                         {
@@ -3805,14 +3839,14 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksBusinessTransactions(programOptions, jobConfiguration, jobTarget, businessTransactionList);
 
-                            FileIOHelper.writeListToCSVFile(businessTransactionList, new BusinessTransactionEntityReportMap(), businessTransactionsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionList, new BusinessTransactionEntityReportMap(), businessTransactionsIndexFilePath);
                         }
 
                         #endregion
 
                         #region Service Endpoints
 
-                        List<AppDRESTMetric> serviceEndpointsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsFilePath);
+                        List<AppDRESTMetric> serviceEndpointsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(serviceEndPointsDataFilePath);
                         List<EntityServiceEndpoint> serviceEndpointsList = null;
                         if (serviceEndpointsRESTList != null)
                         {
@@ -3822,7 +3856,7 @@ namespace AppDynamics.Dexter
 
                             serviceEndpointsList = new List<EntityServiceEndpoint>(serviceEndpointsRESTList.Count);
 
-                            JObject serviceEndpointsDetailsContainer = FileIOHelper.loadJObjectFromFile(serviceEndPointsDetailFilePath);
+                            JObject serviceEndpointsDetailsContainer = FileIOHelper.loadJObjectFromFile(serviceEndPointsDetailDataFilePath);
                             JArray serviceEndpointsDetails = null;
                             if (serviceEndpointsDetailsContainer != null)
                             {
@@ -3878,14 +3912,14 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksServiceEndpoints(programOptions, jobConfiguration, jobTarget, serviceEndpointsList);
 
-                            FileIOHelper.writeListToCSVFile(serviceEndpointsList, new ServiceEndpointEntityReportMap(), serviceEndpointsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(serviceEndpointsList, new ServiceEndpointEntityReportMap(), serviceEndpointsIndexFilePath);
                         }
 
                         #endregion
 
                         #region Errors
 
-                        List<AppDRESTMetric> errorsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(errorsFilePath);
+                        List<AppDRESTMetric> errorsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(errorsFileDataPath);
                         List<EntityError> errorList = null;
                         if (errorsRESTList != null)
                         {
@@ -3986,14 +4020,14 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksErrors(programOptions, jobConfiguration, jobTarget, errorList);
 
-                            FileIOHelper.writeListToCSVFile(errorList, new ErrorEntityReportMap(), errorsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(errorList, new ErrorEntityReportMap(), errorsIndexFilePath);
                         }
 
                         #endregion
 
                         #region Information Points
 
-                        List<AppDRESTMetric> informationPointsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(informationPointsFilePath);
+                        List<AppDRESTMetric> informationPointsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(informationPointsDataFilePath);
                         List<EntityInformationPoint> informationPointsList = null;
                         if (informationPointsRESTList != null)
                         {
@@ -4003,7 +4037,7 @@ namespace AppDynamics.Dexter
 
                             informationPointsList = new List<EntityInformationPoint>(informationPointsRESTList.Count);
 
-                            JObject informationPointsDetailsContainer = FileIOHelper.loadJObjectFromFile(informationPointsDetailFilePath);
+                            JObject informationPointsDetailsContainer = FileIOHelper.loadJObjectFromFile(informationPointsDetailDataFilePath);
                             JArray informationPointsDetails = null;
                             if (informationPointsDetailsContainer != null)
                             {
@@ -4065,7 +4099,7 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksInformationPoints(programOptions, jobConfiguration, jobTarget, informationPointsList);
 
-                            FileIOHelper.writeListToCSVFile(informationPointsList, new InformationPointEntityReportMap(), informationPointsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(informationPointsList, new InformationPointEntityReportMap(), informationIndexReportFilePath);
                         }
 
                         #endregion
@@ -4116,7 +4150,7 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksTiers(programOptions, jobConfiguration, jobTarget, tiersList);
 
-                            FileIOHelper.writeListToCSVFile(tiersList, new TierEntityReportMap(), tiersReportFilePath);
+                            FileIOHelper.writeListToCSVFile(tiersList, new TierEntityReportMap(), tiersIndexFilePath);
                         }
 
                         #endregion
@@ -4129,7 +4163,7 @@ namespace AppDynamics.Dexter
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                            List<EntityApplication> applicationsList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationsReportFilePath, new ApplicationEntityReportMap());
+                            List<EntityApplication> applicationsList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationsIndexFilePath, new ApplicationEntityReportMap());
 
                             if (applicationsList == null || applicationsList.Count == 0)
                             {
@@ -4165,7 +4199,7 @@ namespace AppDynamics.Dexter
                                 applicationRows.Add(applicationRow);
 
                                 // Write just this row for this application
-                                FileIOHelper.writeListToCSVFile(applicationRows, new ApplicationEntityReportMap(), applicationReportFilePath);
+                                FileIOHelper.writeListToCSVFile(applicationRows, new ApplicationEntityReportMap(), applicationIndexFilePath);
                             }
 
                             // Sort them
@@ -4173,7 +4207,7 @@ namespace AppDynamics.Dexter
 
                             updateEntitiesWithReportDetailLinksApplication(programOptions, jobConfiguration, jobTarget, applicationsList);
 
-                            FileIOHelper.writeListToCSVFile(applicationsList, new ApplicationEntityReportMap(), applicationsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationsList, new ApplicationEntityReportMap(), applicationsIndexFilePath);
                         }
 
                         #endregion
@@ -4183,19 +4217,19 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(entitiesAllFolderPath);
+                            FileIOHelper.deleteFolder(entitiesReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(entitiesAllFolderPath);
+                            FileIOHelper.createFolder(entitiesReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(tiersAllReportFilePath, tiersReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(nodesAllReportFilePath, nodesReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(backendsAllReportFilePath, backendsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionsAllReportFilePath, businessTransactionsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsAllReportFilePath, serviceEndpointsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(errorsAllReportFilePath, errorsReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(informationPointsAllReportFilePath, informationPointsReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(tiersReportFilePath, tiersIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(nodesReportFilePath, nodesIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(backendsReportFilePath, backendsIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionsReportFilePath, businessTransactionsIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsReportFilePath, serviceEndpointsIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(errorsReportFilePath, errorsIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(informationPointsReportFilePath, informationIndexReportFilePath);
 
                         // If it is the last one, let's append all Applications
                         if (i == jobConfiguration.Target.Count - 1)
@@ -4203,13 +4237,13 @@ namespace AppDynamics.Dexter
                             var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                             foreach (var controllerGroup in controllers)
                             {
-                                controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(controllerGroup.Key).Host));
+                                controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(controllerGroup.Key).Host));
 
-                                controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
-                                applicationsReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                                controllerIndexFilePath = Path.Combine(controllerIndexFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
+                                applicationsIndexFilePath = Path.Combine(controllerIndexFolderPath, CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
 
-                                FileIOHelper.appendTwoCSVFiles(applicationsAllReportFilePath, applicationsReportFilePath);
-                                FileIOHelper.appendTwoCSVFiles(controllersAllReportFilePath, controllerReportFilePath);
+                                FileIOHelper.appendTwoCSVFiles(applicationsReportFilePath, applicationsIndexFilePath);
+                                FileIOHelper.appendTwoCSVFiles(controllersReportFilePath, controllerIndexFilePath);
                             }
                         }
 
@@ -4275,7 +4309,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingIndexFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -4322,62 +4356,71 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string configAllFolderPath = Path.Combine(reportFolderPath, CONFIGURATION_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string configDataFolderPath = Path.Combine(applicationDataFolderPath, CONFIGURATION_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string configIndexFolderPath = Path.Combine(applicationIndexFolderPath, CONFIGURATION_FOLDER_NAME);
+
+                        string configReportFolderPath = Path.Combine(reportFolderPath, CONFIGURATION_FOLDER_NAME);
 
                         // Entity files
-                        string controllerSettingsFilePath = Path.Combine(controllerFolderPath, EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
-                        string applicationConfigFilePath = Path.Combine(configFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
+                        string controllerSettingsDataFilePath = Path.Combine(controllerDataFolderPath, EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
+                        string applicationDataConfigDataFilePath = Path.Combine(configDataFolderPath, EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
 
                         // Report files from previous report
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string tiersIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string businessTransactionsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string backendsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
 
                         // Report files
-                        string controllerSettingsReportFilePath = Path.Combine(controllerFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
-                        string applicationConfigurationReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
-                        string businessTransactionDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
-                        string businessTransactionEntryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                        string controllerSettingsIndexFilePath = Path.Combine(controllerIndexFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
+                        string applicationConfigurationIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
+                        string businessTransactionDiscoveryRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                        string businessTransactionEntryRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
 
-                        string businessTransactionEntryScopesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
-                        string businessTransactionDiscoveryRules20ReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
-                        string businessTransactionEntryRules20ReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
+                        string businessTransactionEntryScopesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                        string businessTransactionDiscoveryRules20IndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                        string businessTransactionEntryRules20IndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
 
-                        string backendDiscoveryRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
-                        string customExitRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
-                        string informationPointRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
-                        string agentConfigurationPropertiesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
-                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
-                        string httpDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
-                        string entityTierConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
-                        string entityBusinessTransactionConfigurationsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string agentCallGraphSettingsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
-                        string healthRulesReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
+                        string backendDiscoveryRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                        string customExitRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                        string informationPointRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                        string agentConfigurationPropertiesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                        string methodInvocationDataCollectorsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string httpDataCollectorsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                        string entityTierConfigurationsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                        string entityBusinessTransactionConfigurationsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string agentCallGraphSettingsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
+                        string healthRulesIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
 
                         // Report files for All
-                        string controllerSettingsAllReportFilePath = Path.Combine(configAllFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
-                        string applicationConfigurationAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
-                        string businessTransactionDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
-                        string businessTransactionEntryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
-                        string businessTransactionEntryScopesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
-                        string businessTransactionDiscoveryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
-                        string businessTransactionEntryRules20AllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
-                        string backendDiscoveryRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
-                        string customExitRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
-                        string informationPointRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
-                        string agentConfigurationPropertiesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
-                        string methodInvocationDataCollectorsAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
-                        string httpDataCollectorsAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
-                        string entityTierConfigurationsAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
-                        string entityBusinessTransactionConfigurationsAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string agentCallGraphSettingsAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
-                        string healthRulesAllReportFilePath = Path.Combine(configAllFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
+                        string controllerSettingsReportFilePath = Path.Combine(configReportFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
+                        string applicationConfigurationReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_FILE_NAME);
+                        string businessTransactionDiscoveryRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                        string businessTransactionEntryRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                        string businessTransactionEntryScopesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                        string businessTransactionDiscoveryRules20ReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                        string businessTransactionEntryRules20ReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
+                        string backendDiscoveryRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                        string customExitRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                        string informationPointRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                        string agentConfigurationPropertiesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string httpDataCollectorsReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                        string entityTierConfigurationsReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                        string entityBusinessTransactionConfigurationsReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string agentCallGraphSettingsReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
+                        string healthRulesReportFilePath = Path.Combine(configReportFolderPath, APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
 
                         #endregion
 
@@ -4391,7 +4434,7 @@ namespace AppDynamics.Dexter
                             loggerConsole.Info("Controller Settings");
 
                             List<ControllerSetting> controllerSettingsList = new List<ControllerSetting>();
-                            List<AppDRESTControllerSetting> controllerSettingsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTControllerSetting>(controllerSettingsFilePath);
+                            List<AppDRESTControllerSetting> controllerSettingsRESTList = FileIOHelper.loadListOfObjectsFromFile<AppDRESTControllerSetting>(controllerSettingsDataFilePath);
                             if (controllerSettingsRESTList != null)
                             {
                                 foreach (AppDRESTControllerSetting controllerSetting in controllerSettingsRESTList)
@@ -4411,7 +4454,7 @@ namespace AppDynamics.Dexter
                             }
 
                             controllerSettingsList = controllerSettingsList.OrderBy(c => c.Name).ToList();
-                            FileIOHelper.writeListToCSVFile(controllerSettingsList, new ControllerSettingReportMap(), controllerSettingsReportFilePath);
+                            FileIOHelper.writeListToCSVFile(controllerSettingsList, new ControllerSettingReportMap(), controllerSettingsIndexFilePath);
                         }
 
                         #endregion
@@ -4419,9 +4462,9 @@ namespace AppDynamics.Dexter
                         #region Preload list of detected entities
 
                         // For later cross-reference
-                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
-                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
-                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersIndexFilePath, new TierEntityReportMap());
+                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsIndexFilePath, new BackendEntityReportMap());
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsIndexFilePath, new BusinessTransactionEntityReportMap());
 
                         #endregion
 
@@ -4429,10 +4472,10 @@ namespace AppDynamics.Dexter
 
                         loggerConsole.Info("Load Configuration file");
 
-                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationConfigFilePath);
+                        XmlDocument configXml = FileIOHelper.loadXmlDocumentFromFile(applicationDataConfigDataFilePath);
                         if (configXml == null)
                         {
-                            logger.Warn("No application configuration in {0} file", applicationConfigFilePath);
+                            logger.Warn("No application configuration in {0} file", applicationDataConfigDataFilePath);
                             continue;
                         }
 
@@ -4533,7 +4576,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumBTDiscoveryRules = businessTransactionDiscoveryRulesList.Count;
 
                         businessTransactionDiscoveryRulesList = businessTransactionDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
-                        FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRulesList, new BusinessTransactionDiscoveryRuleReportMap(), businessTransactionDiscoveryRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRulesList, new BusinessTransactionDiscoveryRuleReportMap(), businessTransactionDiscoveryRulesIndexFilePath);
 
                         #endregion
 
@@ -4640,7 +4683,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumBTExcludeRules = businessTransactionEntryRulesList.Count - applicationConfiguration.NumBTEntryRules;
 
                         businessTransactionEntryRulesList = businessTransactionEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
-                        FileIOHelper.writeListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), businessTransactionEntryRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), businessTransactionEntryRulesIndexFilePath);
 
                         #endregion
 
@@ -4663,7 +4706,7 @@ namespace AppDynamics.Dexter
                             applicationConfiguration.NumBT20Scopes = businessTransactionEntryScopeList.Count;
 
                             businessTransactionEntryScopeList = businessTransactionEntryScopeList.OrderBy(b => b.ScopeType).ThenBy(b => b.ScopeName).ToList();
-                            FileIOHelper.writeListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryRuleScopeReportMap(), businessTransactionEntryScopesReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryRuleScopeReportMap(), businessTransactionEntryScopesIndexFilePath);
 
 
                             List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = new List<BusinessTransactionEntryRule20>();
@@ -4681,7 +4724,7 @@ namespace AppDynamics.Dexter
                             applicationConfiguration.NumBT20ExcludeRules = businessTransactionEntryRules20List.Count - applicationConfiguration.NumBT20EntryRules;
 
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
-                            FileIOHelper.writeListToCSVFile(businessTransactionEntryRules20List, new BusinessTransactionEntryRule20ReportMap(), businessTransactionEntryRules20ReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionEntryRules20List, new BusinessTransactionEntryRule20ReportMap(), businessTransactionEntryRules20IndexFilePath);
 
 
                             List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20List = new List<BusinessTransactionDiscoveryRule20>();
@@ -4698,7 +4741,7 @@ namespace AppDynamics.Dexter
                             applicationConfiguration.NumBT20DiscoveryRules = businessTransactionEntryRules20List.Count;
 
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
-                            FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRule20List, new BusinessTransactionDiscoveryRule20ReportMap(), businessTransactionDiscoveryRules20ReportFilePath);
+                            FileIOHelper.writeListToCSVFile(businessTransactionDiscoveryRule20List, new BusinessTransactionDiscoveryRule20ReportMap(), businessTransactionDiscoveryRules20IndexFilePath);
                         }
 
                         #endregion
@@ -4751,7 +4794,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumBackendRules = backendDiscoveryRulesList.Count;
 
                         backendDiscoveryRulesList = backendDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
-                        FileIOHelper.writeListToCSVFile(backendDiscoveryRulesList, new BackendDiscoveryRuleReportMap(), backendDiscoveryRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(backendDiscoveryRulesList, new BackendDiscoveryRuleReportMap(), backendDiscoveryRulesIndexFilePath);
 
                         #endregion
 
@@ -4803,7 +4846,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumBackendRules = applicationConfiguration.NumBackendRules + customExitRulesList.Count;
 
                         customExitRulesList = customExitRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
-                        FileIOHelper.writeListToCSVFile(customExitRulesList, new CustomExitRuleReportMap(), customExitRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(customExitRulesList, new CustomExitRuleReportMap(), customExitRulesIndexFilePath);
 
                         #endregion
 
@@ -4862,7 +4905,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumAgentProps = agentConfigurationPropertiesList.Count;
 
                         agentConfigurationPropertiesList = agentConfigurationPropertiesList.OrderBy(p => p.TierName).ThenBy(p => p.AgentType).ThenBy(p => p.PropertyName).ToList();
-                        FileIOHelper.writeListToCSVFile(agentConfigurationPropertiesList, new AgentConfigurationPropertyReportMap(), agentConfigurationPropertiesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(agentConfigurationPropertiesList, new AgentConfigurationPropertyReportMap(), agentConfigurationPropertiesIndexFilePath);
 
                         #endregion
 
@@ -4883,7 +4926,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumInfoPointRules = informationPointRulesList.Count;
 
                         informationPointRulesList = informationPointRulesList.OrderBy(b => b.AgentType).ThenBy(b => b.RuleName).ToList();
-                        FileIOHelper.writeListToCSVFile(informationPointRulesList, new InformationPointRuleReportMap(), informationPointRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(informationPointRulesList, new InformationPointRuleReportMap(), informationPointRulesIndexFilePath);
 
                         #endregion
 
@@ -4910,7 +4953,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumBTs = entityBusinessTransactionConfigurationsList.Count;
 
                         entityBusinessTransactionConfigurationsList = entityBusinessTransactionConfigurationsList.OrderBy(b => b.TierName).ThenBy(b => b.BTType).ThenBy(b => b.BTName).ToList();
-                        FileIOHelper.writeListToCSVFile(entityBusinessTransactionConfigurationsList, new EntityBusinessTransactionConfigurationReportMap(), entityBusinessTransactionConfigurationsReportFilePath);
+                        FileIOHelper.writeListToCSVFile(entityBusinessTransactionConfigurationsList, new EntityBusinessTransactionConfigurationReportMap(), entityBusinessTransactionConfigurationsIndexFilePath);
 
                         #endregion
 
@@ -4933,7 +4976,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumTiers = entityTierConfigurationsList.Count;
 
                         entityTierConfigurationsList = entityTierConfigurationsList.OrderBy(p => p.TierName).ToList();
-                        FileIOHelper.writeListToCSVFile(entityTierConfigurationsList, new EntityTierConfigurationReportMap(), entityTierConfigurationsReportFilePath);
+                        FileIOHelper.writeListToCSVFile(entityTierConfigurationsList, new EntityTierConfigurationReportMap(), entityTierConfigurationsIndexFilePath);
 
                         #endregion
 
@@ -4961,7 +5004,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumMIDCs = methodInvocationDataCollectorsList.GroupBy(m => m.CollectorName).Count();
 
                         methodInvocationDataCollectorsList = methodInvocationDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
-                        FileIOHelper.writeListToCSVFile(methodInvocationDataCollectorsList, new MethodInvocationDataCollectorReportMap(), methodInvocationDataCollectorsReportFilePath);
+                        FileIOHelper.writeListToCSVFile(methodInvocationDataCollectorsList, new MethodInvocationDataCollectorReportMap(), methodInvocationDataCollectorsIndexFilePath);
 
                         // HTTP DCs
 
@@ -4996,7 +5039,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumHTTPDCs = httpDataCollectorsList.GroupBy(m => m.CollectorName).Count(); 
 
                         httpDataCollectorsList = httpDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
-                        FileIOHelper.writeListToCSVFile(httpDataCollectorsList, new HTTPDataCollectorReportMap(), httpDataCollectorsReportFilePath);
+                        FileIOHelper.writeListToCSVFile(httpDataCollectorsList, new HTTPDataCollectorReportMap(), httpDataCollectorsIndexFilePath);
 
                         #endregion
 
@@ -5018,7 +5061,7 @@ namespace AppDynamics.Dexter
                         }
 
                         agentCallGraphSettingCollectorsList = agentCallGraphSettingCollectorsList.OrderBy(a => a.AgentType).ToList();
-                        FileIOHelper.writeListToCSVFile(agentCallGraphSettingCollectorsList, new AgentCallGraphSettingReportMap(), agentCallGraphSettingsReportFilePath);
+                        FileIOHelper.writeListToCSVFile(agentCallGraphSettingCollectorsList, new AgentCallGraphSettingReportMap(), agentCallGraphSettingsIndexFilePath);
 
                         #endregion
 
@@ -5041,7 +5084,7 @@ namespace AppDynamics.Dexter
                         applicationConfiguration.NumHealthRules = healthRulesList.Count;
 
                         healthRulesList = healthRulesList.OrderBy(h => h.RuleType).ThenBy(h => h.RuleName).ToList();
-                        FileIOHelper.writeListToCSVFile(healthRulesList, new HealthRuleReportMap(), healthRulesReportFilePath);
+                        FileIOHelper.writeListToCSVFile(healthRulesList, new HealthRuleReportMap(), healthRulesIndexFilePath);
 
                         #endregion
 
@@ -5049,7 +5092,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityApplicationConfiguration> applicationConfigurationsList = new List<EntityApplicationConfiguration>(1);
                         applicationConfigurationsList.Add(applicationConfiguration);
-                        FileIOHelper.writeListToCSVFile(applicationConfigurationsList, new EntityApplicationConfigurationReportMap(), applicationConfigurationReportFilePath);
+                        FileIOHelper.writeListToCSVFile(applicationConfigurationsList, new EntityApplicationConfigurationReportMap(), applicationConfigurationIndexFilePath);
 
                         #endregion
 
@@ -5058,75 +5101,75 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(configAllFolderPath);
+                            FileIOHelper.deleteFolder(configReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(configAllFolderPath);
+                            FileIOHelper.createFolder(configReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        if (File.Exists(applicationConfigurationReportFilePath) == true && new FileInfo(applicationConfigurationReportFilePath).Length > 0)
+                        if (File.Exists(applicationConfigurationIndexFilePath) == true && new FileInfo(applicationConfigurationIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(applicationConfigurationAllReportFilePath, applicationConfigurationReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(applicationConfigurationReportFilePath, applicationConfigurationIndexFilePath);
                         }
-                        if (File.Exists(businessTransactionDiscoveryRulesReportFilePath) == true && new FileInfo(businessTransactionDiscoveryRulesReportFilePath).Length > 0)
+                        if (File.Exists(businessTransactionDiscoveryRulesIndexFilePath) == true && new FileInfo(businessTransactionDiscoveryRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRulesAllReportFilePath, businessTransactionDiscoveryRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRulesReportFilePath, businessTransactionDiscoveryRulesIndexFilePath);
                         }
-                        if (File.Exists(businessTransactionEntryRulesReportFilePath) == true && new FileInfo(businessTransactionEntryRulesReportFilePath).Length > 0)
+                        if (File.Exists(businessTransactionEntryRulesIndexFilePath) == true && new FileInfo(businessTransactionEntryRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRulesAllReportFilePath, businessTransactionEntryRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRulesReportFilePath, businessTransactionEntryRulesIndexFilePath);
                         }
-                        if (File.Exists(businessTransactionEntryScopesReportFilePath) == true && new FileInfo(businessTransactionEntryScopesReportFilePath).Length > 0)
+                        if (File.Exists(businessTransactionEntryScopesIndexFilePath) == true && new FileInfo(businessTransactionEntryScopesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryScopesAllReportFilePath, businessTransactionEntryScopesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryScopesReportFilePath, businessTransactionEntryScopesIndexFilePath);
                         }
-                        if (File.Exists(businessTransactionDiscoveryRules20ReportFilePath) == true && new FileInfo(businessTransactionDiscoveryRules20ReportFilePath).Length > 0)
+                        if (File.Exists(businessTransactionDiscoveryRules20IndexFilePath) == true && new FileInfo(businessTransactionDiscoveryRules20IndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRules20AllReportFilePath, businessTransactionDiscoveryRules20ReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionDiscoveryRules20ReportFilePath, businessTransactionDiscoveryRules20IndexFilePath);
                         }
-                        if (File.Exists(businessTransactionEntryRules20ReportFilePath) == true && new FileInfo(businessTransactionEntryRules20ReportFilePath).Length > 0)
+                        if (File.Exists(businessTransactionEntryRules20IndexFilePath) == true && new FileInfo(businessTransactionEntryRules20IndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRules20AllReportFilePath, businessTransactionEntryRules20ReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessTransactionEntryRules20ReportFilePath, businessTransactionEntryRules20IndexFilePath);
                         }
-                        if (File.Exists(backendDiscoveryRulesReportFilePath) == true && new FileInfo(backendDiscoveryRulesReportFilePath).Length > 0)
+                        if (File.Exists(backendDiscoveryRulesIndexFilePath) == true && new FileInfo(backendDiscoveryRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(backendDiscoveryRulesAllReportFilePath, backendDiscoveryRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(backendDiscoveryRulesReportFilePath, backendDiscoveryRulesIndexFilePath);
                         }
-                        if (File.Exists(customExitRulesReportFilePath) == true && new FileInfo(customExitRulesReportFilePath).Length > 0)
+                        if (File.Exists(customExitRulesIndexFilePath) == true && new FileInfo(customExitRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(customExitRulesAllReportFilePath, customExitRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(customExitRulesReportFilePath, customExitRulesIndexFilePath);
                         }
-                        if (File.Exists(informationPointRulesReportFilePath) == true && new FileInfo(informationPointRulesReportFilePath).Length > 0)
+                        if (File.Exists(informationPointRulesIndexFilePath) == true && new FileInfo(informationPointRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(informationPointRulesAllReportFilePath, informationPointRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(informationPointRulesReportFilePath, informationPointRulesIndexFilePath);
                         }
-                        if (File.Exists(agentConfigurationPropertiesReportFilePath) == true && new FileInfo(agentConfigurationPropertiesReportFilePath).Length > 0)
+                        if (File.Exists(agentConfigurationPropertiesIndexFilePath) == true && new FileInfo(agentConfigurationPropertiesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(agentConfigurationPropertiesAllReportFilePath, agentConfigurationPropertiesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(agentConfigurationPropertiesReportFilePath, agentConfigurationPropertiesIndexFilePath);
                         }
-                        if (File.Exists(methodInvocationDataCollectorsReportFilePath) == true && new FileInfo(methodInvocationDataCollectorsReportFilePath).Length > 0)
+                        if (File.Exists(methodInvocationDataCollectorsIndexFilePath) == true && new FileInfo(methodInvocationDataCollectorsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(methodInvocationDataCollectorsAllReportFilePath, methodInvocationDataCollectorsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(methodInvocationDataCollectorsReportFilePath, methodInvocationDataCollectorsIndexFilePath);
                         }
-                        if (File.Exists(httpDataCollectorsReportFilePath) == true && new FileInfo(httpDataCollectorsReportFilePath).Length > 0)
+                        if (File.Exists(httpDataCollectorsIndexFilePath) == true && new FileInfo(httpDataCollectorsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(httpDataCollectorsAllReportFilePath, httpDataCollectorsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(httpDataCollectorsReportFilePath, httpDataCollectorsIndexFilePath);
                         }
-                        if (File.Exists(entityTierConfigurationsReportFilePath) == true && new FileInfo(entityTierConfigurationsReportFilePath).Length > 0)
+                        if (File.Exists(entityTierConfigurationsIndexFilePath) == true && new FileInfo(entityTierConfigurationsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(entityTierConfigurationsAllReportFilePath, entityTierConfigurationsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(entityTierConfigurationsReportFilePath, entityTierConfigurationsIndexFilePath);
                         }
-                        if (File.Exists(entityBusinessTransactionConfigurationsReportFilePath) == true && new FileInfo(entityBusinessTransactionConfigurationsReportFilePath).Length > 0)
+                        if (File.Exists(entityBusinessTransactionConfigurationsIndexFilePath) == true && new FileInfo(entityBusinessTransactionConfigurationsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(entityBusinessTransactionConfigurationsAllReportFilePath, entityBusinessTransactionConfigurationsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(entityBusinessTransactionConfigurationsReportFilePath, entityBusinessTransactionConfigurationsIndexFilePath);
                         }
-                        if (File.Exists(agentCallGraphSettingsReportFilePath) == true && new FileInfo(agentCallGraphSettingsReportFilePath).Length > 0)
+                        if (File.Exists(agentCallGraphSettingsIndexFilePath) == true && new FileInfo(agentCallGraphSettingsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(agentCallGraphSettingsAllReportFilePath, agentCallGraphSettingsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(agentCallGraphSettingsReportFilePath, agentCallGraphSettingsIndexFilePath);
                         }
-                        if (File.Exists(healthRulesReportFilePath) == true && new FileInfo(healthRulesReportFilePath).Length > 0)
+                        if (File.Exists(healthRulesIndexFilePath) == true && new FileInfo(healthRulesIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(healthRulesAllReportFilePath, healthRulesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(healthRulesReportFilePath, healthRulesIndexFilePath);
                         }
 
                         // If it is the last one, let's append all Controller settings
@@ -5135,10 +5178,10 @@ namespace AppDynamics.Dexter
                             var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                             foreach (var controllerGroup in controllers)
                             {
-                                controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(controllerGroup.Key).Host));
+                                controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(controllerGroup.Key).Host));
 
-                                controllerSettingsReportFilePath = Path.Combine(controllerFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
-                                FileIOHelper.appendTwoCSVFiles(controllerSettingsAllReportFilePath, controllerSettingsReportFilePath);
+                                controllerSettingsIndexFilePath = Path.Combine(controllerIndexFolderPath, CONTROLLER_SETTINGS_FILE_NAME);
+                                FileIOHelper.appendTwoCSVFiles(controllerSettingsReportFilePath, controllerSettingsIndexFilePath);
                             }
                         }
 
@@ -5162,7 +5205,7 @@ namespace AppDynamics.Dexter
 
                         List<StepTiming> stepTimings = new List<StepTiming>(1);
                         stepTimings.Add(stepTimingTarget);
-                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingIndexFilePath, true);
                     }
                 }
 
@@ -5188,7 +5231,7 @@ namespace AppDynamics.Dexter
 
                 List<StepTiming> stepTimings = new List<StepTiming>(1);
                 stepTimings.Add(stepTimingFunction);
-                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingIndexFilePath, true);
             }
         }
 
@@ -5204,7 +5247,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingIndexFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -5247,59 +5290,68 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string metricsAllFolderPath = Path.Combine(reportFolderPath, METRICS_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string metricsDataFolderPath = Path.Combine(applicationDataFolderPath, METRICS_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string metricsIndexFolderPath = Path.Combine(applicationIndexFolderPath, METRICS_FOLDER_NAME);
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+
+                        string metricsReportFolderPath = Path.Combine(reportFolderPath, METRICS_FOLDER_NAME);
 
                         // Report files from previous steps
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string applicationIndexFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string informationPointsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
 
                         // Report files
-                        string applicationFullReportFilePath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                        string applicationHourlyReportFilePath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                        string tiersFullReportFilePath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string tiersHourlyReportFilePath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string nodesFullReportFilePath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string nodesHourlyReportFilePath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string backendsFullReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string backendsHourlyReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string businessTransactionsFullReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string businessTransactionsHourlyReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string serviceEndpointsFullReportFilePath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string serviceEndpointsHourlyReportFilePath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string errorsFullReportFilePath = Path.Combine(metricsFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string errorsHourlyReportFilePath = Path.Combine(metricsFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string informationPointsFullReportFilePath = Path.Combine(metricsFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
-                        string informationPointsHourlyReportFilePath = Path.Combine(metricsFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string applicationFullIndexFilePath = Path.Combine(metricsIndexFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                        string applicationHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                        string tiersFullIndexFilePath = Path.Combine(metricsIndexFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string tiersHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string nodesFullIndexFilePath = Path.Combine(metricsIndexFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string nodesHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string backendsFullIndexFilePath = Path.Combine(metricsIndexFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string backendsHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string businessTransactionsFullIndexFilePath = Path.Combine(metricsIndexFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string businessTransactionsHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string serviceEndpointsFullIndexFilePath = Path.Combine(metricsIndexFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string serviceEndpointsHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string errorsFullIndexFilePath = Path.Combine(metricsIndexFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string errorsHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string informationPointsFullIndexFilePath = Path.Combine(metricsIndexFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
+                        string informationPointsHourlyIndexFilePath = Path.Combine(metricsIndexFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
 
                         // Report files for All
-                        string applicationsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, APPLICATION_TYPE_SHORT));
-                        string applicationsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, APPLICATION_TYPE_SHORT));
-                        string tiersAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, TIERS_TYPE_SHORT));
-                        string tiersAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, TIERS_TYPE_SHORT));
-                        string nodesAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, NODES_TYPE_SHORT));
-                        string nodesAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, NODES_TYPE_SHORT));
-                        string backendsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, BACKENDS_TYPE_SHORT));
-                        string backendsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, BACKENDS_TYPE_SHORT));
-                        string businessTransactionsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
-                        string businessTransactionsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
-                        string serviceEndpointsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, SERVICE_ENDPOINTS_TYPE_SHORT));
-                        string serviceEndpointsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, SERVICE_ENDPOINTS_TYPE_SHORT));
-                        string errorsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, ERRORS_TYPE_SHORT));
-                        string errorsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, ERRORS_TYPE_SHORT));
-                        string informationPointsAllFullReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, INFORMATION_POINTS_TYPE_SHORT));
-                        string informationPointsAllHourlyReportFilePath = Path.Combine(metricsAllFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, INFORMATION_POINTS_TYPE_SHORT));
+                        string applicationsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, APPLICATION_TYPE_SHORT));
+                        string applicationsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, APPLICATION_TYPE_SHORT));
+                        string tiersFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, TIERS_TYPE_SHORT));
+                        string tiersHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, TIERS_TYPE_SHORT));
+                        string nodesFullaReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, NODES_TYPE_SHORT));
+                        string nodesHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, NODES_TYPE_SHORT));
+                        string backendsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, BACKENDS_TYPE_SHORT));
+                        string backendsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, BACKENDS_TYPE_SHORT));
+                        string businessTransactionsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
+                        string businessTransactionsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
+                        string serviceEndpointsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, SERVICE_ENDPOINTS_TYPE_SHORT));
+                        string serviceEndpointsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, SERVICE_ENDPOINTS_TYPE_SHORT));
+                        string errorsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, ERRORS_TYPE_SHORT));
+                        string errorsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, ERRORS_TYPE_SHORT));
+                        string informationPointsFullReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_FULLRANGE_FILE_NAME, INFORMATION_POINTS_TYPE_SHORT));
+                        string informationPointsHourlyReportFilePath = Path.Combine(metricsReportFolderPath, String.Format(CONVERT_ENTITIES_ALL_METRICS_HOURLY_FILE_NAME, INFORMATION_POINTS_TYPE_SHORT));
 
                         string fullRangeMetricDataFileName = String.Format(EXTRACT_METRIC_FULL_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
@@ -5312,46 +5364,46 @@ namespace AppDynamics.Dexter
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                                List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationIndexFilePath, new ApplicationEntityReportMap());
                                 if (applicationList != null && applicationList.Count > 0)
                                 {
                                     loggerConsole.Info("Index Metrics for Application ({0} entities)", applicationList.Count);
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         APPLICATION_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     #endregion
 
-                                    string metricsEntityFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntityIndexFolderPath = Path.Combine(
+                                        metricsIndexFolderPath,
                                         APPLICATION_TYPE_SHORT);
 
-                                    string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                    string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                    string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                    string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                     #region Full Range
 
                                     List<EntityApplication> applicationFullList = new List<EntityApplication>(1);
                                     EntityApplication applicationRow = applicationList[0].Clone();
-                                    fillFullRangeMetricEntityRow(applicationRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                    fillFullRangeMetricEntityRow(applicationRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                     applicationFullList.Add(applicationRow);
 
@@ -5369,19 +5421,19 @@ namespace AppDynamics.Dexter
 
                                         #region Load Hourly Range Metrics
 
-                                        metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                        metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                         List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                        metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                        metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                         List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                        metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                        metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                         List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                        metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                        metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                         List<AppDRESTMetric> metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                        metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                        metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                         List<AppDRESTMetric> metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                         #endregion
@@ -5389,7 +5441,7 @@ namespace AppDynamics.Dexter
                                         #region Hour Range
 
                                         applicationRow = applicationList[0].Clone();
-                                        fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(applicationRow, jobTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                        fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(applicationRow, jobTimeRange, String.Format(METRIC_PATH_APPLICATION, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                         applicationHourlyList.Add(applicationRow);
 
@@ -5401,8 +5453,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksApplication(programOptions, jobConfiguration, jobTarget, applicationFullList);
                                     updateEntitiesWithReportDetailLinksApplication(programOptions, jobConfiguration, jobTarget, applicationHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(applicationFullList, new ApplicationMetricReportMap(), entityFullRangeReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(applicationHourlyList, new ApplicationMetricReportMap(), entityHourlyRangeReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(applicationFullList, new ApplicationMetricReportMap(), entityFullRangeIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(applicationHourlyList, new ApplicationMetricReportMap(), entityHourlyRangeIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, applicationList.Count);
                                 }
@@ -5413,7 +5465,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Tier
 
-                                List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                                List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersIndexFilePath, new TierEntityReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Tiers ({0} entities)", tiersList.Count);
@@ -5423,25 +5475,25 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityTier> tiersFullBag = new ConcurrentBag<EntityTier>();
                                     ConcurrentBag<EntityTier> tiersHourlyBag = new ConcurrentBag<EntityTier>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         TIERS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     #endregion
@@ -5452,20 +5504,20 @@ namespace AppDynamics.Dexter
                                         tiersList,
                                         tierRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 TIERS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(tierRowOriginal.TierName, tierRowOriginal.TierID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityTier> tierFullList = FileIOHelper.readListFromCSVFile<EntityTier>(entityFullRangeReportFilePath, new TierMetricReportMap());
+                                                List<EntityTier> tierFullList = FileIOHelper.readListFromCSVFile<EntityTier>(entityFullRangeIndexFilePath, new TierMetricReportMap());
                                                 if (tiersFullList != null)
                                                 {
                                                     foreach (EntityTier tierRow in tierFullList)
@@ -5474,7 +5526,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityTier> backendHourlyList = FileIOHelper.readListFromCSVFile<EntityTier>(entityHourlyRangeReportFilePath, new TierMetricReportMap());
+                                                List<EntityTier> backendHourlyList = FileIOHelper.readListFromCSVFile<EntityTier>(entityHourlyRangeIndexFilePath, new TierMetricReportMap());
                                                 if (backendHourlyList != null)
                                                 {
                                                     foreach (EntityTier tierRow in backendHourlyList)
@@ -5491,7 +5543,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityTier> tierFullList = new List<EntityTier>(1);
                                                 EntityTier tierRow = tierRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(tierRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(tierRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 tiersFullBag.Add(tierRow);
                                                 tierFullList.Add(tierRow);
@@ -5509,19 +5561,19 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     #endregion
@@ -5529,7 +5581,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     tierRow = tierRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(tierRow, jobTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(tierRow, jobTimeRange, String.Format(METRIC_PATH_TIER, tierRow.TierName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     tiersHourlyBag.Add(tierRow);
                                                     tierHourlyList.Add(tierRow);
@@ -5539,8 +5591,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(tierFullList, new TierMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(tierHourlyList, new TierMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(tierFullList, new TierMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(tierHourlyList, new TierMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -5560,8 +5612,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksTiers(programOptions, jobConfiguration, jobTarget, tiersFullList);
                                     updateEntitiesWithReportDetailLinksTiers(programOptions, jobConfiguration, jobTarget, tiersHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(tiersFullList, new TierMetricReportMap(), tiersFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(tiersHourlyList, new TierMetricReportMap(), tiersHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(tiersFullList, new TierMetricReportMap(), tiersFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(tiersHourlyList, new TierMetricReportMap(), tiersHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, tiersList.Count);
                                 }
@@ -5572,7 +5624,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+                                List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesIndexFilePath, new NodeEntityReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Nodes ({0} entities)", nodesList.Count);
@@ -5582,25 +5634,25 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityNode> nodesFullBag = new ConcurrentBag<EntityNode>();
                                     ConcurrentBag<EntityNode> nodesHourlyBag = new ConcurrentBag<EntityNode>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         NODES_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     #endregion
@@ -5611,21 +5663,21 @@ namespace AppDynamics.Dexter
                                         nodesList,
                                         nodeRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 NODES_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(nodeRowOriginal.TierName, nodeRowOriginal.TierID),
                                                 getShortenedEntityNameForFileSystem(nodeRowOriginal.NodeName, nodeRowOriginal.NodeID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityNode> nodeFullList = FileIOHelper.readListFromCSVFile<EntityNode>(entityFullRangeReportFilePath, new NodeMetricReportMap());
+                                                List<EntityNode> nodeFullList = FileIOHelper.readListFromCSVFile<EntityNode>(entityFullRangeIndexFilePath, new NodeMetricReportMap());
                                                 if (nodeFullList != null)
                                                 {
                                                     foreach (EntityNode nodeRow in nodeFullList)
@@ -5634,7 +5686,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityNode> nodeHourlyList = FileIOHelper.readListFromCSVFile<EntityNode>(entityHourlyRangeReportFilePath, new NodeMetricReportMap());
+                                                List<EntityNode> nodeHourlyList = FileIOHelper.readListFromCSVFile<EntityNode>(entityHourlyRangeIndexFilePath, new NodeMetricReportMap());
                                                 if (nodeHourlyList != null)
                                                 {
                                                     foreach (EntityNode nodeRow in nodeHourlyList)
@@ -5651,7 +5703,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityNode> nodeFullList = new List<EntityNode>(1);
                                                 EntityNode nodeRow = nodeRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(nodeRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(nodeRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 nodesFullBag.Add(nodeRow);
                                                 nodeFullList.Add(nodeRow);
@@ -5669,19 +5721,19 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EXCPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_HTTPEPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyHTTPEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     #endregion
@@ -5689,7 +5741,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     nodeRow = nodeRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(nodeRow, jobTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(nodeRow, jobTimeRange, String.Format(METRIC_PATH_NODE, nodeRow.TierName, nodeRow.NodeName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     nodesHourlyBag.Add(nodeRow);
                                                     nodeHourlyList.Add(nodeRow);
@@ -5699,8 +5751,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(nodeFullList, new NodeMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(nodeHourlyList, new NodeMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(nodeFullList, new NodeMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(nodeHourlyList, new NodeMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -5720,8 +5772,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksNodes(programOptions, jobConfiguration, jobTarget, nodesFullList);
                                     updateEntitiesWithReportDetailLinksNodes(programOptions, jobConfiguration, jobTarget, nodesHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(nodesFullList, new NodeMetricReportMap(), nodesFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(nodesHourlyList, new NodeMetricReportMap(), nodesHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(nodesFullList, new NodeMetricReportMap(), nodesFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(nodesHourlyList, new NodeMetricReportMap(), nodesHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, nodesList.Count);
                                 }
@@ -5732,7 +5784,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                                List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsIndexFilePath, new BackendEntityReportMap());
                                 if (backendsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Backends ({0} entities)", backendsList.Count);
@@ -5742,19 +5794,19 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityBackend> backendsFullBag = new ConcurrentBag<EntityBackend>();
                                     ConcurrentBag<EntityBackend> backendsHourlyBag = new ConcurrentBag<EntityBackend>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         BACKENDS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     List<AppDRESTMetric> metricDataFullEXCPM = null;
@@ -5769,20 +5821,20 @@ namespace AppDynamics.Dexter
                                         backendsList,
                                         backendRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 BACKENDS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(backendRowOriginal.BackendName, backendRowOriginal.BackendID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityBackend> backendFullList = FileIOHelper.readListFromCSVFile<EntityBackend>(entityFullRangeReportFilePath, new BackendMetricReportMap());
+                                                List<EntityBackend> backendFullList = FileIOHelper.readListFromCSVFile<EntityBackend>(entityFullRangeIndexFilePath, new BackendMetricReportMap());
                                                 if (backendFullList != null)
                                                 {
                                                     foreach (EntityBackend backendRow in backendFullList)
@@ -5791,7 +5843,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityBackend> backendHourlyList = FileIOHelper.readListFromCSVFile<EntityBackend>(entityHourlyRangeReportFilePath, new BackendMetricReportMap());
+                                                List<EntityBackend> backendHourlyList = FileIOHelper.readListFromCSVFile<EntityBackend>(entityHourlyRangeIndexFilePath, new BackendMetricReportMap());
                                                 if (backendHourlyList != null)
                                                 {
                                                     foreach (EntityBackend backendRow in backendHourlyList)
@@ -5808,7 +5860,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityBackend> backendFullList = new List<EntityBackend>(1);
                                                 EntityBackend backendRow = backendRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(backendRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(backendRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 backendsFullBag.Add(backendRow);
                                                 backendFullList.Add(backendRow);
@@ -5826,13 +5878,13 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = null;
@@ -5844,7 +5896,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     backendRow = backendRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(backendRow, jobTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(backendRow, jobTimeRange, String.Format(METRIC_PATH_BACKEND_DISCOVERED_BACKEND_PREFIX, backendRow.BackendName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     backendsHourlyBag.Add(backendRow);
                                                     backendHourlyList.Add(backendRow);
@@ -5854,8 +5906,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(backendFullList, new BackendMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(backendHourlyList, new BackendMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(backendFullList, new BackendMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(backendHourlyList, new BackendMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -5875,8 +5927,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksBackends(programOptions, jobConfiguration, jobTarget, backendsFullList);
                                     updateEntitiesWithReportDetailLinksBackends(programOptions, jobConfiguration, jobTarget, backendsHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(backendsFullList, new BackendMetricReportMap(), backendsFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(backendsHourlyList, new BackendMetricReportMap(), backendsHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(backendsFullList, new BackendMetricReportMap(), backendsFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(backendsHourlyList, new BackendMetricReportMap(), backendsHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, backendsList.Count);
                                 }
@@ -5887,7 +5939,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsIndexFilePath, new BusinessTransactionEntityReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Business Transactions ({0} entities)", businessTransactionsList.Count);
@@ -5897,19 +5949,19 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityBusinessTransaction> businessTransactionsFullBag = new ConcurrentBag<EntityBusinessTransaction>();
                                     ConcurrentBag<EntityBusinessTransaction> businessTransactionsHourlyBag = new ConcurrentBag<EntityBusinessTransaction>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         BUSINESS_TRANSACTIONS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     List<AppDRESTMetric> metricDataFullEXCPM = null;
@@ -5924,21 +5976,21 @@ namespace AppDynamics.Dexter
                                         businessTransactionsList,
                                         businessTransactionRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 BUSINESS_TRANSACTIONS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(businessTransactionRowOriginal.TierName, businessTransactionRowOriginal.TierID),
                                                 getShortenedEntityNameForFileSystem(businessTransactionRowOriginal.BTName, businessTransactionRowOriginal.BTID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityBusinessTransaction> businessTransactionFullList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entityFullRangeReportFilePath, new BusinessTransactionMetricReportMap());
+                                                List<EntityBusinessTransaction> businessTransactionFullList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entityFullRangeIndexFilePath, new BusinessTransactionMetricReportMap());
                                                 if (businessTransactionFullList != null)
                                                 {
                                                     foreach (EntityBusinessTransaction businessTransactionRow in businessTransactionFullList)
@@ -5947,7 +5999,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityBusinessTransaction> businessTransactionHourlyList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entityHourlyRangeReportFilePath, new BusinessTransactionMetricReportMap());
+                                                List<EntityBusinessTransaction> businessTransactionHourlyList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entityHourlyRangeIndexFilePath, new BusinessTransactionMetricReportMap());
                                                 if (businessTransactionHourlyList != null)
                                                 {
                                                     foreach (EntityBusinessTransaction businessTransactionRow in businessTransactionHourlyList)
@@ -5963,7 +6015,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityBusinessTransaction> businessTransactionFullList = new List<EntityBusinessTransaction>(1);
                                                 EntityBusinessTransaction businessTransactionRow = businessTransactionRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(businessTransactionRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(businessTransactionRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 businessTransactionsFullBag.Add(businessTransactionRow);
                                                 businessTransactionFullList.Add(businessTransactionRow);
@@ -5981,13 +6033,13 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = null;
@@ -5999,7 +6051,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     businessTransactionRow = businessTransactionRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(businessTransactionRow, jobTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(businessTransactionRow, jobTimeRange, String.Format(METRIC_PATH_BUSINESS_TRANSACTION, businessTransactionRow.TierName, businessTransactionRow.BTName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     businessTransactionsHourlyBag.Add(businessTransactionRow);
                                                     businessTransactionHourlyList.Add(businessTransactionRow);
@@ -6009,8 +6061,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(businessTransactionFullList, new BusinessTransactionMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(businessTransactionHourlyList, new BusinessTransactionMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(businessTransactionFullList, new BusinessTransactionMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(businessTransactionHourlyList, new BusinessTransactionMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -6030,8 +6082,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksBusinessTransactions(programOptions, jobConfiguration, jobTarget, businessTransactionsFullList);
                                     updateEntitiesWithReportDetailLinksBusinessTransactions(programOptions, jobConfiguration, jobTarget, businessTransactionsHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), businessTransactionsFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(businessTransactionsHourlyList, new BusinessTransactionMetricReportMap(), businessTransactionsHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), businessTransactionsFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(businessTransactionsHourlyList, new BusinessTransactionMetricReportMap(), businessTransactionsHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, businessTransactionsList.Count);
                                 }
@@ -6042,7 +6094,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Service Endpoints
 
-                                List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
+                                List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsIndexFilePath, new ServiceEndpointEntityReportMap());
                                 if (serviceEndpointsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Service Endpoints ({0} entities)", serviceEndpointsList.Count);
@@ -6052,19 +6104,19 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityServiceEndpoint> serviceEndpointsFullBag = new ConcurrentBag<EntityServiceEndpoint>();
                                     ConcurrentBag<EntityServiceEndpoint> serviceEndpointsHourlyBag = new ConcurrentBag<EntityServiceEndpoint>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         SERVICE_ENDPOINTS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     List<AppDRESTMetric> metricDataFullEXCPM = null;
@@ -6079,21 +6131,21 @@ namespace AppDynamics.Dexter
                                         serviceEndpointsList,
                                         serviceEndpointRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 SERVICE_ENDPOINTS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(serviceEndpointRowOriginal.TierName, serviceEndpointRowOriginal.TierID),
                                                 getShortenedEntityNameForFileSystem(serviceEndpointRowOriginal.SEPName, serviceEndpointRowOriginal.SEPID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityServiceEndpoint> serviceEndpointFullList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entityFullRangeReportFilePath, new ServiceEndpointMetricReportMap());
+                                                List<EntityServiceEndpoint> serviceEndpointFullList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entityFullRangeIndexFilePath, new ServiceEndpointMetricReportMap());
                                                 if (serviceEndpointFullList != null)
                                                 {
                                                     foreach (EntityServiceEndpoint serviceEndpointRow in serviceEndpointFullList)
@@ -6102,7 +6154,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityServiceEndpoint> serviceEndpointHourlyList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entityHourlyRangeReportFilePath, new ServiceEndpointMetricReportMap());
+                                                List<EntityServiceEndpoint> serviceEndpointHourlyList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entityHourlyRangeIndexFilePath, new ServiceEndpointMetricReportMap());
                                                 if (serviceEndpointHourlyList != null)
                                                 {
                                                     foreach (EntityServiceEndpoint serviceEndpointRow in serviceEndpointHourlyList)
@@ -6119,7 +6171,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityServiceEndpoint> serviceEndpointFullList = new List<EntityServiceEndpoint>(1);
                                                 EntityServiceEndpoint serviceEndpointRow = serviceEndpointRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(serviceEndpointRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(serviceEndpointRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 serviceEndpointsFullBag.Add(serviceEndpointRow);
                                                 serviceEndpointFullList.Add(serviceEndpointRow);
@@ -6137,13 +6189,13 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = null;
@@ -6155,7 +6207,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     serviceEndpointRow = serviceEndpointRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(serviceEndpointRow, jobTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(serviceEndpointRow, jobTimeRange, String.Format(METRIC_PATH_SERVICE_ENDPOINT, serviceEndpointRow.TierName, serviceEndpointRow.SEPName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     serviceEndpointsHourlyBag.Add(serviceEndpointRow);
                                                     serviceEndpointHourlyList.Add(serviceEndpointRow);
@@ -6165,8 +6217,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(serviceEndpointFullList, new ServiceEndpointMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(serviceEndpointHourlyList, new ServiceEndpointMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(serviceEndpointFullList, new ServiceEndpointMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(serviceEndpointHourlyList, new ServiceEndpointMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -6186,8 +6238,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksServiceEndpoints(programOptions, jobConfiguration, jobTarget, serviceEndpointsFullList);
                                     updateEntitiesWithReportDetailLinksServiceEndpoints(programOptions, jobConfiguration, jobTarget, serviceEndpointsHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), serviceEndpointsFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(serviceEndpointsHourlyList, new ServiceEndpointMetricReportMap(), serviceEndpointsHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), serviceEndpointsFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(serviceEndpointsHourlyList, new ServiceEndpointMetricReportMap(), serviceEndpointsHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, serviceEndpointsList.Count);
                                 }
@@ -6198,7 +6250,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Errors
 
-                                List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
+                                List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsIndexFilePath, new ErrorEntityReportMap());
                                 if (errorsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Errors ({0} entities)", errorsList.Count);
@@ -6208,8 +6260,8 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityError> errorsFullBag = new ConcurrentBag<EntityError>();
                                     ConcurrentBag<EntityError> errorsHourlyBag = new ConcurrentBag<EntityError>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         ERRORS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
@@ -6218,7 +6270,7 @@ namespace AppDynamics.Dexter
 
                                     List<AppDRESTMetric> metricDataFullCPM = null;
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     List<AppDRESTMetric> metricDataFullEXCPM = null;
@@ -6233,21 +6285,21 @@ namespace AppDynamics.Dexter
                                         errorsList,
                                         errorRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 ERRORS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(errorRowOriginal.TierName, errorRowOriginal.TierID),
                                                 getShortenedEntityNameForFileSystem(errorRowOriginal.ErrorName, errorRowOriginal.ErrorID));
 
-                                        string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                        string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityError> errorFullList = FileIOHelper.readListFromCSVFile<EntityError>(entityFullRangeReportFilePath, new ErrorMetricReportMap());
+                                                List<EntityError> errorFullList = FileIOHelper.readListFromCSVFile<EntityError>(entityFullRangeIndexFilePath, new ErrorMetricReportMap());
                                                 if (errorFullList != null)
                                                 {
                                                     foreach (EntityError errorRow in errorFullList)
@@ -6256,7 +6308,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityError> errorHourlyList = FileIOHelper.readListFromCSVFile<EntityError>(entityHourlyRangeReportFilePath, new ErrorMetricReportMap());
+                                                List<EntityError> errorHourlyList = FileIOHelper.readListFromCSVFile<EntityError>(entityHourlyRangeIndexFilePath, new ErrorMetricReportMap());
                                                 if (errorHourlyList != null)
                                                 {
                                                     foreach (EntityError errorRow in errorHourlyList)
@@ -6273,7 +6325,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityError> errorFullList = new List<EntityError>(1);
                                                 EntityError errorRow = errorRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(errorRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(errorRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 errorsFullBag.Add(errorRow);
                                                 errorFullList.Add(errorRow);
@@ -6295,7 +6347,7 @@ namespace AppDynamics.Dexter
 
                                                     List<AppDRESTMetric> metricDataHourlyCPM = null;
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = null;
@@ -6307,7 +6359,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     errorRow = errorRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(errorRow, jobTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(errorRow, jobTimeRange, String.Format(METRIC_PATH_ERROR, errorRow.TierName, errorRow.ErrorName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     errorsHourlyBag.Add(errorRow);
                                                     errorHourlyList.Add(errorRow);
@@ -6317,8 +6369,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(errorFullList, new ErrorMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(errorHourlyList, new ErrorMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(errorFullList, new ErrorMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(errorHourlyList, new ErrorMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -6338,8 +6390,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksErrors(programOptions, jobConfiguration, jobTarget, errorsFullList);
                                     updateEntitiesWithReportDetailLinksErrors(programOptions, jobConfiguration, jobTarget, errorsHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(errorsFullList, new ErrorMetricReportMap(), errorsFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(errorsHourlyList, new ErrorMetricReportMap(), errorsHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(errorsFullList, new ErrorMetricReportMap(), errorsFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(errorsHourlyList, new ErrorMetricReportMap(), errorsHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, errorsList.Count);
                                 }
@@ -6350,7 +6402,7 @@ namespace AppDynamics.Dexter
                             {
                                 #region Information Points
 
-                                List<EntityInformationPoint> informationPointsList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(informationPointsReportFilePath, new InformationPointEntityReportMap());
+                                List<EntityInformationPoint> informationPointsList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(informationPointsIndexFilePath, new InformationPointEntityReportMap());
                                 if (informationPointsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Information Points ({0} entities)", informationPointsList.Count);
@@ -6360,19 +6412,19 @@ namespace AppDynamics.Dexter
                                     ConcurrentBag<EntityInformationPoint> informationPointsFullBag = new ConcurrentBag<EntityInformationPoint>();
                                     ConcurrentBag<EntityInformationPoint> informationPointsHourlyBag = new ConcurrentBag<EntityInformationPoint>();
 
-                                    string metricsEntitiesFolderPath = Path.Combine(
-                                        metricsFolderPath,
+                                    string metricsEntitiesDataFolderPath = Path.Combine(
+                                        metricsDataFolderPath,
                                         INFORMATION_POINTS_TYPE_SHORT);
 
                                     #region Load Full Range Metrics
 
-                                    string metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
+                                    string metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
+                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, fullRangeMetricDataFileName);
                                     List<AppDRESTMetric> metricDataFullEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                     List<AppDRESTMetric> metricDataFullEXCPM = null;
@@ -6387,20 +6439,20 @@ namespace AppDynamics.Dexter
                                         informationPointsList,
                                         informationPointRowOriginal =>
                                         {
-                                            string metricsEntityFolderPath = Path.Combine(
-                                                metricsFolderPath,
+                                            string metricsEntityIndexFolderPath = Path.Combine(
+                                                metricsIndexFolderPath,
                                                 INFORMATION_POINTS_TYPE_SHORT,
                                                 getShortenedEntityNameForFileSystem(informationPointRowOriginal.IPName, informationPointRowOriginal.IPID));
 
-                                            string entityFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
-                                            string entityHourlyRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                                            string entityFullRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
+                                            string entityHourlyRangeIndexFilePath = Path.Combine(metricsEntityIndexFolderPath, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
 
                                             // Check if we are resuming mid-way from some interrupted run and already rendered this entity
-                                            if (File.Exists(entityFullRangeReportFilePath) == true && File.Exists(entityHourlyRangeReportFilePath) == true)
+                                            if (File.Exists(entityFullRangeIndexFilePath) == true && File.Exists(entityHourlyRangeIndexFilePath) == true)
                                             {
                                                 // This file has been indexed before, read it from the file system
 
-                                                List<EntityInformationPoint> informationPointFullList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(entityFullRangeReportFilePath, new InformationPointMetricReportMap());
+                                                List<EntityInformationPoint> informationPointFullList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(entityFullRangeIndexFilePath, new InformationPointMetricReportMap());
                                                 if (informationPointFullList != null)
                                                 {
                                                     foreach (EntityInformationPoint informationPointRow in informationPointFullList)
@@ -6409,7 +6461,7 @@ namespace AppDynamics.Dexter
                                                     }
                                                 }
 
-                                                List<EntityInformationPoint> informationPointHourlyList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(entityHourlyRangeReportFilePath, new InformationPointMetricReportMap());
+                                                List<EntityInformationPoint> informationPointHourlyList = FileIOHelper.readListFromCSVFile<EntityInformationPoint>(entityHourlyRangeIndexFilePath, new InformationPointMetricReportMap());
                                                 if (informationPointHourlyList != null)
                                                 {
                                                     foreach (EntityInformationPoint informationPointRow in informationPointHourlyList)
@@ -6426,7 +6478,7 @@ namespace AppDynamics.Dexter
 
                                                 List<EntityInformationPoint> informationPointFullList = new List<EntityInformationPoint>(1);
                                                 EntityInformationPoint informationPointRow = informationPointRowOriginal.Clone();
-                                                fillFullRangeMetricEntityRow(informationPointRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_INFORMATION_POINT, informationPointRow.IPName, String.Empty), metricsEntityFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
+                                                fillFullRangeMetricEntityRow(informationPointRow, jobConfiguration.Input.ExpandedTimeRange, String.Format(METRIC_PATH_INFORMATION_POINT, informationPointRow.IPName, String.Empty), metricsEntityIndexFolderPath, metricDataFullART, metricDataFullCPM, metricDataFullEPM, metricDataFullEXCPM, metricDataFullHTTPEPM);
 
                                                 informationPointsFullBag.Add(informationPointRow);
                                                 informationPointFullList.Add(informationPointRow);
@@ -6444,13 +6496,13 @@ namespace AppDynamics.Dexter
 
                                                     #region Load Hourly Range Metrics
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_ART_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyART = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_CPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyCPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
-                                                    metricsDataFilePath = Path.Combine(metricsEntitiesFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
+                                                    metricsDataFilePath = Path.Combine(metricsEntitiesDataFolderPath, METRIC_EPM_SHORTNAME, hourlyRangeMetricDataFileName);
                                                     List<AppDRESTMetric> metricDataHourlyEPM = FileIOHelper.loadListOfObjectsFromFile<AppDRESTMetric>(metricsDataFilePath);
 
                                                     List<AppDRESTMetric> metricDataHourlyEXCPM = null;
@@ -6462,7 +6514,7 @@ namespace AppDynamics.Dexter
                                                     #region Hour Range
 
                                                     informationPointRow = informationPointRowOriginal.Clone();
-                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(informationPointRow, jobTimeRange, String.Format(METRIC_PATH_INFORMATION_POINT, informationPointRow.IPName, String.Empty), metricsEntityFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
+                                                    fillHourlyRangeMetricEntityRowAndConvertMetricsToCSV(informationPointRow, jobTimeRange, String.Format(METRIC_PATH_INFORMATION_POINT, informationPointRow.IPName, String.Empty), metricsEntityIndexFolderPath, k, metricDataHourlyART, metricDataHourlyCPM, metricDataHourlyEPM, metricDataHourlyEXCPM, metricDataHourlyHTTPEPM);
 
                                                     informationPointsHourlyBag.Add(informationPointRow);
                                                     informationPointHourlyList.Add(informationPointRow);
@@ -6472,8 +6524,8 @@ namespace AppDynamics.Dexter
 
                                                 #endregion
 
-                                                FileIOHelper.writeListToCSVFile(informationPointFullList, new InformationPointMetricReportMap(), entityFullRangeReportFilePath);
-                                                FileIOHelper.writeListToCSVFile(informationPointHourlyList, new InformationPointMetricReportMap(), entityHourlyRangeReportFilePath);
+                                                FileIOHelper.writeListToCSVFile(informationPointFullList, new InformationPointMetricReportMap(), entityFullRangeIndexFilePath);
+                                                FileIOHelper.writeListToCSVFile(informationPointHourlyList, new InformationPointMetricReportMap(), entityHourlyRangeIndexFilePath);
                                             }
 
                                             Interlocked.Add(ref numEntities, 1);
@@ -6493,8 +6545,8 @@ namespace AppDynamics.Dexter
                                     updateEntitiesWithReportDetailLinksInformationPoints(programOptions, jobConfiguration, jobTarget, informationPointsFullList);
                                     updateEntitiesWithReportDetailLinksInformationPoints(programOptions, jobConfiguration, jobTarget, informationPointsHourlyList);
 
-                                    FileIOHelper.writeListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), informationPointsFullReportFilePath);
-                                    FileIOHelper.writeListToCSVFile(informationPointsHourlyList, new InformationPointMetricReportMap(), informationPointsHourlyReportFilePath);
+                                    FileIOHelper.writeListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), informationPointsFullIndexFilePath);
+                                    FileIOHelper.writeListToCSVFile(informationPointsHourlyList, new InformationPointMetricReportMap(), informationPointsHourlyIndexFilePath);
 
                                     Interlocked.Add(ref numEntitiesTotal, informationPointsList.Count);
                                 }
@@ -6510,28 +6562,28 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(metricsAllFolderPath);
+                            FileIOHelper.deleteFolder(metricsReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(metricsAllFolderPath);
+                            FileIOHelper.createFolder(metricsReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(applicationsAllFullReportFilePath, applicationFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(applicationsAllHourlyReportFilePath, applicationHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(tiersAllFullReportFilePath, tiersFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(tiersAllHourlyReportFilePath, tiersHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(nodesAllFullReportFilePath, nodesFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(nodesAllHourlyReportFilePath, nodesHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(backendsAllFullReportFilePath, backendsFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(backendsAllHourlyReportFilePath, backendsHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionsAllFullReportFilePath, businessTransactionsFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionsAllHourlyReportFilePath, businessTransactionsHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsAllFullReportFilePath, serviceEndpointsFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsAllHourlyReportFilePath, serviceEndpointsHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(errorsAllFullReportFilePath, errorsFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(errorsAllHourlyReportFilePath, errorsHourlyReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(informationPointsAllFullReportFilePath, informationPointsFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(informationPointsAllHourlyReportFilePath, informationPointsHourlyReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(applicationsFullReportFilePath, applicationFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(applicationsHourlyReportFilePath, applicationHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(tiersFullReportFilePath, tiersFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(tiersHourlyReportFilePath, tiersHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(nodesFullaReportFilePath, nodesFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(nodesHourlyReportFilePath, nodesHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(backendsFullReportFilePath, backendsFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(backendsHourlyReportFilePath, backendsHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionsFullReportFilePath, businessTransactionsFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionsHourlyReportFilePath, businessTransactionsHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsFullReportFilePath, serviceEndpointsFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(serviceEndpointsHourlyReportFilePath, serviceEndpointsHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(errorsFullReportFilePath, errorsFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(errorsHourlyReportFilePath, errorsHourlyIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(informationPointsFullReportFilePath, informationPointsFullIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(informationPointsHourlyReportFilePath, informationPointsHourlyIndexFilePath);
 
                         #endregion
                     }
@@ -6553,7 +6605,7 @@ namespace AppDynamics.Dexter
 
                         List<StepTiming> stepTimings = new List<StepTiming>(1);
                         stepTimings.Add(stepTimingTarget);
-                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                        FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingIndexFilePath, true);
                     }
                 }
 
@@ -6579,7 +6631,7 @@ namespace AppDynamics.Dexter
 
                 List<StepTiming> stepTimings = new List<StepTiming>(1);
                 stepTimings.Add(stepTimingFunction);
-                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingReportFilePath, true);
+                FileIOHelper.writeListToCSVFile(stepTimings, new StepTimingReportMap(), stepTimingIndexFilePath, true);
             }
         }
 
@@ -6595,7 +6647,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -6638,34 +6690,44 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string activityGridAllFolderPath = Path.Combine(reportFolderPath, ACTIVITYGRID_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string activityGridDataFolderPath = Path.Combine(applicationDataFolderPath, ACTIVITYGRID_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string activityGridIndexFolderPath = Path.Combine(applicationIndexFolderPath, ACTIVITYGRID_FOLDER_NAME);
+
+                        string activityGridReportFolderPath = Path.Combine(reportFolderPath, ACTIVITYGRID_FOLDER_NAME);
 
                         // Report files from previous steps
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string applicationIndexFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
 
                         // Report files
-                        string applicationFlowmapFullReportFilePath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ACTIVITY_GRID_FILE_NAME);
-                        string tiersFlowmapFullReportFilePath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
-                        string nodesFlowmapFullReportFilePath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
-                        string backendsFlowmapFullReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
-                        string businessTransactionsFlowmapFullReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
+                        string applicationFlowmapIndexFilePath = Path.Combine(activityGridIndexFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ACTIVITY_GRID_FILE_NAME);
+                        string tiersFlowmapIndexFilePath = Path.Combine(activityGridIndexFolderPath, TIERS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
+                        string nodesFlowmapIndexFilePath = Path.Combine(activityGridIndexFolderPath, NODES_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
+                        string backendsFlowmapIndexFilePath = Path.Combine(activityGridIndexFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
+                        string businessTransactionsFlowmapIndexFilePath = Path.Combine(activityGridIndexFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ACTIVITY_GRIDS_FILE_NAME);
 
                         // Report files for All
-                        string applicationsFlowmapAllFullReportFilePath = Path.Combine(activityGridAllFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, APPLICATION_TYPE_SHORT));
-                        string tiersFlowmapAllFullReportFilePath = Path.Combine(activityGridAllFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, TIERS_TYPE_SHORT));
-                        string nodesFlowmapAllFullReportFilePath = Path.Combine(activityGridAllFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, NODES_TYPE_SHORT));
-                        string backendsFlowmapAllFullReportFilePath = Path.Combine(activityGridAllFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, BACKENDS_TYPE_SHORT));
-                        string businessTransactionsFlowmapAllFullReportFilePath = Path.Combine(activityGridAllFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
+                        string applicationsFlowmapReportFilePath = Path.Combine(activityGridReportFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, APPLICATION_TYPE_SHORT));
+                        string tiersFlowmapReportFilePath = Path.Combine(activityGridReportFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, TIERS_TYPE_SHORT));
+                        string nodesFlowmapReportFilePath = Path.Combine(activityGridReportFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, NODES_TYPE_SHORT));
+                        string backendsFlowmapReportFilePath = Path.Combine(activityGridReportFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, BACKENDS_TYPE_SHORT));
+                        string businessTransactionsFlowmapReportFilePath = Path.Combine(activityGridReportFolderPath, String.Format(CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME, BUSINESS_TRANSACTIONS_TYPE_SHORT));
 
                         int numEntitiesTotal = 0;
 
@@ -6676,12 +6738,12 @@ namespace AppDynamics.Dexter
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                                List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationIndexFilePath, new ApplicationEntityReportMap());
                                 if (applicationList != null && applicationList.Count > 0)
                                 {
                                     loggerConsole.Info("Index Flowmap for Application");
 
-                                    convertFlowmapApplication(programOptions, jobConfiguration, jobTarget, applicationList[0], metricsFolderPath);
+                                    convertFlowmapApplication(programOptions, jobConfiguration, jobTarget, applicationList[0], activityGridDataFolderPath, activityGridIndexFolderPath);
 
                                     Interlocked.Add(ref numEntitiesTotal, applicationList.Count);
                                 }
@@ -6692,20 +6754,20 @@ namespace AppDynamics.Dexter
                             {
                                 #region Tiers
 
-                                List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
+                                List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersIndexFilePath, new TierEntityReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Tiers ({0} entities)", tiersList.Count);
 
-                                    FileIOHelper.deleteFile(tiersFlowmapFullReportFilePath);
+                                    FileIOHelper.deleteFile(tiersFlowmapIndexFilePath);
 
                                     int numEntities = 0;
 
                                     foreach (EntityTier tierRow in tiersList)
                                     {
-                                        string tierReportPath = convertFlowmapTier(programOptions, jobConfiguration, jobTarget, tierRow, metricsFolderPath);
+                                        string tierReportPath = convertFlowmapTier(programOptions, jobConfiguration, jobTarget, tierRow, activityGridDataFolderPath, activityGridIndexFolderPath);
 
-                                        FileIOHelper.appendTwoCSVFiles(tiersFlowmapFullReportFilePath, tierReportPath);
+                                        FileIOHelper.appendTwoCSVFiles(tiersFlowmapIndexFilePath, tierReportPath);
 
                                         numEntities++;
                                         if (numEntities % 100 == 0)
@@ -6725,20 +6787,20 @@ namespace AppDynamics.Dexter
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
+                                List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesIndexFilePath, new NodeEntityReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Nodes ({0} entities)", nodesList.Count);
 
-                                    FileIOHelper.deleteFile(nodesFlowmapFullReportFilePath);
+                                    FileIOHelper.deleteFile(nodesFlowmapIndexFilePath);
 
                                     int numEntities = 0;
 
                                     foreach (EntityNode nodeRow in nodesList)
                                     {
-                                        string nodeReportPath = convertFlowmapNode(programOptions, jobConfiguration, jobTarget, nodeRow, metricsFolderPath);
+                                        string nodeReportPath = convertFlowmapNode(programOptions, jobConfiguration, jobTarget, nodeRow, activityGridDataFolderPath, activityGridIndexFolderPath);
 
-                                        FileIOHelper.appendTwoCSVFiles(nodesFlowmapFullReportFilePath, nodeReportPath);
+                                        FileIOHelper.appendTwoCSVFiles(nodesFlowmapIndexFilePath, nodeReportPath);
 
                                         numEntities++;
                                         if (numEntities % 100 == 0)
@@ -6757,20 +6819,20 @@ namespace AppDynamics.Dexter
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
+                                List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsIndexFilePath, new BackendEntityReportMap());
                                 if (backendsList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Backends ({0} entities)", backendsList.Count);
 
-                                    FileIOHelper.deleteFile(backendsFlowmapFullReportFilePath);
+                                    FileIOHelper.deleteFile(backendsFlowmapIndexFilePath);
 
                                     int numEntities = 0;
 
                                     foreach (EntityBackend backendRow in backendsList)
                                     {
-                                        string backendReportPath = convertFlowmapBackend(programOptions, jobConfiguration, jobTarget, backendRow, metricsFolderPath);
+                                        string backendReportPath = convertFlowmapBackend(programOptions, jobConfiguration, jobTarget, backendRow, activityGridDataFolderPath, activityGridIndexFolderPath);
 
-                                        FileIOHelper.appendTwoCSVFiles(backendsFlowmapFullReportFilePath, backendReportPath);
+                                        FileIOHelper.appendTwoCSVFiles(backendsFlowmapIndexFilePath, backendReportPath);
 
                                         numEntities++;
                                         if (numEntities % 100 == 0)
@@ -6789,20 +6851,20 @@ namespace AppDynamics.Dexter
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
+                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsIndexFilePath, new BusinessTransactionEntityReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Business Transactions ({0} entities)", businessTransactionsList.Count);
 
-                                    FileIOHelper.deleteFile(businessTransactionsFlowmapFullReportFilePath);
+                                    FileIOHelper.deleteFile(businessTransactionsFlowmapIndexFilePath);
 
                                     int numEntities = 0;
 
                                     foreach (EntityBusinessTransaction businessTransactionRow in businessTransactionsList)
                                     {
-                                        string businessTransactionReportPath = convertFlowmapsBusinessTransaction(programOptions, jobConfiguration, jobTarget, businessTransactionRow, metricsFolderPath);
+                                        string businessTransactionReportPath = convertFlowmapsBusinessTransaction(programOptions, jobConfiguration, jobTarget, businessTransactionRow, activityGridDataFolderPath, activityGridIndexFolderPath);
 
-                                        FileIOHelper.appendTwoCSVFiles(businessTransactionsFlowmapFullReportFilePath, businessTransactionReportPath);
+                                        FileIOHelper.appendTwoCSVFiles(businessTransactionsFlowmapIndexFilePath, businessTransactionReportPath);
 
                                         numEntities++;
                                         if (numEntities % 100 == 0)
@@ -6826,17 +6888,17 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(activityGridAllFolderPath);
+                            FileIOHelper.deleteFolder(activityGridReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(activityGridAllFolderPath);
+                            FileIOHelper.createFolder(activityGridReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.appendTwoCSVFiles(applicationsFlowmapAllFullReportFilePath, applicationFlowmapFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(tiersFlowmapAllFullReportFilePath, tiersFlowmapFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(nodesFlowmapAllFullReportFilePath, nodesFlowmapFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(backendsFlowmapAllFullReportFilePath, backendsFlowmapFullReportFilePath);
-                        FileIOHelper.appendTwoCSVFiles(businessTransactionsFlowmapAllFullReportFilePath, businessTransactionsFlowmapFullReportFilePath);
+                        FileIOHelper.appendTwoCSVFiles(applicationsFlowmapReportFilePath, applicationFlowmapIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(tiersFlowmapReportFilePath, tiersFlowmapIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(nodesFlowmapReportFilePath, nodesFlowmapIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(backendsFlowmapReportFilePath, backendsFlowmapIndexFilePath);
+                        FileIOHelper.appendTwoCSVFiles(businessTransactionsFlowmapReportFilePath, businessTransactionsFlowmapIndexFilePath);
 
                         #endregion
 
@@ -6901,7 +6963,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -6944,26 +7006,36 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string eventsAllFolderPath = Path.Combine(reportFolderPath, EVENTS_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesDataFolderPath = Path.Combine(applicationDataFolderPath, ENTITIES_FOLDER_NAME);
+                        string eventsDataFolderPath = Path.Combine(applicationDataFolderPath, EVENTS_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string eventsIndexFolderPath = Path.Combine(applicationIndexFolderPath, EVENTS_FOLDER_NAME);
+
+                        string eventsReportFolderPath = Path.Combine(reportFolderPath, EVENTS_FOLDER_NAME);
 
                         // Previosly rendered report files
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string applicationReportFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
 
                         // Report files
-                        string applicationEventsSummaryReportFilePath = Path.Combine(eventsFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
-                        string healthRuleViolationEventsReportFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
-                        string eventsReportFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
+                        string applicationEventsSummaryIndexFilePath = Path.Combine(eventsIndexFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
+                        string healthRuleViolationEventsIndexFilePath = Path.Combine(eventsIndexFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+                        string eventsIndexFilePath = Path.Combine(eventsIndexFolderPath, CONVERT_EVENTS_FILE_NAME);
 
                         // Report files for All
-                        string applicationEventsSummaryAllReportFilePath = Path.Combine(eventsAllFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
-                        string healthRuleViolationEventsAllReportFilePath = Path.Combine(eventsAllFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
-                        string eventsAllReportFilePath = Path.Combine(eventsAllFolderPath, CONVERT_EVENTS_FILE_NAME);
+                        string applicationEventsSummaryReportFilePath = Path.Combine(eventsReportFolderPath, CONVERT_APPLICATION_EVENTS_FILE_NAME);
+                        string healthRuleViolationEventsReportFilePath = Path.Combine(eventsReportFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+                        string eventsReportFilePath = Path.Combine(eventsReportFolderPath, CONVERT_EVENTS_FILE_NAME);
 
                         #endregion
 
@@ -6979,7 +7051,7 @@ namespace AppDynamics.Dexter
                         string DEEPLINK_THIS_TIMERANGE = String.Format(DEEPLINK_TIMERANGE_BETWEEN_TIMES, toTimeUnix, fromTimeUnix, differenceInMinutes);
 
                         string healthRuleViolationsDataFilePath = Path.Combine(
-                            eventsFolderPath,
+                            eventsDataFolderPath,
                             String.Format(HEALTH_RULE_VIOLATIONS_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
                         if (File.Exists(healthRuleViolationsDataFilePath))
@@ -7080,7 +7152,7 @@ namespace AppDynamics.Dexter
                         // Sort them
                         healthRuleViolationList = healthRuleViolationList.OrderBy(o => o.HealthRuleName).ThenBy(o => o.From).ThenBy(o => o.Severity).ToList();
 
-                        FileIOHelper.writeListToCSVFile<HealthRuleViolationEvent>(healthRuleViolationList, new HealthRuleViolationEventReportMap(), healthRuleViolationEventsReportFilePath);
+                        FileIOHelper.writeListToCSVFile<HealthRuleViolationEvent>(healthRuleViolationList, new HealthRuleViolationEventReportMap(), healthRuleViolationEventsIndexFilePath);
 
                         #endregion
 
@@ -7094,7 +7166,7 @@ namespace AppDynamics.Dexter
                             loggerConsole.Info("Type {0} events", eventType);
 
                             string eventsDataFilePath = Path.Combine(
-                                eventsFolderPath,
+                                eventsDataFolderPath,
                                 String.Format(EVENTS_FILE_NAME, eventType, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
                             if (File.Exists(eventsDataFilePath))
@@ -7201,7 +7273,7 @@ namespace AppDynamics.Dexter
                         // Sort them
                         eventsList = eventsList.OrderBy(o => o.Type).ThenBy(o => o.Occurred).ThenBy(o => o.Severity).ToList();
 
-                        FileIOHelper.writeListToCSVFile<Event>(eventsList, new EventReportMap(), eventsReportFilePath);
+                        FileIOHelper.writeListToCSVFile<Event>(eventsList, new EventReportMap(), eventsIndexFilePath);
 
                         #endregion
 
@@ -7232,7 +7304,7 @@ namespace AppDynamics.Dexter
                                 applicationsRow.HasActivity = true;
                             }
 
-                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationEventReportMap(), applicationEventsSummaryReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationEventReportMap(), applicationEventsSummaryIndexFilePath);
                         }
 
                         #endregion
@@ -7242,23 +7314,23 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(eventsAllFolderPath);
+                            FileIOHelper.deleteFolder(eventsReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(eventsAllFolderPath);
+                            FileIOHelper.createFolder(eventsReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        if (File.Exists(applicationEventsSummaryReportFilePath) == true && new FileInfo(applicationEventsSummaryReportFilePath).Length > 0)
+                        if (File.Exists(applicationEventsSummaryIndexFilePath) == true && new FileInfo(applicationEventsSummaryIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(applicationEventsSummaryAllReportFilePath, applicationEventsSummaryReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(applicationEventsSummaryReportFilePath, applicationEventsSummaryIndexFilePath);
                         }
-                        if (File.Exists(healthRuleViolationEventsReportFilePath) == true && new FileInfo(healthRuleViolationEventsReportFilePath).Length > 0)
+                        if (File.Exists(healthRuleViolationEventsIndexFilePath) == true && new FileInfo(healthRuleViolationEventsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(healthRuleViolationEventsAllReportFilePath, healthRuleViolationEventsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(healthRuleViolationEventsReportFilePath, healthRuleViolationEventsIndexFilePath);
                         }
-                        if (File.Exists(eventsReportFilePath) == true && new FileInfo(eventsReportFilePath).Length > 0)
+                        if (File.Exists(eventsIndexFilePath) == true && new FileInfo(eventsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(eventsAllReportFilePath, eventsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(eventsReportFilePath, eventsIndexFilePath);
                         }
 
                         #endregion
@@ -7323,7 +7395,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -7366,47 +7438,56 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string snapshotsAllFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
-                        string configFolderPath = Path.Combine(applicationFolderPath, CONFIGURATION_FOLDER_NAME);
+                        string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string snapshotsDataFolderPath = Path.Combine(applicationDataFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string snapshotsIndexFolderPath = Path.Combine(applicationIndexFolderPath, SNAPSHOTS_FOLDER_NAME);
+                        string configIndexFolderPath = Path.Combine(applicationDataFolderPath, CONFIGURATION_FOLDER_NAME);
+
+                        string snapshotsReportFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
 
                         // Previosly rendered report files
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-                        string methodInvocationDataCollectorsReportFilePath = Path.Combine(configFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                        string applicationIndexFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsIndexFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string methodInvocationDataCollectorsIndexFilePath = Path.Combine(configIndexFolderPath, APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
                         string methodCallLinesToFrameworkTypeMappingFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME);
 
                         // Report files
-                        string snapshotsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
-                        string segmentsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
-                        string callExitsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
-                        string serviceEndpointCallsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
-                        string detectedErrorsReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-                        string businessDataReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
-                        string methodCallLinesReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
-                        string methodCallLinesOccurrencesReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
-                        string applicationSnapshotsSummaryReportFilePath = Path.Combine(snapshotsFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
+                        string snapshotIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+                        string segmentIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+                        string callExitIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                        string serviceEndpointCallIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+                        string detectedErrorsIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                        string businessDataIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string methodCallLineIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                        string methodCallLinesOccurrenceIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
+                        string applicationSnapshotsSummaryIndexFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         // Report files for All
-                        string snapshotsAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
-                        string segmentsAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
-                        string callExitsAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
-                        string serviceEndpointCallsAllReporFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
-                        string detectedErrorsAllReporFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-                        string businessDataAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
-                        string methodCallLinesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
-                        string methodCallLinesOccurrencesAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
-                        string applicationSnapshotsSummaryAllReportFilePath = Path.Combine(snapshotsAllFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
+                        string snapshotsReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+                        string segmentsReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+                        string callExitsReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                        string serviceEndpointCallsReporFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+                        string detectedErrorsReporFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                        string businessDataReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string methodCallLinesReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                        string methodCallLinesOccurrencesReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
+                        string applicationSnapshotsSummaryReportFilePath = Path.Combine(snapshotsReportFolderPath, CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
 
                         #endregion
 
@@ -7415,13 +7496,13 @@ namespace AppDynamics.Dexter
                         // Process each hour at a time
                         loggerConsole.Info("Index Snapshots");
 
-                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
-                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
-                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
-                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
-                        List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
-                        List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
-                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.readListFromCSVFile<MethodInvocationDataCollector>(methodInvocationDataCollectorsReportFilePath, new MethodInvocationDataCollectorReportMap());
+                        List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersIndexFilePath, new TierEntityReportMap());
+                        List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesIndexFilePath, new NodeEntityReportMap());
+                        List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsIndexFilePath, new BackendEntityReportMap());
+                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsIndexFilePath, new BusinessTransactionEntityReportMap());
+                        List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsIndexFilePath, new ServiceEndpointEntityReportMap());
+                        List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsIndexFilePath, new ErrorEntityReportMap());
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.readListFromCSVFile<MethodInvocationDataCollector>(methodInvocationDataCollectorsIndexFilePath, new MethodInvocationDataCollectorReportMap());
 
                         // Load and bucketize the framework mappings
                         Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = populateMethodCallMappingDictionary(methodCallLinesToFrameworkTypeMappingFilePath);
@@ -7429,7 +7510,7 @@ namespace AppDynamics.Dexter
                         int totalNumberOfSnapshots = 0;
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
-                            string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                            string snapshotsListFilePath = Path.Combine(snapshotsDataFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
                             JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
 
                             int j = 0;
@@ -7478,17 +7559,17 @@ namespace AppDynamics.Dexter
                         // Assemble snapshot files into summary file for entire application
                         loggerConsole.Info("Combine Snapshots for This Application");
 
-                        FileIOHelper.deleteFile(snapshotsReportFilePath);
-                        FileIOHelper.deleteFile(segmentsReportFilePath);
-                        FileIOHelper.deleteFile(callExitsReportFilePath);
-                        FileIOHelper.deleteFile(serviceEndpointCallsReportFilePath);
-                        FileIOHelper.deleteFile(detectedErrorsReportFilePath);
-                        FileIOHelper.deleteFile(businessDataReportFilePath);
-                        FileIOHelper.deleteFile(methodCallLinesReportFilePath);
-                        FileIOHelper.deleteFile(methodCallLinesOccurrencesReportFilePath);
-                        FileIOHelper.deleteFile(applicationSnapshotsSummaryReportFilePath);
+                        FileIOHelper.deleteFile(snapshotIndexFilePath);
+                        FileIOHelper.deleteFile(segmentIndexFilePath);
+                        FileIOHelper.deleteFile(callExitIndexFilePath);
+                        FileIOHelper.deleteFile(serviceEndpointCallIndexFilePath);
+                        FileIOHelper.deleteFile(detectedErrorsIndexFilePath);
+                        FileIOHelper.deleteFile(businessDataIndexFilePath);
+                        FileIOHelper.deleteFile(methodCallLineIndexFilePath);
+                        FileIOHelper.deleteFile(methodCallLinesOccurrenceIndexFilePath);
+                        FileIOHelper.deleteFile(applicationSnapshotsSummaryIndexFilePath);
 
-                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
+                        List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationIndexFilePath, new ApplicationEntityReportMap());
                         EntityApplication applicationsRow = null;
                         if (applicationList != null && applicationList.Count > 0)
                         {
@@ -7507,7 +7588,7 @@ namespace AppDynamics.Dexter
                         {
                             int j = 0;
 
-                            string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                            string snapshotsListFilePath = Path.Combine(snapshotsDataFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
                             JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
 
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
@@ -7515,21 +7596,21 @@ namespace AppDynamics.Dexter
                                 logger.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
                                 loggerConsole.Info("Combine Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
-                                using (FileStream snapshotsReportFileStream = File.Open(snapshotsReportFilePath, FileMode.Append))
+                                using (FileStream snapshotsIndexFileStream = File.Open(snapshotIndexFilePath, FileMode.Append))
                                 {
-                                    using (FileStream segmentsReportFileStream = File.Open(segmentsReportFilePath, FileMode.Append))
+                                    using (FileStream segmentsIndexFileStream = File.Open(segmentIndexFilePath, FileMode.Append))
                                     {
-                                        using (FileStream callExitsReportFileStream = File.Open(callExitsReportFilePath, FileMode.Append))
+                                        using (FileStream callExitsIndexFileStream = File.Open(callExitIndexFilePath, FileMode.Append))
                                         {
-                                            using (FileStream serviceEndpointCallsReportFileStream = File.Open(serviceEndpointCallsReportFilePath, FileMode.Append))
+                                            using (FileStream serviceEndpointCallsIndexFileStream = File.Open(serviceEndpointCallIndexFilePath, FileMode.Append))
                                             {
-                                                using (FileStream detectedErrorsReportFileStream = File.Open(detectedErrorsReportFilePath, FileMode.Append))
+                                                using (FileStream detectedErrorsIndexFileStream = File.Open(detectedErrorsIndexFilePath, FileMode.Append))
                                                 {
-                                                    using (FileStream businessDataReportFileStream = File.Open(businessDataReportFilePath, FileMode.Append))
+                                                    using (FileStream businessDataIndexFileStream = File.Open(businessDataIndexFilePath, FileMode.Append))
                                                     {
-                                                        using (FileStream methodCallLinesReportFileStream = File.Open(methodCallLinesReportFilePath, FileMode.Append))
+                                                        using (FileStream methodCallLinesIndexFileStream = File.Open(methodCallLineIndexFilePath, FileMode.Append))
                                                         {
-                                                            using (FileStream methodCallLinesOccurrencesReportFileStream = File.Open(methodCallLinesOccurrencesReportFilePath, FileMode.Append))
+                                                            using (FileStream methodCallLinesOccurrencesIndexFileStream = File.Open(methodCallLinesOccurrenceIndexFilePath, FileMode.Append))
                                                             {
                                                                 foreach (JToken snapshot in listOfSnapshotsInHour)
                                                                 {
@@ -7574,7 +7655,7 @@ namespace AppDynamics.Dexter
                                                                     DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
 
                                                                     string snapshotFolderPath = Path.Combine(
-                                                                        snapshotsFolderPath,
+                                                                        snapshotsIndexFolderPath,
                                                                         getShortenedEntityNameForFileSystem(snapshot["applicationComponentName"].ToString(), (long)snapshot["applicationComponentId"]),
                                                                         getShortenedEntityNameForFileSystem(snapshot["businessTransactionName"].ToString(), (long)snapshot["businessTransactionId"]),
                                                                         String.Format("{0:yyyyMMddHH}", snapshotTime),
@@ -7590,14 +7671,14 @@ namespace AppDynamics.Dexter
                                                                     string thisSnapshotMethodCallLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
                                                                     string thisSnapshotMethodCallOccurrencesLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
 
-                                                                    FileIOHelper.appendTwoCSVFiles(snapshotsReportFileStream, thisSnapshotSnapshotsFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(segmentsReportFileStream, thisSnapshotSegmentsFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(callExitsReportFileStream, thisSnapshotExitCallsFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsReportFileStream, thisSnapshotServiceEndpointCallsFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(detectedErrorsReportFileStream, thisSnapshotDetectedErrorsFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(businessDataReportFileStream, thisSnapshotBusinessDataFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesReportFileStream, thisSnapshotMethodCallLinesFileName);
-                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesReportFileStream, thisSnapshotMethodCallOccurrencesLinesFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(snapshotsIndexFileStream, thisSnapshotSnapshotsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(segmentsIndexFileStream, thisSnapshotSegmentsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(callExitsIndexFileStream, thisSnapshotExitCallsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsIndexFileStream, thisSnapshotServiceEndpointCallsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(detectedErrorsIndexFileStream, thisSnapshotDetectedErrorsFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(businessDataIndexFileStream, thisSnapshotBusinessDataFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesIndexFileStream, thisSnapshotMethodCallLinesFileName);
+                                                                    FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesIndexFileStream, thisSnapshotMethodCallOccurrencesLinesFileName);
 
                                                                     j++;
                                                                     if (j % 200 == 0)
@@ -7624,7 +7705,7 @@ namespace AppDynamics.Dexter
                                 applicationsRow.HasActivity = true;
                             }
 
-                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), applicationSnapshotsSummaryReportFilePath);
+                            FileIOHelper.writeListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), applicationSnapshotsSummaryIndexFilePath);
                         }
 
                         #endregion
@@ -7636,47 +7717,47 @@ namespace AppDynamics.Dexter
                         // If it is the first one, clear out the combined folder
                         if (i == 0)
                         {
-                            FileIOHelper.deleteFolder(snapshotsAllFolderPath);
+                            FileIOHelper.deleteFolder(snapshotsReportFolderPath);
                             Thread.Sleep(1000);
-                            FileIOHelper.createFolder(snapshotsAllFolderPath);
+                            FileIOHelper.createFolder(snapshotsReportFolderPath);
                         }
 
                         // Append all the individual application files into one
-                        if (File.Exists(snapshotsReportFilePath) == true && new FileInfo(snapshotsReportFilePath).Length > 0)
+                        if (File.Exists(snapshotIndexFilePath) == true && new FileInfo(snapshotIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(snapshotsAllReportFilePath, snapshotsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(snapshotsReportFilePath, snapshotIndexFilePath);
                         }
-                        if (File.Exists(segmentsReportFilePath) == true && new FileInfo(segmentsReportFilePath).Length > 0)
+                        if (File.Exists(segmentIndexFilePath) == true && new FileInfo(segmentIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(segmentsAllReportFilePath, segmentsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(segmentsReportFilePath, segmentIndexFilePath);
                         }
-                        if (File.Exists(callExitsReportFilePath) == true && new FileInfo(callExitsReportFilePath).Length > 0)
+                        if (File.Exists(callExitIndexFilePath) == true && new FileInfo(callExitIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(callExitsAllReportFilePath, callExitsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(callExitsReportFilePath, callExitIndexFilePath);
                         }
-                        if (File.Exists(serviceEndpointCallsReportFilePath) == true && new FileInfo(serviceEndpointCallsReportFilePath).Length > 0)
+                        if (File.Exists(serviceEndpointCallIndexFilePath) == true && new FileInfo(serviceEndpointCallIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsAllReporFilePath, serviceEndpointCallsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(serviceEndpointCallsReporFilePath, serviceEndpointCallIndexFilePath);
                         }
-                        if (File.Exists(detectedErrorsReportFilePath) == true && new FileInfo(detectedErrorsReportFilePath).Length > 0)
+                        if (File.Exists(detectedErrorsIndexFilePath) == true && new FileInfo(detectedErrorsIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(detectedErrorsAllReporFilePath, detectedErrorsReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(detectedErrorsReporFilePath, detectedErrorsIndexFilePath);
                         }
-                        if (File.Exists(businessDataReportFilePath) == true && new FileInfo(businessDataReportFilePath).Length > 0)
+                        if (File.Exists(businessDataIndexFilePath) == true && new FileInfo(businessDataIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(businessDataAllReportFilePath, businessDataReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(businessDataReportFilePath, businessDataIndexFilePath);
                         }
-                        if (File.Exists(methodCallLinesReportFilePath) == true && new FileInfo(methodCallLinesReportFilePath).Length > 0)
+                        if (File.Exists(methodCallLineIndexFilePath) == true && new FileInfo(methodCallLineIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(methodCallLinesAllReportFilePath, methodCallLinesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(methodCallLinesReportFilePath, methodCallLineIndexFilePath);
                         }
-                        if (File.Exists(methodCallLinesOccurrencesReportFilePath) == true && new FileInfo(methodCallLinesOccurrencesReportFilePath).Length > 0)
+                        if (File.Exists(methodCallLinesOccurrenceIndexFilePath) == true && new FileInfo(methodCallLinesOccurrenceIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesAllReportFilePath, methodCallLinesOccurrencesReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(methodCallLinesOccurrencesReportFilePath, methodCallLinesOccurrenceIndexFilePath);
                         }
-                        if (File.Exists(applicationSnapshotsSummaryReportFilePath) == true && new FileInfo(applicationSnapshotsSummaryReportFilePath).Length > 0)
+                        if (File.Exists(applicationSnapshotsSummaryIndexFilePath) == true && new FileInfo(applicationSnapshotsSummaryIndexFilePath).Length > 0)
                         {
-                            FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryAllReportFilePath, applicationSnapshotsSummaryReportFilePath);
+                            FileIOHelper.appendTwoCSVFiles(applicationSnapshotsSummaryReportFilePath, applicationSnapshotsSummaryIndexFilePath);
                         }
 
                         #endregion
@@ -7685,10 +7766,10 @@ namespace AppDynamics.Dexter
 
                         if (tiersList!= null && nodesList != null && businessTransactionsList != null)
                         {
-                            Dictionary<long, Dictionary<string, int>> foldedCallStacksNodesList = new Dictionary<long, Dictionary<string, int>>(nodesList.Count);
-                            Dictionary<long, Dictionary<string, int>> foldedCallStacksBusinessTransactionsList = new Dictionary<long, Dictionary<string, int>>(businessTransactionsList.Count);
-                            Dictionary<long, Dictionary<string, int>> foldedCallStacksTiersList = new Dictionary<long, Dictionary<string, int>>(tiersList.Count);
-                            Dictionary<string, int> foldedCallStacksApplication = new Dictionary<string, int>(25);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksNodesList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(nodesList.Count);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksBusinessTransactionsList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(businessTransactionsList.Count);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksTiersList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(tiersList.Count);
+                            Dictionary<string, FoldedStackLine> foldedCallStacksApplication = new Dictionary<string, FoldedStackLine>(100);
 
                             #region Build Node and BT rollups first from the list of snapshots
 
@@ -7698,7 +7779,7 @@ namespace AppDynamics.Dexter
                             {
                                 int j = 0;
 
-                                string snapshotsListFilePath = Path.Combine(snapshotsFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
+                                string snapshotsListFilePath = Path.Combine(snapshotsDataFolderPath, String.Format(EXTRACT_SNAPSHOTS_FILE_NAME, jobTimeRange.From, jobTimeRange.To));
                                 JArray listOfSnapshotsInHour = FileIOHelper.loadJArrayFromFile(snapshotsListFilePath);
 
                                 if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
@@ -7717,21 +7798,21 @@ namespace AppDynamics.Dexter
                                         long nodeID = (long)snapshotToken["applicationComponentNodeId"];
                                         if (foldedCallStacksNodesList.ContainsKey(nodeID) == false)
                                         {
-                                            foldedCallStacksNodesList[nodeID] = new Dictionary<string, int>(25);
+                                            foldedCallStacksNodesList[nodeID] = new Dictionary<string, FoldedStackLine>(50);
                                         }
 
                                         // Look up the folded stack for Business Transaction
                                         long btID = (long)snapshotToken["businessTransactionId"];
                                         if (foldedCallStacksBusinessTransactionsList.ContainsKey(btID) == false)
                                         {
-                                            foldedCallStacksBusinessTransactionsList[btID] = new Dictionary<string, int>(25);
+                                            foldedCallStacksBusinessTransactionsList[btID] = new Dictionary<string, FoldedStackLine>(50);
                                         }
 
                                         // Load folded call stack
                                         DateTime snapshotTime = convertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
 
                                         string snapshotFolderPath = Path.Combine(
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             getShortenedEntityNameForFileSystem(snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"]),
                                             getShortenedEntityNameForFileSystem(snapshotToken["businessTransactionName"].ToString(), btID),
                                             String.Format("{0:yyyyMMddHH}", snapshotTime),
@@ -7740,12 +7821,13 @@ namespace AppDynamics.Dexter
 
                                         string snapshotFoldedCallStacksFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
+                                        // Load the call stack and add it to the right list
                                         if (File.Exists(snapshotFoldedCallStacksFileName) == true)
                                         {
-                                            Dictionary<string, int> foldedCallStacksSnapshotList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(snapshotFoldedCallStacksFileName));
+                                            List<FoldedStackLine> foldedStackLines = FileIOHelper.readListFromCSVFile<FoldedStackLine>(snapshotFoldedCallStacksFileName, new FoldedStackLineReportMap());
 
-                                            addFoldedStacks(foldedCallStacksNodesList[nodeID], foldedCallStacksSnapshotList);
-                                            addFoldedStacks(foldedCallStacksBusinessTransactionsList[btID], foldedCallStacksSnapshotList);
+                                            addFoldedStacks(foldedCallStacksNodesList[nodeID], foldedStackLines);
+                                            addFoldedStacks(foldedCallStacksBusinessTransactionsList[btID], foldedStackLines);
                                         }
 
                                         j++;
@@ -7765,13 +7847,13 @@ namespace AppDynamics.Dexter
                                 if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
                                 {
                                     string nodeFoldedCallStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         NODES_TYPE_SHORT,
                                         getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                                         getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
                                         CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
-                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksNodesList[node.NodeID]), nodeFoldedCallStacksFilePath, false);
+                                    FileIOHelper.writeListToCSVFile(foldedCallStacksNodesList[node.NodeID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), nodeFoldedCallStacksFilePath);
                                 }
                             }
 
@@ -7780,12 +7862,12 @@ namespace AppDynamics.Dexter
                                 if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Count > 0)
                                 {
                                     string businessTransactionFoldedCallStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                                         getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                                         CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
-                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID]), businessTransactionFoldedCallStacksFilePath, false);
+                                    FileIOHelper.writeListToCSVFile(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), businessTransactionFoldedCallStacksFilePath);
                                 }
                             }
 
@@ -7799,7 +7881,7 @@ namespace AppDynamics.Dexter
                             {
                                 if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == false)
                                 {
-                                    foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, int>(25);
+                                    foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, FoldedStackLine>(25);
                                 }
 
                                 foreach (EntityNode node in nodesList)
@@ -7807,7 +7889,7 @@ namespace AppDynamics.Dexter
                                     if (node.TierID == tier.TierID)
                                     {
                                         string nodeFoldedCallStacksFilePath = Path.Combine(
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             NODES_TYPE_SHORT,
                                             getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                                             getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
@@ -7815,9 +7897,9 @@ namespace AppDynamics.Dexter
 
                                         if (File.Exists(nodeFoldedCallStacksFilePath) == true)
                                         {
-                                            Dictionary<string, int> foldedCallStacksNodeList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(nodeFoldedCallStacksFilePath));
+                                            List<FoldedStackLine> foldedStackLinesNodeList = FileIOHelper.readListFromCSVFile<FoldedStackLine>(nodeFoldedCallStacksFilePath, new FoldedStackLineReportMap());
 
-                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedCallStacksNodeList);
+                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedStackLinesNodeList);
                                         }
                                     }
                                 }
@@ -7825,11 +7907,11 @@ namespace AppDynamics.Dexter
                                 if (foldedCallStacksTiersList[tier.TierID].Count > 0)
                                 {
                                     string tierFoldedStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                                         CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
-                                    FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksTiersList[tier.TierID]), tierFoldedStacksFilePath, false);
+                                    FileIOHelper.writeListToCSVFile(foldedCallStacksTiersList[tier.TierID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), tierFoldedStacksFilePath);
                                 }
                             }
 
@@ -7842,23 +7924,23 @@ namespace AppDynamics.Dexter
                             foreach (EntityTier tier in tiersList)
                             {
                                 string tierFoldedStacksFilePath = Path.Combine(
-                                    snapshotsFolderPath,
+                                    snapshotsIndexFolderPath,
                                     getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                                     CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
                                 if (File.Exists(tierFoldedStacksFilePath) == true)
                                 {
-                                    Dictionary<string, int> foldedCallStacksTierList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(tierFoldedStacksFilePath));
+                                    List<FoldedStackLine> foldedStackLinesTierList = FileIOHelper.readListFromCSVFile<FoldedStackLine>(tierFoldedStacksFilePath, new FoldedStackLineReportMap());
 
-                                    addFoldedStacks(foldedCallStacksApplication, foldedCallStacksTierList);
+                                    addFoldedStacks(foldedCallStacksApplication, foldedStackLinesTierList);
                                 }
                             }
 
                             string applicationFoldedStacksFilePath = Path.Combine(
-                                snapshotsFolderPath,
+                                snapshotsIndexFolderPath,
                                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
-                            FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksApplication), applicationFoldedStacksFilePath, false);
+                            FileIOHelper.writeListToCSVFile(foldedCallStacksApplication.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), applicationFoldedStacksFilePath);
 
                             #endregion
                         }
@@ -7929,7 +8011,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -8240,7 +8322,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
 
                 // Report files for All
@@ -8643,6 +8725,7 @@ namespace AppDynamics.Dexter
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_ENTITIES_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_DETECTED_ENTITIES_PIVOT_BUSINESS_TRANSACTIONS_TYPE);
                     pivot.ApplyWidthHeightFormats = false;
+                    ExcelPivotTableField fieldF = pivot.PageFields.Add(pivot.Fields["IsRenamed"]);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Controller"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -8675,6 +8758,7 @@ namespace AppDynamics.Dexter
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_LOCATION_PIVOT];
                     pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT, 1], range, REPORT_DETECTED_ENTITIES_PIVOT_BUSINESS_TRANSACTIONS_LOCATION_SHEET);
                     pivot.ApplyWidthHeightFormats = false;
+                    fieldF = pivot.PageFields.Add(pivot.Fields["IsRenamed"]);
                     fieldR = pivot.RowFields.Add(pivot.Fields["BTType"]);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
@@ -8949,7 +9033,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -9012,7 +9096,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -9329,7 +9413,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
                 string configAllFolderPath = Path.Combine(reportFolderPath, CONFIGURATION_FOLDER_NAME);
 
@@ -10341,7 +10425,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -10404,7 +10488,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -10799,7 +10883,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
                 string metricsAllFolderPath = Path.Combine(reportFolderPath, METRICS_FOLDER_NAME);
                 string activityGridAllFolderPath = Path.Combine(reportFolderPath, ACTIVITYGRID_FOLDER_NAME);
@@ -11820,7 +11904,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -11883,7 +11967,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -11917,30 +12001,34 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string metricsIndexFolderPath = Path.Combine(applicationIndexFolderPath, METRICS_FOLDER_NAME);
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
 
                         // Report files from previous steps
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
-                        string informationPointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
+                        string applicationReportFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string informationPointsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
 
-                        string applicationHourlyReportFilePath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
-                        string tiersHourlyReportFilePath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string nodesHourlyReportFilePath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string backendsHourlyReportFilePath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string businessTransactionsHourlyReportFilePath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string serviceEndpointsHourlyReportFilePath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string errorsHourlyReportFilePath = Path.Combine(metricsFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
-                        string informationPointsHourlyReportFilePath = Path.Combine(metricsFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string applicationHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, APPLICATION_TYPE_SHORT, CONVERT_ENTITY_METRICS_HOURLY_FILE_NAME);
+                        string tiersHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, TIERS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string nodesHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, NODES_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string backendsHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, BACKENDS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string businessTransactionsHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string serviceEndpointsHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string errorsHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, ERRORS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
+                        string informationPointsHourlyReportFilePath = Path.Combine(metricsIndexFolderPath, INFORMATION_POINTS_TYPE_SHORT, CONVERT_ENTITIES_METRICS_HOURLY_FILE_NAME);
 
                         // Metric files
                         string metricsEntityFolderPath = String.Empty;
@@ -11981,7 +12069,7 @@ namespace AppDynamics.Dexter
                         if (applicationList != null && applicationList.Count > 0)
                         {
                             metricsEntityFolderPath = Path.Combine(
-                                metricsFolderPath,
+                                metricsIndexFolderPath,
                                 APPLICATION_TYPE_SHORT);
 
                             EntityApplication applicationRow = applicationList[0];
@@ -12009,7 +12097,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityTier tierRow in tiersList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     TIERS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID));
 
@@ -12046,7 +12134,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityNode nodeRow in nodesList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     NODES_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(nodeRow.TierName, nodeRow.TierID),
                                     getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID));
@@ -12084,7 +12172,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityBackend backendRow in backendsList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     BACKENDS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID));
 
@@ -12121,7 +12209,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityBusinessTransaction businessTransactionRow in businessTransactionsList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(businessTransactionRow.TierName, businessTransactionRow.TierID),
                                     getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID));
@@ -12159,7 +12247,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityServiceEndpoint serviceEndpointRow in serviceEndpointsList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     SERVICE_ENDPOINTS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(serviceEndpointRow.TierName, serviceEndpointRow.TierID),
                                     getShortenedEntityNameForFileSystem(serviceEndpointRow.SEPName, serviceEndpointRow.SEPID));
@@ -12197,7 +12285,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityError errorRow in errorsList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     ERRORS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(errorRow.TierName, errorRow.TierID),
                                     getShortenedEntityNameForFileSystem(errorRow.ErrorName, errorRow.ErrorID));
@@ -12235,7 +12323,7 @@ namespace AppDynamics.Dexter
                             foreach (EntityInformationPoint informationPointRow in informationPointsList)
                             {
                                 metricsEntityFolderPath = Path.Combine(
-                                    metricsFolderPath,
+                                    metricsIndexFolderPath,
                                     INFORMATION_POINTS_TYPE_SHORT,
                                     getShortenedEntityNameForFileSystem(informationPointRow.IPName, informationPointRow.IPID));
 
@@ -12268,7 +12356,7 @@ namespace AppDynamics.Dexter
                             jobConfiguration.Input.ExpandedTimeRange.To);
                         string reportFilePath = Path.Combine(
                             programOptions.OutputJobFolderPath,
-                            REPORTS_FOLDER_NAME,
+                            REPORT_FOLDER_NAME,
                             getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                             getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                             reportFileName);
@@ -12335,7 +12423,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -12506,7 +12594,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
                 string eventsAllFolderPath = Path.Combine(reportFolderPath, EVENTS_FOLDER_NAME);
 
@@ -12637,7 +12725,7 @@ namespace AppDynamics.Dexter
 
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["EventID"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["EventID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["Summary"].Position + 1).Width = 35;
@@ -12747,7 +12835,7 @@ namespace AppDynamics.Dexter
 
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["EventID"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["EventID"].Position + 1).Width = 10;
                     sheet.Column(table.Columns["From"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["To"].Position + 1).Width = 25;
@@ -12837,7 +12925,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -12900,7 +12988,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -13207,7 +13295,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
                 string snapshotsAllFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
 
@@ -14098,7 +14186,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -14161,7 +14249,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -14344,7 +14432,7 @@ namespace AppDynamics.Dexter
                 #region Report file variables
 
                 // Various folders
-                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+                string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
                 string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
                 string snapshotsAllFolderPath = Path.Combine(reportFolderPath, SNAPSHOTS_FOLDER_NAME);
 
@@ -14749,7 +14837,7 @@ namespace AppDynamics.Dexter
                     programOptions.JobName,
                     jobConfiguration.Input.ExpandedTimeRange.From,
                     jobConfiguration.Input.ExpandedTimeRange.To);
-                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, reportFileName);
+                string reportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, reportFileName);
 
                 string folderPath = Path.GetDirectoryName(reportFilePath);
                 if (Directory.Exists(folderPath) == false)
@@ -14812,7 +14900,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -14855,31 +14943,35 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
-                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string metricsIndexFolderPath = Path.Combine(applicationIndexFolderPath, METRICS_FOLDER_NAME);
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string eventsIndexFolderPath = Path.Combine(applicationIndexFolderPath, EVENTS_FOLDER_NAME);
+                        string snapshotsIndexFolderPath = Path.Combine(applicationIndexFolderPath, SNAPSHOTS_FOLDER_NAME);
 
                         // Report files
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string backendsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-                        string serviceEndpointsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-                        string errorsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
+                        string applicationReportFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string backendsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string serviceEndpointsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                        string errorsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_ERRORS_FILE_NAME);
 
-                        string eventsFilePath = Path.Combine(eventsFolderPath, CONVERT_EVENTS_FILE_NAME);
-                        string healthRuleViolationEventsFilePath = Path.Combine(eventsFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
-                        string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
-                        string segmentsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
-                        string exitCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
-                        string serviceEndpointCallsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
-                        string detectedErrorsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-                        string businessDataFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                        string eventsFilePath = Path.Combine(eventsIndexFolderPath, CONVERT_EVENTS_FILE_NAME);
+                        string healthRuleViolationEventsFilePath = Path.Combine(eventsIndexFolderPath, CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+                        string snapshotsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+                        string segmentsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+                        string exitCallsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                        string serviceEndpointCallsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+                        string detectedErrorsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                        string businessDataFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
 
                         string metricsEntityFolderPath = String.Empty;
                         string entitiesFullRangeReportFilePath = String.Empty;
@@ -14917,7 +15009,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityApplication> applicationList = FileIOHelper.readListFromCSVFile<EntityApplication>(applicationReportFilePath, new ApplicationEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, APPLICATION_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, APPLICATION_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITY_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityApplication> applicationMetricsList = FileIOHelper.readListFromCSVFile<EntityApplication>(entitiesFullRangeReportFilePath, new ApplicationMetricReportMap());
 
@@ -14949,7 +15041,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityTier> tiersList = FileIOHelper.readListFromCSVFile<EntityTier>(tiersReportFilePath, new TierEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, TIERS_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, TIERS_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityTier> tiersMetricsList = FileIOHelper.readListFromCSVFile<EntityTier>(entitiesFullRangeReportFilePath, new TierMetricReportMap());
 
@@ -15022,7 +15114,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityNode> nodesList = FileIOHelper.readListFromCSVFile<EntityNode>(nodesReportFilePath, new NodeEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, NODES_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, NODES_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityNode> nodesMetricsList = FileIOHelper.readListFromCSVFile<EntityNode>(entitiesFullRangeReportFilePath, new NodeMetricReportMap());
 
@@ -15095,7 +15187,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityBackend> backendsList = FileIOHelper.readListFromCSVFile<EntityBackend>(backendsReportFilePath, new BackendEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, BACKENDS_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, BACKENDS_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityBackend> backendsMetricsList = FileIOHelper.readListFromCSVFile<EntityBackend>(entitiesFullRangeReportFilePath, new BackendMetricReportMap());
 
@@ -15168,7 +15260,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(businessTransactionsReportFilePath, new BusinessTransactionEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, BUSINESS_TRANSACTIONS_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityBusinessTransaction> businessTransactionsMetricsList = FileIOHelper.readListFromCSVFile<EntityBusinessTransaction>(entitiesFullRangeReportFilePath, new BusinessTransactionMetricReportMap());
 
@@ -15241,7 +15333,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(serviceEndpointsReportFilePath, new ServiceEndpointEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, SERVICE_ENDPOINTS_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityServiceEndpoint> serviceEndpointsMetricsList = FileIOHelper.readListFromCSVFile<EntityServiceEndpoint>(entitiesFullRangeReportFilePath, new ServiceEndpointMetricReportMap());
 
@@ -15314,7 +15406,7 @@ namespace AppDynamics.Dexter
 
                         List<EntityError> errorsList = FileIOHelper.readListFromCSVFile<EntityError>(errorsReportFilePath, new ErrorEntityReportMap());
 
-                        metricsEntityFolderPath = Path.Combine(metricsFolderPath, ERRORS_TYPE_SHORT);
+                        metricsEntityFolderPath = Path.Combine(metricsIndexFolderPath, ERRORS_TYPE_SHORT);
                         entitiesFullRangeReportFilePath = Path.Combine(metricsEntityFolderPath, CONVERT_ENTITIES_METRICS_FULLRANGE_FILE_NAME);
                         List<EntityError> errorsMetricsList = FileIOHelper.readListFromCSVFile<EntityError>(entitiesFullRangeReportFilePath, new ErrorMetricReportMap());
 
@@ -15444,7 +15536,7 @@ namespace AppDynamics.Dexter
             stepTimingFunction.StartTime = DateTime.Now;
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
-            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            string stepTimingReportFilePath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
 
             try
             {
@@ -15487,21 +15579,27 @@ namespace AppDynamics.Dexter
 
                         #region Target step variables
 
+                        // Major folders
+                        string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
                         // Various folders
-                        string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
-                        string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-                        string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-                        string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-                        string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
+                        string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+                        string snapshotsIndexFolderPath = Path.Combine(applicationIndexFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+                        string controllerReportFolderPath = Path.Combine(reportFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+                        string applicationReportFolderPath = Path.Combine(controllerReportFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+                        string snapshotsReportFolderPath = Path.Combine(applicationReportFolderPath, SNAPSHOTS_FOLDER_NAME);
 
                         // Report files
-                        string applicationReportFilePath = Path.Combine(applicationFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
-                        string tiersReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
-                        string nodesReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
-                        string businessTransactionsReportFilePath = Path.Combine(entitiesFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                        string applicationReportFilePath = Path.Combine(applicationIndexFolderPath, CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                        string tiersReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_TIERS_FILE_NAME);
+                        string nodesReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_NODES_FILE_NAME);
+                        string businessTransactionsReportFilePath = Path.Combine(entitiesIndexFolderPath, CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
                         string methodCallLinesToFrameworkTypeMappingFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, METHOD_CALL_LINES_TO_FRAMEWORK_TYPE_MAPPING_FILE_NAME);
-
-                        string snapshotsFilePath = Path.Combine(snapshotsFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
+                        string snapshotsFilePath = Path.Combine(snapshotsIndexFolderPath, CONVERT_SNAPSHOTS_FILE_NAME);
 
                         string flameGraphTemplateFilePath = Path.Combine(programOptions.ProgramLocationFolderPath, FLAME_GRAPH_TEMPLATE_FILE_NAME);
                         string flameGraphTemplateString = FileIOHelper.readFileFromPath(flameGraphTemplateFilePath);
@@ -15524,7 +15622,7 @@ namespace AppDynamics.Dexter
                             EntityApplication application = applicationList[0];
 
                             string applicationFoldedStacksFilePath = Path.Combine(
-                                snapshotsFolderPath,
+                                snapshotsIndexFolderPath,
                                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
                             if (File.Exists(applicationFoldedStacksFilePath) == true)
@@ -15561,7 +15659,7 @@ namespace AppDynamics.Dexter
                                     tier =>
                                     {
                                         string tierFoldedStacksFilePath = Path.Combine(
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                                             CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
@@ -15584,7 +15682,7 @@ namespace AppDynamics.Dexter
                                 foreach (EntityTier tier in tiersList)
                                 {
                                     string tierFoldedStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                                         CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
@@ -15631,7 +15729,7 @@ namespace AppDynamics.Dexter
                                     node =>
                                     {
                                         string nodeFoldedCallStacksFilePath = Path.Combine(
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             NODES_TYPE_SHORT,
                                             getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                                             getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
@@ -15656,7 +15754,7 @@ namespace AppDynamics.Dexter
                                 foreach (EntityNode node in nodesList)
                                 {
                                     string nodeFoldedCallStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         NODES_TYPE_SHORT,
                                         getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                                         getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
@@ -15705,7 +15803,7 @@ namespace AppDynamics.Dexter
                                     businessTransaction =>
                                     {
                                         string businessTransactionFoldedCallStacksFilePath = Path.Combine(
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                                             getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                                             CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
@@ -15729,7 +15827,7 @@ namespace AppDynamics.Dexter
                                 foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                                 {
                                     string businessTransactionFoldedCallStacksFilePath = Path.Combine(
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                                         getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                                         CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
@@ -15784,7 +15882,7 @@ namespace AppDynamics.Dexter
                                             jobConfiguration,
                                             jobTarget,
                                             snapshotsListChunk, 
-                                            snapshotsFolderPath,
+                                            snapshotsIndexFolderPath,
                                             flameGraphTemplateString,
                                             methodCallLineClassToFrameworkTypeMappingDictionary,
                                             false);
@@ -15804,7 +15902,7 @@ namespace AppDynamics.Dexter
                                         jobConfiguration,
                                         jobTarget,
                                         snapshotsList,
-                                        snapshotsFolderPath,
+                                        snapshotsIndexFolderPath,
                                         flameGraphTemplateString,
                                         methodCallLineClassToFrameworkTypeMappingDictionary,
                                         true);
@@ -15932,12 +16030,12 @@ namespace AppDynamics.Dexter
 
         #region Flowmap extraction functions
 
-        private static int extractFlowmapsApplication(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes)
+        private static int extractFlowmapsApplication(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string activityGridFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes)
         {
             logger.Info("Retrieving flowmap for Application {0}, From {1:o}, To {2:o}", jobTarget.Application, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
             string flowmapDataFilePath = Path.Combine(
-                metricsFolderPath,
+                activityGridFolderPath,
                 APPLICATION_TYPE_SHORT,
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
@@ -15952,7 +16050,7 @@ namespace AppDynamics.Dexter
             return 1;
         }
 
-        private static int extractFlowmapsTiers(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTTier> entityList, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
+        private static int extractFlowmapsTiers(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTTier> entityList, string activityGridFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
         {
             int j = 0;
 
@@ -15961,7 +16059,7 @@ namespace AppDynamics.Dexter
                 logger.Info("Retrieving flowmap for Application {0}, Tier {1}, From {2:o}, To {3:o}", jobTarget.Application, tier.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
-                    metricsFolderPath,
+                    activityGridFolderPath,
                     TIERS_TYPE_SHORT,
                     getShortenedEntityNameForFileSystem(tier.name, tier.id),
                     String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
@@ -15985,7 +16083,7 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int extractFlowmapsNodes(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTNode> entityList, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
+        private static int extractFlowmapsNodes(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTNode> entityList, string activityGridFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
         {
             int j = 0;
 
@@ -15994,7 +16092,7 @@ namespace AppDynamics.Dexter
                 logger.Info("Retrieving flowmap for Application {0}, Tier {1}, Node {2}, From {3:o}, To {4:o}", jobTarget.Application, node.tierName, node.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
-                    metricsFolderPath,
+                    activityGridFolderPath,
                     NODES_TYPE_SHORT,
                     getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
                     getShortenedEntityNameForFileSystem(node.name, node.id),
@@ -16019,7 +16117,7 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int extractFlowmapsBackends(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBackend> entityList, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
+        private static int extractFlowmapsBackends(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBackend> entityList, string activityGridFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
         {
             int j = 0;
 
@@ -16028,7 +16126,7 @@ namespace AppDynamics.Dexter
                 logger.Info("Retrieving flowmap for Application {0}, Backend {1}, From {2:o}, To {3:o}", jobTarget.Application, backend.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
-                    metricsFolderPath,
+                    activityGridFolderPath,
                     BACKENDS_TYPE_SHORT,
                     getShortenedEntityNameForFileSystem(backend.name, backend.id),
                     String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
@@ -16052,7 +16150,7 @@ namespace AppDynamics.Dexter
             return entityList.Count;
         }
 
-        private static int extractFlowmapsBusinessTransactions(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBusinessTransaction> entityList, string metricsFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
+        private static int extractFlowmapsBusinessTransactions(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<AppDRESTBusinessTransaction> entityList, string activityGridFolderPath, long fromTimeUnix, long toTimeUnix, long differenceInMinutes, bool progressToConsole)
         {
             int j = 0;
 
@@ -16061,7 +16159,7 @@ namespace AppDynamics.Dexter
                 logger.Info("Retrieving flowmap for Application {0}, Tier {1}, Business Transaction {2}, From {3:o}, To {4:o}", jobTarget.Application, businessTransaction.tierName, businessTransaction.name, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
 
                 string flowmapDataFilePath = Path.Combine(
-                    metricsFolderPath,
+                    activityGridFolderPath,
                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
                     getShortenedEntityNameForFileSystem(businessTransaction.tierName, businessTransaction.tierId),
                     getShortenedEntityNameForFileSystem(businessTransaction.name, businessTransaction.id),
@@ -16090,7 +16188,7 @@ namespace AppDynamics.Dexter
 
         #region Event extraction functions
 
-        private static int extractEvents(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string eventsFolderPath, string eventType, bool progressToConsole)
+        private static int extractEvents(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string eventsDataFolderPath, string eventType, bool progressToConsole)
         {
             if (progressToConsole == true)
             {
@@ -16124,11 +16222,11 @@ namespace AppDynamics.Dexter
 
             if (listOfEvents.Count > 0)
             {
-                string eventsFilePath = Path.Combine(
-                    eventsFolderPath,
+                string eventsDataFilePath = Path.Combine(
+                    eventsDataFolderPath,
                     String.Format(EVENTS_FILE_NAME, eventType, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
-                FileIOHelper.writeJArrayToFile(listOfEvents, eventsFilePath);
+                FileIOHelper.writeJArrayToFile(listOfEvents, eventsDataFilePath);
 
                 logger.Info("{0} events from {1:o} to {2:o}", listOfEvents.Count, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To);
                 if (progressToConsole == true)
@@ -16152,7 +16250,7 @@ namespace AppDynamics.Dexter
 
         #region Snapshot extraction functions
 
-        private static int extractSnapshots(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<JToken> entityList, List<AppDRESTTier> tiersNodeJSList, string snapshotsFolderPath, bool progressToConsole)
+        private static int extractSnapshots(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, List<JToken> entityList, List<AppDRESTTier> tiersNodeJSList, string snapshotsDataFolderPath, bool progressToConsole)
         {
            int j = 0;
 
@@ -16168,7 +16266,7 @@ namespace AppDynamics.Dexter
                     DateTime snapshotTime = convertFromUnixTimestamp((long)snapshot["serverStartTime"]);
 
                     string snapshotFolderPath = Path.Combine(
-                        snapshotsFolderPath,
+                        snapshotsDataFolderPath,
                         getShortenedEntityNameForFileSystem(snapshot["applicationComponentName"].ToString(), (long)snapshot["applicationComponentId"]),
                         getShortenedEntityNameForFileSystem(snapshot["businessTransactionName"].ToString(), (long)snapshot["businessTransactionId"]),
                         String.Format("{0:yyyyMMddHH}", snapshotTime),
@@ -16892,10 +16990,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksApplication(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityApplication> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16907,10 +17005,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksTiers(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityTier> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16922,10 +17020,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksNodes(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityNode> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16937,10 +17035,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksBackends(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityBackend> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16951,10 +17049,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksBusinessTransactions(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityBusinessTransaction> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16966,10 +17064,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksServiceEndpoints(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityServiceEndpoint> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16980,10 +17078,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksErrors(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityError> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -16994,10 +17092,10 @@ namespace AppDynamics.Dexter
 
         private static void updateEntitiesWithReportDetailLinksInformationPoints(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, List<EntityInformationPoint> entityList)
         {
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string controllerIndexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
 
             for (int i = 0; i < entityList.Count; i++)
             {
@@ -18531,14 +18629,11 @@ namespace AppDynamics.Dexter
 
         #region Flowmap detail conversion functions
 
-        private static void convertFlowmapApplication(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityApplication applicationRow, string metricsFolderPath)
+        private static void convertFlowmapApplication(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityApplication applicationRow, string activityGridDataFolderPath, string activityGridIndexFolderPath)
         {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
-                APPLICATION_TYPE_SHORT);
-
             string flowmapDataFilePath = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridDataFolderPath,
+                APPLICATION_TYPE_SHORT,
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
             JObject flowmapData = FileIOHelper.loadJObjectFromFile(flowmapDataFilePath);
@@ -18811,7 +18906,8 @@ namespace AppDynamics.Dexter
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
             string activityGridReportFileName = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridIndexFolderPath,
+                APPLICATION_TYPE_SHORT,
                 CONVERT_ACTIVITY_GRID_FILE_NAME);
 
             FileIOHelper.writeListToCSVFile(activityFlowsList, new ApplicationActivityFlowReportMap(), activityGridReportFileName);
@@ -18819,15 +18915,12 @@ namespace AppDynamics.Dexter
             return;
         }
 
-        private static string convertFlowmapTier(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityTier tierRow, string metricsFolderPath)
+        private static string convertFlowmapTier(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityTier tierRow, string activityGridDataFolderPath, string activityGridIndexFolderPath)
         {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
-                TIERS_TYPE_SHORT,
-                getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID));
-
             string flowmapDataFilePath = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridDataFolderPath,
+                TIERS_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID),
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
             JObject flowmapData = FileIOHelper.loadJObjectFromFile(flowmapDataFilePath);
@@ -19017,7 +19110,9 @@ namespace AppDynamics.Dexter
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
             string activityGridReportFileName = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridIndexFolderPath,
+                TIERS_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(tierRow.TierName, tierRow.TierID),
                 CONVERT_ACTIVITY_GRID_FILE_NAME);
 
             FileIOHelper.writeListToCSVFile(activityFlowsList, new TierActivityFlowReportMap(), activityGridReportFileName);
@@ -19025,16 +19120,13 @@ namespace AppDynamics.Dexter
             return activityGridReportFileName;
         }
 
-        private static string convertFlowmapNode(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityNode nodeRow, string metricsFolderPath)
+        private static string convertFlowmapNode(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityNode nodeRow, string activityGridDataFolderPath, string activityGridIndexFolderPath)
         {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
+            string flowmapDataFilePath = Path.Combine(
+                activityGridDataFolderPath,
                 NODES_TYPE_SHORT,
                 getShortenedEntityNameForFileSystem(nodeRow.TierName, nodeRow.TierID),
-                getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID));
-
-            string flowmapDataFilePath = Path.Combine(
-                metricsEntityFolderPath,
+                getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID),
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
             JObject flowmapData = FileIOHelper.loadJObjectFromFile(flowmapDataFilePath);
@@ -19240,7 +19332,10 @@ namespace AppDynamics.Dexter
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
             string activityGridReportFileName = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridIndexFolderPath,
+                NODES_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(nodeRow.TierName, nodeRow.TierID),
+                getShortenedEntityNameForFileSystem(nodeRow.NodeName, nodeRow.NodeID),
                 CONVERT_ACTIVITY_GRID_FILE_NAME);
 
             FileIOHelper.writeListToCSVFile(activityFlowsList, new NodeActivityFlowReportMap(), activityGridReportFileName);
@@ -19248,16 +19343,13 @@ namespace AppDynamics.Dexter
             return activityGridReportFileName;
         }
 
-        private static string convertFlowmapsBusinessTransaction(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBusinessTransaction businessTransactionRow, string metricsFolderPath)
+        private static string convertFlowmapsBusinessTransaction(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBusinessTransaction businessTransactionRow, string activityGridDataFolderPath, string activityGridIndexFolderPath)
         {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
+            string flowmapDataFilePath = Path.Combine(
+                activityGridDataFolderPath,
                 BUSINESS_TRANSACTIONS_TYPE_SHORT,
                 getShortenedEntityNameForFileSystem(businessTransactionRow.TierName, businessTransactionRow.TierID),
-                getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID));
-
-            string flowmapDataFilePath = Path.Combine(
-                metricsEntityFolderPath,
+                getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID),
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
             JObject flowmapData = FileIOHelper.loadJObjectFromFile(flowmapDataFilePath);
@@ -19459,7 +19551,10 @@ namespace AppDynamics.Dexter
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
             string activityGridReportFileName = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridIndexFolderPath,
+                BUSINESS_TRANSACTIONS_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(businessTransactionRow.TierName, businessTransactionRow.TierID),
+                getShortenedEntityNameForFileSystem(businessTransactionRow.BTName, businessTransactionRow.BTID),
                 CONVERT_ACTIVITY_GRID_FILE_NAME);
 
             FileIOHelper.writeListToCSVFile(activityFlowsList, new BusinessTransactionActivityFlowReportMap(), activityGridReportFileName);
@@ -19467,15 +19562,12 @@ namespace AppDynamics.Dexter
             return activityGridReportFileName;
         }
 
-        private static string convertFlowmapBackend(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBackend backendRow, string metricsFolderPath)
+        private static string convertFlowmapBackend(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget, EntityBackend backendRow, string activityGridDataFolderPath, string activityGridIndexFolderPath)
         {
-            string metricsEntityFolderPath = Path.Combine(
-                metricsFolderPath,
-                BACKENDS_TYPE_SHORT,
-                getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID));
-
             string flowmapDataFilePath = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridDataFolderPath,
+                BACKENDS_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID),
                 String.Format(EXTRACT_ENTITY_FLOWMAP_FILE_NAME, jobConfiguration.Input.ExpandedTimeRange.From, jobConfiguration.Input.ExpandedTimeRange.To));
 
             JObject flowmapData = FileIOHelper.loadJObjectFromFile(flowmapDataFilePath);
@@ -19666,7 +19758,9 @@ namespace AppDynamics.Dexter
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
             string activityGridReportFileName = Path.Combine(
-                metricsEntityFolderPath,
+                activityGridIndexFolderPath,
+                BACKENDS_TYPE_SHORT,
+                getShortenedEntityNameForFileSystem(backendRow.BackendName, backendRow.BackendID),
                 CONVERT_ACTIVITY_GRID_FILE_NAME);
 
             FileIOHelper.writeListToCSVFile(activityFlowsList, new BackendActivityFlowReportMap(), activityGridReportFileName);
@@ -19698,10 +19792,17 @@ namespace AppDynamics.Dexter
 
             #region Target step variables
 
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
-            string reportsFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string dataFolderPath = Path.Combine(programOptions.OutputJobFolderPath, DATA_FOLDER_NAME);
+            string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+            string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
+
+            string controllerDataFolderPath = Path.Combine(dataFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationDataFolderPath = Path.Combine(controllerDataFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string snapshotsDataFolderPath = Path.Combine(applicationDataFolderPath, SNAPSHOTS_FOLDER_NAME);
+
+            string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string snapshotsIndexFolderPath = Path.Combine(applicationIndexFolderPath, SNAPSHOTS_FOLDER_NAME);
 
             #endregion
 
@@ -19719,30 +19820,38 @@ namespace AppDynamics.Dexter
 
                 DateTime snapshotTime = convertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
 
-                string snapshotFolderPath = Path.Combine(
-                    snapshotsFolderPath,
+                string snapshotDataFolderPath = Path.Combine(
+                    snapshotsDataFolderPath,
                     getShortenedEntityNameForFileSystem(snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"]),
                     getShortenedEntityNameForFileSystem(snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"]),
                     String.Format("{0:yyyyMMddHH}", snapshotTime),
                     userExperienceFolderNameMapping[snapshotToken["userExperience"].ToString()],
                     String.Format(SNAPSHOT_FOLDER_NAME, snapshotToken["requestGUID"], snapshotTime));
 
-                string snapshotSegmentsDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_SEGMENT_FILE_NAME);
+                string snapshotSegmentsDataFilePath = Path.Combine(snapshotDataFolderPath, EXTRACT_SNAPSHOT_SEGMENT_FILE_NAME);
 
-                string snapshotsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_FILE_NAME);
-                string segmentsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
-                string exitCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME);
-                string serviceEndpointCallsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME);
-                string detectedErrorsFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
-                string businessDataFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
-                string methodCallLinesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
-                string methodCallLinesOccurrencesFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
-                string foldedCallStacksFileName = Path.Combine(snapshotFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
+                string snapshotIndexFolderPath = Path.Combine(
+                    snapshotsIndexFolderPath,
+                    getShortenedEntityNameForFileSystem(snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"]),
+                    getShortenedEntityNameForFileSystem(snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"]),
+                    String.Format("{0:yyyyMMddHH}", snapshotTime),
+                    userExperienceFolderNameMapping[snapshotToken["userExperience"].ToString()],
+                    String.Format(SNAPSHOT_FOLDER_NAME, snapshotToken["requestGUID"], snapshotTime));
+
+                string snapshotsFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_FILE_NAME);
+                string segmentsFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
+                string exitCallsFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                string serviceEndpointCallsFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINT_CALLS_FILE_NAME);
+                string detectedErrorsFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                string businessDataFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                string methodCallLinesFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                string methodCallLinesOccurrencesFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
+                string foldedCallStacksFileName = Path.Combine(snapshotIndexFolderPath, CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
 
                 #endregion
 
                 // Only process stuff that was previously exported but not indexed yet
-                if (Directory.Exists(snapshotFolderPath) == true && 
+                if (Directory.Exists(snapshotDataFolderPath) == true && 
                     File.Exists(snapshotsFileName) == false)
                 {
                     #region Fill in Snapshot data
@@ -19855,7 +19964,7 @@ namespace AppDynamics.Dexter
 
                     if (snapshot.CallGraphType != "NONE")
                     {
-                        snapshot.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, snapshot).Substring(reportsFolderPath.Length + 1));
+                        snapshot.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Flame>"")", getFlameGraphReportFilePath(programOptions, jobConfiguration, jobTarget, snapshot).Substring(reportFolderPath.Length + 1));
                     }
 
                     #endregion
@@ -19871,7 +19980,7 @@ namespace AppDynamics.Dexter
                     List<BusinessData> businessDataList = null;
                     List<MethodCallLine> methodCallLinesList = null;
                     List<MethodCallLine> methodCallLinesOccurrencesList = null;
-                    Dictionary<string, int> foldedCallStacksList = null; ;
+                    Dictionary<string, FoldedStackLine> foldedCallStacksList = null;
 
                     JArray snapshotSegmentsList = FileIOHelper.loadJArrayFromFile(snapshotSegmentsDataFilePath);
                     if (snapshotSegmentsList != null)
@@ -19900,15 +20009,16 @@ namespace AppDynamics.Dexter
                         methodCallLinesOccurrencesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 50);
 
                         // Assume 25 distinct call stacks in each segment
-                        foldedCallStacksList = new Dictionary<string, int>(snapshotSegmentsList.Count * 25);
+                        foldedCallStacksList = new Dictionary<string, FoldedStackLine>(snapshotSegmentsList.Count * 25);
 
                         SortedDictionary<string, CallChainContainer> callChainsSnapshot = new SortedDictionary<string, CallChainContainer>();
 
                         #endregion
 
+                        // Process segments one by one
                         foreach (JToken snapshotSegmentToken in snapshotSegmentsList)
                         {
-                            string snapshotSegmentDataFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME, snapshotSegmentToken["id"]));
+                            string snapshotSegmentDataFilePath = Path.Combine(snapshotDataFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME, snapshotSegmentToken["id"]));
                             JObject snapshotSegmentDetail = FileIOHelper.loadJObjectFromFile(snapshotSegmentDataFilePath);
                             if (snapshotSegmentDetail != null)
                             {
@@ -20662,7 +20772,7 @@ namespace AppDynamics.Dexter
                                     }
 
                                     // Second, populate the list of the details of errors
-                                    string snapshotSegmentErrorFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegmentToken["id"]));
+                                    string snapshotSegmentErrorFilePath = Path.Combine(snapshotDataFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME, snapshotSegmentToken["id"]));
                                     JArray snapshotSegmentErrorDetail = FileIOHelper.loadJArrayFromFile(snapshotSegmentErrorFilePath);
                                     if (snapshotSegmentErrorDetail != null)
                                     {
@@ -21001,7 +21111,7 @@ namespace AppDynamics.Dexter
 
                                 #region Process Call Graphs in Segment
 
-                                string snapshotSegmentCallGraphFilePath = Path.Combine(snapshotFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME, snapshotSegmentToken["id"]));
+                                string snapshotSegmentCallGraphFilePath = Path.Combine(snapshotDataFolderPath, String.Format(EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME, snapshotSegmentToken["id"]));
                                 JArray snapshotSegmentCallGraphs = FileIOHelper.loadJArrayFromFile(snapshotSegmentCallGraphFilePath);
 
                                 // Can't use recursion for some of the snapshots because of StackOverflowException
@@ -21169,6 +21279,7 @@ namespace AppDynamics.Dexter
                                 List<MethodCallLine> methodCallLinesLeaves = null;
                                 if (methodCallLinesInSegmentList.Count > 0)
                                 {
+                                    // Find all leaves and go up from them there
                                     if (methodCallLinesInSegmentList.Count == 1)
                                     {
                                         methodCallLinesLeaves = methodCallLinesInSegmentList;
@@ -21179,27 +21290,14 @@ namespace AppDynamics.Dexter
                                     }
                                     foreach (MethodCallLine methodCallLineLeaf in methodCallLinesLeaves)
                                     {
-                                        // Allocate some characters per class/method pair
-                                        StringBuilder sbFoldedCallStack = new StringBuilder(128 * methodCallLineLeaf.Depth);
-
-                                        // Walk from the leaf up to the parent, building the flattened stack with frames separated by ;
-                                        MethodCallLine methodCallLine = methodCallLineLeaf;
-                                        while (methodCallLine != null)
+                                        FoldedStackLine foldedStackLine = new FoldedStackLine(methodCallLineLeaf);
+                                        if (foldedCallStacksList.ContainsKey(foldedStackLine.FoldedStack) == true)
                                         {
-                                            if (sbFoldedCallStack.Length > 0) sbFoldedCallStack.Insert(0, ";");
-                                            sbFoldedCallStack.Insert(0, methodCallLine.FullName);
-                                            methodCallLine = methodCallLine.Parent;
-                                        }
-
-                                        // Now count the unique call stacks
-                                        string foldedCallStackString = sbFoldedCallStack.ToString();
-                                        if (foldedCallStacksList.ContainsKey(foldedCallStackString) == true)
-                                        {
-                                            foldedCallStacksList[foldedCallStackString]++;
+                                            foldedCallStacksList[foldedStackLine.FoldedStack].AddFoldedStackLine(foldedStackLine);
                                         }
                                         else
                                         {
-                                            foldedCallStacksList.Add(foldedCallStackString, 1);
+                                            foldedCallStacksList.Add(foldedStackLine.FoldedStack, foldedStackLine);
                                         }
                                     }
                                 }
@@ -21555,7 +21653,7 @@ namespace AppDynamics.Dexter
 
                     if (foldedCallStacksList != null)
                     {
-                        FileIOHelper.saveFileToPath(writeFoldedStackFramesToString(foldedCallStacksList), foldedCallStacksFileName, false);
+                        FileIOHelper.writeListToCSVFile(foldedCallStacksList.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), foldedCallStacksFileName);
                     }
 
                     List<Snapshot> snapshotRows = new List<Snapshot>(1);
@@ -22371,26 +22469,6 @@ namespace AppDynamics.Dexter
             return "17: t>300000"; ;
         }
 
-        public static string writeFoldedStackFramesToString(Dictionary<string, int> foldedCallStacksList)
-        {
-            if (foldedCallStacksList != null)
-            {
-                StringBuilder sb = new StringBuilder(256 * foldedCallStacksList.Count);
-                foreach (KeyValuePair<string, int> foldedCallStack in foldedCallStacksList)
-                {
-                    sb.Append(foldedCallStack.Key);
-                    sb.Append(" ");
-                    sb.Append(foldedCallStack.Value);
-                    sb.AppendLine();
-                    //sb.Append("\n");
-                }
-
-                return sb.ToString();
-            }
-
-            return String.Empty;
-        }
-
         public static Dictionary<string, int> readFoldedStackFramesFromString(string foldedCallStacksString)
         {
             Dictionary<string, int> foldedCallStacksList = new Dictionary<string, int>(25);
@@ -22415,19 +22493,19 @@ namespace AppDynamics.Dexter
             return foldedCallStacksList;
         }
 
-        public static void addFoldedStacks(Dictionary<string, int> foldedCallStacksAddToList, Dictionary<string, int> foldedCallStacksAddFromList)
+        public static void addFoldedStacks(Dictionary<string, FoldedStackLine> foldedlStackLinesAddTo, List<FoldedStackLine> foldedStackLinesAddFrom)
         {
-            if (foldedCallStacksAddToList != null && foldedCallStacksAddFromList != null)
+            if (foldedlStackLinesAddTo != null && foldedStackLinesAddFrom != null)
             {
-                foreach (KeyValuePair<string, int> foldedCallStack in foldedCallStacksAddFromList)
+                foreach (FoldedStackLine foldedCallStack in foldedStackLinesAddFrom)
                 {
-                    if (foldedCallStacksAddToList.ContainsKey(foldedCallStack.Key) == true)
+                    if (foldedlStackLinesAddTo.ContainsKey(foldedCallStack.FoldedStack) == true)
                     {
-                        foldedCallStacksAddToList[foldedCallStack.Key] = foldedCallStacksAddToList[foldedCallStack.Key] + foldedCallStack.Value;
+                        foldedlStackLinesAddTo[foldedCallStack.FoldedStack].AddFoldedStackLine(foldedCallStack);
                     }
                     else
                     {
-                        foldedCallStacksAddToList.Add(foldedCallStack.Key, foldedCallStack.Value);
+                        foldedlStackLinesAddTo.Add(foldedCallStack.FoldedStack, foldedCallStack);
                     }
                 }
             }
@@ -22711,7 +22789,7 @@ namespace AppDynamics.Dexter
             #region Target step variables
 
             // Various folders
-            string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORTS_FOLDER_NAME);
+            string reportFolderPath = Path.Combine(programOptions.OutputJobFolderPath, REPORT_FOLDER_NAME);
             string entitiesAllFolderPath = Path.Combine(reportFolderPath, ENTITIES_FOLDER_NAME);
 
             // Report files
@@ -24982,7 +25060,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     APPLICATION_TYPE_SHORT,
@@ -25000,7 +25078,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     TIERS_TYPE_SHORT,
@@ -25018,7 +25096,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     NODES_TYPE_SHORT,
@@ -25036,7 +25114,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     BACKENDS_TYPE_SHORT,
@@ -25054,7 +25132,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
@@ -25072,7 +25150,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     SERVICE_ENDPOINTS_TYPE_SHORT,
@@ -25090,7 +25168,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     ERRORS_TYPE_SHORT,
@@ -25108,7 +25186,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     INFORMATION_POINTS_TYPE_SHORT,
@@ -25122,11 +25200,13 @@ namespace AppDynamics.Dexter
         {
             #region Target step variables
 
+            string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+
             // Various folders
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
 
             // Report files
-            string controllerReportFilePath = Path.Combine(controllerFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
+            string controllerReportFilePath = Path.Combine(controllerIndexFolderPath, CONVERT_ENTITY_CONTROLLER_FILE_NAME);
 
             #endregion
 
@@ -25310,15 +25390,21 @@ namespace AppDynamics.Dexter
         {
             #region Target step variables
 
+            // Major folders
+            string indexFolderPath = Path.Combine(programOptions.OutputJobFolderPath, INDEX_FOLDER_NAME);
+
             // Various folders and files
-            string controllerFolderPath = Path.Combine(programOptions.OutputJobFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
-            string applicationFolderPath = Path.Combine(controllerFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
-            string entitiesFolderPath = Path.Combine(applicationFolderPath, ENTITIES_FOLDER_NAME);
-            string eventsFolderPath = Path.Combine(applicationFolderPath, EVENTS_FOLDER_NAME);
-            string snapshotsFolderPath = Path.Combine(applicationFolderPath, SNAPSHOTS_FOLDER_NAME);
-            string metricsFolderPath = Path.Combine(applicationFolderPath, METRICS_FOLDER_NAME);
-            string metricsEntityFolderTypePath = Path.Combine(metricsFolderPath, entityType);
+            string controllerIndexFolderPath = Path.Combine(indexFolderPath, getFileSystemSafeString(new Uri(jobTarget.Controller).Host));
+            string applicationIndexFolderPath = Path.Combine(controllerIndexFolderPath, getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+            string entitiesIndexFolderPath = Path.Combine(applicationIndexFolderPath, ENTITIES_FOLDER_NAME);
+            string eventsIndexFolderPath = Path.Combine(applicationIndexFolderPath, EVENTS_FOLDER_NAME);
+            string snapshotsIndexFolderPath = Path.Combine(applicationIndexFolderPath, SNAPSHOTS_FOLDER_NAME);
+            string metricsIndexFolderPath = Path.Combine(applicationIndexFolderPath, METRICS_FOLDER_NAME);
+            string activityGridIndexFolderPath = Path.Combine(applicationIndexFolderPath, ACTIVITYGRID_FOLDER_NAME);
+            string metricsEntityFolderTypePath = Path.Combine(metricsIndexFolderPath, entityType);
             string metricsEntityFolderPath = String.Empty;
+            string activityGridEntityFolderTypePath = Path.Combine(activityGridIndexFolderPath, entityType);
+            string activityGridEntityFolderPath = String.Empty;
 
             // Metric paths and files
             string entityFullRangeReportFilePath = String.Empty;
@@ -25354,6 +25440,7 @@ namespace AppDynamics.Dexter
                 entityNameForDisplay = entityName;
                 entityTypeForDisplay = "Application";
                 metricsEntityFolderPath = metricsEntityFolderTypePath;
+                activityGridEntityFolderPath = activityGridEntityFolderTypePath;
             }
             else if (entityType == TIERS_TYPE_SHORT)
             {
@@ -25362,6 +25449,9 @@ namespace AppDynamics.Dexter
                 entityTypeForDisplay = "Tier";
                 metricsEntityFolderPath = Path.Combine(
                     metricsEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID));
             }
             else if (entityType == NODES_TYPE_SHORT)
@@ -25373,6 +25463,10 @@ namespace AppDynamics.Dexter
                     metricsEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
                     getShortenedEntityNameForFileSystem(entityRow.NodeName, entityRow.NodeID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
+                    getShortenedEntityNameForFileSystem(entityRow.NodeName, entityRow.NodeID));
             }
             else if (entityType == BACKENDS_TYPE_SHORT)
             {
@@ -25382,6 +25476,9 @@ namespace AppDynamics.Dexter
                 metricsEntityFolderPath = Path.Combine(
                     metricsEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(((EntityBackend)entityRow).BackendName, ((EntityBackend)entityRow).BackendID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(((EntityBackend)entityRow).BackendName, ((EntityBackend)entityRow).BackendID));
             }
             else if (entityType == BUSINESS_TRANSACTIONS_TYPE_SHORT)
             {
@@ -25390,6 +25487,10 @@ namespace AppDynamics.Dexter
                 entityTypeForDisplay = "Business Transaction";
                 metricsEntityFolderPath = Path.Combine(
                     metricsEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
+                    getShortenedEntityNameForFileSystem(((EntityBusinessTransaction)entityRow).BTName, ((EntityBusinessTransaction)entityRow).BTID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
                     getShortenedEntityNameForFileSystem(((EntityBusinessTransaction)entityRow).BTName, ((EntityBusinessTransaction)entityRow).BTID));
             }
@@ -25402,6 +25503,10 @@ namespace AppDynamics.Dexter
                     metricsEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
                     getShortenedEntityNameForFileSystem(((EntityServiceEndpoint)entityRow).SEPName, ((EntityServiceEndpoint)entityRow).SEPID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
+                    getShortenedEntityNameForFileSystem(((EntityServiceEndpoint)entityRow).SEPName, ((EntityServiceEndpoint)entityRow).SEPID));
             }
             else if (entityType == ERRORS_TYPE_SHORT)
             {
@@ -25410,6 +25515,10 @@ namespace AppDynamics.Dexter
                 entityTypeForDisplay = "Error";
                 metricsEntityFolderPath = Path.Combine(
                     metricsEntityFolderTypePath,
+                    getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
+                    getShortenedEntityNameForFileSystem(((EntityError)entityRow).ErrorName, ((EntityError)entityRow).ErrorID));
+                activityGridEntityFolderPath = Path.Combine(
+                    activityGridEntityFolderTypePath,
                     getShortenedEntityNameForFileSystem(entityRow.TierName, entityRow.TierID),
                     getShortenedEntityNameForFileSystem(((EntityError)entityRow).ErrorName, ((EntityError)entityRow).ErrorID));
             }
@@ -25777,7 +25886,7 @@ namespace AppDynamics.Dexter
             sheet = excelEntityDetail.Workbook.Worksheets[REPORT_ENTITY_DETAILS_SHEET_ACTIVITYGRID];
 
             fromRow = REPORT_ENTITY_DETAILS_LIST_SHEET_START_TABLE_AT;
-            string activityGridReportFileName = Path.Combine(metricsEntityFolderPath, CONVERT_ACTIVITY_GRID_FILE_NAME);
+            string activityGridReportFileName = Path.Combine(activityGridEntityFolderPath, CONVERT_ACTIVITY_GRID_FILE_NAME);
             if (File.Exists(activityGridReportFileName) == true)
             {
                 readCSVFileIntoExcelRange(activityGridReportFileName, 0, sheet, fromRow, 1);
@@ -27295,7 +27404,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     APPLICATION_TYPE_SHORT,
@@ -27313,7 +27422,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     TIERS_TYPE_SHORT,
@@ -27331,7 +27440,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     NODES_TYPE_SHORT,
@@ -27353,7 +27462,7 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.ExpandedTimeRange.To);
                 reportFilePath = Path.Combine(
                     programOptions.OutputJobFolderPath,
-                    REPORTS_FOLDER_NAME,
+                    REPORT_FOLDER_NAME,
                     getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                     getShortenedEntityNameForFileSystem(entityRow.ApplicationName, entityRow.ApplicationID),
                     BUSINESS_TRANSACTIONS_TYPE_SHORT,
@@ -27385,7 +27494,7 @@ namespace AppDynamics.Dexter
 
             string reportFilePath = Path.Combine(
                 programOptions.OutputJobFolderPath,
-                REPORTS_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
                 SNAPSHOTS_FOLDER_NAME,
@@ -27401,7 +27510,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration,
             JobTarget jobTarget, 
             List<Snapshot> snapshotsList, 
-            string snapshotsFolderPath, 
+            string snapshotsIndexFolderPath, 
             string flameGraphTemplateString,
             Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
             bool progressToConsole)
@@ -27411,7 +27520,7 @@ namespace AppDynamics.Dexter
             foreach (Snapshot snapshot in snapshotsList)
             {
                 string snapshotFolderPath = Path.Combine(
-                    snapshotsFolderPath,
+                    snapshotsIndexFolderPath,
                     getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
                     getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
                     String.Format("{0:yyyyMMddHH}", snapshot.OccurredUtc),
@@ -27447,8 +27556,8 @@ namespace AppDynamics.Dexter
         /// <summary>
         /// Review http://www.brendangregg.com/FlameGraphs/cpuflamegraphs.html
         /// Review http://techblog.netflix.com/2015/07/java-in-flames.html
-        ///        http://techblog.netflix.com/2014/11/nodejs-in-flames.html
-        /// Implementation courtesy of learning how https://github.com/davepacheco/node-stackvis does it
+        /// Review http://techblog.netflix.com/2014/11/nodejs-in-flames.html
+        /// Implementation courtesy of learning how https://github.com/davepacheco/node-stackvis does it, which in itself is reimplementing Brendan's work
         /// </summary>
         /// <param name="foldedStackFilePath"></param>
         /// <param name="flameGraphFilePath"></param>
@@ -27516,7 +27625,7 @@ namespace AppDynamics.Dexter
             #region Create object representation of Flame Graph
 
             // Read folded call stacks with counts of occurrences
-            Dictionary<string, int> foldedCallStacksList = readFoldedStackFramesFromString(FileIOHelper.readFileFromPath(foldedStackFilePath));
+            List<FoldedStackLine> foldedCallStacksList = FileIOHelper.readListFromCSVFile<FoldedStackLine>(foldedStackFilePath, new FoldedStackLineReportMap());
             if (foldedCallStacksList.Count == 0)
             {
                 logger.Warn("Flame graph file {0} contains no folded frames", foldedStackFilePath);
@@ -27524,7 +27633,7 @@ namespace AppDynamics.Dexter
             }
 
             // Sort the call stacks by the string portion alphabetically
-            SortedDictionary<string, int> sortedFoldedCallStacksList = new SortedDictionary<string, int>(foldedCallStacksList);
+            List<FoldedStackLine> sortedFoldedCallStacksList = foldedCallStacksList.OrderBy(s => s.FoldedStack).ToList();
 
             // Depth of the tallest call stack, used to measure the height of final canvas
             int maxFrameDepth = 0;
@@ -27536,11 +27645,11 @@ namespace AppDynamics.Dexter
             List<FlameGraphBox> flameGraphBoxes = new List<FlameGraphBox>(sortedFoldedCallStacksList.Count * 15);
 
             // Process call stacks one by one, stacking frames from left to right in alphabetical order, and stacking them from bottom up
-            foreach (KeyValuePair<string, int> foldedCallStack in sortedFoldedCallStacksList)
+            foreach (FoldedStackLine foldedStackLine in sortedFoldedCallStacksList)
             {
                 // Add an empty frame for frame representing "all samples" frame. 
                 // Parse the folded stack into array of frames, prepended with empty frame to account for all items
-                string[] stackFrames = String.Format("all;{0}", foldedCallStack.Key).Split(';');
+                string[] stackFrames = String.Format("all;{0}", foldedStackLine.FoldedStack).Split(';');
 
                 // Calculate maximum depth for later measurement of the overall canvas
                 if (stackFrames.Length > maxFrameDepth)
@@ -27553,7 +27662,7 @@ namespace AppDynamics.Dexter
 
                 // If not the first stack processed, compare this new stack frames to the previous stack frames, going up 
                 // Keep comparing until you see no differences or hit the top
-                // measure that hight 
+                // measure that height 
                 int depthOfSameFrames = 0;
                 for (int i = 0; i < lastCallStack.Count && i < stackFrames.Length; i++)
                 {
@@ -27562,7 +27671,11 @@ namespace AppDynamics.Dexter
                     {
                         // Same frame. Make it wider by adding the number of samples to the already existing flame graph box
                         FlameGraphBox flameGraphBox = lastCallStack[i];
-                        flameGraphBox.Samples = flameGraphBox.Samples + foldedCallStack.Value;
+                        flameGraphBox.Samples = flameGraphBox.Samples + foldedStackLine.NumSamples;
+                        if (i > 0)
+                        {
+                            flameGraphBox.Duration = flameGraphBox.Duration + foldedStackLine.StackTimingArray[i - 1];
+                        }
 
                         // Add this frame to the current call stack
                         thisCallStack.Add(flameGraphBox);
@@ -27592,7 +27705,12 @@ namespace AppDynamics.Dexter
                     FlameGraphBox flameGraphBox = new FlameGraphBox();
                     flameGraphBox.FullName = stackFrames[i];
                     flameGraphBox.Start = maxSampleWidth;
-                    flameGraphBox.Samples = foldedCallStack.Value;
+                    flameGraphBox.Samples = foldedStackLine.NumSamples;
+                    if (i > 0)
+                    {
+                        flameGraphBox.Duration = flameGraphBox.Duration + foldedStackLine.StackTimingArray[i - 1];
+                    }
+
                     flameGraphBox.Depth = i;
 
                     // Add this frame to the current call stack
@@ -27602,14 +27720,13 @@ namespace AppDynamics.Dexter
                     flameGraphBoxes.Add(flameGraphBox);
                 }
 
-
-                //    If items at the same level are idenfical in MethodCall, make the leftmost item wider in adding this 
-                //    frames' number of samples to the leftmost. Discard the new frame, and use the left one, wider instead
-                //    If items at the same level are not identical in MethodCall, use this frame, adjusting its start to be
-                //    right after the leftmost one's end
+                // If items at the same level are idenfical in MethodCall, make the leftmost item wider in adding this 
+                // frames' number of samples to the leftmost. Discard the new frame, and use the left one, wider instead
+                // If items at the same level are not identical in MethodCall, use this frame, adjusting its start to be
+                // right after the leftmost one's end
 
                 // Move the starting point for next call stack right by the value of the current call stack sample rate
-                maxSampleWidth = maxSampleWidth + foldedCallStack.Value;
+                maxSampleWidth = maxSampleWidth + foldedStackLine.NumSamples;
 
                 // Make this call stack last and move on to next folded call stack
                 lastCallStack = thisCallStack;
@@ -27801,8 +27918,9 @@ namespace AppDynamics.Dexter
 
                                     // Output mouseover hint
                                     xmlWriter.WriteStartElement("title");
-                                    xmlWriter.WriteString(String.Format("{0} ({1} samples, {2:P})", flameGraphBox.FullName, flameGraphBox.Samples, flameGraphBox.Samples / (decimal)maxSampleWidth));
-                                    xmlWriter.WriteEndElement();
+                                    long averageDuration = (long)Math.Round(flameGraphBox.Duration / (decimal)flameGraphBox.Samples, 0);
+                                    xmlWriter.WriteString(String.Format("{0} (Duration Total {1}, Average {2}, {3} samples, {4:P})", XmlConvert.EncodeName(flameGraphBox.FullName), flameGraphBox.Duration, averageDuration, flameGraphBox.Samples, flameGraphBox.Samples / (decimal)maxSampleWidth));
+                                    xmlWriter.WriteEndElement();                                   
 
                                     // Determine the color for the box, using the framework lookup
                                     MethodCallLineClassTypeMapping methodCallLineClassTypeMapping = getMethodCallLineClassTypeMappingFromClassOrFunctionName(flameGraphBox.FullName, methodCallLineClassToFrameworkTypeMappingDictionary);
@@ -27836,6 +27954,36 @@ namespace AppDynamics.Dexter
                                     xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(flameGraphBox.Depth, maxFrameDepth, colorStart, colorEnd));
                                     xmlWriter.WriteAttributeString("rx", "2");
                                     xmlWriter.WriteAttributeString("ry", "2");
+
+                                    if (flameGraphBox.Duration > 0 && averageDuration > 100)
+                                    {
+                                        xmlWriter.WriteAttributeString("stroke", "#BF0000");
+                                        if (averageDuration <= 250)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "1");
+                                        }
+                                        else if (averageDuration <= 500)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "2");
+                                        }
+                                        else if (averageDuration <= 1000)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "3");
+                                        }
+                                        else if (averageDuration <= 5000)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "4");
+                                        }
+                                        else if (averageDuration <= 10000)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "5");
+                                        }
+                                        else
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-width", "6");
+                                        }
+                                    }
+
                                     xmlWriter.WriteEndElement();
 
                                     // Output text label that is visible and positioned right over the rectanlge
@@ -27853,11 +28001,11 @@ namespace AppDynamics.Dexter
 
                                         if (flameGraphBox.FullName.Length > numberOfCharactersThatWillFit)
                                         {
-                                            xmlWriter.WriteString(String.Format("{0}..", flameGraphBox.FullName.Substring(0, numberOfCharactersThatWillFit)));
+                                            xmlWriter.WriteString(String.Format("{0}..", XmlConvert.EncodeName(flameGraphBox.FullName.Substring(0, numberOfCharactersThatWillFit))));
                                         }
                                         else
                                         {
-                                            xmlWriter.WriteString(flameGraphBox.FullName);
+                                            xmlWriter.WriteString(XmlConvert.EncodeName(flameGraphBox.FullName));
                                         }
                                     }
                                     else
@@ -27912,7 +28060,8 @@ namespace AppDynamics.Dexter
             var gActual = startColor.G + (int)(gStep * thisDepth);
             var bActual = startColor.B + (int)(bStep * thisDepth);
 
-            return String.Format("#{0:X2}{1:X2}{2:X2}", rActual, gActual, bActual);
+            // Make color in RGBA format, where A (Alpha) is exactly half 2/3 of the way to 255
+            return String.Format("#{0:X2}{1:X2}{2:X2}B8", rActual, gActual, bActual);
         }
 
         private static Color getColorFromHexString(string hexColorString)

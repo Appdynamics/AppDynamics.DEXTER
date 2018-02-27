@@ -94,7 +94,7 @@ namespace AppDynamics.Dexter
             return this.apiGET("controller/rest/configuration?output=json", "application/json", false);
         }
 
-        public string GetApplicationConfiguration(int applicationID)
+        public string GetApplicationConfiguration(long applicationID)
         {
             return this.apiGET(String.Format("controller/ConfigObjectImportExportServlet?applicationId={0}", applicationID), "text/xml", false);
         }
@@ -109,7 +109,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetSingleApplication(int applicationID)
+        public string GetSingleApplication(long applicationID)
         {
             return this.GetSingleApplication(applicationID.ToString());
         }
@@ -119,7 +119,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/tiers?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfTiers(int applicationID)
+        public string GetListOfTiers(long applicationID)
         {
             return this.GetListOfTiers(applicationID.ToString());
         }
@@ -129,7 +129,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/nodes?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfNodes(int applicationID)
+        public string GetListOfNodes(long applicationID)
         {
             return this.GetListOfNodes(applicationID.ToString());
         }
@@ -139,7 +139,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/business-transactions?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfBusinessTransactions(int applicationID)
+        public string GetListOfBusinessTransactions(long applicationID)
         {
             return this.GetListOfBusinessTransactions(applicationID.ToString());
         }
@@ -149,12 +149,12 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/backends?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfBackends(int applicationID)
+        public string GetListOfBackends(long applicationID)
         {
             return this.GetListOfBackends(applicationID.ToString());
         }
 
-        public string GetListOfBackendsAdditionalDetail(int applicationID)
+        public string GetListOfBackendsAdditionalDetail(long applicationID)
         {
             return this.apiGET(String.Format("controller/restui/backendUiService/backendListViewData/{0}/false?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }
@@ -164,7 +164,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Service Endpoints|*|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfServiceEndpoints(int applicationID)
+        public string GetListOfServiceEndpoints(long applicationID)
         {
             return this.GetListOfServiceEndpoints(applicationID.ToString());
         }
@@ -174,12 +174,12 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Service Endpoints|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
         }
 
-        public string GetListOfServiceEndpointsInTier(int applicationID, string tierName)
+        public string GetListOfServiceEndpointsInTier(long applicationID, string tierName)
         {
             return this.GetListOfServiceEndpointsInTier(applicationID.ToString(), tierName);
         }
 
-        public string GetListOfServiceEndpointsAdditionalDetail(int applicationID)
+        public string GetListOfServiceEndpointsAdditionalDetail(long applicationID)
         {
             return this.apiGET(String.Format("controller/restui/serviceEndpoint/list2/{0}/{0}/APPLICATION?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }
@@ -189,7 +189,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Errors|*|*|Errors per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfErrors(int applicationID)
+        public string GetListOfErrors(long applicationID)
         {
             return this.GetListOfErrors(applicationID.ToString());
         }
@@ -199,7 +199,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/metrics?metric-path=Errors|{1}&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName, WebUtility.UrlEncode(tierName)), "application/json", false);
         }
 
-        public string GetListOfErrorsInTier(int applicationID, string tierName)
+        public string GetListOfErrorsInTier(long applicationID, string tierName)
         {
             return this.GetListOfErrorsInTier(applicationID.ToString(), tierName);
         }
@@ -209,12 +209,12 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/rest/applications/{0}/metric-data?metric-path=Information Points|*|Calls per Minute&time-range-type=BEFORE_NOW&duration-in-mins=15&output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetListOfInformationPoints(int applicationID)
+        public string GetListOfInformationPoints(long applicationID)
         {
             return this.GetListOfInformationPoints(applicationID.ToString());
         }
 
-        public string GetListOfInformationPointsAdditionalDetail(int applicationID)
+        public string GetListOfInformationPointsAdditionalDetail(long applicationID)
         {
             return this.apiGET(String.Format("controller/restui/informationPointUiService/getAllInfoPointsListViewData/{0}?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
         }
@@ -553,7 +553,7 @@ namespace AppDynamics.Dexter
                 false);
         }
 
-        public string GetMetricData(int applicationID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
+        public string GetMetricData(long applicationID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
         {
             return this.GetMetricData(applicationID.ToString(), metricPath, startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, rollup);
         }
@@ -562,7 +562,7 @@ namespace AppDynamics.Dexter
 
         #region Event retrieval
 
-        public string GetHealthRuleViolations(int applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        public string GetHealthRuleViolations(long applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             return this.apiGET(
                 String.Format("controller/rest/applications/{0}/problems/healthrule-violations?time-range-type=BETWEEN_TIMES&start-time={1}&end-time={2}&output=JSON",
@@ -573,7 +573,7 @@ namespace AppDynamics.Dexter
                 true);
         }
 
-        public string GetEvents(int applicationID, string eventType, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        public string GetEvents(long applicationID, string eventType, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             
             return this.apiGET(
