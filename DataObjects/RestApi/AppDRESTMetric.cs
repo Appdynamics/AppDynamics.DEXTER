@@ -34,7 +34,7 @@ namespace AppDynamics.Dexter.DataObjects
         public override String ToString()
         {
             return String.Format(
-                "AppDRESTMetric: {0}({1})",
+                "AppDRESTMetric: {0} ({1})",
                 this.metricName,
                 this.metricId);
         }

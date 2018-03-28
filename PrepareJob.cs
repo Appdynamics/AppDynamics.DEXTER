@@ -136,19 +136,25 @@ namespace AppDynamics.Dexter
 
                 return false;
             }
-            else if (jobConfiguration.Input.TimeRange.From >= jobConfiguration.Input.TimeRange.To)
+            else if (jobConfiguration.Input.TimeRange.From > jobConfiguration.Input.TimeRange.To)
             {
-                logger.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
-                loggerConsole.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be >= Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                logger.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be > Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                loggerConsole.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be > Input.TimeRange.To='{1:u}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
 
                 return false;
             }
-            else if (jobConfiguration.Input.TimeRange.From > DateTime.Now)
+            else if (jobConfiguration.Input.TimeRange.From.ToLocalTime() > DateTime.Now)
             {
                 logger.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
                 loggerConsole.Error("Job File Problem: Input.TimeRange.From='{0:u}' can not be in the future", jobConfiguration.Input.TimeRange.From);
 
                 return false;
+            }
+
+            // Validate Metrics selection
+            if (jobConfiguration.Input.MetricsSelectionCriteria == null)
+            {
+                jobConfiguration.Input.MetricsSelectionCriteria = new string[0];
             }
 
             // Validate Snapshot selection
@@ -211,49 +217,40 @@ namespace AppDynamics.Dexter
 
             #endregion
 
-            #region Expand time ranges for metric retrieval
+            #region Expand time ranges into hourly chunks
 
-            // Expand the time ranges to the hour beginning and end
-            JobTimeRange expandedTimeRange = new JobTimeRange();
-            expandedTimeRange.From = jobConfiguration.Input.TimeRange.From.ToUniversalTime();
-            expandedTimeRange.From = new DateTime(
-                expandedTimeRange.From.Year,
-                expandedTimeRange.From.Month,
-                expandedTimeRange.From.Day,
-                expandedTimeRange.From.Hour,
-                0,
-                0,
-                DateTimeKind.Utc);
-
-            expandedTimeRange.To = jobConfiguration.Input.TimeRange.To.ToUniversalTime();
-            if (expandedTimeRange.To.Minute > 0 || expandedTimeRange.To.Second > 0)
-            {
-                expandedTimeRange.To = new DateTime(
-                    expandedTimeRange.To.Year,
-                    expandedTimeRange.To.Month,
-                    expandedTimeRange.To.Day,
-                    expandedTimeRange.To.Hour,
-                    0,
-                    0,
-                    DateTimeKind.Utc).AddHours(1);
-            }
-
-            jobConfiguration.Input.ExpandedTimeRange = expandedTimeRange;
+            jobConfiguration.Input.TimeRange.From = jobConfiguration.Input.TimeRange.From.ToUniversalTime();
+            jobConfiguration.Input.TimeRange.To = jobConfiguration.Input.TimeRange.To.ToUniversalTime();
 
             // Prepare list of time ranges that goes from the Hour:00 of the From to the Hour:59 of the To
             jobConfiguration.Input.HourlyTimeRanges = new List<JobTimeRange>();
 
-            DateTime intervalStartTime = expandedTimeRange.From;
-            //DateTime intervalEndTime = intervalStartTime.AddMinutes(59);
-            DateTime intervalEndTime = intervalStartTime.AddHours(1);
-            while (intervalEndTime <= expandedTimeRange.To)
+            DateTime intervalStartTime = jobConfiguration.Input.TimeRange.From;
+            DateTime intervalEndTime = new DateTime(
+                intervalStartTime.Year,
+                intervalStartTime.Month,
+                intervalStartTime.Day,
+                intervalStartTime.Hour,
+                0,
+                0,
+                DateTimeKind.Utc).AddHours(1);
+            do
             {
-                jobConfiguration.Input.HourlyTimeRanges.Add(new JobTimeRange { From = intervalStartTime, To = intervalEndTime });
+                TimeSpan timeSpan = intervalEndTime - jobConfiguration.Input.TimeRange.To;
+                if (timeSpan.TotalMinutes >= 0)
+                {
+                    jobConfiguration.Input.HourlyTimeRanges.Add(new JobTimeRange { From = intervalStartTime, To = jobConfiguration.Input.TimeRange.To });
+                    break;
+                }
+                else
+                {
+                    jobConfiguration.Input.HourlyTimeRanges.Add(new JobTimeRange { From = intervalStartTime, To = intervalEndTime });
+                }
 
-                intervalStartTime = intervalStartTime.AddHours(1);
-                //intervalEndTime = intervalStartTime.AddMinutes(59);
+                intervalStartTime = intervalEndTime;
                 intervalEndTime = intervalStartTime.AddHours(1);
             }
+            while (true);
 
             #endregion
 

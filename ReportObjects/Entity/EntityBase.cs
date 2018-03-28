@@ -12,14 +12,6 @@ namespace AppDynamics.Dexter.DataObjects
         public string ApplicationLink { get; set; }
         public string ApplicationName { get; set; }
 
-        public long TierID { get; set; }
-        public string TierLink { get; set; }
-        public string TierName { get; set; }
-
-        public long NodeID { get; set; }
-        public string NodeLink { get; set; }
-        public string NodeName { get; set; }
-
         public string MetricLink { get; set; }
         public List<long> MetricsIDs { get; set; }
 
@@ -29,6 +21,7 @@ namespace AppDynamics.Dexter.DataObjects
         public DateTime FromUtc { get; set; }
         public DateTime ToUtc { get; set; }
 
+        public string ARTRange { get; set; }
         public long ART { get; set; }
         public long TimeTotal { get; set; }
         public long Calls { get; set; }
@@ -44,6 +37,13 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string DetailLink { get; set; }
 
+        public string MetricGraphLink { get; set; }
+
         public string FlameGraphLink { get; set; }
+
+        public virtual long EntityID { get; }
+        public virtual string EntityName { get; }
+        public virtual string FolderName { get; }
+        public virtual string EntityType { get; }
     }
 }

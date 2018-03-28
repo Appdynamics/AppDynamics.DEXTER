@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityApplication : EntityBase
     {
+        public const string ENTITY_TYPE = "Application";
+        public const string ENTITY_FOLDER = "APP";
+
         public string Description { get; set; }
 
         public int NumBackends { get; set; }
@@ -29,6 +32,35 @@ namespace AppDynamics.Dexter.DataObjects
         public int NumHRViolationsWarning { get; set; }
         public int NumHRViolationsCritical { get; set; }
 
+        public override long EntityID
+        {
+            get
+            {
+                return this.ApplicationID;
+            }
+        }
+        public override string EntityName
+        {
+            get
+            {
+                return this.ApplicationName;
+            }
+        }
+        public override string EntityType
+        {
+            get
+            {
+                return ENTITY_TYPE;
+            }
+        }
+        public override string FolderName
+        {
+            get
+            {
+                return ENTITY_FOLDER;
+            }
+        }
+        
         public EntityApplication Clone()
         {
             return (EntityApplication)this.MemberwiseClone();

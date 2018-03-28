@@ -13,6 +13,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.BTName).Index(i); i++;
             Map(m => m.BTType).Index(i); i++;
             Map(m => m.ART).Index(i); i++;
+            Map(m => m.ARTRange).Index(i); i++;
             Map(m => m.TimeTotal).Index(i); i++;
             Map(m => m.Calls).Index(i); i++;
             Map(m => m.CPM).Index(i); i++;
@@ -25,10 +26,12 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.FromUtc).Index(i); i++;
             Map(m => m.ToUtc).Index(i); i++;
             Map(m => m.Duration).Index(i); i++;
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
             Map(m => m.DetailLink).Index(i); i++;
+            Map(m => m.MetricGraphLink).Index(i); i++;
             Map(m => m.FlameGraphLink).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;

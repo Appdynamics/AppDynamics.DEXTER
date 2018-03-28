@@ -4,6 +4,17 @@ namespace AppDynamics.Dexter.DataObjects
 {
     public class EntityNode : EntityBase
     {
+        public const string ENTITY_TYPE = "Node";
+        public const string ENTITY_FOLDER = "NODE";
+
+        public long TierID { get; set; }
+        public string TierLink { get; set; }
+        public string TierName { get; set; }
+
+        public long NodeID { get; set; }
+        public string NodeLink { get; set; }
+        public string NodeName { get; set; }
+
         public string AgentType { get; set; }
         public bool AgentPresent { get; set; }
         public string AgentVersion { get; set; }
@@ -16,6 +27,35 @@ namespace AppDynamics.Dexter.DataObjects
         public string MachineName { get; set; }
         public string MachineOSType { get; set; }
         public string MachineType { get; set; }
+
+        public override long EntityID
+        {
+            get
+            {
+                return this.NodeID;
+            }
+        }
+        public override string EntityName
+        {
+            get
+            {
+                return this.NodeName;
+            }
+        }
+        public override string EntityType
+        {
+            get
+            {
+                return ENTITY_TYPE;
+            }
+        }
+        public override string FolderName
+        {
+            get
+            {
+                return ENTITY_FOLDER;
+            }
+        }
 
         public EntityNode Clone()
         {

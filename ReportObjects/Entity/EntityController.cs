@@ -6,6 +6,7 @@ namespace AppDynamics.Dexter.DataObjects
     {
         public string UserName { get; set; }
         public string Version { get; set; }
+        public string VersionDetail { get; set; }
 
         public int NumApps { get; set; }
 

@@ -152,7 +152,7 @@ namespace AppDynamics.Dexter.DataObjects
         public override String ToString()
         {
             return String.Format(
-                "HealthRule: {0}/{1}/{2} {3}",
+                "HealthRule: {0}/{1}/{2}",
                 this.Controller,
                 this.ApplicationName,
                 this.RuleName);

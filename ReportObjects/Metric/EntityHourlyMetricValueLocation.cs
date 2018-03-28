@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.DataObjects
 {
-    public class MetricValue
+    public class EntityHourlyMetricValueLocation
     {
         public string Controller { get; set; }
 
@@ -16,29 +16,23 @@ namespace AppDynamics.Dexter.DataObjects
         public string MetricName { get; set; }
         public long MetricID { get; set; }
 
-        public DateTime EventTime { get; set; }
-        public DateTime EventTimeStamp { get; set; }
-        public DateTime EventTimeStampUtc { get; set; }
+        public DateTime FromUtc { get; set; }
+        public DateTime ToUtc { get; set; }
 
-        public long Count { get; set; }
-        public long Min { get; set; }
-        public long Max { get; set; }
-        public long Occurrences { get; set; }
-        public long Sum { get; set; }
-        public long Value { get; set; }
-
-        public int MetricResolution { get; set; }
+        public int RowStart { get; set; }
+        public int RowEnd { get; set; }
 
         public override String ToString()
         {
             return String.Format(
-                "MetricValue: Controller={0}, ApplicationName={1}, EntityName={2:o}, MetricName={3}, EventTimeStamp={4:o}, Value={5}",
+                "EntityHourlyMetricValueLocation: Controller={0}, ApplicationName={1}, EntityName={2:o}, MetricName={3}, From={4:o}, RowStart={5}, RowEnd={6}",
                 this.Controller,
                 this.ApplicationName,
                 this.EntityName,
                 this.MetricName,
-                this.EventTimeStamp,
-                this.Value);
+                this.FromUtc,
+                this.RowStart,
+                this.RowEnd);
         }
     }
 }

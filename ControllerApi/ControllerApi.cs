@@ -89,6 +89,11 @@ namespace AppDynamics.Dexter
 
         #region Metadata retrieval
 
+        public string GetControllerVersion()
+        {
+            return this.apiGET("controller/rest/serverstatus", "text/xml", false);
+        }
+
         public string GetControllerConfiguration()
         {
             return this.apiGET("controller/rest/configuration?output=json", "application/json", false);

@@ -1,0 +1,123 @@
+EntityType,MetricPath,MetricName,FolderName,RangeRollupType,Graph,Axis,LineColor,MetricSet
+Application,Overall Application Performance|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Application,Overall Application Performance|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Application,Overall Application Performance|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Application,Overall Application Performance|Exceptions per Minute,Exceptions per Minute,EXCPM,SUM,CallsAndResponse,PRIMARY,FFA500,Transaction
+Application,Overall Application Performance|HTTP Error Codes per Minute,HTTP Error Codes per Minute,HTTPEPM,SUM,CallsAndResponse,PRIMARY,FFC0CB,Transaction
+Tier,Overall Application Performance|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Tier,Overall Application Performance|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Tier,Overall Application Performance|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Tier,Overall Application Performance|*|Exceptions per Minute,Exceptions per Minute,EXCPM,SUM,CallsAndResponse,PRIMARY,FFA500,Transaction
+Tier,Overall Application Performance|*|HTTP Error Codes per Minute,HTTP Error Codes per Minute,HTTPEPM,SUM,CallsAndResponse,PRIMARY,FFC0CB,Transaction
+Tier,Overall Application Performance|*|External Calls|*|Average Response Time (ms),Average Response Time (ms),BACKART,AVERAGE,,SECONDARY,108000,BackendCallsPerTier
+Tier,Overall Application Performance|*|External Calls|*|Calls per Minute,Calls per Minute,BACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerTier
+Tier,Overall Application Performance|*|External Calls|*|Errors per Minute,Errors per Minute,BACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerTier
+Tier,Overall Application Performance|*|External Calls|Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,BACKCPMSPEC,SUM,SpecSQLCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
+Tier,Application Infrastructure Performance|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentAvailability,PRIMARY,108000,AgentStats
+Tier,Application Infrastructure Performance|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentAvailability,PRIMARY,0000FF,AgentStats
+Tier,Application Infrastructure Performance|*|Hardware Resources|CPU|%Busy,Hardware Resources|CPU|%Busy,CPUBUSY,AVERAGE,OSCPUMemory,PRIMARY,108000,OSHardware
+Tier,Application Infrastructure Performance|*|Hardware Resources|Memory|Used (MB),Hardware Resources|Memory|Used (MB),MEMUSEDMB,AVERAGE,OSCPUMemory,SECONDARY,0000FF,OSHardware
+Tier,Application Infrastructure Performance|*|Hardware Resources|Disks|KB written/sec,Hardware Resources|Disks|KB written/sec,DISKKBWRITE,AVERAGE,OSDisk,PRIMARY,108000,OSHardware
+Tier,Application Infrastructure Performance|*|Hardware Resources|Disks|KB read/sec,Hardware Resources|Disks|KB read/sec,DISKKBREAD,AVERAGE,OSDisk,PRIMARY,0000FF,OSHardware
+Tier,Application Infrastructure Performance|*|Hardware Resources|Network|Incoming KB/sec,Hardware Resources|Network|Incoming KB/sec,NETKBIN,AVERAGE,OSNetwork,PRIMARY,108000,OSHardware
+Tier,Application Infrastructure Performance|*|Hardware Resources|Network|Outgoing KB/sec,Hardware Resources|Network|Outgoing KB/sec,NETKBOUT,AVERAGE,OSNetwork,PRIMARY,0000FF,OSHardware
+Tier,Application Infrastructure Performance|*|CLR|Process CPU Burnt (%),CLR|Process CPU Burnt (%),CLRJVM,AVERAGE,CLRProcess,SECONDARY,108000,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Memory|Heap|Current Usage (bytes),CLR|Memory|Heap|Current Usage (bytes),CLRHEAPUSAGE,AVERAGE,CLRProcess,PRIMARY,0000FF,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Memory|Heap|Gen 0 Usage (bytes),CLR|Memory|Heap|Gen 0 Usage (bytes),CLRHEAPGEN0USAGE,AVERAGE,CLRProcess,PRIMARY,9ADAC8,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Memory|Heap|Gen 1 Usage (bytes),CLR|Memory|Heap|Gen 1 Usage (bytes),CLRHEAPGEN1USAGE,AVERAGE,CLRProcess,PRIMARY,3D3DFF,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Memory|Heap|Gen 2 Usage (bytes),CLR|Memory|Heap|Gen 2 Usage (bytes),CLRHEAPGEN2USAGE,AVERAGE,CLRProcess,PRIMARY,DA85FF,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Memory|Large Object Heap|Current Usage (bytes),CLR|Memory|Large Object Heap|Current Usage (bytes),CLRLOHEAPUSAGE,AVERAGE,CLRProcess,PRIMARY,FFB66B,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Garbage Collection|GC Time Spent (%),CLR|Garbage Collection|GC Time Spent (%),CLRGCPCENT,AVERAGE,CLRGC,PRIMARY,108000,CLRStats
+Tier,Application Infrastructure Performance|*|CLR|Garbage Collection|Number of Induced GCs,CLR|Garbage Collection|Number of Induced GCs,CLRGCINDUCED,SUM,CLRGC,SECONDARY,0000FF,CLRStats
+Tier,Application Infrastructure Performance|*|IIS|CPU%,IIS|CPU%,IISCPU,AVERAGE,IIS,PRIMARY,108000,IISStats
+Tier,Application Infrastructure Performance|*|IIS|Working Set,IIS|Working Set,IISWORKSET,AVERAGE,IIS,SECONDARY,0000FF,IISStats
+Tier,Application Infrastructure Performance|*|JVM|Process CPU Usage %,JVM|Process CPU Usage %,JVMCPU,AVERAGE,JVMProcess,SECONDARY,108000,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Memory|Heap|Current Usage (MB),JVM|Memory|Heap|Current Usage (MB),JVMHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,0000FF,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Memory|Non-Heap|Current Usage (MB),JVM|Memory|Non-Heap|Current Usage (MB),JVMNONHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,DA85FF,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|GC Time Spent Per Min (ms),JVM|Garbage Collection|GC Time Spent Per Min (ms),JVMGCTIMETOTAL,AVERAGE,JVMGC,PRIMARY,108000,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Major Collection Time Spent Per Min (ms),JVM|Garbage Collection|Major Collection Time Spent Per Min (ms),JVMGCTIMEMAJOR,AVERAGE,JVMGC,PRIMARY,0000FF,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Minor Collection Time Spent Per Min (ms),JVM|Garbage Collection|Minor Collection Time Spent Per Min (ms),JVMGCTIMEMINOR,AVERAGE,JVMGC,PRIMARY,DA85FF,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|Code Cache|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Code Cache|Current Usage (MB),JVMMEMPOOLCODE,AVERAGE,JVMGCGCMemPool,PRIMARY,21C8FD,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|Compressed Class Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Compressed Class Space|Current Usage (MB),JVMMEMPOOLCLASS,AVERAGE,JVMGCGCMemPool,PRIMARY,21FD29,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|Metaspace|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Metaspace|Current Usage (MB),JVMMEMPOOLMETA,AVERAGE,JVMGCGCMemPool,PRIMARY,C6FD21,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|PS Eden Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Eden Space|Current Usage (MB),JVMMEMPOOLEDEN,AVERAGE,JVMGCGCMemPool,PRIMARY,FDB421,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|PS Old Gen|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Old Gen|Current Usage (MB),JVMMEMPOOLOLDGEN,AVERAGE,JVMGCGCMemPool,PRIMARY,FD2185,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|PS Perm Gen|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Perm Gen|Current Usage (MB),JVMMEMPOOLPERMGEN,AVERAGE,JVMGCGCMemPool,PRIMARY,C321FD,JVMStats
+Tier,Application Infrastructure Performance|*|JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVMMEMPOOLSURVIVOR,AVERAGE,JVMGCGCMemPool,PRIMARY,3A21FD,JVMStats
+Tier,Application Infrastructure Performance|*|JMX|Sessions|activeSessions,JMX|Sessions|activeSessions,JMXSESSACTIVE,AVERAGE,JMXSessions,PRIMARY,0000FF,JMXStatsCustom1
+Tier,"Application Infrastructure Performance|*|JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections","JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections",JMXDBCONNPOOLECOM,AVERAGE,JMXJDBCConnPool,PRIMARY,0000FF,JMXStatsCustom1
+Tier,"Application Infrastructure Performance|*|JMX|Web Container Runtime|""ajp-bio-8009""|Request Count","JMX|Web Container Runtime|""ajp-bio-8009""|Request Count",JMXWCRAJPREQUESTCOUNT,AVERAGE,JMXWCRAJP,PRIMARY,0000FF,JMXStatsCustom1
+Tier,Application Infrastructure Performance|*|Custom Metrics|ECommerce Demo|Slow Query Calls|Call Count,Custom Metrics|ECommerce Demo|Slow Query Calls|Call Count,SLOWQUERY,SUM,CustomSlowQuery,PRIMARY,0000FF,CustomMetricCustom1
+Node,Overall Application Performance|*|Individual Nodes|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Node,Overall Application Performance|*|Individual Nodes|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Node,Overall Application Performance|*|Individual Nodes|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Node,Overall Application Performance|*|Individual Nodes|*|Exceptions per Minute,Exceptions per Minute,EXCPM,SUM,CallsAndResponse,PRIMARY,FFA500,Transaction
+Node,Overall Application Performance|*|Individual Nodes|*|HTTP Error Codes per Minute,HTTP Error Codes per Minute,HTTPEPM,SUM,CallsAndResponse,PRIMARY,FFC0CB,Transaction
+Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Average Response Time (ms),Average Response Time (ms),BACKART,AVERAGE,,SECONDARY,108000,BackendCallsPerNode
+Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Calls per Minute,Calls per Minute,BACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerNode
+Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Errors per Minute,Errors per Minute,BACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerNode
+Node,Overall Application Performance|*|Individual Nodes|*|External Calls|Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,BACKCPMSPEC,SUM,SpecSQLCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentAvailability,PRIMARY,108000,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentAvailability,PRIMARY,0000FF,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|CPU|%Busy,Hardware Resources|CPU|%Busy,CPUBUSY,AVERAGE,OSCPUMemory,PRIMARY,108000,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Memory|Used (MB),Hardware Resources|Memory|Used (MB),MEMUSEDMB,AVERAGE,OSCPUMemory,SECONDARY,0000FF,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Disks|KB written/sec,Hardware Resources|Disks|KB written/sec,DISKKBWRITE,AVERAGE,OSDisk,PRIMARY,108000,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Disks|KB read/sec,Hardware Resources|Disks|KB read/sec,DISKKBREAD,AVERAGE,OSDisk,PRIMARY,0000FF,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Network|Incoming KB/sec,Hardware Resources|Network|Incoming KB/sec,NETKBIN,AVERAGE,OSNetwork,PRIMARY,108000,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Network|Outgoing KB/sec,Hardware Resources|Network|Outgoing KB/sec,NETKBOUT,AVERAGE,OSNetwork,PRIMARY,0000FF,OSHardware
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Process CPU Burnt (%),CLR|Process CPU Burnt (%),CLRJVM,AVERAGE,CLRProcess,SECONDARY,108000,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Memory|Heap|Current Usage (bytes),CLR|Memory|Heap|Current Usage (bytes),CLRHEAPUSAGE,AVERAGE,CLRProcess,PRIMARY,0000FF,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Memory|Heap|Gen 0 Usage (bytes),CLR|Memory|Heap|Gen 0 Usage (bytes),CLRHEAPGEN0USAGE,AVERAGE,CLRProcess,PRIMARY,9ADAC8,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Memory|Heap|Gen 1 Usage (bytes),CLR|Memory|Heap|Gen 1 Usage (bytes),CLRHEAPGEN1USAGE,AVERAGE,CLRProcess,PRIMARY,3D3DFF,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Memory|Heap|Gen 2 Usage (bytes),CLR|Memory|Heap|Gen 2 Usage (bytes),CLRHEAPGEN2USAGE,AVERAGE,CLRProcess,PRIMARY,DA85FF,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Memory|Large Object Heap|Current Usage (bytes),CLR|Memory|Large Object Heap|Current Usage (bytes),CLRLOHEAPUSAGE,AVERAGE,CLRProcess,PRIMARY,FFB66B,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Garbage Collection|GC Time Spent (%),CLR|Garbage Collection|GC Time Spent (%),CLRGCPCENT,AVERAGE,CLRGC,PRIMARY,108000,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Garbage Collection|Number of Induced GCs,CLR|Garbage Collection|Number of Induced GCs,CLRGCINDUCED,SUM,CLRGC,SECONDARY,0000FF,CLRStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|IIS|CPU%,IIS|CPU%,IISCPU,AVERAGE,IIS,PRIMARY,108000,IISStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|IIS|Working Set,IIS|Working Set,IISWORKSET,AVERAGE,IIS,SECONDARY,0000FF,IISStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Process CPU Usage %,JVM|Process CPU Usage %,JVMCPU,AVERAGE,JVMProcess,SECONDARY,108000,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Memory|Heap|Current Usage (MB),JVM|Memory|Heap|Current Usage (MB),JVMHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,0000FF,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Memory|Non-Heap|Current Usage (MB),JVM|Memory|Non-Heap|Current Usage (MB),JVMNONHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,DA85FF,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|GC Time Spent Per Min (ms),JVM|Garbage Collection|GC Time Spent Per Min (ms),JVMGCTIMETOTAL,AVERAGE,JVMGC,PRIMARY,108000,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Major Collection Time Spent Per Min (ms),JVM|Garbage Collection|Major Collection Time Spent Per Min (ms),JVMGCTIMEMAJOR,AVERAGE,JVMGC,PRIMARY,0000FF,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Minor Collection Time Spent Per Min (ms),JVM|Garbage Collection|Minor Collection Time Spent Per Min (ms),JVMGCTIMEMINOR,AVERAGE,JVMGC,PRIMARY,DA85FF,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|Code Cache|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Code Cache|Current Usage (MB),JVMMEMPOOLCODE,AVERAGE,JVMGCGCMemPool,PRIMARY,21C8FD,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|Compressed Class Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Compressed Class Space|Current Usage (MB),JVMMEMPOOLCLASS,AVERAGE,JVMGCGCMemPool,PRIMARY,21FD29,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|Metaspace|Current Usage (MB),JVM|Garbage Collection|Memory Pools|Metaspace|Current Usage (MB),JVMMEMPOOLMETA,AVERAGE,JVMGCGCMemPool,PRIMARY,C6FD21,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|PS Eden Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Eden Space|Current Usage (MB),JVMMEMPOOLEDEN,AVERAGE,JVMGCGCMemPool,PRIMARY,FDB421,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|PS Old Gen|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Old Gen|Current Usage (MB),JVMMEMPOOLOLDGEN,AVERAGE,JVMGCGCMemPool,PRIMARY,FD2185,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|PS Perm Gen|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Perm Gen|Current Usage (MB),JVMMEMPOOLPERMGEN,AVERAGE,JVMGCGCMemPool,PRIMARY,C321FD,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVMMEMPOOLSURVIVOR,AVERAGE,JVMGCGCMemPool,PRIMARY,3A21FD,JVMStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|JMX|Sessions|activeSessions,JMX|Sessions|activeSessions,JMXSESSACTIVE,AVERAGE,JMXSessions,PRIMARY,0000FF,JMXStats
+Node,"Application Infrastructure Performance|*|Individual Nodes|*|JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections","JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections",JMXDBCONNPOOLECOM,AVERAGE,JMXJDBCConnPool,PRIMARY,0000FF,JMXStats
+Tier,"Application Infrastructure Performance|*|Individual Nodes|JMX|Web Container Runtime|""ajp-bio-8009""|Request Count","JMX|Web Container Runtime|""ajp-bio-8009""|Request Count",JMXWCRAJPREQUESTCOUNT,AVERAGE,JMXWCRAJP,PRIMARY,0000FF,JMXStats
+Backend,Backends|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Backend,Backends|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Backend,Backends|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|95th Percentile Response Time (ms),95th Percentile Response Time (ms),95PCENT,AVERAGE,95Percent,PRIMARY,108000,BusinessTransactionPercentiles
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|Average Response Time (ms),Average Response Time (ms),NODEART,AVERAGE,,SECONDARY,108000,TransactionPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|Calls per Minute,Calls per Minute,NODECPM,SUM,,PRIMARY,0000FF,TransactionPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|Errors per Minute,Errors per Minute,NODEEPM,SUM,,PRIMARY,FF0000,TransactionPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|External Calls|*|Average Response Time (ms),Average Response Time (ms),BACKART,AVERAGE,,SECONDARY,108000,BackendCallsPerBT
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|External Calls|*|Calls per Minute,Calls per Minute,BACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerBT
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|External Calls|*|Errors per Minute,Errors per Minute,BACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerBT
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|External Calls|Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute,Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute,BACKCPMSPEC,SUM,SpecSQLCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|External Calls|*|Average Response Time (ms),Average Response Time (ms),NODEBACKART,AVERAGE,,SECONDARY,108000,BackendCallsPerBTPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|External Calls|*|Calls per Minute,Calls per Minute,NODEBACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerBTPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|*|External Calls|*|Errors per Minute,Errors per Minute,NODEBACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerBTPerNode
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Individual Nodes|ECommerce_WEB1_NODE|External Calls|Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute ,ECommerce_WEB1_NODE|External Calls|Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute ,NODEBACKCPMSPEC,SUM,SpecSQLSpecNodeCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
+Service Endpoint,Service Endpoints|*|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Service Endpoint,Service Endpoints|*|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Service Endpoint,Service Endpoints|*|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Service Endpoint,Service Endpoints|*|*|Individual Nodes|*|Average Response Time (ms),Average Response Time (ms),NODEART,AVERAGE,,SECONDARY,108000,TransactionPerNode
+Service Endpoint,Service Endpoints|*|*|Individual Nodes|*|Calls per Minute,Calls per Minute,NODECPM,SUM,,PRIMARY,0000FF,TransactionPerNode
+Service Endpoint,Service Endpoints|*|*|Individual Nodes|*|Errors per Minute,Errors per Minute,NODEEPM,SUM,,PRIMARY,FF0000,TransactionPerNode
+Error,Errors|*|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Error,Errors|*|*|Individual Nodes|*|Errors per Minute,Errors per Minute,NODEEPM,SUM,,PRIMARY,FF0000,TransactionPerNode
+Information Point,Information Points|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
+Information Point,Information Points|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
+Information Point,Information Points|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction
+Information Point,Information Points|*|cartTotal,cartTotal,CARTTOTAL,SUM,CartTotal,PRIMARY,0000FF,InformationPointCustom1

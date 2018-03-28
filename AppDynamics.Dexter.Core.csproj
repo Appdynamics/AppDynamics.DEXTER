@@ -59,6 +59,9 @@
     <None Update="DefaultJob.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="EntityMetricsExtractMapping.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="FlameGraphTemplate.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -171,6 +171,10 @@
     <Compile Include="ReportObjects\FlameGraph\FoldedStackLine.cs" />
     <Compile Include="ReportObjects\FlameGraph\FlameGraphBox.cs" />
     <Compile Include="ReportObjects\Metric\Maps\InformationPointMetricReportMap.cs" />
+    <Compile Include="ReportObjects\Metric\Maps\MetricExtractMappingReportMap.cs" />
+    <Compile Include="ReportObjects\Metric\Maps\EntityHourlyMetricValueLocationReportMap.cs" />
+    <Compile Include="ReportObjects\Metric\MetricExtractMapping.cs" />
+    <Compile Include="ReportObjects\Metric\EntityHourlyMetricValueLocation.cs" />
     <Compile Include="ReportObjects\Snapshot\Maps\MethodCallLineClassTypeMappingReportMap.cs" />
     <Compile Include="ReportObjects\FlameGraph\Map\FoldedStackLineReportMap.cs" />
     <Compile Include="ReportObjects\Snapshot\MethodCallLineClassTypeMapping.cs" />
@@ -196,14 +200,11 @@
     <Compile Include="ReportObjects\ActivityFlow\ActivityFlow.cs" />
     <Compile Include="ReportObjects\ActivityFlow\Maps\ApplicationActivityFlowReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\EventReportMap.cs" />
-    <Compile Include="ReportObjects\Metric\MetricSummary.cs" />
-    <Compile Include="ReportObjects\Metric\Maps\MetricSummaryMetricReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\ErrorMetricReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\ServiceEndpointMetricReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\BusinessTransactionMetricReportMap.cs" />
     <Compile Include="ReportObjects\Entity\EntityBase.cs" />
-    <Compile Include="ReportObjects\Metric\MetricEnums.cs" />
-    <Compile Include="ReportObjects\Metric\Maps\MetricValueMetricReportMap.cs" />
+    <Compile Include="ReportObjects\Metric\Maps\MetricValueReportMap.cs" />
     <Compile Include="ReportObjects\Metric\MetricValue.cs" />
     <Compile Include="ReportObjects\Metric\Maps\BackendMetricReportMap.cs" />
     <Compile Include="ReportObjects\Metric\Maps\NodeMetricReportMap.cs" />
@@ -247,6 +248,9 @@
     </Content>
     <None Include="AppDynamics DEXTER.pfx" />
     <None Include="DefaultJob.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="EntityMetricsExtractMapping.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="MethodNamespaceTypeMapping.csv">

@@ -468,7 +468,7 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static bool appendTwoCSVFiles(string csvToAppendToFilePath, string csvToAppendFilePath)
+        public static bool appendTwoCSVFiles(string csvToAppendToFilePath, string csvFromWhichToAppendFilePath)
         {
             string folderPath = Path.GetDirectoryName(csvToAppendToFilePath);
 
@@ -476,14 +476,14 @@ namespace AppDynamics.Dexter
             {
                 try
                 {
-                    logger.Trace("Appending CSV file {0} and file {1}", csvToAppendToFilePath, csvToAppendFilePath);
+                    logger.Trace("Appending CSV file {0} and file {1}", csvToAppendToFilePath, csvFromWhichToAppendFilePath);
 
-                    if (File.Exists(csvToAppendFilePath) == true)
+                    if (File.Exists(csvFromWhichToAppendFilePath) == true)
                     {
                         if (File.Exists(csvToAppendToFilePath) == true)
                         {
                             // Append without header
-                            using (FileStream sr = File.Open(csvToAppendFilePath, FileMode.Open))
+                            using (FileStream sr = File.Open(csvFromWhichToAppendFilePath, FileMode.Open))
                             {
                                 while (true)
                                 {
@@ -505,7 +505,7 @@ namespace AppDynamics.Dexter
                         else
                         {
                             // Create new file with header
-                            using (StreamReader sr = File.OpenText(csvToAppendFilePath))
+                            using (StreamReader sr = File.OpenText(csvFromWhichToAppendFilePath))
                             {
                                 using (StreamWriter sw = File.CreateText(csvToAppendToFilePath))
                                 {
@@ -519,7 +519,7 @@ namespace AppDynamics.Dexter
                 }
                 catch (Exception ex)
                 {
-                    logger.Error("Appending file {0} and file {1} failed", csvToAppendToFilePath, csvToAppendFilePath);
+                    logger.Error("Appending file {0} and file {1} failed", csvToAppendToFilePath, csvFromWhichToAppendFilePath);
                     logger.Error(ex);
                 }
             }
