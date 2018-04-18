@@ -13,6 +13,9 @@ using System.Xml;
 
 namespace AppDynamics.Dexter
 {
+    /// <summary>
+    /// Helper functions for dealing with File IO
+    /// </summary>
     public class FileIOHelper
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
@@ -20,7 +23,7 @@ namespace AppDynamics.Dexter
 
         #region Basic file and folder reading and writing
 
-        public static bool createFolder(string folderPath)
+        public static bool CreateFolder(string folderPath)
         {
             try
             {
@@ -41,7 +44,7 @@ namespace AppDynamics.Dexter
             }
         }
 
-        public static bool deleteFolder(string folderPath)
+        public static bool DeleteFolder(string folderPath)
         {
             int tryNumber = 1;
 
@@ -77,7 +80,7 @@ namespace AppDynamics.Dexter
             return true;
         }
 
-        public static bool deleteFile(string filePath)
+        public static bool DeleteFile(string filePath)
         {
             int tryNumber = 1;
 
@@ -106,16 +109,16 @@ namespace AppDynamics.Dexter
             return true;
         }
 
-        public static bool saveFileToPath(string fileContents, string filePath)
+        public static bool SaveFileToPath(string fileContents, string filePath)
         {
-            return saveFileToPath(fileContents, filePath, true);
+            return SaveFileToPath(fileContents, filePath, true);
         }
 
-        public static bool saveFileToPath(string fileContents, string filePath, bool writeUTF8BOM)
+        public static bool SaveFileToPath(string fileContents, string filePath, bool writeUTF8BOM)
         {
             string folderPath = Path.GetDirectoryName(filePath);
 
-            if (createFolder(folderPath) == true)
+            if (CreateFolder(folderPath) == true)
             {
                 try
                 {
@@ -142,7 +145,7 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static string readFileFromPath(string filePath)
+        public static string ReadFileFromPath(string filePath)
         {
             try
             {
@@ -161,7 +164,7 @@ namespace AppDynamics.Dexter
 
         #region JSON file reading and writing
 
-        public static JObject loadJObjectFromFile(string jsonFilePath)
+        public static JObject LoadJObjectFromFile(string jsonFilePath)
         {
             try
             {
@@ -185,11 +188,11 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static bool writeObjectToFile(object objectToWrite, string jsonFilePath)
+        public static bool WriteObjectToFile(object objectToWrite, string jsonFilePath)
         {
             string folderPath = Path.GetDirectoryName(jsonFilePath);
 
-            if (createFolder(folderPath) == true)
+            if (CreateFolder(folderPath) == true)
             {
                 try
                 {
@@ -215,7 +218,7 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static JArray loadJArrayFromFile(string jsonFilePath)
+        public static JArray LoadJArrayFromFile(string jsonFilePath)
         {
             try
             {
@@ -239,14 +242,14 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static bool writeJArrayToFile(JArray array, string jsonFilePath)
+        public static bool WriteJArrayToFile(JArray array, string jsonFilePath)
         {
             logger.Trace("Writing JSON Array with {0} elements to file {1}", array.Count, jsonFilePath);
 
-            return writeObjectToFile(array, jsonFilePath);
+            return WriteObjectToFile(array, jsonFilePath);
         }
 
-        public static List<T> loadListOfObjectsFromFile<T>(string jsonFilePath)
+        public static List<T> LoadListOfObjectsFromFile<T>(string jsonFilePath)
         {
             try
             {
@@ -274,7 +277,7 @@ namespace AppDynamics.Dexter
 
         #region JSON job configuration typed functions
 
-        public static JobConfiguration readJobConfigurationFromFile(string configurationFilePath)
+        public static JobConfiguration ReadJobConfigurationFromFile(string configurationFilePath)
         {
             try
             {
@@ -299,7 +302,7 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static bool writeJobConfigurationToFile(JobConfiguration jobConfiguration, string configurationFilePath)
+        public static bool WriteJobConfigurationToFile(JobConfiguration jobConfiguration, string configurationFilePath)
         {
             try
             {
@@ -329,7 +332,7 @@ namespace AppDynamics.Dexter
 
         #region XML reading and writing
 
-        public static XmlDocument loadXmlDocumentFromFile(string xmlFilePath)
+        public static XmlDocument LoadXmlDocumentFromFile(string xmlFilePath)
         {
             try
             {
@@ -359,16 +362,16 @@ namespace AppDynamics.Dexter
 
         #region CSV reading and writing
 
-        public static bool writeListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath)
+        public static bool WriteListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath)
         {
-            return writeListToCSVFile(listToWrite, classMap, csvFilePath, false);
+            return WriteListToCSVFile(listToWrite, classMap, csvFilePath, false);
         }
 
-        public static bool writeListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
+        public static bool WriteListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
         {
             string folderPath = Path.GetDirectoryName(csvFilePath);
 
-            if (createFolder(folderPath) == true)
+            if (CreateFolder(folderPath) == true)
             {
                 try
                 {
@@ -411,7 +414,7 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static MemoryStream writeListToMemoryStream<T>(List<T> listToWrite, ClassMap<T> classMap)
+        public static MemoryStream WriteListToMemoryStream<T>(List<T> listToWrite, ClassMap<T> classMap)
         {
             try
             {
@@ -439,7 +442,7 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static List<T> readListFromCSVFile<T>(string csvFilePath, ClassMap<T> classMap)
+        public static List<T> ReadListFromCSVFile<T>(string csvFilePath, ClassMap<T> classMap)
         {
             try
             {
@@ -468,11 +471,11 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static bool appendTwoCSVFiles(string csvToAppendToFilePath, string csvFromWhichToAppendFilePath)
+        public static bool AppendTwoCSVFiles(string csvToAppendToFilePath, string csvFromWhichToAppendFilePath)
         {
             string folderPath = Path.GetDirectoryName(csvToAppendToFilePath);
 
-            if (createFolder(folderPath) == true)
+            if (CreateFolder(folderPath) == true)
             {
                 try
                 {
@@ -527,7 +530,7 @@ namespace AppDynamics.Dexter
             return false;
         }
 
-        public static bool appendTwoCSVFiles(FileStream csvToAppendToSW, string csvToAppendFilePath)
+        public static bool AppendTwoCSVFiles(FileStream csvToAppendToSW, string csvToAppendFilePath)
         {
             try
             {

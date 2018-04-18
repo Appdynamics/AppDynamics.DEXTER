@@ -23,6 +23,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.DetailLink).Index(i); i++;
             Map(m => m.MetricGraphLink).Index(i); i++;
             Map(m => m.FlameGraphLink).Index(i); i++;
+            Map(m => m.FlameChartLink).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;
             Map(m => m.TierLink).Index(i); i++;

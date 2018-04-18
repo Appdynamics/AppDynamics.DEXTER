@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace AppDynamics.Dexter
 {
     /// <summary>
+    /// Helper functions for encrypting password in the job file
     /// https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.aes?view=netframework-4.7
     /// </summary>
     public class AESEncryptionHelper

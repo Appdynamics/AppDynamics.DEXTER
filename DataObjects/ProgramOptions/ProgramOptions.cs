@@ -4,7 +4,7 @@ using System;
 
 namespace AppDynamics.Dexter
 {
-    class ProgramOptions
+    public class ProgramOptions
     {
         [Option('j', "jobfile", Required = true, HelpText = "Input file defining the job to process.")]
         public string InputJobFilePath { get; set; }

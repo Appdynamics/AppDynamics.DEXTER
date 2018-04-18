@@ -40,6 +40,7 @@ namespace AppDynamics.Dexter.DataObjects
         public string MetricGraphLink { get; set; }
 
         public string FlameGraphLink { get; set; }
+        public string FlameChartLink { get; set; }
 
         public virtual long EntityID { get; }
         public virtual string EntityName { get; }

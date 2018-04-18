@@ -13,7 +13,9 @@ namespace AppDynamics.Dexter
         //        },
         //        "Flowmaps": true,
         //        "Metrics": true,
+        //        "MetricsSelectionCriteria": [ "Transaction", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
         //        "Snapshots": true,
+        //        "SnapshotSelectionCriteria" : {complex object, look at DefaultJob.json}
         //        "Events": false,
         //        "Configuration": true
         //    },
@@ -21,6 +23,7 @@ namespace AppDynamics.Dexter
         //    {
         //      "DetectedEntities": true,
         //      "EntityMetrics": false,
+        //      "EntityMetricGraphs": true,
         //      "EntityDetails": false,
         //      "Snapshots": false,
         //      "FlameGraphs": false,
