@@ -28,6 +28,18 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
 * Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
+# Some Example Reports
+## Entity Details
+"Entity Timeline View" is part of [Entity Details](/TODO/TODO) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
+*	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
+*	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
+*	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
+
+![Entity Details](../blob/master/docs/introduction/EntityDetailsOverview.png?raw=true)
+[Full Size](../blob/master/docs/introduction/EntityDetailsOverview.png?raw=true)
+
+ for more
+
 # Get Started
 ## Necessary Software
 AppDynamics DEXTER is a console application that runs on Windows, MacOS and Linux. You will need:
@@ -80,8 +92,11 @@ AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https:
 ## Support
 Review [Getting Support](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support)
 
-## Acknowledgements
-### Microsoft
-Thanks to Microsoft for Visual Studio and .NET Core https://github.com/dotnet/core team for letting us all write code in C# on any platform
-## Command Line Parser
-Thanks @nemec https://github.com/gsscoder/commandline 
+## Tools Used
+* Microsoft - Thanks for Visual Studio and .NET Core https://github.com/dotnet/core team for letting us all write code in C# on any platform
+* Command Line Parser - Simple and fast https://github.com/gsscoder/commandline 
+* CSV File Creation and Parsing - An excellent utility https://github.com/JoshClose/CsvHelper 
+* JSON Parsing - NewtonSoft JSON is awesome https://www.newtonsoft.com/json
+* Logging - NLog is also awesome http://nlog-project.org/ 
+* Excel Report Creation - Jan Kallman's excellent helper class is a lifesaver https://github.com/JanKallman/EPPlus 
+* Flame Graphs - Brendan Gregg’s Flame Graph generator https://github.com/brendangregg/FlameGraph was used to as reference to build code to generate Flame Graph reports
