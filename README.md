@@ -49,8 +49,19 @@ In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 
+![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
+[Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
+
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
+
+## Snapshots Report
+
+## Configuration Report
+[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)“Configuration” report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
+
+![Configuration](../master/docs/walkthrough/part1/ConfigurationOverview.png?raw=true)
+[Full Size](../master/docs/walkthrough/part1/ConfigurationOverview.png?raw=true)
 
 # Get Started
 ## Necessary Software
