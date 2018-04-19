@@ -110,7 +110,7 @@ Download latest release from [Releases](https://github.com/Appdynamics/AppDynami
 Unzip to some location, for example, `C:\AppDynamics\DEXTER`
 
 ## Specify What to Do in Job File
-Provide instructions on what to get, from where, and how much [Specifying What to Do in Job File](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
+Provide instructions on what to get, from where, and how much in [Job File](wiki/Job-File)
 
 ## Run Application
 When running on Windows, you can choose to run version built using .NET Framework 4.7.1 or .NET Core Framework 2.0.x. When running on Mac or Linux, you need to use .NET Core Framework 2.0.x version.
@@ -125,7 +125,7 @@ For example, on MacOS or Linux:
 dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
-Review all available command line parameters in [Running Application](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
+Review all available command line parameters in [Running Application](wiki/Command-Line-Parameters)
 
 ## Review Results
 You will see the results in the output folder that you specified.
