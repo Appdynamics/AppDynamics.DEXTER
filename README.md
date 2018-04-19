@@ -36,13 +36,11 @@ The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/
 *	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
 
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
-[Full Size](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
 ## Detected Entities
 If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report.
 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
-[Full Size](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
 ## Entity Metrics and Graphs
 [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
