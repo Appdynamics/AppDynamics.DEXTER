@@ -46,6 +46,7 @@ If you ever were presented with a large Controller (or several) full of unknown 
 ## Entity Metrics and Graphs
 In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report, shows summary and graphs for all Metrics for each and every Entity (Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point) in Applications you point it to.
 
+All Tiers in several applications with ART vs CPM scatter
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 
@@ -56,18 +57,40 @@ In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
 ## Snapshots Report
-TODO will add very soon
+Have you ever wanted to find a snapshot that calls a specific Tier, Backend or Application? 
 
-TODO will add very soon
+How about the one that uses specific SQL query? 
 
-TODO will add very soon
+And how about the one that has a real Call Graph? 
+
+Or maybe also a special Data Collectors? 
+
+Or how about finding out how many times that special Query was slow in a given time range?
+
+Or discover which classes and methods are called in which Snapshots?
+
+How about all of the above, combined?
+
+In [Snapshots](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report you can do all of that, and more.
+
+Snapshot Exit Calls broken by time and duration:
+![](../master/docs/walkthrough/part2/SnapshotsExitCallsType.png?raw=true)
+[Full Size](../master/docs/walkthrough/part2/SnapshotsExitCallsType.png?raw=true)
+
+Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
+![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
+[Full Size](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
-TODO will add very soon
+Using [Flame Graphs and Flame Chart](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) reports, is an ingenious and useful way to visualize many call graphs in single screen.
 
-TODO will add very soon
+Sum of all calls in Application for entire time range
+![](../master/docs/walkthrough/part3/FlameGraphApplication.png?raw=true)
+[Full Size](../master/docs/walkthrough/part3/FlameGraphApplication.png?raw=true)
 
-TODO will add very soon
+Sum of all calls in Application with Time grouping
+![](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
+[Full Size](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
 [Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
@@ -108,7 +131,7 @@ For example, on MacOS or Linux:
 dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
-Review all available command line parameters in and how much [Running Application](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
+Review all available command line parameters in [Running Application](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
 
 ## Review Results
 You will see the results in the output folder that you specified.
@@ -119,7 +142,7 @@ Reports are documented in [Description of Reports](https://github.com/Appdynamic
 
 # Useful Links
 ## Documentation
-Review [Documentation](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki) in the project wiki 
+Review [Documentation](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki) in the project wiki.
 
 ## Other location
 AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https://www.appdynamics.com/community/exchange/extension/appdynamics-dexter-data-extraction-enhanced-reporting/) area.
