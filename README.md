@@ -60,8 +60,8 @@ In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
 ## Configuration Report
 [Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)“Configuration” report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 
-![Configuration](../master/docs/walkthrough/part1/ConfigurationOverview.png?raw=true)
-[Full Size](../master/docs/walkthrough/part1/ConfigurationOverview.png?raw=true)
+![Configuration](../master/docs/walkthrough/introduction/ConfigurationOverview.png?raw=true)
+[Full Size](../master/docs/walkthrough/introduction/ConfigurationOverview.png?raw=true)
 
 # Get Started
 ## Necessary Software
