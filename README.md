@@ -47,15 +47,12 @@ If you ever were presented with a large Controller (or several) full of unknown 
 
 A scatterplot of Calls per Minute vs Average Response time is provided for all types of Entities, allowing you to see what items are both slow and frequently called:
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
-[Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 
 Per minute breakdown with ART vs CPM scatter:
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
-[Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 
 All Nodes JVM GC metrics
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
-[Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
 ## Snapshots Report
 Have you ever wanted to find a snapshot that calls a specific Tier, Backend or Application? 
@@ -76,29 +73,24 @@ In [Snapshots](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) repo
 
 Snapshot Exit Calls broken by time and duration:
 ![](../master/docs/walkthrough/part2/SnapshotsExitCallsType.png?raw=true)
-[Full Size](../master/docs/walkthrough/part2/SnapshotsExitCallsType.png?raw=true)
 
 Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
-[Full Size](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
 Using [Flame Graphs and Flame Chart](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) reports, is an ingenious and useful way to visualize many call graphs in single screen.
 
 Sum of all calls in Application for entire time range
 ![](../master/docs/walkthrough/part3/FlameGraphApplication.png?raw=true)
-[Full Size](../master/docs/walkthrough/part3/FlameGraphApplication.png?raw=true)
 
 Sum of all calls in Application with Time grouping
 ![](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
-[Full Size](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
 [Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. 
 
 Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
-[Full Size](../master/docs/introduction/ConfigurationOverview.png?raw=true)
 
 # Get Started
 ## Necessary Software
