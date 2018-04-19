@@ -1,3 +1,4 @@
+
 # Introduction
 AppDynamics provides a rich source of information about your monitored applications, including the performance of individual business activities, dependency flow between application components, and details on every business transaction in an instrumented environment. 
 
@@ -50,9 +51,11 @@ All Tiers in several applications with ART vs CPM scatter
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 
+Per minute breakdown with ART vs CPM scatter
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 
+All Nodes JVM GC metrics
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
@@ -93,8 +96,9 @@ Sum of all calls in Application with Time grouping
 [Full Size](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
-[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
+[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. 
 
+Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
 [Full Size](../master/docs/introduction/ConfigurationOverview.png?raw=true)
 
