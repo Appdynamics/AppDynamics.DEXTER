@@ -15,9 +15,6 @@ If you’re familiar with data warehousing terminology, think of DEXTER as an ex
 
 By extracting the data from AppDynamics and storing it locally, the data can be preserved with full fidelity indefinitely and interrogated in new and novel ways.
 
-# Learn More about Capabilities
-The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
-
 # Scenarios Enabled by This Tool
 Here are some scenarios that are possible with data provided by AppDynamics DEXTER:
 * Investigation of what is detected and reporting across multiple Controllers and multiple Applications
@@ -28,7 +25,9 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
 * Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
-# Some Example Reports
+The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
+
+# Some Visual Examples
 ## Entity Details
 "Entity Timeline View" is part of [Entity Details](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
 *	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
@@ -37,6 +36,21 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 [Full Size](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
+
+## Detected Entities
+If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report.
+
+![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
+[Full Size](../master/docs/introduction/DetectedEntities.png?raw=true)
+
+## Entity Metrics and Graphs
+In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report, shows summary and graphs for all Metrics for each and every Entity (Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point) in Applications you point it to.
+
+![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
+[Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
+
+![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
+[Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
 # Get Started
 ## Necessary Software
