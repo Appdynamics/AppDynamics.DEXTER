@@ -105,12 +105,12 @@ AppDynamics DEXTER is a console application that runs on Windows, MacOS and Linu
 * MacOS - .NET Core 2.0 https://www.microsoft.com/net/download/macos/run
 
 ## Install Application
-Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (`AppDynamics.DEXTER.#.#.#.#.zip`)
+Download latest release from [Releases](../../releases) section, (`AppDynamics.DEXTER.#.#.#.#.zip`)
 
 Unzip to some location, for example, `C:\AppDynamics\DEXTER`
 
 ## Specify What to Do in Job File
-Provide instructions on what to get, from where, and how much in [Job File](wiki/Job-File)
+Provide instructions on what to get, from where, and how much in [Job File](../..wiki/Job-File)
 
 ## Run Application
 When running on Windows, you can choose to run version built using .NET Framework 4.7.1 or .NET Core Framework 2.0.x. When running on Mac or Linux, you need to use .NET Core Framework 2.0.x version.
@@ -125,7 +125,7 @@ For example, on MacOS or Linux:
 dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
-Review all available command line parameters in [Running Application](wiki/Command-Line-Parameters)
+Review all available command line parameters in [Running Application](../../wiki/Command-Line-Parameters)
 
 ## Review Results
 You will see the results in the output folder that you specified.
@@ -136,7 +136,7 @@ Reports are documented in [Description of Reports](https://github.com/Appdynamic
 
 # Useful Links
 ## Documentation
-Review [Documentation](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki) in the project wiki.
+Review [Documentation](../../wiki) in the project wiki.
 
 ## Other location
 AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https://www.appdynamics.com/community/exchange/extension/appdynamics-dexter-data-extraction-enhanced-reporting/) area.
