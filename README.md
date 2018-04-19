@@ -125,8 +125,6 @@ For example, on MacOS or Linux:
 dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
-Review all available command line parameters in [Running Application](../../wiki/Command-Line-Parameters)
-
 ## Review Results
 You will see the results in the output folder that you specified.
 
