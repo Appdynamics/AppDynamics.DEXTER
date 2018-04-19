@@ -133,16 +133,17 @@ If you did not specify output location, default location on Windows is `C:\AppD.
 Reports are documented in [Description of Reports](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) locations
 
 # Useful Links
-## Documentation
-Review [Documentation](../../wiki) in the project wiki.
 
-## Other location
-AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https://www.appdynamics.com/community/exchange/extension/appdynamics-dexter-data-extraction-enhanced-reporting/) area.
+## Documentation 
+Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
 
 ## Support
-Review [Getting Support](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support)
+If you need help with issues and/or intepretation of results, read [Getting Support](../../wiki#getting-support).
 
-## Tools Used
+## Other Location
+AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https://www.appdynamics.com/community/exchange/extension/appdynamics-dexter-data-extraction-enhanced-reporting/) area.
+
+# Acknowledgements
 * Microsoft - Thanks for Visual Studio and .NET Core https://github.com/dotnet/core team for letting us all write code in C# on any platform
 * Command Line Parser - Simple and fast https://github.com/gsscoder/commandline 
 * CSV File Creation and Parsing - An excellent utility https://github.com/JoshClose/CsvHelper 
