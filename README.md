@@ -41,7 +41,7 @@ The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/
 If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report.
 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
-[Full Size](../master/docs/introduction/DetectedEntities.png?raw=true)
+[Full Size](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
 ## Entity Metrics and Graphs
 In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report, shows summary and graphs for all Metrics for each and every Entity (Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point) in Applications you point it to.
