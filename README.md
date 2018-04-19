@@ -13,7 +13,7 @@ If you’re familiar with data warehousing terminology, think of DEXTER as an ex
 * Configuration rules (business transaction, backend detection, data collectors, error detection, agent properties)
 * Snapshots (SQL queries, HTTP destinations, data collectors, call graph data, errors)
 
-By extracting the data from AppDynamics and storing it locally, the data can be preserved with full fidelity indefinitely and interrogated in new and novel ways.
+By extracting the data from AppDynamics, converting it into queryable format and storing it locally, the data can be preserved with full fidelity indefinitely and interrogated in new and novel ways.
 
 # Scenarios Enabled by This Tool
 Here are some scenarios that are possible with data provided by AppDynamics DEXTER:
@@ -27,7 +27,7 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 
 The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
 
-# Some Visual Examples
+# Example Reports
 ## Entity Details
 "Entity Timeline View" is part of [Entity Details](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
 *	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
@@ -56,9 +56,21 @@ In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
 ## Snapshots Report
+TODO will add very soon
+
+TODO will add very soon
+
+TODO will add very soon
+
+## Flame Graph and Flame Chart Reports
+TODO will add very soon
+
+TODO will add very soon
+
+TODO will add very soon
 
 ## Configuration Report
-[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO)“Configuration” report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
+[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
 [Full Size](../master/docs/introduction/ConfigurationOverview.png?raw=true)
