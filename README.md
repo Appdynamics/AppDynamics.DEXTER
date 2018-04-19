@@ -45,13 +45,13 @@ If you ever were presented with a large Controller (or several) full of unknown 
 [Full Size](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
 ## Entity Metrics and Graphs
-In [Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report, shows summary and graphs for all Metrics for each and every Entity (Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point) in Applications you point it to.
+[Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
-All Tiers in several applications with ART vs CPM scatter
+A scatterplot of Calls per Minute vs Average Response time is provided for all types of Entities, allowing you to see what items are both slow and frequently called:
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
 
-Per minute breakdown with ART vs CPM scatter
+Per minute breakdown with ART vs CPM scatter:
 ![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 [Full Size](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 
