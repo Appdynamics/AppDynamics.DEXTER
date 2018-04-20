@@ -78,7 +78,7 @@ Snapshots with multiple Segments have an enhanced Waterfall view, with “^” c
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
-Using [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports, is an ingenious and useful way to visualize many call graphs in single screen.
+[Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports are an ingenious and useful way to visualize many call graphs in single screen.
 
 Sum of all calls in Application for entire time range
 ![](../master/docs/introduction/FlameGraphApplication.png?raw=true)
