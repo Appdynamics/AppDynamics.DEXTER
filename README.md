@@ -125,15 +125,14 @@ dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
 ## Review Results
-You will see the results in the output folder that you specified.
+You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
 
-If you did not specify output location, default location on Windows is `C:\AppD.Dexter.Out\<YourJobName>`, and default location on MacOS or Linux is `%HOME%/AppD.Dexter.Out`.
-
-To understand reports, read [Description of Reports](../../wiki/#report-descriptions).
+To understand what you are looking at, read [Description of Reports](../../wiki/#report-descriptions).
 
 # Useful Links
-
 ## Documentation 
+If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough).
+
 Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
 
 ## Support
