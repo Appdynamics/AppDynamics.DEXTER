@@ -2,6 +2,7 @@
 AppDynamics provides a rich source of information about your monitored applications, including the performance of individual business activities, dependency flow between application components, and details on every business transaction in an instrumented environment. 
 
 AppDynamics APM provides a rich toolkit for turning the vast corpus of data captured by AppDynamics into valuable insights.
+
 AppDynamics DEXTER (Data Extraction and Enhanced Reporting) can make this process even faster and simpler. DEXTER provides new ways to unlock the data stored in the AppDynamics platform. You can analyze this information in a number of data warehousing and visualization applications, and combine it with your own data to generate customized reports.
 
 # Turn Data Store into Data Warehouse
@@ -30,9 +31,9 @@ The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overvi
 # Example Reports
 ## Entity Details
 "Entity Timeline View" is part of [Entity Details](../../wiki/Entity-Details-Report) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
-*	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
-*	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
-*	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
+* 1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
+* Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
+* Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
 
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
