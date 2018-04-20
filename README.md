@@ -2,6 +2,7 @@
 AppDynamics provides a rich source of information about your monitored applications, including the performance of individual business activities, dependency flow between application components, and details on every business transaction in an instrumented environment. 
 
 AppDynamics APM provides a rich toolkit for turning the vast corpus of data captured by AppDynamics into valuable insights.
+
 AppDynamics DEXTER (Data Extraction and Enhanced Reporting) can make this process even faster and simpler. DEXTER provides new ways to unlock the data stored in the AppDynamics platform. You can analyze this information in a number of data warehousing and visualization applications, and combine it with your own data to generate customized reports.
 
 # Turn Data Store into Data Warehouse
@@ -30,9 +31,9 @@ The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overvi
 # Example Reports
 ## Entity Details
 "Entity Timeline View" is part of [Entity Details](../../wiki/Entity-Details-Report) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
-*	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
-*	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
-*	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
+* 1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
+* Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
+* Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
 
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
@@ -77,7 +78,7 @@ Snapshots with multiple Segments have an enhanced Waterfall view, with “^” c
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
-Using [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports, is an ingenious and useful way to visualize many call graphs in single screen.
+[Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports are an ingenious and useful way to visualize many call graphs in single screen.
 
 Sum of all calls in Application for entire time range
 ![](../master/docs/introduction/FlameGraphApplication.png?raw=true)
@@ -125,15 +126,14 @@ dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
 ## Review Results
-You will see the results in the output folder that you specified.
+You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
 
-If you did not specify output location, default location on Windows is `C:\AppD.Dexter.Out\<YourJobName>`, and default location on MacOS or Linux is `%HOME%/AppD.Dexter.Out`.
-
-To understand reports, read [Description of Reports](../../wiki/#report-descriptions).
+To understand what you are looking at, read [Description of Reports](../../wiki/#report-descriptions).
 
 # Useful Links
-
 ## Documentation 
+If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough).
+
 Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
 
 ## Support
