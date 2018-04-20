@@ -1,4 +1,3 @@
-
 # Introduction
 AppDynamics provides a rich source of information about your monitored applications, including the performance of individual business activities, dependency flow between application components, and details on every business transaction in an instrumented environment. 
 
@@ -30,7 +29,7 @@ The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overvi
 
 # Example Reports
 ## Entity Details
-"Entity Timeline View" is part of [Entity Details](../../Entity-Details-Report) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
+"Entity Timeline View" is part of [Entity Details](../../wiki/Entity-Details-Report) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
 *	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
 *	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
 *	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
