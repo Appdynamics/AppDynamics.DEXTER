@@ -129,7 +129,7 @@ You will see the results in the output folder that you specified.
 
 If you did not specify output location, default location on Windows is `C:\AppD.Dexter.Out\<YourJobName>`, and default location on MacOS or Linux is `%HOME%/AppD.Dexter.Out`.
 
-Reports are documented in [Description of Reports](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) locations
+To understand reports, read [Description of Reports](../../wiki/#report-descriptions).
 
 # Useful Links
 
