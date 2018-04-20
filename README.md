@@ -26,11 +26,11 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
 * Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
-The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
+The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
 
 # Example Reports
 ## Entity Details
-"Entity Timeline View" is part of [Entity Details](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
+"Entity Timeline View" is part of [Entity Details](../../Entity-Details) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
 *	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
 *	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
 *	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
@@ -38,21 +38,21 @@ The 3 part [Walkthrough](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
 ## Detected Entities
-If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report.
+If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](../../wiki/Detected-Entities-Report) report.
 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
 ## Entity Metrics and Graphs
-[Entity Metrics](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
+[Entity Metrics](../../wiki/Entity-Metrics) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
 A scatterplot of Calls per Minute vs Average Response time is provided for all types of Entities, allowing you to see what items are both slow and frequently called:
-![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricsTiersHourly.png?raw=true)
+![Entity Metrics](../master/docs/introduction/EntityMetricsTiersHourly.png?raw=true)
 
 Per minute breakdown with ART vs CPM scatter:
-![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
+![Entity Metrics](../master/docs/introduction/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 
 All Nodes JVM GC metrics
-![Entity Metrics](../master/docs/walkthrough/part1/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
+![Entity Metrics](../master/docs/introduction/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
 ## Snapshots Report
 Have you ever wanted to find a snapshot that calls a specific Tier, Backend or Application? 
@@ -69,25 +69,25 @@ Or discover which classes and methods are called in which Snapshots?
 
 How about all of the above, combined?
 
-In [Snapshots](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report you can do all of that, and more.
+In [Snapshots](../../wiki/Snapshots) report you can do all of that, and more.
 
 Snapshot Exit Calls broken by time and duration:
-![](../master/docs/walkthrough/part2/SnapshotsExitCallsType.png?raw=true)
+![](../master/docs/introduction/SnapshotsExitCallsType.png?raw=true)
 
 Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
-Using [Flame Graphs and Flame Chart](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) reports, is an ingenious and useful way to visualize many call graphs in single screen.
+Using [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports, is an ingenious and useful way to visualize many call graphs in single screen.
 
 Sum of all calls in Application for entire time range
-![](../master/docs/walkthrough/part3/FlameGraphApplication.png?raw=true)
+![](../master/docs/introduction/FlameGraphApplication.png?raw=true)
 
 Sum of all calls in Application with Time grouping
-/![](../master/docs/walkthrough/part3/FlameChartApplication.png?raw=true)
+/![](../master/docs/introduction/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
-[Configuration](https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/TODO) report provides information about Controller Settings and Application configuration. 
+[Configuration](../../wiki/Configuration) report provides information about Controller Settings and Application configuration. 
 
 Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
