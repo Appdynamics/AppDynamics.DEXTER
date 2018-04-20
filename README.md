@@ -30,7 +30,7 @@ The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overvi
 
 # Example Reports
 ## Entity Details
-"Entity Timeline View" is part of [Entity Details](../../Entity-Details) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
+"Entity Timeline View" is part of [Entity Details](../../Entity-Details-Report) report that is generated for Application and all of its Tiers, Nodes, Business Transactions, Backends, Service Endpoints and Errors. It provides a single-pane view into many things, including:
 *	1-minute granularity Metrics in the 1 hour time frame for each hour in the exported range
 *	Filterable list of Events and Health Rule Violations, arranged in the timeline of that hour, with details of the Event
 *	Filterable list of Snapshots, broken by Business Transaction and User Experience, arranged in the timeline of that hour, and hotlinked to the specific Snapshot
@@ -43,7 +43,7 @@ If you ever were presented with a large Controller (or several) full of unknown 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
 ## Entity Metrics and Graphs
-[Entity Metrics](../../wiki/Entity-Metrics) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
+[Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
 A scatterplot of Calls per Minute vs Average Response time is provided for all types of Entities, allowing you to see what items are both slow and frequently called:
 ![Entity Metrics](../master/docs/introduction/EntityMetricsTiersHourly.png?raw=true)
@@ -69,7 +69,7 @@ Or discover which classes and methods are called in which Snapshots?
 
 How about all of the above, combined?
 
-In [Snapshots](../../wiki/Snapshots) report you can do all of that, and more.
+In [Snapshots](../../wiki/Snapshots-Report) report you can do all of that, and more.
 
 Snapshot Exit Calls broken by time and duration:
 ![](../master/docs/introduction/SnapshotsExitCallsType.png?raw=true)
@@ -87,7 +87,7 @@ Sum of all calls in Application with Time grouping
 /![](../master/docs/introduction/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
-[Configuration](../../wiki/Configuration) report provides information about Controller Settings and Application configuration. 
+[Configuration](../../wiki/Configuration-Report) report provides information about Controller Settings and Application configuration. 
 
 Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
