@@ -508,6 +508,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             #region Save file 
 
+            Console.WriteLine();
+
             // Report files
             logger.Info("Saving Excel report {0}", reportFilePath);
             loggerConsole.Info("Saving Excel report {0}", reportFilePath);
@@ -769,6 +771,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Output entity one at a time
                 for (int indexOfEntity = 0; indexOfEntity < entityList.Count; indexOfEntity++)
                 {
+                    Console.Write(".");
+
                     EntityBase entity = entityList[indexOfEntity];
 
                     string entityNameForExcelTable = getShortenedEntityNameForExcelTable(entity.EntityName, entity.EntityID);

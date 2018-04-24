@@ -792,7 +792,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                             foreach (var controllerGroup in controllers)
                             {
-                                FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationIndexFilePath(controllerGroup.ToList()[0]));
+                                FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0]));
                                 FileIOHelper.AppendTwoCSVFiles(FilePathMap.ControllersReportFilePath(), FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0]));
                             }
                         }

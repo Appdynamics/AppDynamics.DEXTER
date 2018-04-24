@@ -313,7 +313,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 4, 1);
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 7, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -969,7 +969,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(5).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS_TIMELINE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 5, 1], range, REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "Controller", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "ApplicationName", eSortType.Ascending);
