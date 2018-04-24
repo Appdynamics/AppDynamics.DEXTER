@@ -2068,7 +2068,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
@@ -2077,7 +2077,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
@@ -2086,7 +2086,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
@@ -2095,7 +2095,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
@@ -2104,7 +2104,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
@@ -2113,7 +2113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
@@ -2122,7 +2122,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
+                REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
                 CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
         }

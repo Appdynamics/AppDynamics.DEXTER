@@ -754,62 +754,70 @@ namespace AppDynamics.Dexter.ProcessingSteps
             MemoryStream memoryStreamEntitiesFullRange = null;
             MemoryStream memoryStreamEntitiesHourlyRanges = null;
 
-            if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+            try
             {
-                List<EntityApplication> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
-                List<EntityApplication> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
+                if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+                {
+                    List<EntityApplication> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
+                    List<EntityApplication> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
 
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ApplicationMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ApplicationMetricReportMap());
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ApplicationMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ApplicationMetricReportMap());
+                }
+                else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+                {
+                    List<EntityTier> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+                    List<EntityTier> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new TierMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new TierMetricReportMap());
+                }
+                else if (entity.EntityType == EntityNode.ENTITY_TYPE)
+                {
+                    List<EntityNode> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+                    List<EntityNode> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new NodeMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new NodeMetricReportMap());
+                }
+                else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
+                {
+                    List<EntityBackend> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+                    List<EntityBackend> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BackendMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BackendMetricReportMap());
+                }
+                else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
+                {
+                    List<EntityBusinessTransaction> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+                    List<EntityBusinessTransaction> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BusinessTransactionMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BusinessTransactionMetricReportMap());
+                }
+                else if (entity.EntityType == EntityServiceEndpoint.ENTITY_TYPE)
+                {
+                    List<EntityServiceEndpoint> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
+                    List<EntityServiceEndpoint> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ServiceEndpointMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ServiceEndpointMetricReportMap());
+                }
+                else if (entity.EntityType == EntityError.ENTITY_TYPE)
+                {
+                    List<EntityError> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
+                    List<EntityError> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
+
+                    memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ErrorMetricReportMap());
+                    memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ErrorMetricReportMap());
+                }
             }
-            else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+            catch (ArgumentNullException ex)
             {
-                List<EntityTier> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
-                List<EntityTier> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
-
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new TierMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new TierMetricReportMap());
+                // The file is missing 
             }
-            else if (entity.EntityType == EntityNode.ENTITY_TYPE)
-            {
-                List<EntityNode> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
-                List<EntityNode> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
 
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new NodeMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new NodeMetricReportMap());
-            }
-            else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
-            {
-                List<EntityBackend> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
-                List<EntityBackend> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
-
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BackendMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BackendMetricReportMap());
-            }
-            else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
-            {
-                List<EntityBusinessTransaction> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
-                List<EntityBusinessTransaction> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
-
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BusinessTransactionMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BusinessTransactionMetricReportMap());
-            }
-            else if (entity.EntityType == EntityServiceEndpoint.ENTITY_TYPE)
-            {
-                List<EntityServiceEndpoint> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
-                List<EntityServiceEndpoint> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
-
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ServiceEndpointMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ServiceEndpointMetricReportMap());
-            }
-            else if (entity.EntityType == EntityError.ENTITY_TYPE)
-            {
-                List<EntityError> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
-                List<EntityError> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
-
-                memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ErrorMetricReportMap());
-                memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ErrorMetricReportMap());
-            }
 
             #endregion
 
@@ -897,38 +905,44 @@ namespace AppDynamics.Dexter.ProcessingSteps
             #region Filter things by type of entity
 
             MemoryStream memoryStreamActivityFlow = null;
-
-            if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+            try
             {
-                List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
+                if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+                {
+                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
 
-                memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new ApplicationActivityFlowReportMap());
+                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new ApplicationActivityFlowReportMap());
 
-                //EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), 0, sheet, fromRow, 1);
+                    //EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), 0, sheet, fromRow, 1);
+                }
+                else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+                {
+                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+
+                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new TierActivityFlowReportMap());
+                }
+                else if (entity.EntityType == EntityNode.ENTITY_TYPE)
+                {
+                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+
+                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new NodeActivityFlowReportMap());
+                }
+                else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
+                {
+                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+
+                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BackendActivityFlowReportMap());
+                }
+                else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
+                {
+                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+
+                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BusinessTransactionActivityFlowReportMap());
+                }
             }
-            else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+            catch (ArgumentNullException ex)
             {
-                List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
-
-                memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new TierActivityFlowReportMap());
-            }
-            else if (entity.EntityType == EntityNode.ENTITY_TYPE)
-            {
-                List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
-
-                memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new NodeActivityFlowReportMap());
-            }
-            else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
-            {
-                List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
-
-                memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BackendActivityFlowReportMap());
-            }
-            else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
-            {
-                List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
-
-                memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BusinessTransactionActivityFlowReportMap());
+                // The file is missing 
             }
 
             #endregion
@@ -945,7 +959,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 memoryStreamActivityFlow.Close();
                 memoryStreamActivityFlow.Dispose();
             }
-
 
             #endregion
 
