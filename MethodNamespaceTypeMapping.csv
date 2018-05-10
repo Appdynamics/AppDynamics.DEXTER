@@ -34,8 +34,8 @@ com.fasterxml.jackson.annotation,Jackson Annotation,,
 com.fasterxml.jackson.core,Jackson Core,,
 com.fasterxml.jackson.databind,Jackson DataBind,,
 com.google,Google Core,FBBC05,FEEDBE
-com.ibm,IBM Core,,
-com.informix,Informix,,
+com.ibm,IBM Core,00BFA9,00E5DB
+com.informix,Informix,00BFA9,00E5DB
 com.matrixone,3DS MatrixOne,,
 com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling,,
 com.microsoft,Microsoft,00A1F1,A7D5EC
@@ -82,8 +82,10 @@ jrockit,JRockit JVM,75E500,BBFA38
 Kendo,Kendo UI,,
 log4net,Log4Net Logging,,
 Microsoft,Microsoft,00A1F1,A7D5EC
+Microsoft.Azure,Microsoft Azure,00A1F1,A7D5EC
 Microsoft.Azure.KeyVault,Microsoft Azure KeyVault,00A1F1,A7D5EC
 Microsoft.Crm,Microsoft Dynamics CRM,EA3E23,E8998D
+Microsoft.FSharp,.NET F#,6197FF,00D1C8
 Microsoft.CSharp,.NET C#,6197FF,00D1C8
 Microsoft.Dynamics,Microsoft Dynamics CRM,EA3E23,E8998D
 Microsoft.OData,Microsoft OData,00A1F1,A7D5EC

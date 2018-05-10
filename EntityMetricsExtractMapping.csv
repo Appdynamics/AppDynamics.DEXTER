@@ -90,7 +90,7 @@ Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Col
 Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVM|Garbage Collection|Memory Pools|PS Survivor Space|Current Usage (MB),JVMMEMPOOLSURVIVOR,AVERAGE,JVMGCGCMemPool,PRIMARY,3A21FD,JVMStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|JMX|Sessions|activeSessions,JMX|Sessions|activeSessions,JMXSESSACTIVE,AVERAGE,JMXSessions,PRIMARY,0000FF,JMXStats
 Node,"Application Infrastructure Performance|*|Individual Nodes|*|JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections","JMX|JDBC Connection Pools|""jdbc/OracleECommerceDB""|Active Connections",JMXDBCONNPOOLECOM,AVERAGE,JMXJDBCConnPool,PRIMARY,0000FF,JMXStats
-Tier,"Application Infrastructure Performance|*|Individual Nodes|JMX|Web Container Runtime|""ajp-bio-8009""|Request Count","JMX|Web Container Runtime|""ajp-bio-8009""|Request Count",JMXWCRAJPREQUESTCOUNT,AVERAGE,JMXWCRAJP,PRIMARY,0000FF,JMXStats
+Node,"Application Infrastructure Performance|*|Individual Nodes|*|JMX|Web Container Runtime|""ajp-bio-8009""|Request Count","JMX|Web Container Runtime|""ajp-bio-8009""|Request Count",JMXWCRAJPREQUESTCOUNT,AVERAGE,JMXWCRAJP,PRIMARY,0000FF,JMXStats
 Backend,Backends|*|Average Response Time (ms),Average Response Time (ms),ART,AVERAGE,CallsAndResponse,SECONDARY,108000,Transaction
 Backend,Backends|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,Transaction
 Backend,Backends|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,Transaction

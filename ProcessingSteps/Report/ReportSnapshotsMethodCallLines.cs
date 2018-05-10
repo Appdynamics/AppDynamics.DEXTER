@@ -74,6 +74,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 return true;
             }
+
             try
             {
                 loggerConsole.Info("Prepare Snapshots Method Calls Report File");
