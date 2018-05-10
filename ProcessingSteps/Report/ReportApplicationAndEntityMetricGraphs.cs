@@ -103,10 +103,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
-
             try
             {
+                if (this.ShouldExecute(jobConfiguration) == false)
+                {
+                    return true;
+                }
+
+                List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {

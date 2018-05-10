@@ -2061,7 +2061,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 SNAPSHOTS_FOLDER_NAME,
-                CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
+                CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
 
         public string SnapshotsExitCallsReportFilePath()

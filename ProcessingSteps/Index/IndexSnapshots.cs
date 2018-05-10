@@ -2984,19 +2984,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
                     }
 
-                    if (methodCallLine.NumSEPs == 1)
+                    if (serviceEndpointReferenceList.Count > 0)
                     {
-                        methodCallLine.SEPs = serviceEndpointReferenceList[0];
-                    }
-                    else
-                    {
-                        StringBuilder sb = new StringBuilder(32 * methodCallLine.NumSEPs);
-                        foreach (string serviceEndpointReference in serviceEndpointReferenceList)
+                        if (methodCallLine.NumSEPs == 1)
                         {
-                            sb.AppendFormat("{0};\n", serviceEndpointReference);
+                            methodCallLine.SEPs = serviceEndpointReferenceList[0];
                         }
-                        sb.Remove(sb.Length - 1, 1);
-                        methodCallLine.SEPs = sb.ToString();
+                        else
+                        {
+                            StringBuilder sb = new StringBuilder(32 * methodCallLine.NumSEPs);
+                            foreach (string serviceEndpointReference in serviceEndpointReferenceList)
+                            {
+                                sb.AppendFormat("{0};\n", serviceEndpointReference);
+                            }
+                            sb.Remove(sb.Length - 1, 1);
+                            methodCallLine.SEPs = sb.ToString();
+                        }
                     }
                 }
 

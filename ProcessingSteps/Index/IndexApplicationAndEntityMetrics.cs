@@ -27,14 +27,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
-
             try
             {
                 if (this.ShouldExecute(jobConfiguration) == false)
                 {
                     return true;
                 }
+
+                List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
 
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
@@ -413,7 +413,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, EntityBase> entitiesFullDictionary = backendsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
 
                                         foreach (EntityBase entity in entitiesFullDictionary.Values)
                                         {
@@ -445,7 +445,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             // Prepare copies of entities indexed for fast access by their entity ID
                                             Dictionary<long, EntityBase> entitiesHourlyDictionary = backendsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityTier.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE, metricValuesDictionary);
 
                                             foreach (EntityBase entity in entitiesHourlyDictionary.Values)
                                             {
