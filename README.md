@@ -26,7 +26,7 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
 * Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
-The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
+The 3 part [Walkthrough](../../wiki/Home#walkthrough) gives an overview and screenshots of the tool in action.
 
 # Example Reports
 ## Entity Details
