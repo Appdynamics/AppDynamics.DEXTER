@@ -62,8 +62,8 @@ To take this a step further, PowerBI visual analytics tool offers advanced, inte
 
 ![Entity Metrics in PowerBI](../master/docs/introduction/EntityMetricsPowerBITiersARTvsCPM.png?raw=true)
 
-Interactive Matrix with Legend allows rapid data exploration:
-![Entity Metrics in PowerBI](../master/docs/introduction/EntityMetricsPowerBITiersMatrix.png?raw=true)
+Render Flowmap of activity with Sankey style flow diagram for both Average Response Time and Calls per Minute metrics:
+![Entity Flowmaps in PowerBI](../master/docs/introduction/EntityFlowmapsPowerBIApplicationFlow.png?raw=true)
 
 ## Snapshots Report
 Have you ever wanted to find a snapshot that calls a specific Tier, Backend or Application? 
