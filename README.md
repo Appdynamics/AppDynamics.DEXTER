@@ -42,11 +42,11 @@ If you ever were presented with a large Controller (or several) full of unknown 
 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
-As alternative to Excel, PowerBI analytics tool offers visual exploration possibilities of the same data in [Detected Entities in PowerBI](../../wiki/Detected-Entities-Report-in-PowerBI) report.
+As alternative to Excel, PowerBI visual analytics tool offers advanced exploration possibilities of the same data in [Detected Entities in PowerBI](../../wiki/Detected-Entities-Report-in-PowerBI) report.
 
 ![Detected Entities in PowerBI](../master/docs/introduction/DetectedEntitiesPowerBIOverview.png?raw=true)
 
-## Entity Metrics and Graphs
+## Entity Metrics, Graphs and Flow Maps
 [Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
 A scatterplot of Calls per Minute vs Average Response time is provided for all types of Entities, allowing you to see what items are both slow and frequently called:
@@ -55,8 +55,15 @@ A scatterplot of Calls per Minute vs Average Response time is provided for all t
 Per minute breakdown with ART vs CPM scatter:
 ![Entity Metrics](../master/docs/introduction/EntityMetricGraphsTiersScatterTransaction.png?raw=true)
 
-All Nodes JVM GC metrics
+All Nodes JVM GC metrics are stored in high granularity forever:
 ![Entity Metrics](../master/docs/introduction/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
+
+To take this a step further, PowerBI visual analytics tool offers advanced, interactive displays of the same data in [Entity Metrics in PowerBI](../../wiki/Entity-Metrics-Report-in-PowerBI) and [Entity Flowmaps in PowerBI](../../wiki/Entity-Flowmaps-Report-in-PowerBI)report.
+
+![Entity Metrics in PowerBI](../master/docs/introduction/EntityMetricsPowerBITiersARTvsCPM.png?raw=true)
+
+Interactive Matrix with Legend allows rapid data exploration:
+![Entity Metrics in PowerBI](../master/docs/introduction/EntityMetricsPowerBITiersMatrix.png?raw=true)
 
 ## Snapshots Report
 Have you ever wanted to find a snapshot that calls a specific Tier, Backend or Application? 
