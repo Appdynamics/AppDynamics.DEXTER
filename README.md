@@ -42,6 +42,10 @@ If you ever were presented with a large Controller (or several) full of unknown 
 
 ![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
 
+As alternative to Excel, PowerBI analytics tool offers visual exploration possibilities of the same data in [Detected Entities in PowerBI](../../wiki/Detected-Entities-Report-in-PowerBI) report.
+
+![Detected Entities in PowerBI](../master/docs/introduction/DetectedEntitiesPowerBIOverview.png?raw=true)
+
 ## Entity Metrics and Graphs
 [Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
