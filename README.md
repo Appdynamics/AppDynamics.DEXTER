@@ -26,7 +26,7 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
 * Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
-The 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough) gives an overview and screenshots of the tool in action.
+The 3 part [Walkthrough](../../wiki/Home#walkthrough) gives an overview and screenshots of the tool in action.
 
 # Example Reports
 ## Entity Details
@@ -128,11 +128,11 @@ dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ## Review Results
 You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
 
-To understand what you are looking at, read [Description of Reports](../../wiki/#report-descriptions).
+To understand what you are looking at, read [Description of Excel Reports](../../wiki/#excel-report-descriptions).
 
 # Useful Links
 ## Documentation 
-If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Getting-Started-Walkthrough).
+If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Home#walkthrough).
 
 Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
 
