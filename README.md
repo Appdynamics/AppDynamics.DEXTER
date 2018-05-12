@@ -88,13 +88,12 @@ Snapshot Exit Calls broken by time and duration:
 Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
-However, even better way to use this data is in PowerBI visual analytics tool that offers completely interactive and rapid exploration  in [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI) and [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports.
+An even better way to explore this data is by using PowerBI visual analytics tool with very interactive and rapid exploration views provided by [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI) and [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports.
 
 ![Snapshots in PowerBI](../master/docs/introduction/SnaphotsPowerBI.png?raw=true)
 
-You can explore your Call Graph data:
+You can even explore your Call Graph data:
 ![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
-
 
 ## Flame Graph and Flame Chart Reports
 [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports are an ingenious and useful way to visualize many call graphs in single screen.
