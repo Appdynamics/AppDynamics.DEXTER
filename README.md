@@ -58,7 +58,7 @@ Per minute breakdown with ART vs CPM scatter:
 All Nodes JVM GC metrics are stored in high granularity forever:
 ![Entity Metrics](../master/docs/introduction/EntityMetricGraphsTiersGraphsJVMGC.png?raw=true)
 
-To take this a step further, PowerBI visual analytics tool offers advanced, interactive displays of the same data in [Entity Metrics in PowerBI](../../wiki/Entity-Metrics-Report-in-PowerBI) and [Entity Flowmaps in PowerBI](../../wiki/Entity-Flowmaps-Report-in-PowerBI)report.
+To take this a step further, PowerBI visual analytics tool offers advanced, interactive displays of the same data in [Entity Metrics in PowerBI](../../wiki/Entity-Metrics-Report-in-PowerBI) and [Entity Flowmaps in PowerBI](../../wiki/Entity-Flowmaps-Report-in-PowerBI) reports.
 
 ![Entity Metrics in PowerBI](../master/docs/introduction/EntityMetricsPowerBITiersARTvsCPM.png?raw=true)
 
@@ -87,6 +87,14 @@ Snapshot Exit Calls broken by time and duration:
 
 Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
+
+However, even better way to use this data is in PowerBI visual analytics tool that offers completely interactive and rapid exploration  in [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI) and [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports.
+
+![Snapshots in PowerBI](../master/docs/introduction/SnaphotsPowerBI.png?raw=true)
+
+You can explore your Call Graph data:
+![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
+
 
 ## Flame Graph and Flame Chart Reports
 [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports are an ingenious and useful way to visualize many call graphs in single screen.
