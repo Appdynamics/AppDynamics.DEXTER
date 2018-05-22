@@ -3268,7 +3268,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary[keyLetterOfMappingList];
                     foreach (MethodCallLineClassTypeMapping mapping in methodCallLineClassToFrameworkTypeMappingList)
                     {
-                        if (classOrFunctionName.StartsWith(mapping.ClassPrefix, StringComparison.InvariantCultureIgnoreCase) == true)
+                        if (classOrFunctionName.StartsWith(mapping.ClassPrefix, StringComparison.InvariantCulture) == true)
                         {
                             frameworkName = String.Format("{0} ({1})", mapping.ClassPrefix, mapping.FrameworkType);
                             break;
@@ -3276,7 +3276,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
 
-                // If we haven't found framework, get it out of the fiull class name
+                // If we haven't found framework, get it out of the full class name
                 // Grab first two elements instead of the entire class name
                 // AutoFac.Control.Execution -> Autofac.Funky
                 // com.tms.whatever -> com.tms

@@ -22,6 +22,18 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.MachineOSType).Index(i); i++;
             Map(m => m.MachineType).Index(i); i++;
 
+            Map(m => m.AgentRuntime).Index(i); i++;
+
+            Map(m => m.InstallDirectory).Index(i); i++;
+            Map(m => m.InstallTime).Index(i); i++;
+            Map(m => m.LastStartTime).Index(i); i++;
+            Map(m => m.IsDisabled).Index(i); i++;
+            Map(m => m.IsMonitoringDisabled).Index(i); i++;
+
+            Map(m => m.NumStartupOptions).Index(i); i++;
+            Map(m => m.NumProperties).Index(i); i++;
+            Map(m => m.NumEnvVariables).Index(i); i++;
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.NodeID).Index(i); i++;

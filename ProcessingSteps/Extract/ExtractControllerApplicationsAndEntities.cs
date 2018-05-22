@@ -1,13 +1,19 @@
 ﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class ExtractControllerApplicationsAndEntities : JobStepBase
     {
+        private const int NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS = 5;
+        private const int ENTITIES_EXTRACT_NUMBER_OF_NODES_TO_PROCESS_PER_THREAD = 10;
+
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -178,6 +184,75 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         controllerApi.PrivateApiLogin();
                         informationPointsJSON = controllerApi.GetListOfInformationPointsAdditionalDetail(jobTarget.ApplicationID);
                         if (informationPointsJSON != String.Empty) FileIOHelper.SaveFileToPath(informationPointsJSON, FilePathMap.InformationPointsDetailDataFilePath(jobTarget));
+
+                        #endregion
+
+                        #region Node Properties
+
+                        List<AppDRESTNode> nodesList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTNode>(FilePathMap.NodesDataFilePath(jobTarget));
+                        if (nodesList != null)
+                        {
+                            loggerConsole.Info("Node Properties for Nodes ({0} entities)", nodesList.Count);
+
+                            int j = 0;
+
+                            var listOfNodesInHourChunks = nodesList.BreakListIntoChunks(ENTITIES_EXTRACT_NUMBER_OF_NODES_TO_PROCESS_PER_THREAD);
+
+                            Parallel.ForEach<List<AppDRESTNode>, int>(
+                                listOfNodesInHourChunks,
+                                new ParallelOptions { MaxDegreeOfParallelism = NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
+                                () => 0,
+                                (listOfNodesInHourChunk, loop, subtotal) =>
+                                {
+                                    // Set up controller access
+                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    // Login into private API
+                                    controllerApiParallel.PrivateApiLogin();
+
+                                    foreach (AppDRESTNode node in listOfNodesInHourChunk)
+                                    {
+                                        if (File.Exists(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node)) == false)
+                                        {
+                                            string nodePropertiesJSON = controllerApi.GetNodeProperties(node.id);
+                                            if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
+                                        }
+                                    }
+                                    
+                                    return listOfNodesInHourChunk.Count;
+                                },
+                                (finalResult) =>
+                                {
+                                    Interlocked.Add(ref j, finalResult);
+                                    Console.Write("[{0}].", j);
+                                }
+                            );
+
+                            //Parallel.ForEach(
+                            //    nodesList,
+                            //    new ParallelOptions { MaxDegreeOfParallelism = NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
+                            //    () => 0,
+                            //    (node, loop, subtotal) =>
+                            //    {
+                            //        ControllerApi controllerApiLocal = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                            //        controllerApiLocal.PrivateApiLogin();
+
+                            //        string nodePropertiesJSON = controllerApi.GetNodeProperties(node.id);
+                            //        if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
+
+                            //        return 1;
+                            //    },
+                            //    (finalResult) =>
+                            //    {
+                            //        Interlocked.Add(ref j, finalResult);
+                            //        if (j % 10 == 0)
+                            //        {
+                            //            Console.Write("[{0}].", j);
+                            //        }
+                            //    }
+                            //);
+
+                            loggerConsole.Info("Completed {0} Nodes", nodesList.Count);
+                        }
 
                         #endregion
                     }

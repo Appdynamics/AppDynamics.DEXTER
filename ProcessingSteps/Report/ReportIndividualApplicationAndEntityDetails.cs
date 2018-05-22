@@ -1518,6 +1518,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                             break;
 
+                        case "CLR_CRASH":
+                            var eventsGroup_CLR_CRASH = eventsGroup.ToList().GroupBy(e => e.TierName);
+                            foreach (var eventsGrouping in eventsGroup_CLR_CRASH)
+                            {
+                                eventsAllGrouped.Add(eventsGrouping.ToList());
+                            }
+                            break;
+
                         case "POLICY_OPEN_WARNING":
                         case "POLICY_OPEN_CRITICAL":
                         case "POLICY_CLOSE_WARNING":
@@ -1630,7 +1638,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (firstEvent.SubType != String.Empty) { sheet.Cells[j, 2].Value = firstEvent.SubType; }
                         if (firstEvent.TierName != String.Empty) { sheet.Cells[j, 3].Value = firstEvent.TierName; }
                         if (firstEvent.BTName != String.Empty) { sheet.Cells[j, 4].Value = firstEvent.BTName; }
-                        if (firstEvent.TriggeredEntityName != String.Empty) { sheet.Cells[j, 5].Value = firstEvent.TriggeredEntityName; }
+                        if (firstEvent.TriggeredEntityName != String.Empty)
+                        {
+                            sheet.Cells[j, 5].Value = firstEvent.TriggeredEntityName;
+                        }
+                        else
+                        {
+                            if (firstEvent.NodeName != String.Empty)
+                            {
+                                sheet.Cells[j, 5].Value = firstEvent.NodeName;
+                            }
+                        }
                         sheet.Cells[j, 1].StyleName = "EventHeadingStyle";
                         sheet.Cells[j, 2].StyleName = "EventHeadingStyle";
                         sheet.Cells[j, 3].StyleName = "EventHeadingStyle";

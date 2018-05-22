@@ -113,6 +113,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     loggerConsole.Info("Extract Flowmaps for Tiers ({0} entities)", tiersList.Count);
 
+                                    int j = 0;
+
                                     Parallel.ForEach(
                                         tiersList,
                                         new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
@@ -131,7 +133,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         },
                                         (finalResult) =>
                                         {
-                                            //Interlocked.Add(ref numEventsTotal, finalResult);
+                                            Interlocked.Add(ref j, finalResult);
+                                            if (j % 10 == 0)
+                                            {
+                                                Console.Write("[{0}].", j);
+                                            }
                                         }
                                     );
 
@@ -149,6 +155,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Extract Flowmaps for Nodes ({0} entities)", nodesList.Count);
+
+                                    int j = 0;
 
                                     Parallel.ForEach(
                                         nodesList,
@@ -168,7 +176,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         },
                                         (finalResult) =>
                                         {
-                                            //Interlocked.Add(ref numEventsTotal, finalResult);
+                                            Interlocked.Add(ref j, finalResult);
+                                            if (j % 10 == 0)
+                                            {
+                                                Console.Write("[{0}].", j);
+                                            }
                                         }
                                     );
 
@@ -188,6 +200,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     loggerConsole.Info("Extract Flowmaps for Backends ({0} entities)", backendsList.Count);
 
+                                    int j = 0;
+
                                     Parallel.ForEach(
                                         backendsList,
                                         new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
@@ -206,7 +220,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         },
                                         (finalResult) =>
                                         {
-                                            //Interlocked.Add(ref numEventsTotal, finalResult);
+                                            Interlocked.Add(ref j, finalResult);
+                                            if (j % 10 == 0)
+                                            {
+                                                Console.Write("[{0}].", j);
+                                            }
                                         }
                                     );
 
@@ -226,6 +244,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     loggerConsole.Info("Extract Flowmaps for Business Transactions ({0} entities)", businessTransactionsList.Count);
 
+                                    int j = 0;
+
                                     Parallel.ForEach(
                                         businessTransactionsList,
                                         new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
@@ -244,7 +264,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         },
                                         (finalResult) =>
                                         {
-                                            //Interlocked.Add(ref numEventsTotal, finalResult);
+                                            Interlocked.Add(ref j, finalResult);
+                                            if (j % 10 == 0)
+                                            {
+                                                Console.Write("[{0}].", j);
+                                            }
                                         }
                                     );
 

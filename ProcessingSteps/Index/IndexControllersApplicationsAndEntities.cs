@@ -131,17 +131,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Nodes
+                        #region Nodes and Node Properties
 
                         List<AppDRESTNode> nodesRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTNode>(FilePathMap.NodesDataFilePath(jobTarget));
                         List<EntityNode> nodesList = null;
+                        List<EntityNodeProperty> entityNodeStartupOptionsList = null;
+                        List<EntityNodeProperty> entityNodePropertiesList = null;
+                        List<EntityNodeProperty> entityNodeEnvironmentVariablesList = null;
                         if (nodesRESTList != null)
                         {
-                            loggerConsole.Info("Index List of Nodes ({0} entities)", nodesRESTList.Count);
+                            loggerConsole.Info("Index List of Nodes and Node Properties ({0} entities)", nodesRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + nodesRESTList.Count;
 
                             nodesList = new List<EntityNode>(nodesRESTList.Count);
+                            entityNodeStartupOptionsList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
+                            entityNodePropertiesList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
+                            entityNodeEnvironmentVariablesList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
 
                             foreach (AppDRESTNode node in nodesRESTList)
                             {
@@ -214,13 +220,123 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithDeeplinks(nodeRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(nodeRow, jobTarget, jobConfiguration.Input.TimeRange);
 
+                                JObject nodeProperties = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
+                                if (nodeProperties != null)
+                                {
+                                    nodeRow.AgentRuntime = nodeProperties["latestAgentRuntime"].ToString();
+
+                                    nodeRow.InstallDirectory = nodeProperties["installDir"].ToString();
+                                    nodeRow.InstallTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)nodeProperties["installTime"]);
+
+                                    nodeRow.LastStartTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)nodeProperties["lastStartTime"]);
+
+                                    nodeRow.IsDisabled = (bool)nodeProperties["disable"];
+                                    nodeRow.IsMonitoringDisabled = (bool)nodeProperties["disableMonitoring"];
+
+                                    if (nodeProperties["latestVmStartupOptions"].HasValues == true)
+                                    {
+                                        nodeRow.NumStartupOptions = nodeProperties["latestVmStartupOptions"].Count();
+                                        foreach (JValue nodeStartupOptionObject in nodeProperties["latestVmStartupOptions"])
+                                        {
+                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            nodePropertyRow.NodeID = nodeRow.NodeID;
+                                            nodePropertyRow.AgentType = nodeRow.AgentType;
+                                            nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
+                                            nodePropertyRow.ApplicationID = nodeRow.ApplicationID;
+                                            nodePropertyRow.Controller = nodeRow.Controller;
+                                            nodePropertyRow.NodeName = nodeRow.NodeName;
+                                            nodePropertyRow.TierID = nodeRow.TierID;
+                                            nodePropertyRow.TierName = nodeRow.TierName;
+
+                                            string optionValue = nodeStartupOptionObject.Value.ToString();
+                                            string optionValueAdjusted = String.Empty;
+                                            if (optionValue.StartsWith("-D") == true)
+                                            {
+                                                optionValueAdjusted = optionValue.Substring(2);
+                                            }
+                                            else if (optionValue.StartsWith("-") == true)
+                                            {
+                                                optionValueAdjusted = optionValue.Substring(1);
+                                            }
+
+                                            if (optionValueAdjusted.Length > 0)
+                                            {
+                                                string[] optionValueAdjustedTokens = optionValueAdjusted.Split(new char[] { '=' , ':'});
+                                                if (optionValueAdjustedTokens.Length > 0)
+                                                {
+                                                    nodePropertyRow.PropName = optionValueAdjustedTokens[0];
+                                                }
+                                                if (optionValueAdjustedTokens.Length > 1)
+                                                {
+                                                    nodePropertyRow.PropValue = optionValueAdjustedTokens[1];
+                                                }
+                                            }
+                                            else
+                                            {
+                                                nodePropertyRow.PropName = "Unknown";
+                                                nodePropertyRow.PropValue = optionValue;
+                                            }
+
+                                            entityNodeStartupOptionsList.Add(nodePropertyRow);
+                                        }
+                                    }
+                                    if (nodeProperties["latestVmSystemProperties"].HasValues == true)
+                                    {
+                                        nodeRow.NumProperties = nodeProperties["latestVmSystemProperties"].Count();
+                                        foreach (JObject nodePropertyObject in nodeProperties["latestVmSystemProperties"])
+                                        {
+                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            nodePropertyRow.NodeID = nodeRow.NodeID;
+                                            nodePropertyRow.AgentType = nodeRow.AgentType;
+                                            nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
+                                            nodePropertyRow.ApplicationID = nodeRow.ApplicationID;
+                                            nodePropertyRow.Controller = nodeRow.Controller;
+                                            nodePropertyRow.NodeName = nodeRow.NodeName;
+                                            nodePropertyRow.TierID = nodeRow.TierID;
+                                            nodePropertyRow.TierName = nodeRow.TierName;
+
+                                            nodePropertyRow.PropName = nodePropertyObject["name"].ToString();
+                                            nodePropertyRow.PropValue = nodePropertyObject["value"].ToString();
+
+                                            entityNodePropertiesList.Add(nodePropertyRow);
+                                        }
+                                    }
+                                    if (nodeProperties["latestEnvironmentVariables"].HasValues == true)
+                                    {
+                                        nodeRow.NumEnvVariables = nodeProperties["latestEnvironmentVariables"].Count();
+                                        foreach (JObject nodePropertyObject in nodeProperties["latestEnvironmentVariables"])
+                                        {
+                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            nodePropertyRow.NodeID = nodeRow.NodeID;
+                                            nodePropertyRow.AgentType = nodeRow.AgentType;
+                                            nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
+                                            nodePropertyRow.ApplicationID = nodeRow.ApplicationID;
+                                            nodePropertyRow.Controller = nodeRow.Controller;
+                                            nodePropertyRow.NodeName = nodeRow.NodeName;
+                                            nodePropertyRow.TierID = nodeRow.TierID;
+                                            nodePropertyRow.TierName = nodeRow.TierName;
+
+                                            nodePropertyRow.PropName = nodePropertyObject["name"].ToString();
+                                            nodePropertyRow.PropValue = nodePropertyObject["value"].ToString();
+
+                                            entityNodeEnvironmentVariablesList.Add(nodePropertyRow);
+                                        }
+                                    }
+                                }
+
                                 nodesList.Add(nodeRow);
                             }
 
                             // Sort them
                             nodesList = nodesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ToList();
+                            entityNodeStartupOptionsList = entityNodeStartupOptionsList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
+                            entityNodePropertiesList = entityNodePropertiesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
+                            entityNodeEnvironmentVariablesList = entityNodeEnvironmentVariablesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
 
                             FileIOHelper.WriteListToCSVFile(nodesList, new NodeEntityReportMap(), FilePathMap.NodesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodeStartupOptionsList, new NodePropertyReportMap(), FilePathMap.NodeStartupOptionsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodePropertiesList, new NodePropertyReportMap(), FilePathMap.NodePropertiesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodeEnvironmentVariablesList, new NodePropertyReportMap(), FilePathMap.NodeEnvironmentVariablesIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -765,6 +881,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.NodesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.NodesIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.NodesReportFilePath(), FilePathMap.NodesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.NodeStartupOptionsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.NodeStartupOptionsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.NodeStartupOptionsReportFilePath(), FilePathMap.NodeStartupOptionsIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.NodePropertiesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.NodePropertiesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.NodePropertiesReportFilePath(), FilePathMap.NodePropertiesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.NodeEnvironmentVariablesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.NodeEnvironmentVariablesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.NodeEnvironmentVariablesReportFilePath(), FilePathMap.NodeEnvironmentVariablesIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.BackendsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BackendsIndexFilePath(jobTarget)).Length > 0)
                         {

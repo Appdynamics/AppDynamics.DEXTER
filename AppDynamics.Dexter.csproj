@@ -191,7 +191,9 @@
     <Compile Include="ReportObjects\Configuration\Maps\EntityApplicationConfigurationReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\ControllerSettingReportMap.cs" />
     <Compile Include="ReportObjects\Entity\EntityInformationPoint.cs" />
+    <Compile Include="ReportObjects\Entity\EntityNodeProperty.cs" />
     <Compile Include="ReportObjects\Entity\Maps\InformationPointEntityReportMap.cs" />
+    <Compile Include="ReportObjects\Entity\Maps\NodePropertyReportMap.cs" />
     <Compile Include="ReportObjects\Event\Maps\ApplicationEventReportMap.cs" />
     <Compile Include="ReportObjects\FlameGraph\FoldedStackLine.cs" />
     <Compile Include="ReportObjects\FlameGraph\FlameGraphBox.cs" />
