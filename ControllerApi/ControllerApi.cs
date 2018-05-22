@@ -139,6 +139,11 @@ namespace AppDynamics.Dexter
             return this.GetListOfNodes(applicationID.ToString());
         }
 
+        public string GetNodeProperties(long nodeID)
+        {
+            return this.apiGET(String.Format("controller/restui/nodeUiService/appAgentByNodeId/{0}", nodeID), "application/json", true);
+        }
+
         public string GetListOfBusinessTransactions(string applicationName)
         {
             return this.apiGET(String.Format("controller/rest/applications/{0}/business-transactions?output=JSON", applicationName), "application/json", false);

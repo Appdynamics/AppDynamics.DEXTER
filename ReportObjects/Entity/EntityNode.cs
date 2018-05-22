@@ -28,6 +28,19 @@ namespace AppDynamics.Dexter.DataObjects
         public string MachineOSType { get; set; }
         public string MachineType { get; set; }
 
+        public bool IsDisabled { get; set; }
+        public bool IsMonitoringDisabled { get; set; }
+
+        public string InstallDirectory { get; set; }
+        public DateTime LastStartTime { get; set; }
+        public DateTime InstallTime { get; set; }
+
+        public int NumStartupOptions { get; set; }
+        public int NumProperties { get; set; }
+        public int NumEnvVariables { get; set; }
+
+        public string AgentRuntime { get; set; }
+
         public override long EntityID
         {
             get

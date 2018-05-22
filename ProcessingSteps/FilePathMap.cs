@@ -37,6 +37,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_ENTITY_ERRORS_FILE_NAME = "errors.json";
         private const string EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME = "informationpoints.json";
         private const string EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME = "informationpointsdetail.json";
+        private const string EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME = "node.{0}.json";
 
         // Metric data file names
         private const string EXTRACT_METRIC_FULL_FILE_NAME = "full.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -72,6 +73,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ENTITY_APPLICATION_FILE_NAME = "application.csv";
         private const string CONVERT_ENTITY_TIERS_FILE_NAME = "tiers.csv";
         private const string CONVERT_ENTITY_NODES_FILE_NAME = "nodes.csv";
+        private const string CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME = "nodestartupoptions.csv";
+        private const string CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME = "nodeproperties.csv";
+        private const string CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME = "nodeenvironmentvariables.csv";
         private const string CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
         private const string CONVERT_ENTITY_BACKENDS_FILE_NAME = "backends.csv";
         private const string CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
@@ -375,6 +379,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
         }
 
+        public string NodeRuntimePropertiesDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, AppDRESTNode node)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME,
+                getShortenedEntityNameForFileSystem(node.name, node.id));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
+                reportFileName);
+        }
+
         #endregion
 
         #region Entity Metadata Index
@@ -427,6 +447,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ENTITY_NODES_FILE_NAME);
+        }
+
+        public string NodeStartupOptionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME);
+        }
+
+        public string NodePropertiesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME);
+        }
+
+        public string NodeEnvironmentVariablesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
         }
 
         public string BackendsIndexFilePath(JobTarget jobTarget)
@@ -537,6 +590,33 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ENTITY_NODES_FILE_NAME);
+        }
+
+        public string NodeStartupOptionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME);
+        }
+
+        public string NodePropertiesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME);
+        }
+
+        public string NodeEnvironmentVariablesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
         }
 
         public string BackendsReportFilePath()
