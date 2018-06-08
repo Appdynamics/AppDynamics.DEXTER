@@ -1,9 +1,8 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -84,7 +83,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     loggerConsole.Info("Index Flowmap for Application");
 
-                                    convertFlowmapApplication(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange);
+                                    FileIOHelper.DeleteFile(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget));
+
+                                    List<ActivityFlow> activityFlowsList = convertFlowmapApplication(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange);
+
+                                    if (activityFlowsList != null)
+                                    {
+                                        FileIOHelper.WriteListToCSVFile(activityFlowsList, new ApplicationActivityFlowReportMap(), FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget));
+                                    }
+
+                                    if (activityFlowsList != null)
+                                    {
+                                        loggerConsole.Info("Index Flowmap for Application per Minute");
+
+                                        int numberOfMinutes = Convert.ToInt32((jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).TotalMinutes);
+
+                                        List<ActivityFlow> activityFlowsPerMinuteList = new List<ActivityFlow>(activityFlowsList.Count * numberOfMinutes);
+
+                                        for (int minute = 0; minute < numberOfMinutes; minute++)
+                                        {
+                                            JobTimeRange thisMinuteJobTimeRange = new JobTimeRange();
+                                            thisMinuteJobTimeRange.From = jobConfiguration.Input.TimeRange.From.AddMinutes(minute);
+                                            thisMinuteJobTimeRange.To = jobConfiguration.Input.TimeRange.From.AddMinutes(minute + 1);
+
+                                            activityFlowsList = convertFlowmapApplication(applicationList[0], jobTarget, thisMinuteJobTimeRange);
+
+                                            if (activityFlowsList != null)
+                                            {
+                                                activityFlowsPerMinuteList.AddRange(activityFlowsList);
+                                            }
+                                        }
+
+                                        FileIOHelper.WriteListToCSVFile(activityFlowsPerMinuteList, new ApplicationActivityFlowReportMap(), FilePathMap.ApplicationFlowmapPerMinuteIndexFilePath(jobTarget));
+                                    }
 
                                     Interlocked.Add(ref numEntitiesTotal, applicationList.Count);
 
@@ -106,7 +137,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityTier tier in tiersList)
                                     {
-                                        convertFlowmapTier(tier, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapTier(tier, jobTarget, jobConfiguration.Input.TimeRange);
+
+                                        if (activityFlowsList != null)
+                                        {
+                                            FileIOHelper.WriteListToCSVFile(activityFlowsList, new TierActivityFlowReportMap(), FilePathMap.TiersFlowmapIndexFilePath(jobTarget), true);
+                                        }
                                     }
 
                                     loggerConsole.Info("Completed {0} Tiers", tiersList.Count);
@@ -129,7 +165,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityNode node in nodesList)
                                     {
-                                        convertFlowmapNode(node, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapNode(node, jobTarget, jobConfiguration.Input.TimeRange);
+
+                                        if (activityFlowsList != null)
+                                        {
+                                            FileIOHelper.WriteListToCSVFile(activityFlowsList, new NodeActivityFlowReportMap(), FilePathMap.NodesFlowmapIndexFilePath(jobTarget), true);
+                                        }
                                     }
 
                                     loggerConsole.Info("Completed {0} Nodes", nodesList.Count);
@@ -152,7 +193,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityBackend backend in backendsList)
                                     {
-                                        convertFlowmapBackend(backend, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapBackend(backend, jobTarget, jobConfiguration.Input.TimeRange);
+
+                                        if (activityFlowsList != null)
+                                        {
+                                            FileIOHelper.WriteListToCSVFile(activityFlowsList, new BackendActivityFlowReportMap(), FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), true);
+                                        }
                                     }
 
                                     loggerConsole.Info("Completed {0} Backends", backendsList.Count);
@@ -175,7 +221,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                                     {
-                                        convertFlowmapsBusinessTransaction(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapsBusinessTransaction(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange);
+
+                                        FileIOHelper.WriteListToCSVFile(activityFlowsList, new BusinessTransactionActivityFlowReportMap(), FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), true);
+
                                     }
 
                                     loggerConsole.Info("Completed {0} Business Transactions", businessTransactionsList.Count);
@@ -201,6 +250,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         // Append all the individual application files into one
                         FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsFlowmapReportFilePath(), FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsFlowmapPerMinuteReportFilePath(), FilePathMap.ApplicationFlowmapPerMinuteIndexFilePath(jobTarget));
                         FileIOHelper.AppendTwoCSVFiles(FilePathMap.TiersFlowmapReportFilePath(), FilePathMap.TiersFlowmapIndexFilePath(jobTarget));
                         FileIOHelper.AppendTwoCSVFiles(FilePathMap.NodesFlowmapReportFilePath(), FilePathMap.NodesFlowmapIndexFilePath(jobTarget));
                         FileIOHelper.AppendTwoCSVFiles(FilePathMap.BackendsFlowmapReportFilePath(), FilePathMap.BackendsFlowmapIndexFilePath(jobTarget));
@@ -266,12 +316,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return (jobConfiguration.Input.Flowmaps == true);
         }
 
-        private void convertFlowmapApplication(EntityApplication application, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapApplication(EntityApplication application, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, jobTimeRange));
             if (flowmapData == null)
             {
-                return;
+                return null;
             }
 
             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
@@ -537,17 +587,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Sort them
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
-            FileIOHelper.WriteListToCSVFile(activityFlowsList, new ApplicationActivityFlowReportMap(), FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget));
-
-            return;
+            return activityFlowsList;
         }
 
-        private void convertFlowmapTier(EntityTier tier, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapTier(EntityTier tier, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.TierFlowmapDataFilePath(jobTarget, jobTimeRange, tier));
             if (flowmapData == null)
             {
-                return;
+                return null;
             }
 
             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
@@ -730,17 +778,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Sort them
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
-            FileIOHelper.WriteListToCSVFile(activityFlowsList, new TierActivityFlowReportMap(), FilePathMap.TiersFlowmapIndexFilePath(jobTarget), true);
-
-            return;
+            return activityFlowsList;
         }
 
-        private void convertFlowmapNode(EntityNode node, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapNode(EntityNode node, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeFlowmapDataFilePath(jobTarget, jobTimeRange, node));
             if (flowmapData == null)
             {
-                return;
+                return null;
             }
 
             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
@@ -939,17 +985,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Sort them
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
-            FileIOHelper.WriteListToCSVFile(activityFlowsList, new NodeActivityFlowReportMap(), FilePathMap.NodesFlowmapIndexFilePath(jobTarget), true);
-
-            return;
+            return activityFlowsList;
         }
 
-        private void convertFlowmapBackend(EntityBackend backend, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapBackend(EntityBackend backend, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.BackendFlowmapDataFilePath(jobTarget, jobTimeRange, backend));
             if (flowmapData == null)
             {
-                return;
+                return null;
             }
 
             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
@@ -1133,17 +1177,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Sort them
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
-            FileIOHelper.WriteListToCSVFile(activityFlowsList, new BackendActivityFlowReportMap(), FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), true);
-
-            return;
+            return activityFlowsList;
         }
 
-        private void convertFlowmapsBusinessTransaction(EntityBusinessTransaction businessTransaction, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapsBusinessTransaction(EntityBusinessTransaction businessTransaction, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.BusinessTransactionFlowmapDataFilePath(jobTarget, jobTimeRange, businessTransaction));
             if (flowmapData == null)
             {
-                return;
+                return null;
             }
 
             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
@@ -1338,9 +1380,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Sort them
             activityFlowsList = activityFlowsList.OrderBy(a => a.CallDirection).ThenBy(a => a.FromType).ThenBy(a => a.FromName).ThenBy(a => a.ToType).ThenBy(a => a.ToName).ThenBy(a => a.CallType).ThenBy(a => a.CPM).ToList();
 
-            FileIOHelper.WriteListToCSVFile(activityFlowsList, new BusinessTransactionActivityFlowReportMap(), FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), true);
-
-            return;
+            return activityFlowsList;
         }
     }
 }

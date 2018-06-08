@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using AppDynamics.Dexter.ProcessingSteps;
+using CommandLine;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -247,6 +248,14 @@ namespace AppDynamics.Dexter
                         jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full = true;
                         jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial = true;
                         jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None = true;
+                    }
+
+                    // Validate Configuration Comparison selection
+                    if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria == null)
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria = new JobTarget();
+                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = JobStepBase.BLANK_APPLICATION_APPLICATION;
                     }
 
                     #endregion

@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using NLog;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -128,6 +128,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "AGENT_DIAGNOSTICS" },
             { "AGENT_EVENT" }
         };
+
+        #endregion
+
+        #region Configuration comparison variables
+
+        public const string BLANK_APPLICATION_CONTROLLER = "https://reference.controller";
+        public const string BLANK_APPLICATION_APPLICATION = "ReferenceApp";
+
+        public const string PROPERTY_ENTIRE_OBJECT = "EntireObject";
+        public const string DIFFERENCE_IDENTICAL = "IDENTICAL";
+        public const string DIFFERENCE_MISSING = "MISSING";
+        public const string DIFFERENCE_EXTRA = "EXTRA";
+        public const string DIFFERENCE_DIFFERENT = "DIFFERENT";
 
         #endregion
 

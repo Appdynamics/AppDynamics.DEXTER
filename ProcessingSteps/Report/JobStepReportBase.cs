@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
 using OfficeOpenXml.Table;
 using OfficeOpenXml.Table.PivotTable;
@@ -51,6 +51,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal static Color colorOrangeForWarnEvents = Color.FromArgb(0xFF, 0xC0, 0x0);
         // This color is close to Color.IndianRed
         internal static Color colorRedForErrorEvents = Color.FromArgb(0xFF, 0x69, 0x69);
+
+        // Configuration comparison colors
+        // This color is for differences, kind of pinkish
+        internal static Color colorDifferent = Color.FromArgb(0xE8, 0xAF, 0xC3);
+        // This color is for missing configuration entries
+        internal static Color colorMissing = Color.LightBlue;
+        // This color is for extra configuration entries. Similar to Color.Orange
+        internal static Color colorExtra = Color.FromArgb(0xFF, 0xC0, 0x0);
 
         // Hyperlink colors
         internal static Color colorBlueForHyperlinks = Color.Blue;
@@ -452,6 +460,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
             cfUserExperience.Style.Font.Color.Color = Color.Black;
             cfUserExperience.Style.Fill.BackgroundColor.Color = colorRedForErrorSnapshots;
             cfUserExperience.Formula = @"=""ERROR""";
+        }
+
+        internal static void addDifferenceConditionalFormatting(ExcelWorksheet sheet, ExcelAddress cfAddressDifference)
+        {
+            var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressDifference);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = colorDifferent;
+            cfUserExperience.Formula = @"=""DIFFERENT""";
+
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressDifference);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = colorExtra;
+            cfUserExperience.Formula = @"=""EXTRA""";
+
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressDifference);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = colorMissing;
+            cfUserExperience.Formula = @"=""MISSING""";
         }
     }
 }

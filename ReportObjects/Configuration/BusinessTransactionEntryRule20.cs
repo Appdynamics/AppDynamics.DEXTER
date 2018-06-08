@@ -1,33 +1,35 @@
 ﻿using System;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BusinessTransactionEntryRule20
+    public class BusinessTransactionEntryRule20 : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
         public string ScopeName { get; set; }
 
         public string AgentType { get; set; }
         public string EntryPointType { get; set; }
         public string RuleName { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string Description { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Version { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsBackground { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsExclusion { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Priority { get; set; }
 
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string MatchConditions { get; set; }
 
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Actions { get; set; }
 
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Properties { get; set; }
 
         public int NumDetectedBTs { get; set; }
@@ -35,10 +37,42 @@ namespace AppDynamics.Dexter.DataObjects
 
         public string RuleRawValue { get; set; }
 
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}/{2}", this.RuleName, this.AgentType, this.EntryPointType);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.RuleName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "BTEntryRule20";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.AgentType;
+            }
+        }
+
         public override String ToString()
         {
             return String.Format(
-                "BusinessTransactionEntryRule: {0}/{1}/{2} {3} {4} {5}",
+                "BusinessTransactionEntryRule20: {0}/{1}/{2} {3} {4} {5}",
                 this.Controller,
                 this.ApplicationName,
                 this.ScopeName,

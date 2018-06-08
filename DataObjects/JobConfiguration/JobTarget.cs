@@ -12,6 +12,11 @@ namespace AppDynamics.Dexter
         public bool NameRegex { get; set; }
         public JobTargetStatus Status { get; set; }
 
+        public JobTarget Clone()
+        {
+            return (JobTarget)this.MemberwiseClone();
+        }
+
         public override string ToString()
         {
             return String.Format("JobTarget: {0}/{1}({2})", this.Controller, this.Application, this.ApplicationID);

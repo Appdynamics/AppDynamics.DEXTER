@@ -1,36 +1,71 @@
 ﻿using System;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BusinessTransactionEntryRule
+    public class BusinessTransactionEntryRule : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
-        public string TierName { get; set; }
-
         public string AgentType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string EntryPointType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string RuleName { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsBackground { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsExcluded { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsExclusion { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Priority { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string MatchClass { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string MatchMethod { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string MatchURI { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string SplitConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string Parameters { get; set; }
 
         public int NumDetectedBTs { get; set; }
         public string DetectedBTs { get; set; }
 
         public string RuleRawValue { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}/{2}/{3}", this.RuleName, this.AgentType, this.EntryPointType, this.TierName);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.RuleName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "BTEntryRule";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.AgentType;
+            }
+        }
 
         public override String ToString()
         {

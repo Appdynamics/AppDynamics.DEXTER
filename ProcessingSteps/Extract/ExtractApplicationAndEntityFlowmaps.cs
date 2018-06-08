@@ -1,9 +1,9 @@
 ﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.ReportObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -99,6 +99,46 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
 
                                 loggerConsole.Info("Completed Application");
+
+                                loggerConsole.Info("Extract Flowmap for Application in each minute in ({0} minutes)", differenceInMinutes);
+
+                                int j = 0;
+
+                                Parallel.For(0, 
+                                    differenceInMinutes, 
+                                    new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                    () => 0,
+                                    (minute, loop, subtotal) =>
+                                    {
+                                        ControllerApi controllerApiLocal = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                        controllerApiLocal.PrivateApiLogin();
+
+                                        JobTimeRange thisMinuteJobTimeRange = new JobTimeRange();
+                                        thisMinuteJobTimeRange.From = jobConfiguration.Input.TimeRange.From.AddMinutes(minute);
+                                        thisMinuteJobTimeRange.To = jobConfiguration.Input.TimeRange.From.AddMinutes(minute + 1);
+
+                                        long fromTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.From);
+                                        long toTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.To);
+                                        long differenceInMinutesLocal = 1;
+
+                                        if (File.Exists(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange)) == false)
+                                        {
+                                            string flowmapJson = controllerApiLocal.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnixLocal, toTimeUnixLocal, differenceInMinutesLocal);
+                                            if (flowmapJson != String.Empty) FileIOHelper.SaveFileToPath(flowmapJson, FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange));
+                                        }
+                                        return 1;
+                                    },
+                                    (finalResult) =>
+                                    {
+                                        Interlocked.Add(ref j, finalResult);
+                                        if (j % 10 == 0)
+                                        {
+                                            Console.Write("[{0}].", j);
+                                        }
+                                    }
+                                );
+
+                                loggerConsole.Info("Completed Application {0} timeranges", differenceInMinutes);
 
                                 Interlocked.Add(ref numEntitiesTotal, 1);
 

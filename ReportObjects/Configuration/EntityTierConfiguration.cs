@@ -1,30 +1,59 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class EntityTierConfiguration
+    public class EntityTierConfiguration : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
         public long TierID { get; set; }
-        public string TierName { get; set; }
         public string TierType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string TierDescription { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsDynamicScalingEnabled { get; set; }
 
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string MemoryConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string CacheConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string CustomCacheConfig { get; set; }
 
         public int NumBTs { get; set; }
         public int NumBTTypes { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.TierName, this.TierType);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.TierName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "TierConfiguration";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.TierType;
+            }
+        }
+
         public override String ToString()
         {
             return String.Format(

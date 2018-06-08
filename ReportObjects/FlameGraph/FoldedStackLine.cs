@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
     public class FoldedStackLine
     {

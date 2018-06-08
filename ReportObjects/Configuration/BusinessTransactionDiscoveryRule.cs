@@ -1,26 +1,54 @@
 ﻿using System;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BusinessTransactionDiscoveryRule
+    public class BusinessTransactionDiscoveryRule : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
-        public string TierName { get; set; }
-
         public string AgentType { get; set; }
         public string EntryPointType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsMonitoringEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string DiscoveryType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsDiscoveryEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string NamingConfigType { get; set; }
 
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string RuleRawValue { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}/{2}", this.EntryPointType, this.AgentType, this.TierName);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.EntryPointType;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "BTDiscoveryRule";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.AgentType;
+            }
+        }
 
         public override String ToString()
         {

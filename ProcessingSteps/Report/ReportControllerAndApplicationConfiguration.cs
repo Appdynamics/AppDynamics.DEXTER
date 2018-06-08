@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
 using OfficeOpenXml.Style;
@@ -43,6 +43,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS = "18.MIDCs";
         private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "19.HTTP DCs";
         private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "20.Call Graph Settings";
+        private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES = "30.Config Differences";
+        private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT = "30.Config Differences.Type";
 
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_TOC = "t_TOC";
         private const string REPORT_CONFIGURATION_DETAILS_TABLE_CONTROLLERS = "t_Controllers";
@@ -65,6 +67,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_TABLE_TIER_SETTINGS = "t_Tiers";
         private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SETTINGS = "t_BusinessTransactions";
         private const string REPORT_CONFIGURATION_TABLE_AGENT_CALL_GRAPH_SETTINGS = "t_AgentCallGraphSettings";
+        private const string REPORT_CONFIGURATION_TABLE_CONFIGURATION_DIFFERENCES = "t_ConfigurationDifferrences";
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE = "p_BTEntryRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_LOCATION = "p_BTEntryRulesLocation";
@@ -74,6 +77,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE = "p_CustomExitRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE = "p_AgentPropertiesType";
         private const string REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE = "p_HealthRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_CONFIGURATION_DIFFERENCES = "p_ConfigurationDifferrences";
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE_GRAPH = "g_BTEntryRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_20_TYPE_GRAPH = "g_BTEntryRules20Type";
@@ -81,6 +85,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_PIVOT_CUSTOM_EXIT_RULES_TYPE_GRAPH = "g_CustomExitRulesType";
         private const string REPORT_CONFIGURATION_PIVOT_AGENT_CONFIGURATION_PROPERTIES_TYPE_GRAPH = "g_AgentPropertiesType";
         private const string REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE_GRAPH = "g_HealthRulesType";
+        private const string REPORT_CONFIGURATION_PIVOT_CONFIGURATION_DIFFERENCES_GRAPH = "g_ConfigurationDifferrences";
 
         private const int REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT = 7;
@@ -118,7 +123,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Prepare package
                 ExcelPackage excelReport = new ExcelPackage();
                 excelReport.Workbook.Properties.Author = String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version);
-                excelReport.Workbook.Properties.Title = "AppDynamics DEXTER Controller and Application Configuration  Report";
+                excelReport.Workbook.Properties.Title = "AppDynamics DEXTER Controller and Application Configuration Report";
                 excelReport.Workbook.Properties.Subject = programOptions.JobName;
 
                 excelReport.Workbook.Properties.Comments = String.Format("Targets={0}\nFrom={1:o}\nTo={2:o}", jobConfiguration.Target.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
@@ -352,6 +357,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "Types of Differences";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + REPORT_CONFIGURATION_PIVOT_SHEET_CHART_HEIGHT + 5, 1);
+
                 #endregion
 
                 loggerConsole.Info("Fill Controller and Application Configuration Report File");
@@ -518,6 +541,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.HealthRulesReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Configuration Differences
+
+                loggerConsole.Info("List of Configuration Differences");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ConfigurationComparisonReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1169,7 +1201,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
-                    sheet.Column(table.Columns["RuleType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["HRRuleType"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["AffectsEntityType"].Position + 1).Width = 15;
 
                     // Make pivot
@@ -1182,7 +1214,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "RuleName");
-                    addColumnFieldToPivot(pivot, "RuleType", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "HRRuleType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "RuleName", DataFieldFunctions.Count);
 
                     ExcelChart chart = sheet.Drawings.AddChart(REPORT_CONFIGURATION_PIVOT_HEALTH_RULES_TYPE_GRAPH, eChartType.ColumnClustered, pivot);
@@ -1192,6 +1224,63 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
                     sheet.Column(3).Width = 20;
+                }
+
+                #endregion
+
+                #region Configuration Differences
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES];
+                logger.Info("Configuration Differences Sheet ({0} rows)", sheet.Dimension.Rows);
+                loggerConsole.Info("Configuration Differences Sheet ({0} rows)", sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_CONFIGURATION_DIFFERENCES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["RuleType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleSubType"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["EntityName"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["Property"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ReferenceApp"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["DifferenceApp"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Difference"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Property"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["ReferenceValue"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["DifferenceValue"].Position + 1).Width = 20;
+
+                    ExcelAddress cfAddressDifference = new ExcelAddress(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Difference"].Position + 1, sheet.Dimension.Rows, table.Columns["Difference"].Position + 1);
+                    addDifferenceConditionalFormatting(sheet, cfAddressDifference);
+
+                    // Make pivot
+                    sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_CONFIGURATION_PIVOT_SHEET_START_PIVOT_AT + REPORT_CONFIGURATION_PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, REPORT_CONFIGURATION_PIVOT_CONFIGURATION_DIFFERENCES);
+                    setDefaultPivotTableSettings(pivot);
+                    addRowFieldToPivot(pivot, "RuleType");
+                    addRowFieldToPivot(pivot, "RuleSubType");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "EntityName");
+                    addRowFieldToPivot(pivot, "Property");
+                    addColumnFieldToPivot(pivot, "DifferenceController", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "DifferenceApp", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "Difference", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "EntityName", DataFieldFunctions.Count);
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_CONFIGURATION_PIVOT_CONFIGURATION_DIFFERENCES_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 20;
                 }
 
                 #endregion
