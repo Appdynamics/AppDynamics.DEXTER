@@ -181,11 +181,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     //Server Agent v4.1.7.1 GA #9949 ra4a2721d52322207b626e8d4c88855c846741b3d 18-4.1.7.next-build
                                     //Server Agent v3.7.11.1 GA #2013-10-23_17-07-44 r41149afdb8ce39025051c25382b1cf77e2a7fed0 21
                                     //Server Agent v4.1.8.5 GA #10236 r8eca32e4695e8f6a5902d34a66bfc12da1e12241 45-4.1.8.next-controller
+                                    //Server Agent v4.4.2 GA #4.4.2.22394 rnull null
 
                                     // Apache agent looks like this
                                     // Proxy v4.2.5.1 GA SHA-1:.ad6c804882f518b3350f422489866ea2008cd664 #13146 35-4.2.5.next-build
 
-                                    Regex regexVersion = new Regex(@"(?i).*v(\d*\.\d*\.\d*\.\d*).*", RegexOptions.IgnoreCase);
+                                    Regex regexVersion = new Regex(@"(?i).*v(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
                                     Match match = regexVersion.Match(nodeRow.AgentVersion);
                                     if (match != null)
                                     {
@@ -193,6 +194,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             nodeRow.AgentVersionRaw = nodeRow.AgentVersion;
                                             nodeRow.AgentVersion = match.Groups[1].Value;
+                                            if (nodeRow.AgentVersion.Count(v => v == '.') < 3)
+                                            {
+                                                nodeRow.AgentVersion = String.Format("{0}.0", nodeRow.AgentVersion);
+                                            }
                                         }
                                     }
                                 }
@@ -206,7 +211,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     //Machine Agent v3.8.3.0 GA Build Date 2014 - 06 - 06 17:09:13
                                     //Machine Agent v4.1.7.1 GA Build Date 2015 - 11 - 24 20:49:24
 
-                                    Regex regexVersion = new Regex(@"(?i).*Machine Agent.*v(\d*\.\d*\.\d*\.\d*).*", RegexOptions.IgnoreCase);
+                                    Regex regexVersion = new Regex(@"(?i).*v(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
                                     Match match = regexVersion.Match(nodeRow.MachineAgentVersion);
                                     if (match != null)
                                     {
@@ -214,6 +219,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             nodeRow.MachineAgentVersionRaw = nodeRow.MachineAgentVersion;
                                             nodeRow.MachineAgentVersion = match.Groups[1].Value;
+                                            if (nodeRow.MachineAgentVersion.Count(v => v == '.') < 3)
+                                            {
+                                                nodeRow.MachineAgentVersion = String.Format("{0}.0", nodeRow.MachineAgentVersion);
+                                            }
                                         }
                                     }
                                 }
