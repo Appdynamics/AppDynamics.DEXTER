@@ -12,6 +12,7 @@ namespace AppDynamics.Dexter
         public string[] MetricsSelectionCriteria { get; set; }
         public bool Snapshots { get; set; }
         public bool Configuration { get; set; }
+        public JobTarget ConfigurationComparisonReferenceCriteria { get; set; }
         public bool Events { get; set; }
     }
 }

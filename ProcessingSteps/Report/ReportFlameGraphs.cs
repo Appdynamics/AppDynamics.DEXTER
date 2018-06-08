@@ -1,5 +1,5 @@
-﻿using AppDynamics.Dexter.DataObjects;
-using AppDynamics.Dexter.Extensions;
+﻿using AppDynamics.Dexter.Extensions;
+using AppDynamics.Dexter.ReportObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -516,7 +516,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                     flameGraphBox.Start = maxSampleWidth;
                     flameGraphBox.Samples = foldedStackLine.NumSamples;
-                    if (i > 0)
+                    if (i > 0 && i < foldedStackLine.StackTimingArray.Length)
                     {
                         flameGraphBox.Duration = flameGraphBox.Duration + foldedStackLine.StackTimingArray[i - 1];
                     }

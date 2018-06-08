@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
     public class HealthRuleReportMap : ClassMap<HealthRule>
     {
@@ -19,7 +19,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.DurationOfEvalPeriod).Index(i); i++;
             Map(m => m.WaitTimeAfterViolation).Index(i); i++;
 
-            Map(m => m.RuleType).Index(i); i++;
+            Map(m => m.HRRuleType).Index(i); i++;
             Map(m => m.AffectsEntityType).Index(i); i++;
             Map(m => m.AffectsEntityMatchCriteria).Index(i); i++;
             Map(m => m.AffectsEntityMatchType).Index(i); i++;

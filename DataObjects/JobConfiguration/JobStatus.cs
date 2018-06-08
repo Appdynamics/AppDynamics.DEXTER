@@ -11,10 +11,11 @@
 
         IndexControllersApplicationsAndEntities = 11,
         IndexControllerAndApplicationConfiguration = 12,
-        IndexApplicationAndEntityMetrics = 13,
-        IndexApplicationAndEntityFlowmaps = 14,
-        IndexEventsAndHealthRuleViolations = 15,
-        IndexSnapshots = 16,
+        IndexApplicationConfigurationComparison = 13,
+        IndexApplicationAndEntityMetrics = 14,
+        IndexApplicationAndEntityFlowmaps = 15,
+        IndexEventsAndHealthRuleViolations = 16,
+        IndexSnapshots = 17,
 
         ReportControlerApplicationsAndEntities = 21,
         ReportControllerAndApplicationConfiguration = 22,

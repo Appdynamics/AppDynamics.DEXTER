@@ -1,26 +1,58 @@
 ﻿using System;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BusinessTransactionEntryScope
+    public class BusinessTransactionEntryScope : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
 
         public string ScopeName { get; set; }
         public string ScopeType { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string Description { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Version { get; set; }
 
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string IncludedTiers { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumTiers { get; set; }
 
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string IncludedRules { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumRules { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}", this.ScopeName, this.ScopeName);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.ScopeName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "Scope";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.ScopeType;
+            }
+        }
 
         public override String ToString()
         {

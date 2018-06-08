@@ -120,12 +120,15 @@
     <Compile Include="DataObjects\JobConfiguration\JobTimeRange.cs" />
     <Compile Include="Helpers\AESEncryptionHelper.cs" />
     <Compile Include="Helpers\EPPlusCSVHelper.cs" />
+    <Compile Include="Helpers\FieldComparisonAttribute.cs" />
     <Compile Include="Helpers\UnixTimeHelper.cs" />
     <Compile Include="Helpers\FileIOHelper.cs" />
     <Compile Include="Helpers\IEnumerableExtensions.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractApplicationAndEntityFlowmaps.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractEventsAndHealthRuleViolations.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractSnapshots.cs" />
+    <Compile Include="ProcessingSteps\Index\IndexApplicationConfigurationDifferences.cs" />
+    <Compile Include="ProcessingSteps\Index\IndexControllerAndApplicationConfiguration.cs" />
     <Compile Include="ProcessingSteps\Index\IndexControllersApplicationsAndEntities.cs" />
     <Compile Include="ProcessingSteps\Index\JobStepIndexBase.cs" />
     <Compile Include="ProcessingSteps\Report\JobStepReportBase.cs" />
@@ -142,7 +145,6 @@
     <Compile Include="ProcessingSteps\Index\IndexEventsAndHealthRuleViolations.cs" />
     <Compile Include="ProcessingSteps\Index\IndexApplicationAndEntityFlowmaps.cs" />
     <Compile Include="ProcessingSteps\Index\IndexApplicationAndEntityMetrics.cs" />
-    <Compile Include="ProcessingSteps\Index\IndexControllerAndApplicationConfiguration.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractApplicationAndEntityMetrics.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractControllerAndApplicationConfiguration.cs" />
     <Compile Include="ProcessingSteps\Extract\ExtractControllerApplicationsAndEntities.cs" />
@@ -156,10 +158,13 @@
     <Compile Include="ReportObjects\ActivityFlow\Maps\BackendActivityFlowReportMap.cs" />
     <Compile Include="ReportObjects\ActivityFlow\Maps\NodeActivityFlowReportMap.cs" />
     <Compile Include="ReportObjects\ActivityFlow\Maps\TierActivityFlowReportMap.cs" />
+    <Compile Include="ReportObjects\ConfigurationComparison\ConfigurationDifference.cs" />
+    <Compile Include="ReportObjects\ConfigurationComparison\Maps\ConfigurationDifferenceReportMap.cs" />
     <Compile Include="ReportObjects\Configuration\AgentCallGraphSetting.cs" />
     <Compile Include="ReportObjects\Configuration\BusinessTransactionDiscoveryRule20.cs" />
     <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryRule20.cs" />
     <Compile Include="ReportObjects\Configuration\BusinessTransactionEntryScope.cs" />
+    <Compile Include="ReportObjects\Configuration\ConfigurationEntityBase.cs" />
     <Compile Include="ReportObjects\Configuration\HealthRule.cs" />
     <Compile Include="ReportObjects\Configuration\EntityBusinessTransactionConfiguration.cs" />
     <Compile Include="ReportObjects\Configuration\Maps\AgentCallGraphSettingReportMap.cs" />
@@ -264,6 +269,9 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="SearchContract.ico" />
+    <Content Include="TemplateApplicationConfiguration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="Apache License 2.0.rtf" />
     <None Include="App.config">
       <SubType>Designer</SubType>

@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
 using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.Drawing.Chart;
@@ -8,7 +8,6 @@ using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Reflection;
 
@@ -32,6 +31,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS = "7.Exit Calls";
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_TYPE_PIVOT = "7.Exit Calls.Type";
         private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_TIMELINE_PIVOT = "7.Exit Calls.Timeline";
+        private const string REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_ERRORS_PIVOT = "7.Exit Calls.Errors";
 
         private const string REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS = "8.SEP Calls";
         private const string REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS_TYPE_PIVOT = "8.SEP Calls.Type";
@@ -65,6 +65,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_SNAPSHOTS_PIVOT_SERVICE_ENDPOINT_CALLS_TIMELINE = "p_ServiceEndpointCallsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS = "p_ExitCalls";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_TIMELINE = "p_ExitCallsTimeline";
+        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_ERRORS = "p_ExitCalls";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS = "p_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE = "p_DetectedErrorsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA = "p_BusinessData";
@@ -78,6 +79,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_SNAPSHOTS_PIVOT_SERVICE_ENDPOINT_CALLS_TIMELINE_GRAPH = "g_ServiceEndpointCallsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_GRAPH = "g_ExitCalls";
         private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_TIMELINE_GRAPH = "g_ExitCallsTimeline";
+        private const string REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_ERRORS_GRAPH = "g_ExitCallsErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_GRAPH = "g_DetectedErrors";
         private const string REPORT_SNAPSHOTS_PIVOT_DETECTED_ERRORS_TIMELINE_GRAPH = "g_DetectedErrorsTimeline";
         private const string REPORT_SNAPSHOTS_PIVOT_BUSINESS_DATA_GRAPH = "g_BusinessData";
@@ -232,6 +234,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_TYPE_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 3].Value = "See Errors";
+                sheet.Cells[2, 4].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_ERRORS_PIVOT);
+                sheet.Cells[2, 4].StyleName = "HyperLinkStyle";
                 sheet.Cells[3, 1].Value = "See Timeline";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_TIMELINE_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
@@ -245,6 +250,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_ERRORS_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SNAPSHOTS_SHEET_EXIT_CALLS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 4, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_TIMELINE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -827,6 +841,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS_ERRORS_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_SNAPSHOTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_SNAPSHOTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1], range, REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_ERRORS);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "ToEntityType");
+                    addFilterFieldToPivot(pivot, "ToEntityName", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "RequestID");
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "HasErrors", eSortType.Ascending);
+                    addRowFieldToPivot(pivot, "ExitType");
+                    addRowFieldToPivot(pivot, "ErrorDetail");
+                    addRowFieldToPivot(pivot, "Detail");
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "BTName");
+                    addDataFieldToPivot(pivot, "RequestID", DataFieldFunctions.Count, "Calls");
+                    addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average, "Average");
+
+                    chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_ERRORS_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 20;
+                    sheet.Column(6).Width = 20;
+                    sheet.Column(7).Width = 20;
                 }
 
                 #endregion

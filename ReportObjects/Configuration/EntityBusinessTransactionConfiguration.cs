@@ -1,38 +1,71 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class EntityBusinessTransactionConfiguration
+    public class EntityBusinessTransactionConfiguration : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
         public long TierID { get; set; }
-        public string TierName { get; set; }
 
         public long BTID { get; set; }
         public string BTName { get; set; }
         public string BTType { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsExcluded { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsBackground { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsEUMEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string IsEUMPossible { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsAnalyticsEnabled { get; set; }
 
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string BTSLAConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string BTSnapshotCollectionConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string BTRequestThresholdConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string BTBackgroundSnapshotCollectionConfig { get; set; }
+        [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string BTBackgroundRequestThresholdConfig { get; set; }
 
         public int NumAssignedMIDCs { get; set; }
         public string AssignedMIDCs { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}/{2}", this.BTName, this.BTType, this.TierName);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.BTName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "BTConfiguration";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.BTType;
+            }
+        }
 
         public override String ToString()
         {

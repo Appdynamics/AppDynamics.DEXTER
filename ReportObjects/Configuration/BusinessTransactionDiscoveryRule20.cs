@@ -1,31 +1,64 @@
 ﻿using System;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BusinessTransactionDiscoveryRule20
+    public class BusinessTransactionDiscoveryRule20 : ConfigurationEntityBase
     {
-        public string Controller { get; set; }
-        public string ControllerLink { get; set; }
-
-        public long ApplicationID { get; set; }
-        public string ApplicationLink { get; set; }
-        public string ApplicationName { get; set; }
-
         public string ScopeName { get; set; }
 
         public string AgentType { get; set; }
         public string EntryPointType { get; set; }
         public string RuleName { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string Description { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Version { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Priority { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsMonitoringEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsDiscoveryEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string NamingConfigType { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string HTTPAutoDiscovery { get; set; }
+
+        public override string EntityIdentifier
+        {
+            get
+            {
+                return String.Format("{0}/{1}/{2}", this.RuleName, this.AgentType, this.EntryPointType);
+            }
+        }
+
+        public override string EntityName
+        {
+            get
+            {
+                return this.RuleName;
+            }
+        }
+
+        public override string RuleType
+        {
+            get
+            {
+                return "BTDiscoveryRule20";
+            }
+        }
+
+        public override string RuleSubType
+        {
+            get
+            {
+                return this.AgentType;
+            }
+        }
 
         public override String ToString()
         {

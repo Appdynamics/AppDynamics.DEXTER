@@ -1,4 +1,5 @@
 ﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.ReportObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;

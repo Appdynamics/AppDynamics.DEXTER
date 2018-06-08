@@ -1,4 +1,5 @@
 ﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.ReportObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,6 +21,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
         private const string EVENTS_FOLDER_NAME = "EVT";
         private const string ACTIVITYGRID_FOLDER_NAME = "FLOW";
+        private const string CONFIGURATION_COMPARISON_FOLDER_NAME = "CMPR";
 
         // Metadata file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
@@ -101,6 +103,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
         private const string APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME = "healthrules.csv";
 
+        // Configuration comparison report list conversion file names
+        private const string CONFIGURATION_DIFFERENCES_FILE_NAME = "configuration.differences.csv";
+
         // Metric report conversion file names
         private const string CONVERT_ENTITIES_METRICS_SUMMARY_FULLRANGE_FILE_NAME = "entities.full.csv";
         private const string CONVERT_ENTITIES_METRICS_SUMMARY_HOURLY_FILE_NAME = "entities.hour.csv";
@@ -147,6 +152,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Flow map to flow grid conversion file names
         private const string CONVERT_ACTIVITY_GRIDS_FILE_NAME = "activitygrids.full.csv";
         private const string CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME = "{0}.activitygrids.full.csv";
+        private const string CONVERT_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME = "activitygrids.perminute.full.csv";
+        private const string CONVERT_ALL_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME = "{0}.activitygrids.perminute.full.csv";
 
         #endregion
 
@@ -199,6 +206,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Flame graph template SVG XML file
         private const string FLAME_GRAPH_TEMPLATE_FILE_NAME = "FlameGraphTemplate.svg";
 
+        // Template application export of an empty application
+        private const string TEMPLATE_APPLICATION_CONFIGURATION_FILE_NAME = "TemplateApplicationConfiguration.xml";
+
+
         #endregion
 
         #region Snapshot UX to Folder Mapping
@@ -244,39 +255,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
         public string ControllerVersionDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
-                DATA_FOLDER_NAME, 
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host), 
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 EXTRACT_CONTROLLER_VERSION_FILE_NAME);
         }
 
         public string ApplicationsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
-                DATA_FOLDER_NAME, 
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host), 
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
         }
 
         public string ApplicationDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
-                DATA_FOLDER_NAME, 
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host), 
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID), 
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 EXTRACT_ENTITY_APPLICATION_FILE_NAME);
         }
 
         public string TiersDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
-                DATA_FOLDER_NAME, 
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host), 
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID), 
-                ENTITIES_FOLDER_NAME, 
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
         }
 
@@ -402,8 +413,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         public string ControllerIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
-                INDEX_FOLDER_NAME, 
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 CONVERT_ENTITY_CONTROLLER_FILE_NAME);
         }
@@ -672,7 +683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.From,
                 jobTimeRange.To);
             return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath, 
+                this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 reportFileName);
         }
@@ -712,7 +723,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONTROLLER_SETTINGS_FILE_NAME);
         }
 
@@ -1068,6 +1078,54 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 reportFileName);
+        }
+
+        #endregion
+
+
+        #region Configuration Comparison Data
+
+        public string TemplateApplicationConfigurationFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                TEMPLATE_APPLICATION_CONFIGURATION_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Configuration Comparison Index
+
+        public string ConfigurationComparisonIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_COMPARISON_FOLDER_NAME,
+                CONFIGURATION_DIFFERENCES_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Configuration Comparison Report
+
+        public string ConfigurationComparisonReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_COMPARISON_FOLDER_NAME);
+        }
+
+        public string ConfigurationComparisonReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_COMPARISON_FOLDER_NAME,
+                CONFIGURATION_DIFFERENCES_FILE_NAME);
         }
 
         #endregion
@@ -1480,6 +1538,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
 
+        public string ApplicationFlowmapPerMinuteIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ACTIVITYGRID_FOLDER_NAME,
+                EntityApplication.ENTITY_FOLDER,
+                CONVERT_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME);
+        }
+
         public string TiersFlowmapIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
@@ -1544,6 +1614,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             string reportFileName = String.Format(
                 CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME,
+                EntityApplication.ENTITY_FOLDER);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ACTIVITYGRID_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string ApplicationsFlowmapPerMinuteReportFilePath()
+        {
+            string reportFileName = String.Format(
+                CONVERT_ALL_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME,
                 EntityApplication.ENTITY_FOLDER);
 
             return Path.Combine(

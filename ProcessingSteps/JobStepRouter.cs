@@ -25,6 +25,7 @@ namespace AppDynamics.Dexter
                 // Index data
                 JobStatus.IndexControllersApplicationsAndEntities,
                 JobStatus.IndexControllerAndApplicationConfiguration,
+                JobStatus.IndexApplicationConfigurationComparison,
                 JobStatus.IndexApplicationAndEntityMetrics,
                 JobStatus.IndexApplicationAndEntityFlowmaps,
                 JobStatus.IndexEventsAndHealthRuleViolations,
@@ -65,6 +66,10 @@ namespace AppDynamics.Dexter
             loggerConsole.Info("Starting job from status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Starting job from status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', Time ranges='{2}', Flowmaps='{3}', Metrics='{4}', Snapshots='{5}', Configuration='{6}', Events='{7}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration, jobConfiguration.Input.Events);
+            if (jobConfiguration.Input.MetricsSelectionCriteria != null)
+            {
+                logger.Info("Job input: MetricsSelectionCriteria='{0}'", String.Join(",", jobConfiguration.Input.MetricsSelectionCriteria));
+            }
             if (jobConfiguration.Input.SnapshotSelectionCriteria != null)
             {
                 PropertyInfo[] pis = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperties();
@@ -96,6 +101,10 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full,
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial,
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None);
+            }
+            if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria != null)
+            {
+                logger.Info("Job input: ConfigurationComparisonReferenceCriteria.Controller='{0}', ConfigurationComparisonReferenceCriteria.Application='{1}'", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application);
             }
 
             logger.Info("Job output: DetectedEntities='{0}', EntityMetrics='{1}', EntityDetails='{2}', Snapshots='{3}', Configuration='{4}', Events='{5}'", jobConfiguration.Output.DetectedEntities, jobConfiguration.Output.EntityMetrics, jobConfiguration.Output.EntityDetails, jobConfiguration.Output.Snapshots, jobConfiguration.Output.Configuration, jobConfiguration.Output.Events);
@@ -164,6 +173,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.IndexControllerAndApplicationConfiguration:
                     return new IndexControllerAndApplicationConfiguration();
+
+                case JobStatus.IndexApplicationConfigurationComparison:
+                    return new IndexApplicationConfigurationComparison();
 
                 case JobStatus.IndexApplicationAndEntityMetrics:
                     return new IndexApplicationAndEntityMetrics();

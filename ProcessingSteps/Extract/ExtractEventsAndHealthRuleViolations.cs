@@ -1,10 +1,8 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 

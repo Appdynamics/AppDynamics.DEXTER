@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.DataObjects
+namespace AppDynamics.Dexter.ReportObjects
 {
     public class HTTPDataCollectorReportMap : ClassMap<HTTPDataCollector>
     {
@@ -13,6 +13,7 @@ namespace AppDynamics.Dexter.DataObjects
             Map(m => m.CollectorName).Index(i); i++;
             Map(m => m.DataGathererName).Index(i); i++;
             Map(m => m.DataGathererValue).Index(i); i++;
+            Map(m => m.HeadersList).Index(i); i++;
 
             Map(m => m.IsURLEnabled).Index(i); i++;
             Map(m => m.IsSessionIDEnabled).Index(i); i++;

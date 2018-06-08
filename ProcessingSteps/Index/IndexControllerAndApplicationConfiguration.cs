@@ -1,4 +1,5 @@
 ﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -36,6 +37,37 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                // Check to see if the reference application is the template
+                bool compareAgainstTemplateConfiguration = false;
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == BLANK_APPLICATION_APPLICATION)
+                {
+                    compareAgainstTemplateConfiguration = true;
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t => String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller, true) == 0 && String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application, true) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+
+                        compareAgainstTemplateConfiguration = true;
+                    }
+                }
+                if (compareAgainstTemplateConfiguration == true)
+                {
+                    // Copy the template file into the Data folder to prepare for index
+                    string templateConfigValue = FileIOHelper.ReadFileFromPath(FilePathMap.TemplateApplicationConfigurationFilePath());
+                    FileIOHelper.SaveFileToPath(templateConfigValue, FilePathMap.ApplicationConfigurationDataFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria));
+
+                    // Add this target to the list of targets to unwrap
+                    jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Status = JobTargetStatus.ConfigurationValid;
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                }
+
                 List<string> listOfControllersAlreadyProcessed = new List<string>(jobConfiguration.Target.Count);
 
                 // Process each target
@@ -54,8 +86,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     stepTimingTarget.StepName = jobConfiguration.Status.ToString();
                     stepTimingTarget.StepID = (int)jobConfiguration.Status;
                     stepTimingTarget.StartTime = DateTime.Now;
-
-                    stepTimingTarget.NumEntities = 1;
 
                     try
                     {
@@ -103,6 +133,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             controllerSettingsList = controllerSettingsList.OrderBy(c => c.Name).ToList();
                             FileIOHelper.WriteListToCSVFile(controllerSettingsList, new ControllerSettingReportMap(), FilePathMap.ControllerSettingsIndexFilePath(jobTarget));
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + controllerSettingsList.Count;
                         }
 
                         #endregion
@@ -127,10 +159,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             continue;
                         }
 
+                        loggerConsole.Info("Application Summary");
+
                         EntityApplicationConfiguration applicationConfiguration = new EntityApplicationConfiguration();
                         applicationConfiguration.Controller = jobTarget.Controller;
                         applicationConfiguration.ControllerLink = String.Format(DEEPLINK_CONTROLLER, applicationConfiguration.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
-                        applicationConfiguration.ApplicationName = configXml.SelectSingleNode("application/name").InnerText;
+                        //applicationConfiguration.ApplicationName = configXml.SelectSingleNode("application/name").InnerText;
+                        applicationConfiguration.ApplicationName = jobTarget.Application;
                         applicationConfiguration.ApplicationID = jobTarget.ApplicationID;
                         applicationConfiguration.ApplicationLink = String.Format(DEEPLINK_APPLICATION, applicationConfiguration.Controller, applicationConfiguration.ApplicationID, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
                         applicationConfiguration.ApplicationDescription = configXml.SelectSingleNode("application/description").InnerText;
@@ -159,19 +194,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         applicationConfiguration.BTBackgroundRequestThresholdConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/configuration/background-business-transaction-config/bt-request-thresholds"));
 
                         applicationConfiguration.EUMConfigExclude = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/exclude-config"));
-                        applicationConfiguration.EUMConfigPage = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/page-config"));
-                        applicationConfiguration.EUMConfigMobilePage = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config"));
-                        applicationConfiguration.EUMConfigMobileAgent = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/eum-mobile-agent-config"));
+
+                        JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/page-config")));
+                        if (ruleSetting != null)
+                        {
+                            applicationConfiguration.EUMConfigPage = ruleSetting.ToString();
+                        }
+                        ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config")));
+                        if (ruleSetting != null)
+                        {
+                            applicationConfiguration.EUMConfigMobilePage = ruleSetting.ToString();
+                        }
+                        ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/eum-mobile-agent-config")));
+                        if (ruleSetting != null)
+                        {
+                            applicationConfiguration.EUMConfigMobileAgent = ruleSetting.ToString();
+                        }
 
                         applicationConfiguration.AnalyticsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/analytics-dynamic-service-configurations"));
                         applicationConfiguration.WorkflowsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/workflows"));
                         applicationConfiguration.TasksConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/tasks"));
                         applicationConfiguration.BTGroupsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/business-transaction-groups"));
 
-                        applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/metric-baselines/metric-baseline"));
+                        applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/metric-baselines"));
                         applicationConfiguration.NumBaselines = configXml.SelectNodes("application/metric-baselines/metric-baseline").Count;
 
-                        applicationConfiguration.ErrorAgentConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/configuration/error-configuration"));
+                        applicationConfiguration.ErrorAgentConfig = makeXMLFormattedAndIndented(String.Format("<error-configurations>{0}</error-configurations>", makeXMLFormattedAndIndented(configXml.SelectNodes("application/configuration/error-configuration"))));
                         applicationConfiguration.NumErrorRules = configXml.SelectNodes("application/configuration/error-configuration").Count;
 
                         #endregion
@@ -225,6 +273,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         businessTransactionDiscoveryRulesList = businessTransactionDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
                         FileIOHelper.WriteListToCSVFile(businessTransactionDiscoveryRulesList, new BusinessTransactionDiscoveryRuleReportMap(), FilePathMap.BusinessTransactionDiscoveryRulesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionDiscoveryRulesList.Count;
 
                         #endregion
 
@@ -333,6 +383,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         businessTransactionEntryRulesList = businessTransactionEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
                         FileIOHelper.WriteListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionEntryRulesList.Count;
+
                         #endregion
 
                         #region MDS/Config 2.0 Scopes, BT Detection and BT Rules
@@ -356,6 +408,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             businessTransactionEntryScopeList = businessTransactionEntryScopeList.OrderBy(b => b.ScopeType).ThenBy(b => b.ScopeName).ToList();
                             FileIOHelper.WriteListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryRuleScopeReportMap(), FilePathMap.BusinessTransactionEntryScopesIndexFilePath(jobTarget));
 
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionEntryScopeList.Count;
+
 
                             List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = new List<BusinessTransactionEntryRule20>();
 
@@ -374,6 +428,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
                             FileIOHelper.WriteListToCSVFile(businessTransactionEntryRules20List, new BusinessTransactionEntryRule20ReportMap(), FilePathMap.BusinessTransactionEntryRules20IndexFilePath(jobTarget));
 
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionEntryRules20List.Count;
+
 
                             List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20List = new List<BusinessTransactionDiscoveryRule20>();
 
@@ -390,6 +446,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
                             FileIOHelper.WriteListToCSVFile(businessTransactionDiscoveryRule20List, new BusinessTransactionDiscoveryRule20ReportMap(), FilePathMap.BusinessTransactionDiscoveryRules20IndexFilePath(jobTarget));
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionDiscoveryRule20List.Count;
                         }
 
                         #endregion
@@ -444,6 +502,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         backendDiscoveryRulesList = backendDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
                         FileIOHelper.WriteListToCSVFile(backendDiscoveryRulesList, new BackendDiscoveryRuleReportMap(), FilePathMap.BackendDiscoveryRulesIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + backendDiscoveryRulesList.Count;
+
                         #endregion
 
                         #region Custom Exit Rules 
@@ -495,6 +555,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         customExitRulesList = customExitRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.ExitType).ThenBy(b => b.RuleName).ToList();
                         FileIOHelper.WriteListToCSVFile(customExitRulesList, new CustomExitRuleReportMap(), FilePathMap.CustomExitRulesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + customExitRulesList.Count;
 
                         #endregion
 
@@ -555,9 +617,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         agentConfigurationPropertiesList = agentConfigurationPropertiesList.OrderBy(p => p.TierName).ThenBy(p => p.AgentType).ThenBy(p => p.PropertyName).ToList();
                         FileIOHelper.WriteListToCSVFile(agentConfigurationPropertiesList, new AgentConfigurationPropertyReportMap(), FilePathMap.AgentConfigurationPropertiesIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + agentConfigurationPropertiesList.Count;
+
                         #endregion
 
                         #region Information Point Rules
+
+                        loggerConsole.Info("Information Point Rules");
 
                         List<InformationPointRule> informationPointRulesList = new List<InformationPointRule>();
 
@@ -575,6 +641,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         informationPointRulesList = informationPointRulesList.OrderBy(b => b.AgentType).ThenBy(b => b.RuleName).ToList();
                         FileIOHelper.WriteListToCSVFile(informationPointRulesList, new InformationPointRuleReportMap(), FilePathMap.InformationPointRulesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + informationPointRulesList.Count;
 
                         #endregion
 
@@ -603,6 +671,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         entityBusinessTransactionConfigurationsList = entityBusinessTransactionConfigurationsList.OrderBy(b => b.TierName).ThenBy(b => b.BTType).ThenBy(b => b.BTName).ToList();
                         FileIOHelper.WriteListToCSVFile(entityBusinessTransactionConfigurationsList, new EntityBusinessTransactionConfigurationReportMap(), FilePathMap.EntityBusinessTransactionConfigurationsIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + entityBusinessTransactionConfigurationsList.Count;
+
                         #endregion
 
                         #region Tier Settings
@@ -625,6 +695,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         entityTierConfigurationsList = entityTierConfigurationsList.OrderBy(p => p.TierName).ToList();
                         FileIOHelper.WriteListToCSVFile(entityTierConfigurationsList, new EntityTierConfigurationReportMap(), FilePathMap.EntityTierConfigurationsIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + entityTierConfigurationsList.Count;
 
                         #endregion
 
@@ -653,6 +725,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         methodInvocationDataCollectorsList = methodInvocationDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
                         FileIOHelper.WriteListToCSVFile(methodInvocationDataCollectorsList, new MethodInvocationDataCollectorReportMap(), FilePathMap.MethodInvocationDataCollectorsIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + methodInvocationDataCollectorsList.Count;
 
                         // HTTP DCs
 
@@ -689,6 +763,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         httpDataCollectorsList = httpDataCollectorsList.OrderBy(b => b.CollectorName).ThenBy(b => b.DataGathererName).ToList();
                         FileIOHelper.WriteListToCSVFile(httpDataCollectorsList, new HTTPDataCollectorReportMap(), FilePathMap.HttpDataCollectorsIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + httpDataCollectorsList.Count;
+
                         #endregion
 
                         #region Call Graph Settings
@@ -710,6 +786,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         agentCallGraphSettingCollectorsList = agentCallGraphSettingCollectorsList.OrderBy(a => a.AgentType).ToList();
                         FileIOHelper.WriteListToCSVFile(agentCallGraphSettingCollectorsList, new AgentCallGraphSettingReportMap(), FilePathMap.AgentCallGraphSettingsIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + agentCallGraphSettingCollectorsList.Count;
 
                         #endregion
 
@@ -734,6 +812,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthRulesList = healthRulesList.OrderBy(h => h.RuleType).ThenBy(h => h.RuleName).ToList();
                         FileIOHelper.WriteListToCSVFile(healthRulesList, new HealthRuleReportMap(), FilePathMap.HealthRulesIndexFilePath(jobTarget));
 
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + healthRulesList.Count;
+
                         #endregion
 
                         #region Application Settings
@@ -741,6 +821,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<EntityApplicationConfiguration> applicationConfigurationsList = new List<EntityApplicationConfiguration>(1);
                         applicationConfigurationsList.Add(applicationConfiguration);
                         FileIOHelper.WriteListToCSVFile(applicationConfigurationsList, new EntityApplicationConfigurationReportMap(), FilePathMap.ApplicationConfigurationIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + applicationConfigurationsList.Count;
 
                         #endregion
 
@@ -851,6 +933,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         stepTimings.Add(stepTimingTarget);
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
+                }
+
+                // Remove the last item from job configuration that was put there earlier if comparing against template
+                if (compareAgainstTemplateConfiguration == true)
+                {
+                    jobConfiguration.Target.RemoveAt(jobConfiguration.Target.Count - 1);
                 }
 
                 return true;
@@ -1417,6 +1505,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             if (scopeNode.Attributes["rule-name"].Value == businessTransactionDiscoveryRule20.RuleName)
                             {
                                 businessTransactionDiscoveryRule20.ScopeName = scopeNode.ParentNode.Attributes["scope-name"].Value;
+                                businessTransactionDiscoveryRule20.TierName = businessTransactionDiscoveryRule20.ScopeName;
                                 break;
                             }
                         }
@@ -1596,7 +1685,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             agentConfigurationProperty.PropertyName = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("name"));
             agentConfigurationProperty.PropertyType = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("type"));
-            agentConfigurationProperty.Description = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("description"));
+            agentConfigurationProperty.Description = getStringValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("description")).Trim();
             agentConfigurationProperty.IsRequired = getBoolValueFromXmlNode(agentPropertyDefinitionConfigurationNode.SelectSingleNode("required"));
 
             switch (agentConfigurationProperty.PropertyType)
@@ -1718,6 +1807,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 httpDataCollector.DataGathererValue = getStringValueFromXmlNode(dataGathererConfigurationNode.SelectSingleNode("name"));
             }
 
+            StringBuilder sb = new StringBuilder(200);
+            foreach (XmlNode headerNode in httpDataCollectorConfigurationNode.SelectNodes("headers"))
+            {
+                sb.AppendFormat("{0};", getStringValueFromXmlNode(headerNode));
+            }
+            httpDataCollector.HeadersList = sb.ToString();
+
             httpDataCollector.IsAssignedToBTs = false;
 
             httpDataCollector.RuleRawValue = makeXMLFormattedAndIndented(httpDataCollectorConfigurationNode);
@@ -1731,7 +1827,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     httpDataCollector.IsAssignedToBTs = true;
                     httpDataCollector.NumAssignedBTs = entityBusinessTransactionConfigurationsForThisDCList.Count;
 
-                    StringBuilder sb = new StringBuilder(32 * entityBusinessTransactionConfigurationsForThisDCList.Count);
+                    sb = new StringBuilder(32 * entityBusinessTransactionConfigurationsForThisDCList.Count);
                     foreach (EntityBusinessTransactionConfiguration bt in entityBusinessTransactionConfigurationsForThisDCList)
                     {
                         sb.AppendFormat("{0}/{1};\n", bt.TierName, bt.BTName);
@@ -1881,7 +1977,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             healthRule.ApplicationLink = applicationConfiguration.ApplicationLink;
 
             healthRule.RuleName = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("name"));
-            healthRule.RuleType = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("type"));
+            healthRule.HRRuleType = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("type"));
             healthRule.Description = getStringValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("description"));
             healthRule.IsEnabled = getBoolValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("enabled"));
             healthRule.IsDefault = getBoolValueFromXmlNode(healthRuleConfigurationNode.SelectSingleNode("is-default"));

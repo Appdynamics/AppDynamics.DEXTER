@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
 using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.Drawing.Chart;
@@ -1303,13 +1303,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             logger.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
             loggerConsole.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
+            logger.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
+            loggerConsole.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
             logger.Trace("Output.EntityMetrics={0}", jobConfiguration.Output.EntityMetrics);
             loggerConsole.Trace("Output.EntityMetrics={0}", jobConfiguration.Output.EntityMetrics);
-            if (jobConfiguration.Input.Metrics == false || jobConfiguration.Output.EntityMetrics == false)
+            if ((jobConfiguration.Input.Metrics == false && jobConfiguration.Input.Flowmaps == false) || jobConfiguration.Output.EntityMetrics == false)
             {
                 loggerConsole.Trace("Skipping report of entity metrics");
             }
-            return (jobConfiguration.Input.Metrics == true && jobConfiguration.Output.EntityMetrics == true);
+            return ((jobConfiguration.Input.Metrics == true || jobConfiguration.Input.Flowmaps == true) && jobConfiguration.Output.EntityMetrics == true);
         }
 
         private static void addConditionalFormattingToTableInMetricReport(string entityType, ExcelWorksheet sheet, ExcelTable table)

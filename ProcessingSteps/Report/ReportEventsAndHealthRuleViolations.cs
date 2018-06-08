@@ -1,4 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
 using OfficeOpenXml.Style;

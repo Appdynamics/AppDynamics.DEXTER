@@ -1,15 +1,13 @@
-﻿using AppDynamics.Dexter.DataObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using OfficeOpenXml;
-using OfficeOpenXml.ConditionalFormatting;
 using OfficeOpenXml.Drawing.Chart;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
 using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
 using System.IO;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace AppDynamics.Dexter.ProcessingSteps
