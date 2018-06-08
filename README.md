@@ -21,6 +21,7 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Investigation of what is detected and reporting across multiple Controllers and multiple Applications
 * Evaluating what components (Tiers, Nodes, Backends, Business Transactions) are reporting and what load they have
 * Inventory of configuration in multiple environments
+* Comparison of configuration between multiple environments
 * Health Checks for On-Premises Controller – grabbing of data from for later investigation, when Controller is no longer accessible
 * Extraction and preservation of fine-grained Metric, Flow map and Snapshot data for interesting time ranges (such as load test, application outage, interesting customer load) with goal of investigation and comparison in the future
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
@@ -105,10 +106,13 @@ Sum of all calls in Application with Time grouping
 /![](../master/docs/introduction/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
-[Configuration](../../wiki/Configuration-Report) report provides information about Controller Settings and Application configuration. 
+[Configuration](../../wiki/Configuration-Report) report provides information about Controller Settings and Application configuration as well as comparison of configuration between multiple environments
 
 Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
+
+Here is an example showing differences
+![Configuration Differences](../master/docs/introduction/ConfigurationComparison.png?raw=true)
 
 # Get Started
 ## Necessary Software
