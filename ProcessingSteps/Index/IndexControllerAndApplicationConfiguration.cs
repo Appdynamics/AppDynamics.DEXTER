@@ -216,7 +216,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         applicationConfiguration.TasksConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/tasks"));
                         applicationConfiguration.BTGroupsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/business-transaction-groups"));
 
-                        applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectNodes("application/metric-baselines"));
+                        applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/metric-baselines"));
                         applicationConfiguration.NumBaselines = configXml.SelectNodes("application/metric-baselines/metric-baseline").Count;
 
                         applicationConfiguration.ErrorAgentConfig = makeXMLFormattedAndIndented(String.Format("<error-configurations>{0}</error-configurations>", makeXMLFormattedAndIndented(configXml.SelectNodes("application/configuration/error-configuration"))));
@@ -1603,8 +1603,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             customExitRule.IsApplyToAllBTs = getBoolValueFromXmlNode(customExitConfigurationNode.SelectSingleNode("instrumentation-point/apply-to-all-bts"));
 
-            customExitRule.DataCollectorsConfig = makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/method-invocation-data-gatherer-config"));
-            customExitRule.InfoPointsConfig = makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/info-point-metric-definition"));
+            customExitRule.DataCollectorsConfig = makeXMLFormattedAndIndented(String.Format("<method-invocation-data-gatherer-configs>{0}</method-invocation-data-gatherer-configs>", makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/method-invocation-data-gatherer-config"))));
+            customExitRule.InfoPointsConfig = makeXMLFormattedAndIndented(String.Format("<info-point-metric-definitions>{0}</info-point-metric-definitions>", makeXMLFormattedAndIndented(customExitConfigurationNode.SelectNodes("instrumentation-point/info-point-metric-definition"))));
 
             customExitRule.RuleRawValue = makeXMLFormattedAndIndented(customExitConfigurationNode);
 
@@ -1664,7 +1664,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             informationPointRule.MatchParameterTypes = getStringValueFromXmlNode(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/method-parameter-types"));
             informationPointRule.MatchCondition = makeXMLFormattedAndIndented(informationPointConfigurationNode.SelectSingleNode("pojo-method-definition/match-condition"));
 
-            informationPointRule.InfoPointsConfig = makeXMLFormattedAndIndented(informationPointConfigurationNode.SelectNodes("info-point-metric-definition"));
+            informationPointRule.InfoPointsConfig = makeXMLFormattedAndIndented(String.Format("<info-point-metric-definitions>{0}</info-point-metric-definitions>", makeXMLFormattedAndIndented(informationPointConfigurationNode.SelectNodes("info-point-metric-definition"))));
 
             informationPointRule.RuleRawValue = makeXMLFormattedAndIndented(informationPointConfigurationNode);
 
@@ -1998,7 +1998,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 healthRule.AffectsEntityMatchType = getStringValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("match-type"));
                 healthRule.AffectsEntityMatchPattern = getStringValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("match-pattern"));
                 healthRule.AffectsEntityMatchIsInverse = getBoolValueFromXmlNode(affectedWrapperXmlNode.SelectSingleNode("inverse"));
-                healthRule.AffectsEntityMatchCriteria = makeXMLFormattedAndIndented(affectedWrapperXmlNode.SelectNodes("*[not(self::type) and not(self::match-type) and not(self::match-pattern) and not(self::inverse)]"));
+                healthRule.AffectsEntityMatchCriteria = makeXMLFormattedAndIndented(String.Format("<match-criteria>{0}</match-criteria>", makeXMLFormattedAndIndented(affectedWrapperXmlNode.SelectNodes("*[not(self::type) and not(self::match-type) and not(self::match-pattern) and not(self::inverse)]"))));
             }
 
             // XML can look like that for single element
