@@ -370,6 +370,8 @@ namespace AppDynamics.Dexter
 
         public static bool WriteListToCSVFile<T>(List<T> listToWrite, ClassMap<T> classMap, string csvFilePath, bool appendToExistingFile)
         {
+            if (listToWrite == null) return true;
+
             string folderPath = Path.GetDirectoryName(csvFilePath);
 
             if (CreateFolder(folderPath) == true)
@@ -419,6 +421,8 @@ namespace AppDynamics.Dexter
         {
             try
             {
+                if (listToWrite == null) return null;
+
                 logger.Trace("Writing list with {0} elements containing type {1} to memory stream", listToWrite.Count, typeof(T));
 
                 MemoryStream ms = new MemoryStream(1024 * listToWrite.Count);

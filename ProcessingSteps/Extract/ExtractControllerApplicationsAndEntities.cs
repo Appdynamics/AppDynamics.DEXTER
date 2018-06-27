@@ -228,30 +228,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                             );
 
-                            //Parallel.ForEach(
-                            //    nodesList,
-                            //    new ParallelOptions { MaxDegreeOfParallelism = NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
-                            //    () => 0,
-                            //    (node, loop, subtotal) =>
-                            //    {
-                            //        ControllerApi controllerApiLocal = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                            //        controllerApiLocal.PrivateApiLogin();
-
-                            //        string nodePropertiesJSON = controllerApi.GetNodeProperties(node.id);
-                            //        if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
-
-                            //        return 1;
-                            //    },
-                            //    (finalResult) =>
-                            //    {
-                            //        Interlocked.Add(ref j, finalResult);
-                            //        if (j % 10 == 0)
-                            //        {
-                            //            Console.Write("[{0}].", j);
-                            //        }
-                            //    }
-                            //);
-
                             loggerConsole.Info("Completed {0} Nodes", nodesList.Count);
                         }
 
@@ -261,6 +237,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         logger.Warn(ex);
                         loggerConsole.Warn(ex);
+
+                        return false;
                     }
                     finally
                     {
