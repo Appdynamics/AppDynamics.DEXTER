@@ -65,7 +65,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public override String ToString()
         {
             return String.Format(
-                "MethodInvocationDataCollector: {0}/{1}/{2}",
+                "HTTPDataCollector: {0}/{1}/{2}",
                 this.Controller,
                 this.ApplicationName,
                 this.CollectorName);

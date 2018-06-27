@@ -326,6 +326,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         logger.Warn(ex);
                         loggerConsole.Warn(ex);
+
+                        return false;
                     }
                     finally
                     {

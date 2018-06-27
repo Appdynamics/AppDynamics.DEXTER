@@ -155,7 +155,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Preload all the reports that will be filtered by the subsequent entities
 
-                        loggerConsole.Info("Completed Entity Details Data Preloading");
+                        loggerConsole.Info("Entity Details Data Preloading");
 
                         List<Event> eventsAllList = FileIOHelper.ReadListFromCSVFile<Event>(FilePathMap.EventsIndexFilePath(jobTarget), new EventReportMap());
                         List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile<HealthRuleViolationEvent>(FilePathMap.HealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
@@ -165,6 +165,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<ServiceEndpointCall> serviceEndpointCallsAllList = FileIOHelper.ReadListFromCSVFile<ServiceEndpointCall>(FilePathMap.SnapshotsServiceEndpointCallsIndexFilePath(jobTarget), new ServiceEndpointCallReportMap());
                         List<DetectedError> detectedErrorsAllList = FileIOHelper.ReadListFromCSVFile<DetectedError>(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget), new DetectedErrorReportMap());
                         List<BusinessData> businessDataAllList = FileIOHelper.ReadListFromCSVFile<BusinessData>(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget), new BusinessDataReportMap());
+
+                        loggerConsole.Info("Completed Entity Details Data Preloading");
 
                         string relativePathToReportsToRemoveFromLinks = Path.Combine(
                             FilePathMap.getFileSystemSafeString(new Uri(jobTarget.Controller).Host),

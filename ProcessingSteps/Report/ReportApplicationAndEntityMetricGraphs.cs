@@ -155,8 +155,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityApplication.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityApplication.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -178,8 +178,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityTier.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityTier.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(tiersList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -199,10 +199,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityNode.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityNode.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(nodesList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -224,8 +225,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityBackend.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBackend.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(backendsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -247,8 +248,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityBusinessTransaction.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(businessTransactionsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -270,8 +271,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityServiceEndpoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(serviceEndpointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -293,7 +294,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityError.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityError.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, errorsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(errorsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -315,8 +316,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityInformationPoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
                                     fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityInformationPoint.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingList, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingList, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(informationPointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -333,6 +334,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         logger.Warn(ex);
                         loggerConsole.Warn(ex);
+                        return false;
                     }
                     finally
                     {
@@ -600,18 +602,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             ExcelWorksheet sheetMetrics = excelReportMetrics.Workbook.Worksheets[REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS];
 
-            // Load metric index locations file for later use
-            List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = FileIOHelper.ReadListFromCSVFile<EntityHourlyMetricValueLocation>(FilePathMap.MetricsLocationIndexFilePath(jobTarget, entityFolderName), new EntityHourlyMetricValueLocationReportMap());
-
-            // Process metrics in groups as indicated by their Graph column. All metrics with same Graph value go into same sheet, with as many sheets as necessary
-            // Empty graph name means do not output
-            List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entityType && m.Graph.Length > 0).ToList();
+            Dictionary<long, Dictionary<string, EntityHourlyMetricValueLocation[]>> entityMetricValuesLocationsDictionary = indexMetricValueLocationsForFasterAccess(jobConfiguration, jobTarget, entityFolderName, entityType);
 
             // Output all graphs
-            var metricMappingsGrouped = entityMetricExtractMappingListFiltered.GroupBy(m => new { m.Graph });
+            var metricMappingsGrouped = entityMetricExtractMappingList.GroupBy(m => new { m.Graph });
             foreach (var metricMappingGroup in metricMappingsGrouped)
             {
                 List<MetricExtractMapping> entityMetricExtractMappingForThisGraph = metricMappingGroup.ToList();
+
+                Console.Write("{0} {1} starting for {2} entities ", entityFolderName, metricMappingGroup.Key.Graph, entityList.Count);
 
                 // Measure the width of the time range to be at least 16 cells
                 int numCellsPerHourRange = entityMetricExtractMappingForThisGraph.Count * 2;
@@ -776,8 +775,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Output entity one at a time
                 for (int indexOfEntity = 0; indexOfEntity < entityList.Count; indexOfEntity++)
                 {
-                    Console.Write(".");
-
                     EntityBase entity = entityList[indexOfEntity];
 
                     string entityNameForExcelTable = getShortenedEntityNameForExcelTable(entity.EntityName, entity.EntityID);
@@ -815,26 +812,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             #endregion
 
-                            // Get indexed table location mapping for this specific metric/entity/timerange combo
-                            List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForThisMetric = entityMetricValuesLocations.Where(m =>
-                                m.MetricName == metricExtractMapping.MetricName &&
-                                m.EntityID == entity.EntityID &&
-                                m.FromUtc >= jobTimeRange.From &&
-                                m.ToUtc < jobTimeRange.To).ToList();
-                            if (entityMetricValuesLocationsForThisMetric != null && entityMetricValuesLocationsForThisMetric.Count > 0)
+                            EntityHourlyMetricValueLocation entityMetricValuesLocationForThisMetric = null;
+                            if (entityMetricValuesLocationsDictionary.ContainsKey(entity.EntityID) == true &&
+                                entityMetricValuesLocationsDictionary[entity.EntityID].ContainsKey(metricExtractMapping.MetricName) == true)
+                            {
+                                entityMetricValuesLocationForThisMetric = entityMetricValuesLocationsDictionary[entity.EntityID][metricExtractMapping.MetricName][indexOfTimeRange];
+                            }
+
+                            if (entityMetricValuesLocationForThisMetric != null)
                             {
                                 // We must have some activity here
                                 entityHasActivity = true;
 
                                 // Output the numeric values
                                 ExcelTable tableMetrics = sheetMetrics.Tables[String.Format(REPORT_METRICS_GRAPHS_METRIC_TABLE_METRIC_VALUES, entityFolderName, metricExtractMapping.FolderName)];
+
                                 if (tableMetrics != null)
                                 {
-                                    // Should be only metric index for this value 1 in here
-                                    EntityHourlyMetricValueLocation entityMetricValuesLocationForThisMetric = entityMetricValuesLocationsForThisMetric[0];
-
                                     // Get the range that contains the Sum column of the metric
                                     ExcelRangeBase rangeMetricValuesForSum = getSingleColumnRangeFromTable(tableMetrics, "Sum", entityMetricValuesLocationForThisMetric.RowStart, entityMetricValuesLocationForThisMetric.RowEnd);
+
                                     if (rangeMetricValuesForSum != null)
                                     {
                                         sheetGraphs.Cells[currentMaxRow, columnIndexOfValueOfCurrentMetric].Formula = String.Format(@"=SUM({0})", rangeMetricValuesForSum.FullAddress);
@@ -996,6 +993,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     currentMaxRow++;
 
                     #endregion
+
+                    if (indexOfEntity % 50 == 0)
+                    {
+                        Console.Write("[{0}].", indexOfEntity);
+                    }
                 }
 
                 #region Create tables for entities
@@ -1016,6 +1018,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
 
                 #endregion
+
+                Console.WriteLine("{0} {1} complete", entityFolderName, metricMappingGroup.Key.Graph);
             }
 
             return;
@@ -1037,6 +1041,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             // Process metrics in the CPM, ART and EPM group
             List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
+
+            Dictionary<long, Dictionary<string, EntityHourlyMetricValueLocation[]>> entityMetricValuesLocationsDictionary = indexMetricValueLocationsForFasterAccess(jobConfiguration, jobTarget, entityFolderName, entityType);
 
             if (entityMetricExtractMappingListFiltered.Count > 0)
             {
@@ -1201,6 +1207,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                Console.Write("{0} {1} starting for {2} entities ", entityFolderName, sheetName, entityList.Count);
+
                 // Output entity one at a time
                 for (int indexOfEntity = 0; indexOfEntity < entityList.Count; indexOfEntity++)
                 {
@@ -1221,24 +1229,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        // Get indexed table location mapping for this specific metric/entity/timerange combo
-                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForART = entityMetricValuesLocations.Where(m =>
-                            m.MetricName == memART.MetricName &&
-                            m.EntityID == entity.EntityID &&
-                            m.FromUtc >= jobTimeRange.From &&
-                            m.ToUtc < jobTimeRange.To).FirstOrDefault();
+                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForART = null;
+                        if (entityMetricValuesLocationsDictionary.ContainsKey(entity.EntityID) == true &&
+                            entityMetricValuesLocationsDictionary[entity.EntityID].ContainsKey(memART.MetricName) == true)
+                        {
+                            entityMetricValuesLocationsForART = entityMetricValuesLocationsDictionary[entity.EntityID][memART.MetricName][indexOfTimeRange];
+                        }
 
-                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForCPM = entityMetricValuesLocations.Where(m =>
-                            m.MetricName == memCPM.MetricName &&
-                            m.EntityID == entity.EntityID &&
-                            m.FromUtc >= jobTimeRange.From &&
-                            m.ToUtc < jobTimeRange.To).FirstOrDefault();
+                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForCPM = null;
+                        if (entityMetricValuesLocationsDictionary.ContainsKey(entity.EntityID) == true &&
+                            entityMetricValuesLocationsDictionary[entity.EntityID].ContainsKey(memCPM.MetricName) == true)
+                        {
+                            entityMetricValuesLocationsForCPM = entityMetricValuesLocationsDictionary[entity.EntityID][memCPM.MetricName][indexOfTimeRange];
+                        }
 
-                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForEPM = entityMetricValuesLocations.Where(m =>
-                            m.MetricName == memEPM.MetricName &&
-                            m.EntityID == entity.EntityID &&
-                            m.FromUtc >= jobTimeRange.From &&
-                            m.ToUtc < jobTimeRange.To).FirstOrDefault();
+                        EntityHourlyMetricValueLocation entityMetricValuesLocationsForEPM = null;
+                        if (entityMetricValuesLocationsDictionary.ContainsKey(entity.EntityID) == true &&
+                            entityMetricValuesLocationsDictionary[entity.EntityID].ContainsKey(memEPM.MetricName) == true)
+                        {
+                            entityMetricValuesLocationsForEPM = entityMetricValuesLocationsDictionary[entity.EntityID][memEPM.MetricName][indexOfTimeRange];
+                        }
 
                         // Get ranges with the metrics
                         ExcelRangeBase rangeARTValues = null;
@@ -1400,6 +1410,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     currentMaxRow++;
 
                     #endregion
+
+                    if (indexOfEntity % 50 == 0)
+                    {
+                        Console.Write("[{0}].", indexOfEntity);
+                    }
                 }
 
                 #region Create tables for entities
@@ -1420,6 +1435,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
 
                 #endregion
+
+                Console.WriteLine("{0} {1} complete", entityFolderName, sheetName);
             }
         }
 
@@ -1561,6 +1578,75 @@ namespace AppDynamics.Dexter.ProcessingSteps
             datalabelsRangeXmlNode.AppendChild(fXmlNode);
 
             #endregion
+        }
+
+        private Dictionary<long, Dictionary<string, EntityHourlyMetricValueLocation[]>> indexMetricValueLocationsForFasterAccess(
+            JobConfiguration jobConfiguration,
+            JobTarget jobTarget,
+            string entityFolderName,
+            string entityType)
+        {
+            // Load metric index locations file for later use
+            List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = FileIOHelper.ReadListFromCSVFile<EntityHourlyMetricValueLocation>(FilePathMap.MetricsLocationIndexFilePath(jobTarget, entityFolderName), new EntityHourlyMetricValueLocationReportMap());
+
+            // Index the metric value locations into this funky dictionary of dictionaries with array in following hierarchy
+            //      Entity ID (123)
+            //          Metric Name (ART, CPM)
+            //              Time range 0
+            //              ...
+            //              Time range N
+            Dictionary<long, Dictionary<string, EntityHourlyMetricValueLocation[]>> entityMetricValuesLocationsDictionary = null;
+
+            // Group them by Entity ID first
+            var entityMetricValuesLocationsGroupedByEntityID = entityMetricValuesLocations.GroupBy(m => new { m.EntityID });
+            if (entityMetricValuesLocationsGroupedByEntityID != null)
+            {
+                entityMetricValuesLocationsDictionary = new Dictionary<long, Dictionary<string, EntityHourlyMetricValueLocation[]>>(entityMetricValuesLocationsGroupedByEntityID.Count());
+                foreach (var entityMetricMappingsGroupForEntity in entityMetricValuesLocationsGroupedByEntityID)
+                {
+                    List<EntityHourlyMetricValueLocation> entityHourlyMetricValueLocationsForThisEntity = entityMetricMappingsGroupForEntity.ToList();
+
+                    // Group them by Metric Name second
+                    var entityMetricValuesLocationsGroupedByMetricName = entityHourlyMetricValueLocationsForThisEntity.GroupBy(m => new { m.MetricName });
+
+                    long entityID = entityMetricMappingsGroupForEntity.Key.EntityID;
+                    entityMetricValuesLocationsDictionary.Add(entityID, new Dictionary<string, EntityHourlyMetricValueLocation[]>(5));
+                    foreach (var entityMetricMappingsGroupForEntityMetric in entityMetricValuesLocationsGroupedByMetricName)
+                    {
+                        List<EntityHourlyMetricValueLocation> entityHourlyMetricValueLocationsForThisEntityAndMetric = entityMetricMappingsGroupForEntityMetric.ToList();
+
+                        // Preallocate the array for each of the timeranges in anticipation of metric data to be inserted there
+                        EntityHourlyMetricValueLocation[] entityHourlyMetricValueLocationsForThisEntityAndMetricArray = new EntityHourlyMetricValueLocation[jobConfiguration.Input.HourlyTimeRanges.Count];
+                        entityMetricValuesLocationsDictionary[entityID].Add(entityMetricMappingsGroupForEntityMetric.Key.MetricName, entityHourlyMetricValueLocationsForThisEntityAndMetricArray);
+
+                        if (entityHourlyMetricValueLocationsForThisEntityAndMetric != null && entityHourlyMetricValueLocationsForThisEntityAndMetric.Count > 0)
+                        {
+                            // Roll through the array of all the time ranges populating the array slots for each hour that has data
+                            int indexOfMetricValueLocation = 0;
+                            for (int indexOfTimeRange = 0; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
+                            {
+                                JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
+                                EntityHourlyMetricValueLocation entityHourlyMetricValueLocation = entityHourlyMetricValueLocationsForThisEntityAndMetric[indexOfMetricValueLocation];
+
+                                if (entityHourlyMetricValueLocation.FromUtc >= jobTimeRange.From &&
+                                    entityHourlyMetricValueLocation.ToUtc < jobTimeRange.To)
+                                {
+                                    // Found metric values for this entity for this metric in this time range
+                                    entityHourlyMetricValueLocationsForThisEntityAndMetricArray[indexOfTimeRange] = entityHourlyMetricValueLocation;
+
+                                    indexOfMetricValueLocation++;
+                                }
+                                if (indexOfMetricValueLocation >= entityHourlyMetricValueLocationsForThisEntityAndMetric.Count)
+                                {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return entityMetricValuesLocationsDictionary;
         }
     }
 }
