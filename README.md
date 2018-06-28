@@ -106,7 +106,7 @@ Sum of all calls in Application with Time grouping
 /![](../master/docs/introduction/FlameChartApplication.png?raw=true)
 
 ## Configuration Report
-[Configuration](../../wiki/Configuration-Report) report provides information about Controller Settings and Application configuration as well as comparison of configuration between multiple environments
+[Configuration](../../wiki/Configuration-Report) report provides information about Controller Settings and Application configuration as well as comparison of configuration between multiple environments.
 
 Here is an example showing non-default Agent Properties set on multiple Applications in multiple Controllers
 ![Configuration](../master/docs/introduction/ConfigurationOverview.png?raw=true)
