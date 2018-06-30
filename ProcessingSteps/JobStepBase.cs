@@ -22,12 +22,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Event types
 
         // There are a bazillion types of events
-        // Source C:\appdynamics\codebase\controller\controller-api\agent\src\main\java\com\singularity\ee\controller\api\constants\EventType.java
-        // They are also documented here:
-        //      https://docs.appdynamics.com/display/PRO42/Events+Reference
+        //      https://docs.appdynamics.com/display/PRO44/Events+Reference
         //      https://docs.appdynamics.com/display/PRO43/Remediation+Scripts
         //      https://docs.appdynamics.com/display/PRO43/Build+a+Custom+Action
-        // Choosing select few that I care about
+        // They are defined here :
+        //      C:\appdynamics\codebase\controller\controller-api\agent\src\main\java\com\singularity\ee\controller\api\constants\EventType.java
+        // But filtering that to only the ones that aren't deprecated
         internal static List<string> EVENT_TYPES = new List<string>
         {
             // Events UI: Application Changes
@@ -69,10 +69,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Events UI: Error
             // This is thrown when the agent detects and error NOT during a BT (no BT id on thread)
             { "APPLICATION_ERROR" },
+            { "BUSINESS_ERROR" },
 
             // Events UI: Not possible - this is just a query here
             // Diagnostic session.  There are several subTypes for this.
             { "DIAGNOSTIC_SESSION" },
+
+            // Agent Config
+            { "AGENT_CONFIGURATION_ERROR" },
 
             // Registration limits for Agent
             { "AGENT_ADD_BLACKLIST_REG_LIMIT_REACHED" },
@@ -83,17 +87,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             // Registration limits for Controller
             { "CONTROLLER_ASYNC_ADD_REG_LIMIT_REACHED" },
+            { "CONTROLLER_COLLECTIONS_ADD_REG_LIMIT_REACHED" },
             { "CONTROLLER_ERROR_ADD_REG_LIMIT_REACHED" },
             { "CONTROLLER_EVENT_UPLOAD_LIMIT_REACHED" },
-            { "CONTROLLER_METRIC_REG_LIMIT_REACHED" },
-            { "CONTROLLER_RSD_UPLOAD_LIMIT_REACHED" },
-            { "CONTROLLER_STACKTRACE_ADD_REG_LIMIT_REACHED" },
+            { "CONTROLLER_MEMORY_ADD_REG_LIMIT_REACHED" },
             { "CONTROLLER_METADATA_REGISTRATION_LIMIT_REACHED" },
+            { "CONTROLLER_METRIC_DATA_BUFFER_OVERFLOW" },
+            { "CONTROLLER_METRIC_REG_LIMIT_REACHED" },
+            { "CONTROLLER_PSD_UPLOAD_LIMIT_REACHED" },
+            { "CONTROLLER_RSD_UPLOAD_LIMIT_REACHED" },
+            { "CONTROLLER_SEP_ADD_REG_LIMIT_REACHED" },
+            { "CONTROLLER_STACKTRACE_ADD_REG_LIMIT_REACHED" },
+            { "CONTROLLER_TRACKED_OBJECT_ADD_REG_LIMIT_REACHED" },
 
             // Custom Actions
             { "CUSTOM_ACTION_STARTED" },
             { "CUSTOM_ACTION_FAILED" },
             { "CUSTOM_ACTION_END" },
+            { "CUSTOM_EMAIL_ACTION_STARTED" },
+            { "CUSTOM_EMAIL_ACTION_FAILED" },
+            { "EMAIL_ACTION_FAILED" },
+            { "CUSTOM_EMAIL_ACTION_END" },
+            { "HTTP_REQUEST_ACTION_STARTED" },
+            { "HTTP_REQUEST_ACTION_FAILED" },
+            { "HTTP_REQUEST_ACTION_END" },
             { "RUNBOOK_DIAGNOSTIC SESSION_STARTED" },
             { "RUNBOOK_DIAGNOSTIC SESSION_FAILED" },
             { "RUNBOOK_DIAGNOSTIC SESSION_END" },
@@ -112,21 +129,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "SMS_SENT" },
 
             // Discovery
+            { "APPLICATION_DISCOVERED" },
             { "MACHINE_DISCOVERED" },
             { "NODE_DISCOVERED" },
             { "SERVICE_ENDPOINT_DISCOVERED" },
             { "TIER_DISCOVERED" },
-            { "TIER_DISCOVERED" },
-            { "TIER_DISCOVERED" },
-            { "TIER_DISCOVERED" },
+            { "BT_DISCOVERED" },
+            { "BACKEND_DISCOVERED" },
+
+            // Database
+            // Yeah we can't spell
+            { "DB_SERVER_PARAMTER_CHANGE" },
+
+            // Memory Leaks
+            { "MEMORY" },
+            { "MEMORY_LEAK_DIAGNOSTICS" },
+            { "OBJECT_CONTENT_SUMMARY" },
 
             // Others
             { "CONTROLLER_AGENT_VERSION_INCOMPATIBILITY" },
             { "LICENSE" },
             { "DISK_SPACE" },
+            { "DEV_MODE_CONFIG_UPDATE" },
             { "AGENT_STATUS" },
             { "AGENT_DIAGNOSTICS" },
-            { "AGENT_EVENT" }
+            { "AGENT_EVENT" },
+            { "APPDYNAMICS_DATA" },
+            { "APPDYNAMICS_INTERNAL_DIAGNOSTICS" },
+            { "WARROOM_NOTE" }
         };
 
         #endregion
