@@ -132,7 +132,7 @@ Download latest release from [Releases](../../releases) section, (`AppDynamics.D
 Unzip to some location, for example, `C:\AppDynamics\DEXTER`
 
 ## Specify What to Do in Job File
-Provide instructions on what to get, from where, and how much in [Job File](../../wiki/Job-File)
+Provide instructions on what to get, from where, and how much in [Job File](../../wiki/Job-File), editing it in Text Editor OR creating it using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
 
 ## Run Application
 When running on Windows, you can choose to run version built using .NET Framework 4.7.1 or .NET Core Framework 2.0.x. When running on Mac or Linux, you need to use .NET Core Framework 2.0.x version.
