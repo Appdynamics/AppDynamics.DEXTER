@@ -49,6 +49,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
+
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
                     stepTimingTarget.ApplicationName = jobTarget.Application;
@@ -61,17 +63,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
 
                         #region Index Snapshots
 
@@ -1275,7 +1266,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                     cccSnap.CallTimings.Add(new CallTiming { Async = exitCall.IsAsync, Duration = exitCall.Duration });
 
-                                    exitCall.Detail = exitCallToken["detailString"].ToString();
+                                    exitCall.Detail = exitCallToken["detailString"].ToString().Trim();
+                                    if (exitCall.Detail.Length == 0)
+                                    {
+                                        exitCall.Detail = exitCall.ToEntityName;
+                                    }
                                     exitCall.ErrorDetail = exitCallToken["errorDetails"].ToString();
                                     if (exitCall.ErrorDetail == "\\N") { exitCall.ErrorDetail = String.Empty; }
 
@@ -1397,7 +1392,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     exitCall.SQLClauseType = "COMMIT";
                                                     break;
 
+                                                case "db transaction rollback":
+                                                    exitCall.SQLClauseType = "ROLLBACK";
+                                                    break;
+
                                                 case "datasource.getconnection":
+                                                case "driver.connect":
                                                     exitCall.SQLClauseType = "CONNECTION";
                                                     break;
 
@@ -1405,6 +1405,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 case "query":
                                                 case "update":
                                                 case "delete":
+                                                case "batch update":
                                                 default:
                                                     // Get SQL statement type
                                                     if (new Regex(@"\bCREATE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
@@ -1454,6 +1455,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     else if (new Regex(@"\bCALL\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
                                                     {
                                                         exitCall.SQLClauseType = "PROCCALL";
+                                                    }
+                                                    else if (new Regex(@"\bSET\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
+                                                    {
+                                                        exitCall.SQLClauseType = "SET";
+                                                    }
+                                                    else if (new Regex(@"\bPREPARED STATEMENT\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
+                                                    {
+                                                        exitCall.SQLClauseType = "PREPSTMT";
                                                     }
 
                                                     // Check other clauses
@@ -1553,6 +1562,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
 
                                     #endregion
+
+                                    #region Parse CUSTOM
+
+                                    if (exitCall.ExitType == "CUSTOM")
+                                    {
+                                        // Look up whether this Exit type is something prettier than CUSTOM
+                                        EntityBackend backend = backendsList.Where(b => b.BackendID == exitCall.ToEntityID).FirstOrDefault();
+                                        if (backend != null)
+                                        {
+                                            exitCall.ExitType = backend.BackendType;
+                                        }
+                                    }
+
+                                    #endregion 
 
                                     exitCallsListInThisSegment.Add(exitCall);
                                 }

@@ -44,6 +44,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
+
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
                     stepTimingTarget.ApplicationName = jobTarget.Application;
@@ -56,17 +58,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
 
                         #region Target step variables
 
@@ -100,12 +91,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 loggerConsole.Info("Completed Application");
 
-                                loggerConsole.Info("Extract Flowmap for Application in each minute in ({0} minutes)", differenceInMinutes);
+                                JobTimeRange jobTimeRangeLast = jobConfiguration.Input.HourlyTimeRanges[jobConfiguration.Input.HourlyTimeRanges.Count - 1];
+
+                                int differenceInMinutesForLastTimeRange = (int)((jobTimeRangeLast.To - jobTimeRangeLast.From).TotalMinutes);
+
+                                loggerConsole.Info("Extract Flowmap for Application in each minute in in last timerange ({0} minutes)", differenceInMinutesForLastTimeRange);
 
                                 int j = 0;
 
-                                Parallel.For(0, 
-                                    differenceInMinutes, 
+                                Parallel.For(0,
+                                    differenceInMinutesForLastTimeRange, 
                                     new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
                                     () => 0,
                                     (minute, loop, subtotal) =>
@@ -114,8 +109,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         controllerApiLocal.PrivateApiLogin();
 
                                         JobTimeRange thisMinuteJobTimeRange = new JobTimeRange();
-                                        thisMinuteJobTimeRange.From = jobConfiguration.Input.TimeRange.From.AddMinutes(minute);
-                                        thisMinuteJobTimeRange.To = jobConfiguration.Input.TimeRange.From.AddMinutes(minute + 1);
+                                        thisMinuteJobTimeRange.From = jobTimeRangeLast.From.AddMinutes(minute);
+                                        thisMinuteJobTimeRange.To = jobTimeRangeLast.From.AddMinutes(minute + 1);
 
                                         long fromTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.From);
                                         long toTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.To);

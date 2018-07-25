@@ -16,6 +16,7 @@ namespace AppDynamics.Dexter
             {
                 // Get data
                 JobStatus.ExtractControllerApplicationsAndEntities,
+                JobStatus.ExtractControllerSIMApplicationsAndEntities,
                 JobStatus.ExtractControllerAndApplicationConfiguration,
                 JobStatus.ExtractApplicationAndEntityMetrics,
                 JobStatus.ExtractApplicationAndEntityFlowmaps,
@@ -23,7 +24,8 @@ namespace AppDynamics.Dexter
                 JobStatus.ExtractSnapshots,
 
                 // Index data
-                JobStatus.IndexControllersApplicationsAndEntities,
+                JobStatus.IndexControllerApplicationsAndEntities,
+                JobStatus.IndexControllerSIMApplicationsAndEntities,
                 JobStatus.IndexControllerAndApplicationConfiguration,
                 JobStatus.IndexApplicationConfigurationComparison,
                 JobStatus.IndexApplicationAndEntityMetrics,
@@ -33,6 +35,7 @@ namespace AppDynamics.Dexter
 
                 // Report data
                 JobStatus.ReportControlerApplicationsAndEntities,
+                JobStatus.ReportControlerSIMApplicationsAndEntities,
                 JobStatus.ReportControllerAndApplicationConfiguration,
                 JobStatus.ReportApplicationAndEntityMetrics,
                 JobStatus.ReportApplicationAndEntityMetricGraphs,
@@ -151,7 +154,10 @@ namespace AppDynamics.Dexter
             {
                 case JobStatus.ExtractControllerApplicationsAndEntities:
                     return new ExtractControllerApplicationsAndEntities();
-                    
+
+                case JobStatus.ExtractControllerSIMApplicationsAndEntities:
+                    return new ExtractControllerSIMApplicationsAndEntities();
+
                 case JobStatus.ExtractControllerAndApplicationConfiguration:
                     return new ExtractControllerAndApplicationConfiguration();
 
@@ -168,8 +174,11 @@ namespace AppDynamics.Dexter
                     return new ExtractEventsAndHealthRuleViolations();
 
 
-                case JobStatus.IndexControllersApplicationsAndEntities:
-                    return new IndexControllersApplicationsAndEntities();
+                case JobStatus.IndexControllerApplicationsAndEntities:
+                    return new IndexControllerApplicationsAndEntities();
+
+                case JobStatus.IndexControllerSIMApplicationsAndEntities:
+                    return new IndexControllerSIMApplicationsAndEntities();
 
                 case JobStatus.IndexControllerAndApplicationConfiguration:
                     return new IndexControllerAndApplicationConfiguration();
@@ -192,6 +201,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportControlerApplicationsAndEntities:
                     return new ReportControlerApplicationsAndEntities();
+
+                case JobStatus.ReportControlerSIMApplicationsAndEntities:
+                    return new ReportControlerSIMApplicationsAndEntities();
 
                 case JobStatus.ReportControllerAndApplicationConfiguration:
                     return new ReportControllerAndApplicationConfiguration();

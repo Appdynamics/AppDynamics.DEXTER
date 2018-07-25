@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 
@@ -122,6 +123,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
             if (this.ShouldExecute(jobConfiguration) == false)
+            {
+                return true;
+            }
+
+            if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
                 return true;
             }

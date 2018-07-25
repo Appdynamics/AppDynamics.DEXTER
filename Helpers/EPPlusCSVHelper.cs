@@ -191,12 +191,17 @@ namespace AppDynamics.Dexter
                     if (ex.Message == "Row out of range")
                     {
                         logger.Warn("Max number of rows in sheet {0} reached", sheet.Name);
-                        break;
+                        return null;
                     }
                     else
                     {
                         throw;
                     }
+                }
+                catch (OutOfMemoryException ex)
+                {
+                    logger.Warn("Max number of rows or cells in sheet {0} reached", sheet.Name);
+                    return null;
                 }
             }
 

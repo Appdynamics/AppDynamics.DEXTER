@@ -77,7 +77,7 @@ namespace AppDynamics.Dexter
 
         public bool IsControllerAccessible()
         {
-            return (this.GetListOfApplications() != String.Empty);
+            return (this.GetApplicationsAPM() != String.Empty);
         }
 
         public void PrivateApiLogin()
@@ -87,7 +87,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Metadata retrieval
+        #region Controller configuration
 
         public string GetControllerVersion()
         {
@@ -99,24 +99,28 @@ namespace AppDynamics.Dexter
             return this.apiGET("controller/rest/configuration?output=json", "application/json", false);
         }
 
+        #endregion
+
+        #region APM metadata
+
         public string GetApplicationConfiguration(long applicationID)
         {
             return this.apiGET(String.Format("controller/ConfigObjectImportExportServlet?applicationId={0}", applicationID), "text/xml", false);
         }
 
-        public string GetListOfApplications()
+        public string GetApplicationsAPM()
         {
             return this.apiGET("controller/rest/applications?output=JSON", "application/json", false);
         }
 
-        public string GetSingleApplication(string applicationName)
+        public string GetSingleApplicationAPM(string applicationName)
         {
             return this.apiGET(String.Format("controller/rest/applications/{0}?output=JSON", applicationName), "application/json", false);
         }
 
-        public string GetSingleApplication(long applicationID)
+        public string GetSingleApplicationAPM(long applicationID)
         {
-            return this.GetSingleApplication(applicationID.ToString());
+            return this.GetSingleApplicationAPM(applicationID.ToString());
         }
 
         public string GetListOfTiers(string applicationName)
@@ -716,6 +720,95 @@ namespace AppDynamics.Dexter
                 logger.Trace("{0}/{1} POST as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
                 logger.Trace("POST body {0}", requestBody);
             }
+        }
+
+        #endregion
+
+        #region SIM metadata 
+
+        public string GetApplicationSIM()
+        {
+            return this.apiGET("controller/sim/v2/user/app", "application/json", false);
+        }
+
+        public string GetSIMListOfTiers()
+        {
+            return this.apiGET("controller/sim/v2/user/app/tiers", "application/json", false);
+        }
+
+        public string GetSIMListOfNodes()
+        {
+            return this.apiGET("controller/sim/v2/user/app/nodes", "application/json", false);
+        }
+
+        public string GetSIMListOfMachines()
+        {
+            return this.apiGET("controller/sim/v2/user/machines", "application/json", false);
+        }
+
+        public string GetSIMListOfGroups()
+        {
+            return this.apiGET("controller/sim/v2/user/groups", "application/json", false);
+        }
+
+        public string GetSIMMachine(long machineID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}", machineID), "application/json", false);
+        }
+
+        public string GetSIMMachineDockerContainers(long machineID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}/docker/containers", machineID), "application/json", false);
+        }
+
+        public string GetSIMListOfServiceAvailability()
+        {
+            return this.apiGET("controller/sim/v2/user/sam/targets/http", "application/json", false);
+        }
+
+        public string GetSIMServiceAvailability(long saID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/sam/targets/http/{0}", saID), "application/json", false);
+        }
+
+        #endregion
+
+        #region SIM Data
+
+        public string GetSIMMachineProcesses(long machineID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/sim/v2/user/machines/{0}/processes?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&limit=1000&sortBy=CLASS", 
+                machineID,
+                endTimeInUnixEpochFormat,
+                startTimeInUnixEpochFormat,
+                durationBetweenTimes), 
+            "application/json", 
+            false);
+        }
+
+        public string GetSIMServiceAvailabilityEvents(long saID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/sim/v2/user/sam/target/{0}/events?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&maxCount=5000",
+                saID,
+                endTimeInUnixEpochFormat,
+                startTimeInUnixEpochFormat,
+                durationBetweenTimes),
+            "application/json",
+            false);
+        }
+
+        #endregion
+
+
+
+
+        #region EUM metadata
+
+        public string GetApplicationsEUM()
+        {
+            return this.apiGET("controller/restui/eumApplications/getEumWebApplications", "application/json", true);
         }
 
         #endregion

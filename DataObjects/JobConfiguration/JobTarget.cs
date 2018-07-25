@@ -10,7 +10,7 @@ namespace AppDynamics.Dexter
         public string Application { get; set; }
         public long ApplicationID { get; set; }
         public bool NameRegex { get; set; }
-        public JobTargetStatus Status { get; set; }
+        public string Type { get; set; }
 
         public JobTarget Clone()
         {

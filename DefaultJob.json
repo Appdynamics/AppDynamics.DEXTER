@@ -1,9 +1,34 @@
 ﻿{
-  "Input": 
-  {
+  "Target": [
+    {
+      "Controller": "https://your.controller.here",
+      "UserName": "username@customer1",
+      "UserPassword": "your password or leave blank to be prompted",
+      "Application": "YourApplication",
+      "NameRegex": false,
+      "Type": "APM"
+    },
+    {
+      "Controller": "https://your.other.controller.here",
+      "UserName": "username@customer2",
+      "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
+      "Application": ".*",
+      "NameRegex": true,
+      "Type": "APM"
+    },
+    {
+      "Controller": "https://your.controller.here",
+      "UserName": "username@customer1",
+      "UserPassword": "your password or leave blank to be prompted",
+      "Application": "The name of SIM Application does not matter - there is only one in every Controller",
+      "NameRegex": false,
+      "Type": "SIM"
+    }
+  ],
+  "Input": {
     "TimeRange": {
-      "From": "2018-06-01T09:00:00",
-      "To": "2018-06-01T10:00:00"
+      "From": "2018-07-01T09:00:00",
+      "To": "2018-07-01T10:00:00"
     },
     "Metrics": true,
     "MetricsSelectionCriteria": [ "Transaction", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
@@ -84,22 +109,5 @@
     "Configuration": true,
     "Snapshots": true,
     "FlameGraphs": true
-  },
-  "Target": 
-  [
-    {
-      "Controller": "https://your.controller.here",
-      "UserName": "username@customer1",
-      "UserPassword": "your password or leave blank to be prompted",
-      "Application": "YourApplication",
-      "NameRegex": false
-    },
-    {
-      "Controller": "https://your.other.controller.here",
-      "UserName": "username@customer2",
-      "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
-      "Application": ".*",
-      "NameRegex": true
-    }
-  ]
+  }
 }
