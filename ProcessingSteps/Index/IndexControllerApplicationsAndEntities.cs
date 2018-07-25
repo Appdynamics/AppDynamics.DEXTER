@@ -12,7 +12,7 @@ using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class IndexControllersApplicationsAndEntities : JobStepIndexBase
+    public class IndexControllerApplicationsAndEntities : JobStepIndexBase
     {
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -45,6 +45,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
+
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
                     stepTimingTarget.ApplicationName = jobTarget.Application;
@@ -57,17 +59,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
 
                         #region Controller
 
@@ -605,8 +596,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 // BTM|Application Diagnostic Data|Error:11626|Errors per Minute
                                 //                                       ^^^^^
                                 //                                       ID
-                                errorRow.ErrorID = Convert.ToInt32(error.metricName.Split('|')[2].Split(':')[1]);
-
+                                try
+                                {
+                                    errorRow.ErrorID = Convert.ToInt32(error.metricName.Split('|')[2].Split(':')[1]);
+                                }
+                                catch (IndexOutOfRangeException ex)
+                                {
+                                    errorRow.ErrorID = -1;
+                                }
                                 // metricPath
                                 // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
                                 //                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

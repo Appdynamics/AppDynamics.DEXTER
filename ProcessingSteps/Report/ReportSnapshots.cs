@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 namespace AppDynamics.Dexter.ProcessingSteps
@@ -108,6 +109,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
             if (this.ShouldExecute(jobConfiguration) == false)
+            {
+                return true;
+            }
+
+            if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
                 return true;
             }
@@ -517,16 +523,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["DurationRange"].Position + 1).Width = 15;
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["DurationRange"].Position + 1).Width = 15;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
                     addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
@@ -635,20 +648,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
-
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["UserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["FromSegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["FromTierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
                     // Make timeline fixed width
                     ExcelRangeBase rangeTimeline = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["Timeline"].Position + 1, sheet.Dimension.Rows, table.Columns["Timeline"].Position + 1];
                     rangeTimeline.StyleName = "TimelineStyle";
@@ -760,22 +779,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["ToEntityName"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["ExitType"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["Detail"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["Method"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ToSegmentID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
                     addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
@@ -804,7 +830,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "TierName");
                     addRowFieldToPivot(pivot, "BTName");
-                    addDataFieldToPivot(pivot, "RequestID", DataFieldFunctions.Count, "Calls");
+                    addDataFieldToPivot(pivot, "NumCalls", DataFieldFunctions.Sum, "Calls");
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average, "Average");
 
                     ExcelChart chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_GRAPH, eChartType.ColumnClustered, pivot);
@@ -857,7 +883,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "TierName");
                     addRowFieldToPivot(pivot, "BTName");
-                    addDataFieldToPivot(pivot, "RequestID", DataFieldFunctions.Count, "Calls");
+                    addDataFieldToPivot(pivot, "NumCalls", DataFieldFunctions.Sum, "Calls");
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average, "Average");
 
                     chart = sheet.Drawings.AddChart(REPORT_SNAPSHOTS_PIVOT_EXIT_CALLS_ERRORS_GRAPH, eChartType.ColumnClustered, pivot);
@@ -890,18 +916,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
                     addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
@@ -969,20 +1002,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["ErrorName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ErrorMessage"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ErrorDetail"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
                     addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
@@ -1053,20 +1093,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
-                    sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;
-                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    try
+                    {
+                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 15;
+                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["DataName"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["DataValue"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["DataType"].Position + 1).Width = 10;
+                        sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                        sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    }
+                    catch (OutOfMemoryException ex)
+                    {
+                        // Do nothing, we must have a lot of cells
+                    }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
                     addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);

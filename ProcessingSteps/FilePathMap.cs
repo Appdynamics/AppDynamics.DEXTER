@@ -15,13 +15,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Parent Folder names
         private const string ENTITIES_FOLDER_NAME = "ENT";
+        private const string SIM_ENTITIES_FOLDER_NAME = "SIMENT";
         private const string CONFIGURATION_FOLDER_NAME = "CFG";
         private const string METRICS_FOLDER_NAME = "METR";
         private const string SNAPSHOTS_FOLDER_NAME = "SNAP";
         private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
         private const string EVENTS_FOLDER_NAME = "EVT";
+        private const string SA_EVENTS_FOLDER_NAME = "SAEVT";
         private const string ACTIVITYGRID_FOLDER_NAME = "FLOW";
         private const string CONFIGURATION_COMPARISON_FOLDER_NAME = "CMPR";
+        private const string PROCESSES_FOLDER_NAME = "PROC";
 
         // Metadata file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
@@ -41,6 +44,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME = "informationpointsdetail.json";
         private const string EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME = "node.{0}.json";
 
+        // SIM metadata file names
+        private const string EXTRACT_ENTITY_GROUPS_FILE_NAME = "groups.json";
+        private const string EXTRACT_ENTITY_MACHINES_FILE_NAME = "machines.json";
+        private const string EXTRACT_ENTITY_MACHINE_FILE_NAME = "machine.{0}.json";
+        private const string EXTRACT_ENTITY_DOCKER_CONTAINERS_FILE_NAME = "dockercontainer.{0}.json";
+        private const string EXTRACT_ENTITY_SERVICE_AVAILABILITIES_FILE_NAME = "serviceavailabilities.json";
+        private const string EXTRACT_ENTITY_SERVICE_AVAILABILITY_FILE_NAME = "serviceavailability.{0}.json";
+
+        // SIM process file names
+        private const string EXTRACT_PROCESSES_FILE_NAME = "proc.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+
         // Metric data file names
         private const string EXTRACT_METRIC_FULL_FILE_NAME = "full.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_METRIC_HOUR_FILE_NAME = "hour.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -48,6 +62,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Events data file names
         private const string HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+
+        // SIM Service Availability events data file names
+        private const string SERVICE_AVAILABILITY_EVENTS_FILE_NAME = "saevents.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
 
         // List of Snapshots file names
         private const string EXTRACT_SNAPSHOTS_FILE_NAME = "snapshots.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -83,6 +100,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
         private const string CONVERT_ENTITY_ERRORS_FILE_NAME = "errors.csv";
         private const string CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME = "informationpoints.csv";
+
+        // Detected SIM entity report conversion file names
+        private const string CONVERT_ENTITY_MACHINES_FILE_NAME = "machines.csv";
+        private const string CONVERT_ENTITY_MACHINE_PROPERTIES_FILE_NAME = "machineproperties.csv";
+        private const string CONVERT_ENTITY_MACHINE_CPUS_FILE_NAME = "machinecpus.csv";
+        private const string CONVERT_ENTITY_MACHINE_VOLUMES_FILE_NAME = "machinevolumes.csv";
+        private const string CONVERT_ENTITY_MACHINE_NETWORKS_FILE_NAME = "machinenetworks.csv";
+        private const string CONVERT_ENTITY_MACHINE_CONTAINERS_FILE_NAME = "machinecontainers.csv";
+        private const string CONVERT_ENTITY_MACHINE_PROCESSES_FILE_NAME = "machineprocesses.csv";
 
         // Settings report list conversion file names
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
@@ -163,6 +189,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Report file names
         private const string REPORT_DETECTED_ENTITIES_FILE_NAME = "DetectedEntities.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_SIM_ENTITIES_FILE_NAME = "DetectedEntities.SIM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
@@ -679,6 +706,374 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             string reportFileName = String.Format(
                 REPORT_DETECTED_ENTITIES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
+        #region SIM Entity Metadata Data
+
+        public string SIMTiersDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_TIERS_FILE_NAME);
+        }
+
+        public string SIMNodesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_NODES_FILE_NAME);
+        }
+
+        public string SIMGroupsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_GROUPS_FILE_NAME);
+        }
+
+        public string SIMMachinesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_MACHINES_FILE_NAME);
+        }
+
+        public string SIMMachineDataFilePath(JobTarget jobTarget, string machineName, long machineID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_MACHINE_FILE_NAME,
+                getShortenedEntityNameForFileSystem(machineName, machineID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string SIMMachineDockerContainersDataFilePath(JobTarget jobTarget, string machineName, long machineID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_DOCKER_CONTAINERS_FILE_NAME,
+                getShortenedEntityNameForFileSystem(machineName, machineID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string SIMServiceAvailabilitiesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_SERVICE_AVAILABILITIES_FILE_NAME);
+        }
+
+        public string SIMServiceAvailabilityDataFilePath(JobTarget jobTarget, string saName, long saID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_SERVICE_AVAILABILITY_FILE_NAME,
+                getShortenedEntityNameForFileSystem(saName, saID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string SIMMachineProcessesDataFilePath(JobTarget jobTarget, string machineName, long machineID, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_PROCESSES_FILE_NAME,
+                getShortenedEntityNameForFileSystem(machineName, machineID),
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                PROCESSES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string SIMServiceAvailabilityEventsDataFilePath(JobTarget jobTarget, string saName, long saID, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                SERVICE_AVAILABILITY_EVENTS_FILE_NAME,
+                getShortenedEntityNameForFileSystem(saName, saID),
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SA_EVENTS_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region SIM Entity Metadata Index
+
+        public string SIMApplicationIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_APPLICATION_FILE_NAME);
+        }
+
+        public string SIMTiersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_TIERS_FILE_NAME);
+        }
+
+        public string SIMNodesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODES_FILE_NAME);
+        }
+
+        public string SIMMachinesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINES_FILE_NAME);
+        }
+
+        public string SIMMachinePropertiesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_PROPERTIES_FILE_NAME);
+        }
+
+        public string SIMMachineCPUsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_CPUS_FILE_NAME);
+        }
+
+        public string SIMMachineVolumesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_VOLUMES_FILE_NAME);
+        }
+
+        public string SIMMachineNetworksIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_NETWORKS_FILE_NAME);
+        }
+
+        public string SIMMachineContainersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_CONTAINERS_FILE_NAME);
+        }
+
+        public string SIMMachineProcessesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                PROCESSES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_PROCESSES_FILE_NAME);
+        }
+
+        #endregion
+
+        #region SIM Entity Metadata Report
+
+        public string SIMEntitiesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME);
+        }
+
+        public string SIMApplicationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+        }
+
+        public string SIMTiersReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_TIERS_FILE_NAME);
+        }
+
+        public string SIMNodesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_NODES_FILE_NAME);
+        }
+
+        public string SIMMachinesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINES_FILE_NAME);
+        }
+
+        public string SIMMachinePropertiesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_PROPERTIES_FILE_NAME);
+        }
+
+        public string SIMMachineCPUsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_CPUS_FILE_NAME);
+        }
+
+        public string SIMMachineVolumesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_VOLUMES_FILE_NAME);
+        }
+
+        public string SIMMachineNetworksReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_NETWORKS_FILE_NAME);
+        }
+
+        public string SIMMachineContainersReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_CONTAINERS_FILE_NAME);
+        }
+
+        public string SIMMachineProcessesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                SIM_ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MACHINE_PROCESSES_FILE_NAME);
+        }
+
+        public string SIMEntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_DETECTED_SIM_ENTITIES_FILE_NAME,
                 this.ProgramOptions.JobName,
                 jobTimeRange.From,
                 jobTimeRange.To);

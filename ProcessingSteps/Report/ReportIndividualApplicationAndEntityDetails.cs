@@ -111,6 +111,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
+            if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+            {
+                return true;
+            }
+
             try
             {
                 List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
@@ -122,6 +127,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     stopWatchTarget.Start();
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
+
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
 
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
@@ -135,17 +142,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
 
                         #region Target step variables
 

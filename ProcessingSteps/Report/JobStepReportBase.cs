@@ -202,6 +202,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                                             UserName = jobTarget.UserName,
                                                                             Application = jobTarget.Application,
                                                                             ApplicationID = jobTarget.ApplicationID,
+                                                                            ApplicationType = jobTarget.Type
                                                                         }, true);
             ExcelTable table = sheet.Tables.Add(range, REPORT_TABLE_PARAMETERS_TARGETS);
             table.ShowHeader = true;

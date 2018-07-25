@@ -110,6 +110,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
                 List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
 
                 // Process each target
@@ -119,6 +124,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     stopWatchTarget.Start();
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
+
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
 
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;

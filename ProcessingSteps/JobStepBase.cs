@@ -174,6 +174,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
+        #region Types of Applications
+
+        internal const string APPLICATION_TYPE_APM = "APM";
+        internal const string APPLICATION_TYPE_SIM = "SIM";
+        internal const string APPLICATION_TYPE_WEB = "WEB";
+
+        #endregion
+
         internal static Logger logger = LogManager.GetCurrentClassLogger();
         internal static Logger loggerConsole = LogManager.GetLogger("AppDynamics.Dexter.Console");
 
@@ -193,8 +201,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public void DisplayJobTargetStartingStatus(JobConfiguration jobConfiguration, JobTarget jobTarget, int jobTargetIndex)
         {
-            logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
-            loggerConsole.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5})", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID);
+            logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
+            loggerConsole.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
         }
 
         public void DisplayJobTargetEndedStatus(JobConfiguration jobConfiguration, JobTarget jobTarget, int jobTargetIndex, Stopwatch stopWatch)

@@ -37,6 +37,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
                 // Check to see if the reference application is the template
                 bool compareAgainstTemplateConfiguration = false;
                 if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == BLANK_APPLICATION_CONTROLLER &&
@@ -64,7 +69,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (compareAgainstTemplateConfiguration == true)
                 {
                     // Add this target to the list of targets to unwrap
-                    jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Status = JobTargetStatus.ConfigurationValid;
                     jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
                 }
 
@@ -83,6 +87,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
+
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
                     stepTimingTarget.ApplicationName = jobTarget.Application;
@@ -97,17 +103,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target state check
-
-                        if (jobTarget.Status != JobTargetStatus.ConfigurationValid)
-                        {
-                            loggerConsole.Trace("Target in invalid state {0}, skipping", jobTarget.Status);
-
-                            continue;
-                        }
-
-                        #endregion
 
                         #region Skip the reference Application
 

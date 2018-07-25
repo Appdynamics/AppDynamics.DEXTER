@@ -9,6 +9,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for Deeplinks
 
+        // APM links
         internal const string DEEPLINK_CONTROLLER = @"{0}/controller/#/location=AD_HOME_OVERVIEW&timeRange={1}";
         internal const string DEEPLINK_APPLICATION = @"{0}/controller/#/location=APP_DASHBOARD&timeRange={2}&application={1}&dashboardMode=force";
         internal const string DEEPLINK_TIER = @"{0}/controller/#/location=APP_COMPONENT_MANAGER&timeRange={3}&application={1}&component={2}&dashboardMode=force";
@@ -23,6 +24,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string DEEPLINK_INCIDENT = @"{0}/controller/#/location=APP_INCIDENT_DETAIL_MODAL&timeRange={4}&application={1}&incident={2}&incidentTime={3}";
         internal const string DEEPLINK_SNAPSHOT_OVERVIEW = @"{0}/controller/#/location=APP_SNAPSHOT_VIEWER&rsdTime={3}&application={1}&requestGUID={2}&tab=overview&dashboardMode=force";
         internal const string DEEPLINK_SNAPSHOT_SEGMENT = @"{0}/controller/#/location=APP_SNAPSHOT_VIEWER&rsdTime={4}&application={1}&requestGUID={2}&tab={3}&dashboardMode=force";
+
+        // SIM links
+        internal const string DEEPLINK_SIMAPPLICATION = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_LIST&timeRange={1}";
+        internal const string DEEPLINK_SIMMACHINE = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_OVERVIEW&timeRange={2}&machineId={1}";
 
         internal const string DEEPLINK_METRIC = @"{0}/controller/#/location=METRIC_BROWSER&timeRange={3}&application={1}&metrics={2}";
         internal const string DEEPLINK_TIMERANGE_LAST_15_MINUTES = "last_15_minutes.BEFORE_NOW.-1.-1.15";
