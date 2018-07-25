@@ -47,6 +47,8 @@ As alternative to Excel, PowerBI visual analytics tool offers advanced explorati
 
 ![Detected Entities in PowerBI](../master/docs/introduction/DetectedEntitiesPowerBIOverview.png?raw=true)
 
+Detected Entities report also supports SIM applications.
+
 ## Entity Metrics, Graphs and Flow Maps
 [Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
 
