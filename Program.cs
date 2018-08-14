@@ -32,6 +32,7 @@ namespace AppDynamics.Dexter
                 logger.Trace("OS Architecture {0}", RuntimeInformation.OSArchitecture);
                 logger.Trace("OS {0}", RuntimeInformation.OSDescription);
                 logger.Trace("Process Architecture {0}", RuntimeInformation.ProcessArchitecture);
+                logger.Trace("Number of Processors {0}", Environment.ProcessorCount);
 
                 #region Parse input parameters
 
@@ -569,6 +570,9 @@ namespace AppDynamics.Dexter
                     {
                         logger.Error("Job File Problem: Expanded targets but not a single valid target to work on");
                         loggerConsole.Error("Job File Problem: Expanded targets but not a single valid target to work on");
+                        loggerConsole.Error("This is most likely caused by either incorrect password or incorrectly specified user name.");
+                        loggerConsole.Error("Only AppDynamics-internal authentication is supported in username@tenant format");
+                        loggerConsole.Error("If you are using SAML or LDAP account, please change to AppDynamics-internal account");
 
                         return;
                     }

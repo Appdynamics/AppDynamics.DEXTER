@@ -59,6 +59,9 @@ namespace AppDynamics.Dexter.ReportObjects
             Map(m => m.TakenReason).Index(i); i++;
             Map(m => m.TakenPolicy).Index(i); i++;
 
+            Map(m => m.IsDelayedDeepDive).Index(i); i++;
+            Map(m => m.DelayedDeepDiveOffSet).Index(i); i++;
+
             Map(m => m.WarningThreshold).Index(i); i++;
             Map(m => m.CriticalThreshold).Index(i); i++;
 

@@ -1400,12 +1400,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             ExcelChart chart = sheet.Drawings.AddChart(graphName, eChartType.XYScatter);
             ExcelScatterChart chart1 = (ExcelScatterChart)chart;
             chart.SetPosition(0, 0, 2, 0);
-            chart.SetSize(800, 300);
+            chart.SetSize(300, 300);
             chart.Legend.Remove();
-            chart.XAxis.Title.Text = "ART";
-            chart.XAxis.Title.Font.Size = 8;
-            chart.YAxis.Title.Text = "CPM";
+            chart.YAxis.Title.Text = "ART";
             chart.YAxis.Title.Font.Size = 8;
+            chart.XAxis.Title.Text = "CPM";
+            chart.XAxis.Title.Font.Size = 8;
             chart.VaryColors = true;
             //chart1.BubbleScale = 50;
 

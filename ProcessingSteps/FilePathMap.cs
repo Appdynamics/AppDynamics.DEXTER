@@ -19,7 +19,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONFIGURATION_FOLDER_NAME = "CFG";
         private const string METRICS_FOLDER_NAME = "METR";
         private const string SNAPSHOTS_FOLDER_NAME = "SNAP";
-        private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
+        //private const string SNAPSHOT_FOLDER_NAME = "{0}.{1:yyyyMMddHHmmss}";
         private const string EVENTS_FOLDER_NAME = "EVT";
         private const string SA_EVENTS_FOLDER_NAME = "SAEVT";
         private const string ACTIVITYGRID_FOLDER_NAME = "FLOW";
@@ -70,11 +70,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_SNAPSHOTS_FILE_NAME = "snapshots.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
 
         // Snapshot file names
-        private const string EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME = "flowmap.json";
-        private const string EXTRACT_SNAPSHOT_SEGMENT_FILE_NAME = "segments.json";
-        private const string EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME = "segment.{0}.json";
-        private const string EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME = "callgraph.{0}.json";
-        private const string EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME = "error.{0}.json";
+        private const string EXTRACT_SNAPSHOT_FILE_NAME = "{0}.{1}.{2:yyyyMMddHHmmss}.json";
 
         // Flowmap file names
         private const string EXTRACT_ENTITY_FLOWMAP_FILE_NAME = "flowmap.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -160,6 +156,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Folded call stacks rollups
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME = "snapshots.foldedcallstackswithtime.csv";
+
+        // Snapshots files for each BT and time ranges
+        private const string CONVERT_SNAPSHOTS_TIMERANGE_FILE_NAME = "snapshots.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_TIMERANGE_FILE_NAME = "snapshots.segments.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_TIMERANGE_FILE_NAME = "snapshots.exits.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_TIMERANGE_FILE_NAME = "snapshots.serviceendpoints.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_TIMERANGE_FILE_NAME = "snapshots.errors.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_TIMERANGE_FILE_NAME = "snapshots.businessdata.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_TIMERANGE_NAME = "snapshots.methodcalllines.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_TIMERANGE_FILE_NAME = "snapshots.methodcalllinesoccurrences.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+
+        // Folded call stacks rollups for each BT and Nodes
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME = "snapshots.foldedcallstacks.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+        private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME = "snapshots.foldedcallstackswithtime.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
+
 
         // Snapshot files
         private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
@@ -2231,7 +2242,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-        public string SnapshotDataFolderPath(
+        public string SnapshotDataFilePath(
             JobTarget jobTarget,
             string tierName, long tierID,
             string businessTransactionName, long businessTransactionID,
@@ -2244,52 +2255,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME, 
+                SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tierName, tierID),
                 getShortenedEntityNameForFileSystem(businessTransactionName, businessTransactionID),
-                String.Format("{0:yyyyMMddHH}", snapshotTime),
-                USEREXPERIENCE_FOLDER_MAPPING[userExperience],
-                String.Format(SNAPSHOT_FOLDER_NAME, requestID, snapshotTime));
-        }
-
-        public string SnapshotSegmentsDataFilePath(string snapshotDataFolderPath)
-        {
-            return Path.Combine(
-                snapshotDataFolderPath,
-                EXTRACT_SNAPSHOT_SEGMENT_FILE_NAME);
-        }
-
-        public string SnapshotSegmentDataFilePath(string snapshotDataFolderPath, string segmentID)
-        {
-            string reportFileName = String.Format(
-                EXTRACT_SNAPSHOT_SEGMENT_DATA_FILE_NAME,
-                segmentID);
-
-            return Path.Combine(
-                snapshotDataFolderPath,
-                reportFileName);
-        }
-
-        public string SnapshotSegmentErrorDataFilePath(string snapshotDataFolderPath, string segmentID)
-        {
-            string reportFileName = String.Format(
-                EXTRACT_SNAPSHOT_SEGMENT_ERROR_FILE_NAME,
-                segmentID);
-
-            return Path.Combine(
-                snapshotDataFolderPath,
-                reportFileName);
-        }
-
-        public string SnapshotSegmentCallGraphDataFilePath(string snapshotDataFolderPath, string segmentID)
-        {
-            string reportFileName = String.Format(
-                EXTRACT_SNAPSHOT_SEGMENT_CALLGRAPH_FILE_NAME,
-                segmentID);
-
-            return Path.Combine(
-                snapshotDataFolderPath,
-                reportFileName);
+                String.Format(EXTRACT_SNAPSHOT_FILE_NAME, USEREXPERIENCE_FOLDER_MAPPING[userExperience], requestID, snapshotTime));
         }
 
         public string MethodCallLinesToFrameworkTypetMappingFilePath()
@@ -2303,13 +2272,157 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Snapshots Index
 
-        public string SnapshotIndexFolderPath(
-            JobTarget jobTarget,
-            string tierName, long tierID,
-            string businessTransactionName, long businessTransactionID,
-            DateTime snapshotTime,
-            string userExperience,
-            string requestID)
+        #region Snapshots Business Transaction for Time Range
+
+        public string SnapshotsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_TIMERANGE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        #endregion
+
+        #region Snapshots Business Transaction
+
+        public string SnapshotsIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2317,82 +2430,105 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 SNAPSHOTS_FOLDER_NAME,
-                getShortenedEntityNameForFileSystem(tierName, tierID),
-                getShortenedEntityNameForFileSystem(businessTransactionName, businessTransactionID),
-                String.Format("{0:yyyyMMddHH}", snapshotTime),
-                USEREXPERIENCE_FOLDER_MAPPING[userExperience],
-                String.Format(SNAPSHOT_FOLDER_NAME, requestID, snapshotTime));
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_FILE_NAME);
         }
 
-        public string SnapshotIndexFilePath(string snapshotIndexFolderPath)
+        public string SnapshotsSegmentsIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotIndexFolderPath,
-                CONVERT_SNAPSHOT_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
 
-        public string SnapshotSegmentsIndexFilePath(string snapshotIndexFolderPath)
+        public string SnapshotsExitCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotIndexFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
 
-        public string SnapshotExitCallsIndexFilePath(string snapshotIndexFolderPath)
+        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotIndexFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
 
-        public string SnapshotServiceEndpointCallsIndexFilePath(string snapshotDataFolderPath)
+        public string SnapshotsDetectedErrorsIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
 
-        public string SnapshotDetectedErrorsIndexFilePath(string snapshotDataFolderPath)
+        public string SnapshotsBusinessDataIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
 
-        public string SnapshotBusinessDataIndexFilePath(string snapshotDataFolderPath)
+        public string SnapshotsMethodCallLinesIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
 
-        public string SnapshotMethodCallLinesIndexFilePath(string snapshotDataFolderPath)
+        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
-        public string SnapshotMethodCallLinesOccurrencesIndexFilePath(string snapshotDataFolderPath)
-        {
-            return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
-        }
+        #endregion
 
-        public string SnapshotFoldedCallStacksIndexFilePath(string snapshotDataFolderPath)
-        {
-            return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
-        }
-
-        public string SnapshotFoldedCallStacksWithTimeIndexFilePath(string snapshotDataFolderPath)
-        {
-            return Path.Combine(
-                snapshotDataFolderPath,
-                CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
-        }
+        #region Snapshots All
 
         public string SnapshotsIndexFilePath(JobTarget jobTarget)
         {
@@ -2482,7 +2618,87 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksForApplicationIndexFilePath(JobTarget jobTarget)
+        #endregion
+
+        #region Snapshots Folded Call Stacks All
+
+        public string SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, EntityNode node, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                EntityNode.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                reportFileName);
+        }
+
+        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                reportFileName);
+        }
+
+        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction, EntityNode node, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                SNAPSHOTS_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
+                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
+                EntityNode.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
+                reportFileName);
+        }
+
+        public string SnapshotsFoldedCallStacksIndexApplicationFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2493,7 +2709,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksForEntityIndexFilePath(JobTarget jobTarget, EntityTier tier)
+        public string SnapshotsFoldedCallStacksIndexEntityFilePath(JobTarget jobTarget, EntityTier tier)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2505,7 +2721,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksForEntityIndexFilePath(JobTarget jobTarget, EntityNode node)
+        public string SnapshotsFoldedCallStacksIndexEntityFilePath(JobTarget jobTarget, EntityNode node)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2519,7 +2735,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksForEntityIndexFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
+        public string SnapshotsFoldedCallStacksIndexEntityFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2532,7 +2748,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeForApplicationIndexFilePath(JobTarget jobTarget)
+        public string SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2543,7 +2759,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(JobTarget jobTarget, EntityTier tier)
+        public string SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(JobTarget jobTarget, EntityTier tier)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2555,7 +2771,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(JobTarget jobTarget, EntityNode node)
+        public string SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(JobTarget jobTarget, EntityNode node)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2569,7 +2785,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
+        public string SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(JobTarget jobTarget, EntityBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -2581,6 +2797,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
+
+        #endregion
+
         public string ApplicationSnapshotsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(

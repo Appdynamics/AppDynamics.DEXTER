@@ -801,9 +801,6 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-
-
-
         #region EUM metadata
 
         public string GetApplicationsEUM()

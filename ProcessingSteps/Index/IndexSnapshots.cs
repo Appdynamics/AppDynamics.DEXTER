@@ -3,6 +3,7 @@ using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -64,10 +65,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
 
-                        #region Index Snapshots
-
-                        // Process each hour at a time
-                        loggerConsole.Info("Index Snapshots");
+                        #region Load logical model
 
                         List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
                         List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
@@ -76,11 +74,73 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointEntityReportMap());
                         List<EntityError> errorsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorEntityReportMap());
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.MethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
+                        Dictionary<long, EntityTier> tiersDictionary = null;
+                        if (tiersList != null)
+                        {
+                            tiersDictionary = tiersList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            tiersDictionary = new Dictionary<long, EntityTier>();
+                        }
+                        Dictionary<long, EntityNode> nodesDictionary = null;
+                        if (nodesList != null)
+                        {
+                            nodesDictionary = nodesList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            nodesDictionary = new Dictionary<long, EntityNode>();
+                        }
+                        Dictionary<long, EntityBackend> backendsDictionary = null;
+                        if (backendsList != null)
+                        {
+                            backendsDictionary = backendsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            backendsDictionary = new Dictionary<long, EntityBackend>();
+                        }
+                        Dictionary<long, EntityBusinessTransaction> businessTransactionsDictionary = null;
+                        if (businessTransactionsList != null)
+                        {
+                            businessTransactionsDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            businessTransactionsDictionary = new Dictionary<long, EntityBusinessTransaction>();
+                        }
+                        Dictionary<long, EntityServiceEndpoint> serviceEndpointsDictionary = null;
+                        if (serviceEndpointsList != null)
+                        {
+                            serviceEndpointsDictionary = serviceEndpointsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            serviceEndpointsDictionary = new Dictionary<long, EntityServiceEndpoint>();
+                        }
+                        Dictionary<long, EntityError> errorsDictionary = null;
+                        if (errorsList != null)
+                        {
+                            errorsDictionary = errorsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                        }
+                        else
+                        {
+                            errorsDictionary = new Dictionary<long, EntityError>();
+                        }
 
                         // Load and bucketize the framework mappings
                         Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = populateMethodCallMappingDictionary(FilePathMap.MethodCallLinesToFrameworkTypetMappingFilePath());
 
+                        #endregion
+
+                        #region Index Snapshots
+
+                        loggerConsole.Info("Index Snapshots");
+
                         int totalNumberOfSnapshots = 0;
+                        
+                        // Process each hour at a time
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
                             JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotsDataFilePath(jobTarget, jobTimeRange));
@@ -94,35 +154,155 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + listOfSnapshotsInHour.Count;
 
-                                if (programOptions.ProcessSequentially == false)
-                                {
-                                    var listOfSnapshotsInHourChunks = listOfSnapshotsInHour.BreakListIntoChunks(SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                                // Group all snapshots in this time range by Business Transaction
+                                var listOfSnapshotsInHourGroupedByBT = listOfSnapshotsInHour.GroupBy(s => (long)s["businessTransactionId"]);
 
-                                    Parallel.ForEach<List<JToken>, int>(
-                                        listOfSnapshotsInHourChunks,
-                                        () => 0,
-                                        (listOfSnapshotsInHourChunk, loop, subtotal) =>
-                                        {
-                                            subtotal += indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHourChunk, tiersList, nodesList, backendsList, businessTransactionsList, serviceEndpointsList, errorsList, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, false);
-                                            return subtotal;
-                                        },
-                                        (finalResult) =>
-                                        {
-                                            Interlocked.Add(ref j, finalResult);
-                                            Console.Write("[{0}].", j);
-                                        }
-                                    );
-                                }
-                                else
+                                // For each BT in this time range, process all snapshots in this BT
+                                foreach (var listOfBTSnapshotsInHourGroup in listOfSnapshotsInHourGroupedByBT)
                                 {
-                                    j = indexSnapshots(programOptions, jobConfiguration, jobTarget, jobTimeRange, listOfSnapshotsInHour.ToList<JToken>(), tiersList, nodesList, backendsList, businessTransactionsList, serviceEndpointsList, errorsList, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, true);
+                                    List<JToken> listOfBTSnapshotsInHour = listOfBTSnapshotsInHourGroup.ToList();
+
+                                    EntityBusinessTransaction businessTransaction = null;
+                                    if (businessTransactionsDictionary.TryGetValue(listOfBTSnapshotsInHourGroup.Key, out businessTransaction) == true)
+                                    {
+                                        Console.Write("{0}({1})({2} snapshots) starting. ", businessTransaction.BTName, businessTransaction.BTID, listOfBTSnapshotsInHour.Count);
+
+                                        // Only process if it hasn't been done before. This is for restartability mid-way
+                                        if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == false)
+                                        {
+                                            IndexedSnapshotsResults indexedSnapshotsResults = null;
+
+                                            if (programOptions.ProcessSequentially == false && listOfBTSnapshotsInHour.Count >= SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD)
+                                            {
+                                                // Partition list of BTs into chunks
+                                                int chunkSize = SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD;
+                                                var listOfSnapshotsInHourChunks = listOfBTSnapshotsInHour.BreakListIntoChunks(chunkSize);
+
+                                                // Prepare thread safe storage to dump all those chunks
+                                                ConcurrentBag<IndexedSnapshotsResults> indexedSnapshotsResultsBag = new ConcurrentBag<IndexedSnapshotsResults>();
+
+                                                // Index them in parallel
+                                                Parallel.ForEach<List<JToken>, IndexedSnapshotsResults>(
+                                                    listOfSnapshotsInHourChunks,
+                                                    () => new IndexedSnapshotsResults(chunkSize),
+                                                    (listOfSnapshotsInHourChunk, loop, subtotal) =>
+                                                    {
+                                                        IndexedSnapshotsResults indexedSnapshotsResultsChunk = indexSnapshots(jobTarget, jobTimeRange, listOfSnapshotsInHourChunk, tiersDictionary, nodesDictionary, backendsDictionary, businessTransactionsDictionary, serviceEndpointsDictionary, errorsDictionary, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, false);
+                                                        return indexedSnapshotsResultsChunk;
+                                                    },
+                                                    (finalResult) =>
+                                                    {
+                                                        indexedSnapshotsResultsBag.Add(finalResult);
+                                                        Console.Write("[{0}].", finalResult.Snapshots.Count);
+                                                    }
+                                                );
+
+                                                // Combine chunks of this single BT indexing produced by multiple threads into one object
+                                                indexedSnapshotsResults = new IndexedSnapshotsResults(listOfBTSnapshotsInHour.Count);
+                                                foreach (IndexedSnapshotsResults indexedSnapshotsResultsChunk in indexedSnapshotsResultsBag)
+                                                {
+                                                    if (indexedSnapshotsResultsChunk.Snapshots.Count == 0) continue;
+
+                                                    indexedSnapshotsResults.Snapshots.AddRange(indexedSnapshotsResultsChunk.Snapshots);
+                                                    indexedSnapshotsResults.Segments.AddRange(indexedSnapshotsResultsChunk.Segments);
+                                                    indexedSnapshotsResults.ExitCalls.AddRange(indexedSnapshotsResultsChunk.ExitCalls);
+                                                    indexedSnapshotsResults.ServiceEndpointCalls.AddRange(indexedSnapshotsResultsChunk.ServiceEndpointCalls);
+                                                    indexedSnapshotsResults.DetectedErrors.AddRange(indexedSnapshotsResultsChunk.DetectedErrors);
+                                                    indexedSnapshotsResults.BusinessData.AddRange(indexedSnapshotsResultsChunk.BusinessData);
+                                                    indexedSnapshotsResults.MethodCallLines.AddRange(indexedSnapshotsResultsChunk.MethodCallLines);
+                                                    indexedSnapshotsResults.MethodCallLineOccurrences.AddRange(indexedSnapshotsResultsChunk.MethodCallLineOccurrences);
+
+                                                    // Fold the folded call stacks from chunks into the results
+                                                    if (indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming.ContainsKey(businessTransaction.BTID) == false)
+                                                    {
+                                                        indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[businessTransaction.BTID] = new Dictionary<string, FoldedStackLine>(50);
+                                                    }
+                                                    addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[businessTransaction.BTID], indexedSnapshotsResultsChunk.FoldedCallStacksBusinessTransactionsNoTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>());
+                                                    if (indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming.ContainsKey(businessTransaction.BTID) == false)
+                                                    {
+                                                        indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[businessTransaction.BTID] = new Dictionary<string, FoldedStackLine>(50);
+                                                    }
+                                                    addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[businessTransaction.BTID], indexedSnapshotsResultsChunk.FoldedCallStacksBusinessTransactionsWithTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>());
+                                                    foreach (long nodeID in indexedSnapshotsResultsChunk.FoldedCallStacksNodesNoTiming.Keys)
+                                                    {
+                                                        if (indexedSnapshotsResults.FoldedCallStacksNodesNoTiming.ContainsKey(nodeID) == false)
+                                                        {
+                                                            indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[nodeID] = new Dictionary<string, FoldedStackLine>(50);
+                                                        }
+                                                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[nodeID], indexedSnapshotsResultsChunk.FoldedCallStacksNodesNoTiming[nodeID].Values.ToList<FoldedStackLine>());
+                                                    }
+                                                    foreach (long nodeID in indexedSnapshotsResultsChunk.FoldedCallStacksNodesWithTiming.Keys)
+                                                    {
+                                                        if (indexedSnapshotsResults.FoldedCallStacksNodesWithTiming.ContainsKey(nodeID) == false)
+                                                        {
+                                                            indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[nodeID] = new Dictionary<string, FoldedStackLine>(50);
+                                                        }
+                                                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[nodeID], indexedSnapshotsResultsChunk.FoldedCallStacksNodesWithTiming[nodeID].Values.ToList<FoldedStackLine>());
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                indexedSnapshotsResults = indexSnapshots(jobTarget, jobTimeRange, listOfBTSnapshotsInHour, tiersDictionary, nodesDictionary, backendsDictionary, businessTransactionsDictionary, serviceEndpointsDictionary, errorsDictionary, methodInvocationDataCollectorsList, methodCallLineClassToFrameworkTypeMappingDictionary, true);
+                                            }
+                                            j += listOfBTSnapshotsInHour.Count;
+
+                                            // Save results for this BT for all the Snapshots
+                                            if (indexedSnapshotsResults != null)
+                                            {
+                                                // Sort things prettily
+                                                indexedSnapshotsResults.Snapshots = indexedSnapshotsResults.Snapshots.OrderBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
+                                                indexedSnapshotsResults.Segments = indexedSnapshotsResults.Segments.OrderBy(s => s.RequestID).ThenByDescending(s => s.IsFirstInChain).ThenBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
+                                                indexedSnapshotsResults.ExitCalls = indexedSnapshotsResults.ExitCalls.OrderBy(c => c.RequestID).ThenBy(c => c.SegmentID).ThenBy(c => c.ExitType).ToList();
+                                                indexedSnapshotsResults.ServiceEndpointCalls = indexedSnapshotsResults.ServiceEndpointCalls.OrderBy(s => s.RequestID).ThenBy(s => s.SegmentID).ThenBy(s => s.SEPName).ToList();
+                                                indexedSnapshotsResults.DetectedErrors = indexedSnapshotsResults.DetectedErrors.OrderBy(e => e.RequestID).ThenBy(e => e.SegmentID).ThenBy(e => e.ErrorName).ToList();
+                                                indexedSnapshotsResults.BusinessData = indexedSnapshotsResults.BusinessData.OrderBy(b => b.RequestID).ThenBy(b => b.DataType).ThenBy(b => b.DataName).ToList();
+
+                                                // Save Snapshot data for this hour
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.Snapshots, new SnapshotReportMap(), FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.Segments, new SegmentReportMap(), FilePathMap.SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.ExitCalls, new ExitCallReportMap(), FilePathMap.SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.ServiceEndpointCalls, new ServiceEndpointCallReportMap(), FilePathMap.SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.DetectedErrors, new DetectedErrorReportMap(), FilePathMap.SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.BusinessData, new BusinessDataReportMap(), FilePathMap.SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.MethodCallLines, new MethodCallLineReportMap(), FilePathMap.SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.MethodCallLineOccurrences, new MethodCallLineOccurrenceReportMap(), FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+
+                                                // Save Snapshot call stacks for flame graphs for this hour
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                foreach (long nodeID in indexedSnapshotsResults.FoldedCallStacksNodesNoTiming.Keys)
+                                                {
+                                                    EntityNode nodeForFoldedStack = null;
+                                                    if (nodesDictionary.TryGetValue(nodeID, out nodeForFoldedStack) == true)
+                                                    {
+                                                        Dictionary<string, FoldedStackLine> foldedCallStacksList = indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[nodeID];
+
+                                                        FileIOHelper.WriteListToCSVFile(foldedCallStacksList.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, nodeForFoldedStack, jobTimeRange));
+                                                    }
+                                                }
+                                                foreach (long nodeID in indexedSnapshotsResults.FoldedCallStacksNodesWithTiming.Keys)
+                                                {
+                                                    EntityNode nodeForFoldedStack = null;
+                                                    if (nodesDictionary.TryGetValue(nodeID, out nodeForFoldedStack) == true)
+                                                    {
+                                                        Dictionary<string, FoldedStackLine> foldedCallStacksList = indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[nodeID];
+
+                                                        FileIOHelper.WriteListToCSVFile(foldedCallStacksList.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, nodeForFoldedStack, jobTimeRange));
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        Console.WriteLine("Done [{0}/{1}].", j, listOfSnapshotsInHour.Count);
+                                    }
                                 }
 
                                 loggerConsole.Info("{0} snapshots", j);
                                 totalNumberOfSnapshots = totalNumberOfSnapshots + j;
                             }
                         }
-                        loggerConsole.Info("{0} snapshots total", totalNumberOfSnapshots);
+                        loggerConsole.Info("{0} snapshots total in all hour ranges", totalNumberOfSnapshots);
 
                         #endregion
 
@@ -139,6 +319,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
+                        FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget));
 
                         List<EntityApplication> applicationList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
@@ -152,100 +333,88 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             applicationsRow.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
                             applicationsRow.FromUtc = jobConfiguration.Input.TimeRange.From;
                             applicationsRow.ToUtc = jobConfiguration.Input.TimeRange.To;
-                        }
 
-                        Hashtable requestIDs = new Hashtable(totalNumberOfSnapshots);
+                            Hashtable requestIDs = new Hashtable(totalNumberOfSnapshots);
 
-                        foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
-                        {
-                            int j = 0;
-
-                            JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotsDataFilePath(jobTarget, jobTimeRange));
-
-                            if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
+                            foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                             {
-                                logger.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
-                                loggerConsole.Info("Combine Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
+                                JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotsDataFilePath(jobTarget, jobTimeRange));
 
-                                using (FileStream snapshotsIndexFileStream = File.Open(FilePathMap.SnapshotsIndexFilePath(jobTarget), FileMode.Append))
+                                if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                                 {
-                                    using (FileStream segmentsIndexFileStream = File.Open(FilePathMap.SnapshotsSegmentsIndexFilePath(jobTarget), FileMode.Append))
+                                    logger.Info("Combine Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
+                                    loggerConsole.Info("Combine Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
+
+                                    // Count the snapshots for Application row report
+                                    foreach (JToken snapshotToken in listOfSnapshotsInHour)
                                     {
-                                        using (FileStream callExitsIndexFileStream = File.Open(FilePathMap.SnapshotsExitCallsIndexFilePath(jobTarget), FileMode.Append))
+                                        if (requestIDs.ContainsKey(snapshotToken["requestGUID"].ToString()) == true)
                                         {
-                                            using (FileStream serviceEndpointCallsIndexFileStream = File.Open(FilePathMap.SnapshotsServiceEndpointCallsIndexFilePath(jobTarget), FileMode.Append))
+                                            logger.Warn("Snapshot {0} is a duplicate, skipping", snapshotToken["requestGUID"]);
+                                            continue;
+                                        }
+                                        requestIDs.Add(snapshotToken["requestGUID"].ToString(), true);
+
+                                        applicationsRow.NumSnapshots++;
+                                        switch (snapshotToken["userExperience"].ToString())
+                                        {
+                                            case "NORMAL":
+                                                applicationsRow.NumSnapshotsNormal++;
+                                                break;
+
+                                            case "SLOW":
+                                                applicationsRow.NumSnapshotsSlow++;
+                                                break;
+
+                                            case "VERY_SLOW":
+                                                applicationsRow.NumSnapshotsVerySlow++;
+                                                break;
+
+                                            case "STALL":
+                                                applicationsRow.NumSnapshotsStall++;
+                                                break;
+
+                                            case "ERROR":
+                                                applicationsRow.NumSnapshotsError++;
+                                                break;
+
+                                            default:
+                                                break;
+                                        }
+                                    }
+
+                                    // Combine main snapshot data
+                                    using (FileStream snapshotsIndexFileStream = File.Open(FilePathMap.SnapshotsIndexFilePath(jobTarget), FileMode.Append))
+                                    {
+                                        using (FileStream segmentsIndexFileStream = File.Open(FilePathMap.SnapshotsSegmentsIndexFilePath(jobTarget), FileMode.Append))
+                                        {
+                                            using (FileStream callExitsIndexFileStream = File.Open(FilePathMap.SnapshotsExitCallsIndexFilePath(jobTarget), FileMode.Append))
                                             {
-                                                using (FileStream detectedErrorsIndexFileStream = File.Open(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget), FileMode.Append))
+                                                using (FileStream serviceEndpointCallsIndexFileStream = File.Open(FilePathMap.SnapshotsServiceEndpointCallsIndexFilePath(jobTarget), FileMode.Append))
                                                 {
-                                                    using (FileStream businessDataIndexFileStream = File.Open(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget), FileMode.Append))
+                                                    using (FileStream detectedErrorsIndexFileStream = File.Open(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget), FileMode.Append))
                                                     {
-                                                        using (FileStream methodCallLinesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget), FileMode.Append))
+                                                        using (FileStream businessDataIndexFileStream = File.Open(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget), FileMode.Append))
                                                         {
-                                                            using (FileStream methodCallLinesOccurrencesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget), FileMode.Append))
+                                                            using (FileStream methodCallLinesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget), FileMode.Append))
                                                             {
-                                                                foreach (JToken snapshotToken in listOfSnapshotsInHour)
+                                                                using (FileStream methodCallLinesOccurrencesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget), FileMode.Append))
                                                                 {
-                                                                    if (requestIDs.ContainsKey(snapshotToken["requestGUID"].ToString()) == true)
+                                                                    foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                                                                     {
-                                                                        logger.Warn("Snapshot {0} is a duplicate, skipping", snapshotToken["requestGUID"]);
-                                                                        continue;
-                                                                    }
-                                                                    requestIDs.Add(snapshotToken["requestGUID"].ToString(), true);
-
-                                                                    // Count the snapshot
-                                                                    if (applicationsRow != null)
-                                                                    {
-                                                                        applicationsRow.NumSnapshots++;
-                                                                        switch (snapshotToken["userExperience"].ToString())
+                                                                        if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
                                                                         {
-                                                                            case "NORMAL":
-                                                                                applicationsRow.NumSnapshotsNormal++;
-                                                                                break;
+                                                                            Console.Write("{0}({1}). ", businessTransaction.BTName, businessTransaction.BTID);
 
-                                                                            case "SLOW":
-                                                                                applicationsRow.NumSnapshotsSlow++;
-                                                                                break;
-
-                                                                            case "VERY_SLOW":
-                                                                                applicationsRow.NumSnapshotsVerySlow++;
-                                                                                break;
-
-                                                                            case "STALL":
-                                                                                applicationsRow.NumSnapshotsStall++;
-                                                                                break;
-
-                                                                            case "ERROR":
-                                                                                applicationsRow.NumSnapshotsError++;
-                                                                                break;
-
-                                                                            default:
-                                                                                break;
+                                                                            FileIOHelper.AppendTwoCSVFiles(snapshotsIndexFileStream, FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(segmentsIndexFileStream, FilePathMap.SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(callExitsIndexFileStream, FilePathMap.SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(serviceEndpointCallsIndexFileStream, FilePathMap.SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(detectedErrorsIndexFileStream, FilePathMap.SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(businessDataIndexFileStream, FilePathMap.SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(methodCallLinesIndexFileStream, FilePathMap.SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(methodCallLinesOccurrencesIndexFileStream, FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                                         }
-                                                                    }
-
-                                                                    DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
-
-                                                                    string snapshotFolderPath = FilePathMap.SnapshotIndexFolderPath(
-                                                                        jobTarget,
-                                                                        snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
-                                                                        snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
-                                                                        snapshotTime,
-                                                                        snapshotToken["userExperience"].ToString(),
-                                                                        snapshotToken["requestGUID"].ToString());
-
-                                                                    FileIOHelper.AppendTwoCSVFiles(snapshotsIndexFileStream, FilePathMap.SnapshotIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(segmentsIndexFileStream, FilePathMap.SnapshotSegmentsIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(callExitsIndexFileStream, FilePathMap.SnapshotExitCallsIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(serviceEndpointCallsIndexFileStream, FilePathMap.SnapshotServiceEndpointCallsIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(detectedErrorsIndexFileStream, FilePathMap.SnapshotDetectedErrorsIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(businessDataIndexFileStream, FilePathMap.SnapshotBusinessDataIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(methodCallLinesIndexFileStream, FilePathMap.SnapshotMethodCallLinesIndexFilePath(snapshotFolderPath));
-                                                                    FileIOHelper.AppendTwoCSVFiles(methodCallLinesOccurrencesIndexFileStream, FilePathMap.SnapshotMethodCallLinesOccurrencesIndexFilePath(snapshotFolderPath));
-
-                                                                    j++;
-                                                                    if (j % 200 == 0)
-                                                                    {
-                                                                        Console.Write("[{0}].", j);
                                                                     }
                                                                 }
                                                             }
@@ -255,17 +424,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                     }
+                                    Console.WriteLine("Done combining snapshots from hour ranges");
                                 }
                             }
-                            loggerConsole.Info("{0} snapshots", j);
-                        }
 
-                        if (applicationsRow != null)
-                        {
-                            if (applicationsRow.NumSnapshots > 0)
-                            {
-                                applicationsRow.HasActivity = true;
-                            }
+                            if (applicationsRow.NumSnapshots > 0) applicationsRow.HasActivity = true;
 
                             FileIOHelper.WriteListToCSVFile(applicationList, new ApplicationSnapshotReportMap(), FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget));
                         }
@@ -324,304 +487,175 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Combine folded Flame Graphs stacks from individual Snapshots
+                        #region Combine folded Flame Graphs and Flame Charts stacks from individual Snapshots
 
                         if (tiersList != null && nodesList != null && businessTransactionsList != null)
                         {
+                            // Prepare summary containers
                             Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksNodesList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(nodesList.Count);
                             Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksBusinessTransactionsList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(businessTransactionsList.Count);
                             Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksTiersList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(tiersList.Count);
                             Dictionary<string, FoldedStackLine> foldedCallStacksApplication = new Dictionary<string, FoldedStackLine>(100);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksWithTimeNodesList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(nodesList.Count);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksWithTimeBusinessTransactionsList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(businessTransactionsList.Count);
+                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksWithTimeTiersList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(tiersList.Count);
+                            Dictionary<string, FoldedStackLine> foldedCallStacksWithTimeApplication = new Dictionary<string, FoldedStackLine>(100);
 
-                            #region Build Node and BT rollups first from the list of snapshots
+                            #region Build Node and BT rollups first from the list of prepared chunks by BT and BT\Node structure
 
-                            loggerConsole.Info("Fold Stacks for Nodes and Business Transactions - Flame Graph");
+                            loggerConsole.Info("Fold Stacks for Nodes and Business Transactions");
 
-                            // Fold up all the snapshots
                             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                             {
-                                int j = 0;
-
-                                JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotsDataFilePath(jobTarget, jobTimeRange));
-
-                                if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
+                                // Go through BTs
+                                foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                                 {
-                                    logger.Info("Fold Stacks for Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
-                                    loggerConsole.Info("Fold Stacks for Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
-
-                                    foreach (JToken snapshotToken in listOfSnapshotsInHour)
+                                    // Flame graph
+                                    if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == false) foldedCallStacksBusinessTransactionsList[businessTransaction.BTID] = new Dictionary<string, FoldedStackLine>(50);
+                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
                                     {
-                                        if ((bool)snapshotToken["firstInChain"] == false)
-                                        {
-                                            continue;
-                                        }
+                                        List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange), new FoldedStackLineReportMap());
 
-                                        // Look up the folded stack for Node
-                                        long nodeID = (long)snapshotToken["applicationComponentNodeId"];
-                                        if (foldedCallStacksNodesList.ContainsKey(nodeID) == false)
-                                        {
-                                            foldedCallStacksNodesList[nodeID] = new Dictionary<string, FoldedStackLine>(50);
-                                        }
+                                        addFoldedStacks(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID], foldedStackLines);
+                                    }
 
-                                        // Look up the folded stack for Business Transaction
-                                        long btID = (long)snapshotToken["businessTransactionId"];
-                                        if (foldedCallStacksBusinessTransactionsList.ContainsKey(btID) == false)
-                                        {
-                                            foldedCallStacksBusinessTransactionsList[btID] = new Dictionary<string, FoldedStackLine>(50);
-                                        }
+                                    // Flame chart
+                                    if (foldedCallStacksWithTimeBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == false) foldedCallStacksWithTimeBusinessTransactionsList[businessTransaction.BTID] = new Dictionary<string, FoldedStackLine>(50);
+                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
+                                    {
+                                        List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange), new FoldedStackLineReportMap());
 
-                                        // Load folded call stack
-                                        DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
+                                        addFoldedStacks(foldedCallStacksWithTimeBusinessTransactionsList[businessTransaction.BTID], foldedStackLines);
+                                    }
 
-                                        string snapshotFolderPath = FilePathMap.SnapshotIndexFolderPath(
-                                            jobTarget,
-                                            snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
-                                            snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
-                                            snapshotTime,
-                                            snapshotToken["userExperience"].ToString(),
-                                            snapshotToken["requestGUID"].ToString());
+                                    // Nodes for this BT
+                                    foreach (EntityNode node in nodesList)
+                                    {
+                                        if (node.TierID == businessTransaction.TierID)
+                                        {   
+                                            // Flame graph
+                                            if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == false) foldedCallStacksNodesList[node.NodeID] = new Dictionary<string, FoldedStackLine>(50);
+                                            if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, node, jobTimeRange)) == true)
+                                            {
+                                                List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, node, jobTimeRange), new FoldedStackLineReportMap());
 
-                                        // Load the call stack and add it to the right list
-                                        if (File.Exists(FilePathMap.SnapshotFoldedCallStacksIndexFilePath(snapshotFolderPath)) == true)
-                                        {
-                                            List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotFoldedCallStacksIndexFilePath(snapshotFolderPath), new FoldedStackLineReportMap());
+                                                addFoldedStacks(foldedCallStacksNodesList[node.NodeID], foldedStackLines);
+                                            }
 
-                                            addFoldedStacks(foldedCallStacksNodesList[nodeID], foldedStackLines);
-                                            addFoldedStacks(foldedCallStacksBusinessTransactionsList[btID], foldedStackLines);
-                                        }
+                                            // Flame chart
+                                            if (foldedCallStacksWithTimeNodesList.ContainsKey(node.NodeID) == false) foldedCallStacksWithTimeNodesList[node.NodeID] = new Dictionary<string, FoldedStackLine>(50);
+                                            if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, node, jobTimeRange)) == true)
+                                            {
+                                                List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, node, jobTimeRange), new FoldedStackLineReportMap());
 
-                                        j++;
-                                        if (j % 500 == 0)
-                                        {
-                                            Console.Write("[{0}].", j);
+                                                addFoldedStacks(foldedCallStacksWithTimeNodesList[node.NodeID], foldedStackLines);
+                                            }
                                         }
                                     }
-                                }
-
-                                loggerConsole.Info("{0} snapshots", j);
-                            }
-
-                            // Save Node and BT rollups
-                            foreach (EntityNode node in nodesList)
-                            {
-                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
-                                {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksNodesList[node.NodeID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, node));
-                                }
-                            }
-
-                            foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
-                            {
-                                if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Count > 0)
-                                {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, businessTransaction));
                                 }
                             }
 
                             #endregion
 
-                            #region Build Tier rollups second using Nodes that are part of Tier rollups
+                            #region Build folded stack rollups for Tiers and Applications
 
                             loggerConsole.Info("Fold Stacks for Tiers");
 
                             foreach (EntityTier tier in tiersList)
                             {
-                                if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == false)
-                                {
-                                    foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, FoldedStackLine>(25);
-                                }
-
                                 foreach (EntityNode node in nodesList)
                                 {
                                     if (node.TierID == tier.TierID)
                                     {
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, node)) == true)
+                                        // Flame graph
+                                        if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == false) foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, FoldedStackLine>(25);
+                                        if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true)
                                         {
-                                            List<FoldedStackLine> foldedStackLinesNodeList = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, node), new FoldedStackLineReportMap());
+                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedCallStacksNodesList[node.NodeID].Values.ToList<FoldedStackLine>());
+                                        }
 
-                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedStackLinesNodeList);
+                                        // Flame chart
+                                        if (foldedCallStacksWithTimeTiersList.ContainsKey(tier.TierID) == false) foldedCallStacksWithTimeTiersList[tier.TierID] = new Dictionary<string, FoldedStackLine>(25);
+                                        if (foldedCallStacksWithTimeNodesList.ContainsKey(node.NodeID) == true)
+                                        {
+                                            addFoldedStacks(foldedCallStacksWithTimeTiersList[tier.TierID], foldedCallStacksWithTimeNodesList[node.NodeID].Values.ToList<FoldedStackLine>());
                                         }
                                     }
                                 }
-
-                                if (foldedCallStacksTiersList[tier.TierID].Count > 0)
-                                {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksTiersList[tier.TierID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, tier));
-                                }
                             }
-
-                            #endregion
-
-                            #region Build Application level rollups using all Tiers
 
                             loggerConsole.Info("Fold Stacks for Application");
 
                             foreach (EntityTier tier in tiersList)
                             {
-                                if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, tier)) == true)
+                                // Flame graph
+                                if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == true)
                                 {
-                                    List<FoldedStackLine> foldedStackLinesTierList = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, tier), new FoldedStackLineReportMap());
+                                    addFoldedStacks(foldedCallStacksApplication, foldedCallStacksTiersList[tier.TierID].Values.ToList<FoldedStackLine>());
+                                }
 
-                                    addFoldedStacks(foldedCallStacksApplication, foldedStackLinesTierList);
+                                // Flame chart
+                                if (foldedCallStacksWithTimeTiersList.ContainsKey(tier.TierID) == true)
+                                {
+                                    addFoldedStacks(foldedCallStacksWithTimeApplication, foldedCallStacksWithTimeTiersList[tier.TierID].Values.ToList<FoldedStackLine>());
                                 }
                             }
-                           
-                            FileIOHelper.WriteListToCSVFile(foldedCallStacksApplication.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksForApplicationIndexFilePath(jobTarget));
 
                             #endregion
-                        }
 
-                        #endregion
+                            #region Save folded stacks
 
-                        #region Combine folded Flame Charts stacks from individual Snapshots
-
-                        if (tiersList != null && nodesList != null && businessTransactionsList != null)
-                        {
-                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksNodesList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(nodesList.Count);
-                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksBusinessTransactionsList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(businessTransactionsList.Count);
-                            Dictionary<long, Dictionary<string, FoldedStackLine>> foldedCallStacksTiersList = new Dictionary<long, Dictionary<string, FoldedStackLine>>(tiersList.Count);
-                            Dictionary<string, FoldedStackLine> foldedCallStacksApplication = new Dictionary<string, FoldedStackLine>(100);
-
-                            #region Build Node and BT rollups first from the list of snapshots
-
-                            loggerConsole.Info("Fold Stacks for Nodes and Business Transactions - Flame Chart");
-
-                            // Fold up all the snapshots
-                            foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
-                            {
-                                int j = 0;
-
-                                JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotsDataFilePath(jobTarget, jobTimeRange));
-
-                                if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
-                                {
-                                    logger.Info("Fold Stacks for Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
-                                    loggerConsole.Info("Fold Stacks for Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
-
-                                    foreach (JToken snapshotToken in listOfSnapshotsInHour)
-                                    {
-                                        if ((bool)snapshotToken["firstInChain"] == false)
-                                        {
-                                            continue;
-                                        }
-
-                                        // Look up the folded stack for Node
-                                        long nodeID = (long)snapshotToken["applicationComponentNodeId"];
-                                        if (foldedCallStacksNodesList.ContainsKey(nodeID) == false)
-                                        {
-                                            foldedCallStacksNodesList[nodeID] = new Dictionary<string, FoldedStackLine>(50);
-                                        }
-
-                                        // Look up the folded stack for Business Transaction
-                                        long btID = (long)snapshotToken["businessTransactionId"];
-                                        if (foldedCallStacksBusinessTransactionsList.ContainsKey(btID) == false)
-                                        {
-                                            foldedCallStacksBusinessTransactionsList[btID] = new Dictionary<string, FoldedStackLine>(50);
-                                        }
-
-                                        // Load folded call stack
-                                        DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
-
-                                        string snapshotFolderPath = FilePathMap.SnapshotIndexFolderPath(
-                                            jobTarget,
-                                            snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
-                                            snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
-                                            snapshotTime,
-                                            snapshotToken["userExperience"].ToString(),
-                                            snapshotToken["requestGUID"].ToString());
-
-                                        // Load the call stack and add it to the right list
-                                        if (File.Exists(FilePathMap.SnapshotFoldedCallStacksWithTimeIndexFilePath(snapshotFolderPath)) == true)
-                                        {
-                                            List<FoldedStackLine> foldedStackLines = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotFoldedCallStacksWithTimeIndexFilePath(snapshotFolderPath), new FoldedStackLineReportMap());
-
-                                            addFoldedStacks(foldedCallStacksNodesList[nodeID], foldedStackLines);
-                                            addFoldedStacks(foldedCallStacksBusinessTransactionsList[btID], foldedStackLines);
-                                        }
-
-                                        j++;
-                                        if (j % 500 == 0)
-                                        {
-                                            Console.Write("[{0}].", j);
-                                        }
-                                    }
-                                }
-
-                                loggerConsole.Info("{0} snapshots", j);
-                            }
-
-                            // Save Node and BT rollups
-                            foreach (EntityNode node in nodesList)
-                            {
-                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
-                                {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksNodesList[node.NodeID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, node));
-                                }
-                            }
+                            loggerConsole.Info("Save Fold Stacks for Business Transactions");
 
                             foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                             {
                                 if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Count > 0)
                                 {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, businessTransaction));
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, businessTransaction));
+                                }
+                                if (foldedCallStacksWithTimeBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksWithTimeBusinessTransactionsList[businessTransaction.BTID].Count > 0)
+                                {
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksWithTimeBusinessTransactionsList[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, businessTransaction));
                                 }
                             }
 
-                            #endregion
-
-                            #region Build Tier rollups second using Nodes that are part of Tier rollups
-
-                            loggerConsole.Info("Fold Stacks for Tiers");
+                            loggerConsole.Info("Save Fold Stacks for Tiers ");
 
                             foreach (EntityTier tier in tiersList)
                             {
-                                if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == false)
+                                if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == true && foldedCallStacksTiersList[tier.TierID].Count > 0)
                                 {
-                                    foldedCallStacksTiersList[tier.TierID] = new Dictionary<string, FoldedStackLine>(25);
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksTiersList[tier.TierID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, tier));
                                 }
-
-                                foreach (EntityNode node in nodesList)
+                                if (foldedCallStacksWithTimeTiersList.ContainsKey(tier.TierID) == true && foldedCallStacksWithTimeTiersList[tier.TierID].Count > 0)
                                 {
-                                    if (node.TierID == tier.TierID)
-                                    {
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, node)) == true)
-                                        {
-                                            List<FoldedStackLine> foldedStackLinesNodeList = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, node), new FoldedStackLineReportMap());
-
-                                            addFoldedStacks(foldedCallStacksTiersList[tier.TierID], foldedStackLinesNodeList);
-                                        }
-                                    }
-                                }
-
-                                if (foldedCallStacksTiersList[tier.TierID].Count > 0)
-                                {
-                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksTiersList[tier.TierID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, tier));
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksWithTimeTiersList[tier.TierID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, tier));
                                 }
                             }
 
-                            #endregion
+                            loggerConsole.Info("Save Fold Stacks for Nodes");
 
-                            #region Build Application level rollups using all Tiers
-
-                            loggerConsole.Info("Fold Stacks for Application");
-
-                            foreach (EntityTier tier in tiersList)
+                            foreach (EntityNode node in nodesList)
                             {
-                                if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, tier)) == true)
+                                if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
                                 {
-                                    List<FoldedStackLine> foldedStackLinesTierList = FileIOHelper.ReadListFromCSVFile<FoldedStackLine>(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, tier), new FoldedStackLineReportMap());
-
-                                    addFoldedStacks(foldedCallStacksApplication, foldedStackLinesTierList);
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksNodesList[node.NodeID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, node));
+                                }
+                                if (foldedCallStacksWithTimeNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksWithTimeNodesList[node.NodeID].Count > 0)
+                                {
+                                    FileIOHelper.WriteListToCSVFile(foldedCallStacksWithTimeNodesList[node.NodeID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, node));
                                 }
                             }
 
-                            FileIOHelper.WriteListToCSVFile(foldedCallStacksApplication.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeForApplicationIndexFilePath(jobTarget));
+                            loggerConsole.Info("Save Fold Stacks for Applications");
+
+                            FileIOHelper.WriteListToCSVFile(foldedCallStacksApplication.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(foldedCallStacksWithTimeApplication.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(jobTarget));
 
                             #endregion
                         }
 
                         #endregion
-
                     }
                     catch (Exception ex)
                     {
@@ -682,25 +716,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return (jobConfiguration.Input.Snapshots == true);
         }
 
-        private int indexSnapshots(
-            ProgramOptions programOptions,
-            JobConfiguration jobConfiguration,
+        private IndexedSnapshotsResults indexSnapshots(
             JobTarget jobTarget,
             JobTimeRange jobTimeRange,
-            List<JToken> snapshotTokenList,
-            List<EntityTier> tiersList,
-            List<EntityNode> nodesList,
-            List<EntityBackend> backendsList,
-            List<EntityBusinessTransaction> businessTransactionsList,
-            List<EntityServiceEndpoint> serviceEndpointsList,
-            List<EntityError> errorsList,
+            List<JToken> snapshotsList,
+            Dictionary<long, EntityTier> tiersDictionary,
+            Dictionary<long, EntityNode> nodesDictionary,
+            Dictionary<long, EntityBackend> backendsDictionary,
+            Dictionary<long, EntityBusinessTransaction> businessTransactionsDictionary,
+            Dictionary<long, EntityServiceEndpoint> serviceEndpointsDictionary,
+            Dictionary<long, EntityError> errorsDictionary,
             List<MethodInvocationDataCollector> methodInvocationDataCollectorsList,
-            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,            
             bool progressToConsole)
         {
             int j = 0;
 
-            foreach (JToken snapshotToken in snapshotTokenList)
+            IndexedSnapshotsResults indexedSnapshotsResults = new IndexedSnapshotsResults(snapshotsList.Count);
+
+            foreach (JToken snapshotToken in snapshotsList)
             {
                 // Only do first in chain
                 if ((bool)snapshotToken["firstInChain"] == false)
@@ -708,13 +742,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     continue;
                 }
 
-                logger.Info("Indexing snapshot for Application {0}, Tier {1}, Business Transaction {2}, RequestGUID {3}", jobTarget.Application, snapshotToken["applicationComponentName"], snapshotToken["businessTransactionName"], snapshotToken["requestGUID"]);
-
-                #region Target step variables
-
                 DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
 
-                string snapshotDataFolderPath = FilePathMap.SnapshotDataFolderPath(
+                string snapshotDataFilePath = FilePathMap.SnapshotDataFilePath(
                     jobTarget,
                     snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
                     snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
@@ -722,19 +752,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     snapshotToken["userExperience"].ToString(),
                     snapshotToken["requestGUID"].ToString());
 
-                string snapshotIndexFolderPath = FilePathMap.SnapshotIndexFolderPath(
-                    jobTarget,
-                    snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
-                    snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
-                    snapshotTime,
-                    snapshotToken["userExperience"].ToString(),
-                    snapshotToken["requestGUID"].ToString());
+                logger.Info("Indexing snapshot for Application {0}, Tier {1}, Business Transaction {2}, RequestGUID {3}", jobTarget.Application, snapshotToken["applicationComponentName"], snapshotToken["businessTransactionName"], snapshotToken["requestGUID"]);
 
-                #endregion
-
-                // Only process stuff that was previously exported but not indexed yet
-                if (Directory.Exists(snapshotDataFolderPath) == true &&
-                    File.Exists(FilePathMap.SnapshotIndexFilePath(snapshotIndexFolderPath)) == false)
+                JObject snapshotData = FileIOHelper.LoadJObjectFromFile(snapshotDataFilePath);
+                if (snapshotData != null)
                 {
                     #region Fill in Snapshot data
 
@@ -744,30 +765,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     snapshot.ApplicationID = jobTarget.ApplicationID;
                     snapshot.TierID = (long)snapshotToken["applicationComponentId"];
                     snapshot.TierName = snapshotToken["applicationComponentName"].ToString();
-                    if (tiersList != null)
+                    if (tiersDictionary != null)
                     {
-                        EntityTier tier = tiersList.Where(t => t.TierID == snapshot.TierID).FirstOrDefault();
-                        if (tier != null)
+                        EntityTier tier = null;
+                        if (tiersDictionary.TryGetValue(snapshot.TierID, out tier) == true)
                         {
                             snapshot.TierType = tier.TierType;
                         }
                     }
                     snapshot.BTID = (long)snapshotToken["businessTransactionId"];
                     snapshot.BTName = snapshotToken["businessTransactionName"].ToString();
-                    if (businessTransactionsList != null)
+                    if (businessTransactionsDictionary != null)
                     {
-                        EntityBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTID == snapshot.BTID).FirstOrDefault();
-                        if (businessTransaction != null)
+                        EntityBusinessTransaction businessTransaction = null;
+                        if (businessTransactionsDictionary.TryGetValue(snapshot.BTID, out businessTransaction) == true)
                         {
                             snapshot.BTType = businessTransaction.BTType;
                         }
                     }
                     snapshot.NodeID = (long)snapshotToken["applicationComponentNodeId"];
                     snapshot.NodeName = snapshotToken["applicationComponentNodeName"].ToString();
-                    if (nodesList != null)
+                    if (nodesDictionary != null)
                     {
-                        EntityNode node = nodesList.Where(n => n.NodeID == snapshot.NodeID).FirstOrDefault();
-                        if (node != null)
+                        EntityNode node = null;
+                        if (nodesDictionary.TryGetValue(snapshot.NodeID, out node) == true)
                         {
                             snapshot.AgentType = node.AgentType;
                         }
@@ -855,41 +876,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     #region Process segments
 
-                    List<Segment> segmentsList = null;
-                    List<ExitCall> exitCallsList = null;
-                    List<ServiceEndpointCall> serviceEndpointCallsList = null;
-                    List<DetectedError> detectedErrorsList = null;
-                    List<BusinessData> businessDataList = null;
-                    List<MethodCallLine> methodCallLinesList = null;
-                    List<MethodCallLine> methodCallLinesOccurrencesList = null;
+                    IndexedSnapshotsResults indexedSnapshotResults = new IndexedSnapshotsResults(1);
+
                     Dictionary<string, FoldedStackLine> foldedCallStacksList = null;
                     Dictionary<string, FoldedStackLine> foldedCallStacksWithTimeList = null;
 
-                    JArray snapshotSegmentsList = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotSegmentsDataFilePath(snapshotDataFolderPath));
-                    if (snapshotSegmentsList != null)
+                    JArray snapshotSegmentsList = (JArray)snapshotData["segments"];
+                    if (snapshotSegmentsList != null && snapshotSegmentsList.Count > 0)
                     {
                         #region Prepare elements for storage of indexed data from segments
-
-                        // Number of segments is known
-                        segmentsList = new List<Segment>(snapshotSegmentsList.Count);
-
-                        // Eyeball each segment to have 3 exits on average
-                        exitCallsList = new List<ExitCall>(snapshotSegmentsList.Count * 3);
-
-                        // Let's assume that each segment has a SEP
-                        serviceEndpointCallsList = new List<ServiceEndpointCall>(snapshotSegmentsList.Count);
-
-                        // Don't know how long this is going to be
-                        detectedErrorsList = new List<DetectedError>();
-
-                        // Don't know how long this one is going to be either
-                        businessDataList = new List<BusinessData>();
-
-                        // Assume each call graph is 250 items long
-                        methodCallLinesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 250);
-
-                        // Some methods repeat though
-                        methodCallLinesOccurrencesList = new List<MethodCallLine>(snapshotSegmentsList.Count * 50);
 
                         // Assume 25 distinct call stacks in each segment
                         foldedCallStacksList = new Dictionary<string, FoldedStackLine>(snapshotSegmentsList.Count * 25);
@@ -899,10 +894,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        // Process segments one by one
+                        #region Process segments one by one
+
                         foreach (JToken snapshotSegmentToken in snapshotSegmentsList)
                         {
-                            JObject snapshotSegmentDetail = FileIOHelper.LoadJObjectFromFile(FilePathMap.SnapshotSegmentDataFilePath(snapshotDataFolderPath, snapshotSegmentToken["id"].ToString()));
+                            JObject snapshotSegmentDetail = (JObject)(snapshotData["segmentDetails"][snapshotSegmentToken["id"].ToString()]);
+
                             if (snapshotSegmentDetail != null)
                             {
                                 #region Fill in Segment data
@@ -914,10 +911,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 segment.ApplicationID = snapshot.ApplicationID;
                                 segment.TierID = (long)snapshotSegmentToken["applicationComponentId"];
                                 segment.TierName = snapshotSegmentToken["applicationComponentName"].ToString();
-                                if (tiersList != null)
+                                if (tiersDictionary != null)
                                 {
-                                    EntityTier tier = tiersList.Where(t => t.TierID == segment.TierID).FirstOrDefault();
-                                    if (tier != null)
+                                    EntityTier tier = null;
+                                    if (tiersDictionary.TryGetValue(snapshot.TierID, out tier) == true)
                                     {
                                         segment.TierType = tier.TierType;
                                     }
@@ -927,10 +924,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 segment.BTType = snapshot.BTType;
                                 segment.NodeID = (long)snapshotSegmentToken["applicationComponentNodeId"];
                                 segment.NodeName = snapshotSegmentToken["applicationComponentNodeName"].ToString();
-                                if (nodesList != null)
+                                if (nodesDictionary != null)
                                 {
-                                    EntityNode node = nodesList.Where(n => n.NodeID == segment.NodeID).FirstOrDefault();
-                                    if (node != null)
+                                    EntityNode node = null;
+                                    if (nodesDictionary.TryGetValue(snapshot.NodeID, out node) == true)
                                     {
                                         segment.AgentType = node.AgentType;
                                     }
@@ -1091,13 +1088,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         long tierID = -1;
                                         if (long.TryParse(callChainToken.Substring(10), out tierID) == true)
                                         {
-                                            if (tiersList != null)
+                                            EntityTier tier = null;
+                                            if (tiersDictionary.TryGetValue(tierID, out tier) == true)
                                             {
-                                                EntityTier tier = tiersList.Where(t => t.TierID == tierID).FirstOrDefault();
-                                                if (tier != null)
-                                                {
-                                                    sbCallChain.AppendFormat("({0})->", tier.TierName);
-                                                }
+                                                sbCallChain.AppendFormat("({0})->", tier.TierName);
                                             }
                                         }
                                     }
@@ -1110,14 +1104,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         long backendID = -1;
                                         if (long.TryParse(callChainToken.Substring(17).TrimEnd(']', '}'), out backendID) == true)
                                         {
-                                            if (backendsList != null)
+                                            EntityBackend backend = null;
+                                            if (backendsDictionary.TryGetValue(backendID, out backend) == true)
                                             {
-                                                EntityBackend backend = backendsList.Where(b => b.BackendID == backendID).FirstOrDefault();
-                                                if (backend != null)
-                                                {
-                                                    //sbCallChain.AppendFormat("<{0}><{1}>>->", backendRow.BackendName, backendRow.BackendType);
-                                                    sbCallChain.AppendFormat("<{0}>->", backend.BackendName);
-                                                }
+                                                //sbCallChain.AppendFormat("<{0}><{1}>>->", backendRow.BackendName, backendRow.BackendType);
+                                                sbCallChain.AppendFormat("<{0}>->", backend.BackendName);
                                             }
                                         }
                                     }
@@ -1199,7 +1190,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                     else if (exitCallToken["toComponentId"].ToString().StartsWith("App:") == true)
                                     {
-                                        //Application
+                                        // Application in same controller
+                                        exitCall.ToEntityType = EntityApplication.ENTITY_TYPE;
+                                        JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "appId").FirstOrDefault();
+                                        if (goingToProperty != null)
+                                        {
+                                            exitCall.ToEntityID = (long)goingToProperty["value"]; ;
+                                        }
+                                        goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "to").FirstOrDefault();
+                                        if (goingToProperty != null)
+                                        {
+                                            exitCall.ToEntityName = goingToProperty["value"].ToString();
+                                        }
+                                        if (exitCall.IsAsync == false)
+                                        {
+                                            exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms]->{{{2}}}", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                        }
+                                        else
+                                        {
+                                            exitCall.CallChain = String.Format("{0}->[{1}]:[{3} ms async]->{{{2}}}", callChainForThisSegment, exitCall.ExitType, exitCall.ToEntityName, exitCall.Duration);
+                                        }
+                                    }
+                                    else if (exitCallToken["toComponentId"].ToString().StartsWith("ExApp:") == true)
+                                    {
+                                        // Application in Federated controller
                                         exitCall.ToEntityType = EntityApplication.ENTITY_TYPE;
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "appId").FirstOrDefault();
                                         if (goingToProperty != null)
@@ -1224,7 +1238,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         // Tier
                                         exitCall.ToEntityType = EntityTier.ENTITY_TYPE;
-                                        exitCall.ToEntityID = (long)exitCallToken["toComponentId"];
+                                        try { exitCall.ToEntityID = (long)exitCallToken["toComponentId"]; } catch { }
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "to").FirstOrDefault();
                                         if (goingToProperty != null)
                                         {
@@ -1568,8 +1582,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (exitCall.ExitType == "CUSTOM")
                                     {
                                         // Look up whether this Exit type is something prettier than CUSTOM
-                                        EntityBackend backend = backendsList.Where(b => b.BackendID == exitCall.ToEntityID).FirstOrDefault();
-                                        if (backend != null)
+                                        EntityBackend backend = null;
+                                        if (backendsDictionary.TryGetValue(exitCall.ToEntityID, out backend) == true)
                                         {
                                             exitCall.ExitType = backend.BackendType;
                                         }
@@ -1615,10 +1629,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     serviceEndpointCall.SegmentUserExperience = segment.UserExperience;
                                     serviceEndpointCall.SnapshotUserExperience = snapshot.UserExperience;
 
-                                    if (serviceEndpointsList != null)
+                                    if (serviceEndpointsDictionary != null)
                                     {
-                                        EntityServiceEndpoint serviceEndpoint = serviceEndpointsList.Where(s => s.SEPID == serviceEndpointID).FirstOrDefault();
-                                        if (serviceEndpoint != null)
+                                        EntityServiceEndpoint serviceEndpoint = null;
+                                        if (serviceEndpointsDictionary.TryGetValue(serviceEndpointID, out serviceEndpoint) == true)
                                         {
                                             serviceEndpointCall.SEPID = serviceEndpoint.SEPID;
                                             serviceEndpointCall.SEPName = serviceEndpoint.SEPName;
@@ -1644,51 +1658,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     foreach (JToken errorToken in snapshotSegmentDetail["errorIDs"])
                                     {
                                         long errorID = (long)((JValue)errorToken).Value;
-                                        if (errorsList != null)
+
+                                        EntityError error = null;
+                                        if (errorsDictionary.TryGetValue(errorID, out error) == true)
                                         {
-                                            EntityError error = errorsList.Where(e => e.ErrorID == errorID).FirstOrDefault();
-                                            if (error != null)
-                                            {
-                                                DetectedError detectedError = new DetectedError();
+                                            DetectedError detectedError = new DetectedError();
 
-                                                detectedError.Controller = segment.Controller;
-                                                detectedError.ApplicationName = segment.ApplicationName;
-                                                detectedError.ApplicationID = segment.ApplicationID;
-                                                detectedError.TierID = segment.TierID;
-                                                detectedError.TierName = segment.TierName;
-                                                detectedError.TierType = segment.TierType;
-                                                detectedError.BTID = segment.BTID;
-                                                detectedError.BTName = segment.BTName;
-                                                detectedError.BTType = segment.BTType;
-                                                detectedError.NodeID = segment.NodeID;
-                                                detectedError.NodeName = segment.NodeName;
-                                                detectedError.AgentType = segment.AgentType;
+                                            detectedError.Controller = segment.Controller;
+                                            detectedError.ApplicationName = segment.ApplicationName;
+                                            detectedError.ApplicationID = segment.ApplicationID;
+                                            detectedError.TierID = segment.TierID;
+                                            detectedError.TierName = segment.TierName;
+                                            detectedError.TierType = segment.TierType;
+                                            detectedError.BTID = segment.BTID;
+                                            detectedError.BTName = segment.BTName;
+                                            detectedError.BTType = segment.BTType;
+                                            detectedError.NodeID = segment.NodeID;
+                                            detectedError.NodeName = segment.NodeName;
+                                            detectedError.AgentType = segment.AgentType;
 
-                                                detectedError.RequestID = segment.RequestID;
-                                                detectedError.SegmentID = segment.SegmentID;
+                                            detectedError.RequestID = segment.RequestID;
+                                            detectedError.SegmentID = segment.SegmentID;
 
-                                                detectedError.OccurredUtc = segment.OccurredUtc;
-                                                detectedError.Occurred = segment.Occurred;
+                                            detectedError.OccurredUtc = segment.OccurredUtc;
+                                            detectedError.Occurred = segment.Occurred;
 
-                                                detectedError.SegmentUserExperience = segment.UserExperience;
-                                                detectedError.SnapshotUserExperience = snapshot.UserExperience;
+                                            detectedError.SegmentUserExperience = segment.UserExperience;
+                                            detectedError.SnapshotUserExperience = snapshot.UserExperience;
 
-                                                detectedError.ErrorID = error.ErrorID;
-                                                detectedError.ErrorName = error.ErrorName;
-                                                detectedError.ErrorType = error.ErrorType;
+                                            detectedError.ErrorID = error.ErrorID;
+                                            detectedError.ErrorName = error.ErrorName;
+                                            detectedError.ErrorType = error.ErrorType;
 
-                                                detectedError.ErrorIDMatchedToMessage = false;
+                                            detectedError.ErrorIDMatchedToMessage = false;
 
-                                                detectedError.ErrorCategory = "<unmatched>";
-                                                detectedError.ErrorDetail = "<unmatched>";
+                                            detectedError.ErrorCategory = "<unmatched>";
+                                            detectedError.ErrorDetail = "<unmatched>";
 
-                                                detectedErrorsFromErrorIDs.Add(detectedError);
-                                            }
+                                            detectedErrorsFromErrorIDs.Add(detectedError);
                                         }
                                     }
 
                                     // Second, populate the list of the details of errors
-                                    JArray snapshotSegmentErrorDetail = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotSegmentErrorDataFilePath(snapshotDataFolderPath, snapshotSegmentToken["id"].ToString()));
+                                    JArray snapshotSegmentErrorDetail = (JArray)(snapshotData["errors"][segment.SegmentID.ToString()]);
                                     if (snapshotSegmentErrorDetail != null)
                                     {
                                         detectedErrorsListInThisSegment = new List<DetectedError>(snapshotSegmentErrorDetail.Count);
@@ -1883,7 +1895,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 detectedErrorThatWasUnmatched.ErrorType = detectedErrorsFromErrorIDsUnmatched[0].ErrorType;
                                             }
                                         }
-
                                     }
 
                                     // Finally, let's parse stack trace away from the message
@@ -2026,7 +2037,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #region Process Call Graphs in Segment
 
-                                JArray snapshotSegmentCallGraphs = FileIOHelper.LoadJArrayFromFile(FilePathMap.SnapshotSegmentCallGraphDataFilePath(snapshotDataFolderPath, snapshotSegmentToken["id"].ToString()));
+                                JArray snapshotSegmentCallGraphs = (JArray)(snapshotData["callgraphs"][segment.SegmentID.ToString()]);
 
                                 // Can't use recursion for some of the snapshots because of StackOverflowException
                                 // We run out of stack when we go 400+ deep into call stack, which apparently happens
@@ -2202,6 +2213,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         methodCallLinesLeaves = methodCallLinesInSegmentList.Where(m => m.ElementType == MethodCallLineElementType.Leaf).ToList();
                                     }
+
                                     foreach (MethodCallLine methodCallLineLeaf in methodCallLinesLeaves)
                                     {
                                         FoldedStackLine foldedStackLine = new FoldedStackLine(methodCallLineLeaf, false);
@@ -2223,7 +2235,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             foldedCallStacksWithTimeList.Add(foldedStackLineWithTime.FoldedStack, foldedStackLineWithTime);
                                         }
-
                                     }
                                 }
 
@@ -2261,11 +2272,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 segment.NumCallsToTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityTier.ENTITY_TYPE).Sum(e => e.NumCalls);
                                 segment.NumCallsToBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityBackend.ENTITY_TYPE).Sum(e => e.NumCalls);
-                                segment.NumCallsToApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_FOLDER).Sum(e => e.NumCalls);
+                                segment.NumCallsToApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_TYPE).Sum(e => e.NumCalls);
 
                                 segment.NumCalledTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityTier.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
                                 segment.NumCalledBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityBackend.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
-                                segment.NumCalledApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_FOLDER).GroupBy(e => e.ToEntityName).Count();
+                                segment.NumCalledApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
 
                                 segment.NumSEPs = serviceEndpointCallsListInThisSegment.Count();
 
@@ -2274,38 +2285,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #endregion
 
-                                // Add the created entities
-                                segmentsList.Add(segment);
-                                exitCallsList.AddRange(exitCallsListInThisSegment);
-                                serviceEndpointCallsList.AddRange(serviceEndpointCallsListInThisSegment);
-                                detectedErrorsList.AddRange(detectedErrorsListInThisSegment);
-                                businessDataList.AddRange(businessDataListInThisSegment);
-                                methodCallLinesList.AddRange(methodCallLinesInSegmentList);
-                                methodCallLinesOccurrencesList.AddRange(methodCallLinesOccurrencesInSegmentList);
+                                // Add the created entities to the container
+                                indexedSnapshotResults.Segments.Add(segment);
+                                indexedSnapshotResults.ExitCalls.AddRange(exitCallsListInThisSegment);
+                                indexedSnapshotResults.ServiceEndpointCalls.AddRange(serviceEndpointCallsListInThisSegment);
+                                indexedSnapshotResults.DetectedErrors.AddRange(detectedErrorsListInThisSegment);
+                                indexedSnapshotResults.BusinessData.AddRange(businessDataListInThisSegment);
+                                indexedSnapshotResults.MethodCallLines.AddRange(methodCallLinesInSegmentList);
+                                indexedSnapshotResults.MethodCallLineOccurrences.AddRange(methodCallLinesOccurrencesInSegmentList);
                             }
                         }
 
-                        // Sort things prettily
-                        segmentsList = segmentsList.OrderByDescending(s => s.IsFirstInChain).ThenBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
-                        exitCallsList = exitCallsList.OrderBy(c => c.RequestID).ThenBy(c => c.SegmentID).ThenBy(c => c.ExitType).ToList();
-                        serviceEndpointCallsList = serviceEndpointCallsList.OrderBy(s => s.RequestID).ThenBy(s => s.SegmentID).ThenBy(s => s.SEPName).ToList();
-                        detectedErrorsList = detectedErrorsList.OrderBy(e => e.RequestID).ThenBy(e => e.SegmentID).ThenBy(e => e.ErrorName).ToList();
-                        businessDataList = businessDataList.OrderBy(b => b.DataType).ThenBy(b => b.DataName).ToList();
+                        #endregion
 
                         #region Calculate End to End Duration time
 
-                        if (segmentsList.Count == 0)
+                        if (indexedSnapshotResults.Segments.Count == 0)
                         {
                             snapshot.EndToEndDuration = snapshot.Duration;
                         }
-                        else if (segmentsList.Count == 1)
+                        else if (indexedSnapshotResults.Segments.Count == 1)
                         {
-                            snapshot.EndToEndDuration = segmentsList[0].Duration;
+                            snapshot.EndToEndDuration = indexedSnapshotResults.Segments[0].Duration;
                         }
                         else
                         {
-                            Segment segmentFirst = segmentsList[0];
-                            Segment segmentLast = segmentsList[segmentsList.Count - 1];
+                            List<Segment> segmentsListSorted = indexedSnapshotResults.Segments.OrderBy(s => s.Occurred).ToList();
+                            Segment segmentFirst = segmentsListSorted[0];
+                            Segment segmentLast = segmentsListSorted[segmentsListSorted.Count - 1];
                             snapshot.EndToEndDuration = Math.Abs((long)(segmentLast.Occurred - segmentFirst.Occurred).TotalMilliseconds) + segmentLast.Duration;
                             if (snapshot.EndToEndDuration < snapshot.Duration)
                             {
@@ -2323,7 +2330,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Build call timeline for the Segments
 
-                        foreach (Segment segment in segmentsList)
+                        foreach (Segment segment in indexedSnapshotResults.Segments)
                         {
                             // Timeline looks like that:
                             //^ ---------------^---1------------^------2---------^---------3-----^-------------4 -^
@@ -2435,7 +2442,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
 
                             // Represent the exits from MethodCallLines with caret ^ characters
-                            List<MethodCallLine> methodCallLinesOccurrencesExits = methodCallLinesList.Where(m => m.SegmentID == segment.SegmentID && m.NumExits > 0).ToList();
+                            List<MethodCallLine> methodCallLinesOccurrencesExits = indexedSnapshotResults.MethodCallLines.Where(m => m.SegmentID == segment.SegmentID && m.NumExits > 0).ToList();
                             foreach (MethodCallLine methodCallLineExit in methodCallLinesOccurrencesExits)
                             {
                                 int numIntervalsOffsetFromSegmentStartToExit = (int)Math.Round((double)(methodCallLineExit.ExecToHere / timelineResolutionInMS), 0);
@@ -2514,81 +2521,65 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Update various counts for Snapshot columns
 
-                        snapshot.NumErrors = segmentsList.Sum(s => s.NumErrors);
+                        snapshot.NumErrors = indexedSnapshotResults.Segments.Sum(s => s.NumErrors);
 
-                        snapshot.NumSegments = segmentsList.Count;
-                        snapshot.NumCallGraphs = segmentsList.Count(s => s.CallGraphType != "NONE");
+                        snapshot.NumSegments = indexedSnapshotResults.Segments.Count;
+                        snapshot.NumCallGraphs = indexedSnapshotResults.Segments.Count(s => s.CallGraphType != "NONE");
 
-                        snapshot.NumCallsToTiers = segmentsList.Sum(s => s.NumCallsToTiers);
-                        snapshot.NumCallsToBackends = segmentsList.Sum(s => s.NumCallsToBackends);
-                        snapshot.NumCallsToApplications = segmentsList.Sum(s => s.NumCallsToApplications);
+                        snapshot.NumCallsToTiers = indexedSnapshotResults.Segments.Sum(s => s.NumCallsToTiers);
+                        snapshot.NumCallsToBackends = indexedSnapshotResults.Segments.Sum(s => s.NumCallsToBackends);
+                        snapshot.NumCallsToApplications = indexedSnapshotResults.Segments.Sum(s => s.NumCallsToApplications);
 
-                        snapshot.NumCalledTiers = segmentsList.Sum(s => s.NumCalledTiers);
-                        snapshot.NumCalledBackends = segmentsList.Sum(s => s.NumCalledBackends);
-                        snapshot.NumCalledApplications = segmentsList.Sum(s => s.NumCalledApplications);
+                        snapshot.NumCalledTiers = indexedSnapshotResults.Segments.Sum(s => s.NumCalledTiers);
+                        snapshot.NumCalledBackends = indexedSnapshotResults.Segments.Sum(s => s.NumCalledBackends);
+                        snapshot.NumCalledApplications = indexedSnapshotResults.Segments.Sum(s => s.NumCalledApplications);
 
-                        snapshot.NumSEPs = segmentsList.Sum(s => s.NumSEPs);
+                        snapshot.NumSEPs = indexedSnapshotResults.Segments.Sum(s => s.NumSEPs);
 
-                        snapshot.NumHTTPDCs = segmentsList.Sum(s => s.NumHTTPDCs);
-                        snapshot.NumMIDCs = segmentsList.Sum(s => s.NumMIDCs);
+                        snapshot.NumHTTPDCs = indexedSnapshotResults.Segments.Sum(s => s.NumHTTPDCs);
+                        snapshot.NumMIDCs = indexedSnapshotResults.Segments.Sum(s => s.NumMIDCs);
 
                         #endregion
                     }
+
+                    indexedSnapshotResults.Snapshots.Add(snapshot);
 
                     #endregion
 
                     #region Save results
 
-                    // Save results
-                    if (segmentsList != null)
+                    indexedSnapshotsResults.Snapshots.AddRange(indexedSnapshotResults.Snapshots);
+                    indexedSnapshotsResults.Segments.AddRange(indexedSnapshotResults.Segments);
+                    indexedSnapshotsResults.ExitCalls.AddRange(indexedSnapshotResults.ExitCalls);
+                    indexedSnapshotsResults.ServiceEndpointCalls.AddRange(indexedSnapshotResults.ServiceEndpointCalls);
+                    indexedSnapshotsResults.DetectedErrors.AddRange(indexedSnapshotResults.DetectedErrors);
+                    indexedSnapshotsResults.BusinessData.AddRange(indexedSnapshotResults.BusinessData);
+                    indexedSnapshotsResults.MethodCallLines.AddRange(indexedSnapshotResults.MethodCallLines);
+                    indexedSnapshotsResults.MethodCallLineOccurrences.AddRange(indexedSnapshotResults.MethodCallLineOccurrences);
+
+                    // Save the folded call stacks into the results
+                    if (indexedSnapshotsResults.FoldedCallStacksNodesNoTiming.ContainsKey(snapshot.NodeID) == false)
                     {
-                        FileIOHelper.WriteListToCSVFile(segmentsList, new SegmentReportMap(), FilePathMap.SnapshotSegmentsIndexFilePath(snapshotIndexFolderPath));
+                        indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[snapshot.NodeID] = new Dictionary<string, FoldedStackLine>(50);
+                        indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[snapshot.NodeID] = new Dictionary<string, FoldedStackLine>(50);
                     }
-
-                    if (exitCallsList != null)
+                    if (indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming.ContainsKey(snapshot.BTID) == false)
                     {
-                        FileIOHelper.WriteListToCSVFile(exitCallsList, new ExitCallReportMap(), FilePathMap.SnapshotExitCallsIndexFilePath(snapshotIndexFolderPath));
-                    }
-
-                    if (serviceEndpointCallsList != null)
-                    {
-
-                        FileIOHelper.WriteListToCSVFile(serviceEndpointCallsList, new ServiceEndpointCallReportMap(), FilePathMap.SnapshotServiceEndpointCallsIndexFilePath(snapshotIndexFolderPath));
-                    }
-
-                    if (detectedErrorsList != null)
-                    {
-                        FileIOHelper.WriteListToCSVFile(detectedErrorsList, new DetectedErrorReportMap(), FilePathMap.SnapshotDetectedErrorsIndexFilePath(snapshotIndexFolderPath));
-                    }
-
-                    if (businessDataList != null)
-                    {
-                        FileIOHelper.WriteListToCSVFile(businessDataList, new BusinessDataReportMap(), FilePathMap.SnapshotBusinessDataIndexFilePath(snapshotIndexFolderPath));
-                    }
-
-                    if (methodCallLinesList != null)
-                    {
-                        FileIOHelper.WriteListToCSVFile(methodCallLinesList, new MethodCallLineReportMap(), FilePathMap.SnapshotMethodCallLinesIndexFilePath(snapshotIndexFolderPath));
-                    }
-
-                    if (methodCallLinesOccurrencesList != null)
-                    {
-                        FileIOHelper.WriteListToCSVFile(methodCallLinesOccurrencesList, new MethodCallLineOccurrenceReportMap(), FilePathMap.SnapshotMethodCallLinesOccurrencesIndexFilePath(snapshotIndexFolderPath));
+                        indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[snapshot.BTID] = new Dictionary<string, FoldedStackLine>(50);
+                        indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[snapshot.BTID] = new Dictionary<string, FoldedStackLine>(50);
                     }
 
                     if (foldedCallStacksList != null)
                     {
-                        FileIOHelper.WriteListToCSVFile(foldedCallStacksList.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotFoldedCallStacksIndexFilePath(snapshotIndexFolderPath));
+                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[snapshot.NodeID], foldedCallStacksList.Values.ToList<FoldedStackLine>());
+                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[snapshot.BTID], foldedCallStacksList.Values.ToList<FoldedStackLine>());
                     }
 
                     if (foldedCallStacksWithTimeList != null)
                     {
-                        FileIOHelper.WriteListToCSVFile(foldedCallStacksWithTimeList.Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotFoldedCallStacksWithTimeIndexFilePath(snapshotIndexFolderPath));
+                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[snapshot.NodeID], foldedCallStacksWithTimeList.Values.ToList<FoldedStackLine>());
+                        addFoldedStacks(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[snapshot.BTID], foldedCallStacksWithTimeList.Values.ToList<FoldedStackLine>());
                     }
-
-                    List<Snapshot> snapshotRows = new List<Snapshot>(1);
-                    snapshotRows.Add(snapshot);
-                    FileIOHelper.WriteListToCSVFile(snapshotRows, new SnapshotReportMap(), FilePathMap.SnapshotIndexFilePath(snapshotIndexFolderPath));
 
                     #endregion
                 }
@@ -2603,7 +2594,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
 
-            return snapshotTokenList.Count;
+            return indexedSnapshotsResults;
         }
 
         private MethodCallLine convertCallGraphChildren_Recursion(
@@ -3325,19 +3316,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return frameworkName;
         }
 
-        internal void addFoldedStacks(Dictionary<string, FoldedStackLine> foldedlStackLinesAddTo, List<FoldedStackLine> foldedStackLinesAddFrom)
+        internal void addFoldedStacks(Dictionary<string, FoldedStackLine> foldedStackLinesContainer, List<FoldedStackLine> foldedStackLinesToAdd)
         {
-            if (foldedlStackLinesAddTo != null && foldedStackLinesAddFrom != null)
+            if (foldedStackLinesContainer != null && foldedStackLinesToAdd != null)
             {
-                foreach (FoldedStackLine foldedCallStack in foldedStackLinesAddFrom)
+                foreach (FoldedStackLine foldedCallStack in foldedStackLinesToAdd)
                 {
-                    if (foldedlStackLinesAddTo.ContainsKey(foldedCallStack.FoldedStack) == true)
+                    if (foldedStackLinesContainer.ContainsKey(foldedCallStack.FoldedStack) == true)
                     {
-                        foldedlStackLinesAddTo[foldedCallStack.FoldedStack].AddFoldedStackLine(foldedCallStack);
+                        foldedStackLinesContainer[foldedCallStack.FoldedStack].AddFoldedStackLine(foldedCallStack);
                     }
                     else
                     {
-                        foldedlStackLinesAddTo.Add(foldedCallStack.FoldedStack, foldedCallStack);
+                        FoldedStackLine foldedStackLineClone = foldedCallStack.Clone();
+                        foldedStackLinesContainer.Add(foldedCallStack.FoldedStack, foldedStackLineClone);
                     }
                 }
             }

@@ -88,6 +88,14 @@ namespace AppDynamics.Dexter.ReportObjects
                 this.FoldedStack);
         }
 
+        public FoldedStackLine Clone()
+        {
+            FoldedStackLine foldedStackLineClone = (FoldedStackLine)this.MemberwiseClone();
+            foldedStackLineClone.StackTimingArray = new long[this.StackTimingArray.Length];
+            this.StackTimingArray.CopyTo(foldedStackLineClone.StackTimingArray, 0);
+            return foldedStackLineClone;
+        }
+
         private string get10MinuteRange(int minute)
         {
             if (minute < 10)
