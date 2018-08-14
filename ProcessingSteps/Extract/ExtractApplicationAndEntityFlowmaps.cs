@@ -133,7 +133,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 );
 
-                                loggerConsole.Info("Completed Application {0} timeranges", differenceInMinutes);
+                                loggerConsole.Info("Completed Application in each minute {0} minutes", differenceInMinutesForLastTimeRange);
 
                                 Interlocked.Add(ref numEntitiesTotal, 1);
 

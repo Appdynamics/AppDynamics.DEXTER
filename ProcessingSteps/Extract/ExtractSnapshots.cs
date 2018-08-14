@@ -3,11 +3,13 @@ using AppDynamics.Dexter.Extensions;
 using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -98,6 +100,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 // Extract snapshot list
                                 long serverCursorId = 0;
                                 string serverCursorIdType = String.Empty;
+                                Hashtable requestIDs = new Hashtable(10000);
+
                                 do
                                 {
                                     string snapshotsJSON = String.Empty;
@@ -157,7 +161,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         JArray snapshots = (JArray)snapshotsParsed["requestSegmentDataListItems"];
                                         foreach (JObject snapshot in snapshots)
                                         {
+                                            // Filter out duplicates
+                                            if (requestIDs.ContainsKey(snapshot["requestGUID"].ToString()) == true)
+                                            {
+                                                logger.Warn("Snapshot {0} is a duplicate, skipping", snapshot["requestGUID"]);
+                                                continue;
+                                            }
+
                                             listOfSnapshots.Add(snapshot);
+                                            requestIDs.Add(snapshot["requestGUID"].ToString(), true);
                                         }
 
                                         // Check whether we have more snapshots and if yes, get continuation type and cursor ID
@@ -251,6 +263,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             JArray listOfSnapshotsInHour = FileIOHelper.LoadJArrayFromFile(snapshotsDataFilePath);
                             if (listOfSnapshotsInHour != null && listOfSnapshotsInHour.Count > 0)
                             {
+                                #region Filter Snapshots
+
                                 logger.Info("Filter Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count);
                                 loggerConsole.Info("Filter Snapshots {0:G} to {1:G} ({2} snapshots)", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count);
 
@@ -406,7 +420,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     listOfSnapshotsInHourFiltered.Add(snapshotToken);
                                 }
 
-                                logger.Info("Total Snapshots {0:o} to {1:o} is {2}, after filtered {3}", jobTimeRange.From.ToLocalTime(), jobTimeRange.To.ToLocalTime(), listOfSnapshotsInHour.Count, listOfSnapshotsInHourFiltered.Count);
+                                logger.Info("Total Snapshots {0:o} to {1:o} is {2}, after filtered {3}", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHour.Count, listOfSnapshotsInHourFiltered.Count);
+
+                                #endregion
+
+                                #region Extract Snapshots
 
                                 // Now extract things
                                 logger.Info("Extract Snapshots {0:o} to {1:o} ({2} snapshots)", jobTimeRange.From, jobTimeRange.To, listOfSnapshotsInHourFiltered.Count);
@@ -446,7 +464,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     numSnapshots = extractSnapshots(jobConfiguration, jobTarget, controllerApi, listOfSnapshotsInHourFiltered, tiersNodeJSList, true);
                                 }
 
-                                loggerConsole.Info("{0} snapshots", numSnapshots);
+                                loggerConsole.Info("{0} snapshots extracted", numSnapshots);
+
+                                #endregion
                             }
                         }
 
@@ -514,30 +534,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
             JobConfiguration jobConfiguration, 
             JobTarget jobTarget, 
             ControllerApi controllerApi, 
-            List<JToken> entityList, 
+            List<JToken> snapshotTokenList, 
             List<AppDRESTTier> tiersNodeJSList, 
             bool progressToConsole)
         {
             int j = 0;
 
-            foreach (JToken snapshot in entityList)
+            foreach (JToken snapshotToken in snapshotTokenList)
             {
                 // Only do first in chain
-                if ((bool)snapshot["firstInChain"] == true)
+                if ((bool)snapshotToken["firstInChain"] == true)
                 {
-                    logger.Info("Retrieving snapshot for Application {0}, Tier {1}, Business Transaction {2}, RequestGUID {3}", jobTarget.Application, snapshot["applicationComponentName"], snapshot["businessTransactionName"], snapshot["requestGUID"]);
-
                     #region Target step variables
 
-                    DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshot["serverStartTime"]);
+                    DateTime snapshotTime = UnixTimeHelper.ConvertFromUnixTimestamp((long)snapshotToken["serverStartTime"]);
 
-                    string snapshotFolderPath = FilePathMap.SnapshotDataFolderPath(
+                    string snapshotDataFilePath = FilePathMap.SnapshotDataFilePath(
                         jobTarget,
-                        snapshot["applicationComponentName"].ToString(), (long)snapshot["applicationComponentId"],
-                        snapshot["businessTransactionName"].ToString(), (long)snapshot["businessTransactionId"],
+                        snapshotToken["applicationComponentName"].ToString(), (long)snapshotToken["applicationComponentId"],
+                        snapshotToken["businessTransactionName"].ToString(), (long)snapshotToken["businessTransactionId"],
                         snapshotTime,
-                        snapshot["userExperience"].ToString(),
-                        snapshot["requestGUID"].ToString());
+                        snapshotToken["userExperience"].ToString(),
+                        snapshotToken["requestGUID"].ToString());
 
                     // Must strip out the milliseconds, because the segment list retrieval doesn't seem to like them in the datetimes
                     DateTime snapshotTimeFrom = snapshotTime.AddMinutes(-30).AddMilliseconds(snapshotTime.Millisecond * -1);
@@ -549,124 +567,183 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     #endregion
 
-                    #region Get Snapshot Flowmap
-
-                    // Get snapshot flow map
-                    // Commenting this out until the time I decide to build visual representation of it, until then it is not needed
-                    //string snapshotFlowmapDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME);
-
-                    //if (File.Exists(snapshotFlowmapDataFilePath) == false)
-                    //{
-                    //    string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
-                    //    if (snapshotFlowmapJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
-                    //}
-
-                    #endregion
-
-                    #region Get List of Segments
-
-                    // Get list of segments
-                    string snapshotSegmentsDataFilePath = FilePathMap.SnapshotSegmentsDataFilePath(snapshotFolderPath);
-
-                    if (File.Exists(snapshotSegmentsDataFilePath) == false)
+                    if (File.Exists(snapshotDataFilePath) == false)
                     {
-                        string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshot["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
-                        if (snapshotSegmentsJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotSegmentsJson, snapshotSegmentsDataFilePath);
-                    }
+                        logger.Info("Retrieving snapshot for Application {0}, Tier {1}, Business Transaction {2}, RequestGUID {3}", jobTarget.Application, snapshotToken["applicationComponentName"], snapshotToken["businessTransactionName"], snapshotToken["requestGUID"]);
 
-                    #endregion
+                        #region Get Snapshot Flowmap
 
-                    #region Get Details for Each Segment
+                        // Get snapshot flow map
+                        // Commenting this out until the time I decide to build visual representation of it, until then it is not needed
+                        //string snapshotFlowmapDataFilePath = Path.Combine(snapshotFolderPath, EXTRACT_SNAPSHOT_FLOWMAP_FILE_NAME);
 
-                    JArray snapshotSegmentsList = FileIOHelper.LoadJArrayFromFile(snapshotSegmentsDataFilePath);
-                    if (snapshotSegmentsList != null)
-                    {
-                        // Get details for segment
-                        foreach (JToken snapshotSegment in snapshotSegmentsList)
+                        //if (File.Exists(snapshotFlowmapDataFilePath) == false)
+                        //{
+                        //    string snapshotFlowmapJson = controllerApi.GetFlowmapSnapshot(jobTarget.ApplicationID, (int)snapshot["businessTransactionId"], snapshot["requestGUID"].ToString(), fromTimeUnix, toTimeUnix, differenceInMinutes);
+                        //    if (snapshotFlowmapJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotFlowmapJson, snapshotFlowmapDataFilePath);
+                        //}
+
+                        #endregion
+
+                        #region Get List of Segments
+
+                        // Get list of segments
+                        string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshotToken["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
+
+                        #endregion
+
+                        #region Get Details for Each Segment                        
+
+                        Dictionary<long, string> snapshotSegmentDetailsJsonList = new Dictionary<long, string>(5);
+                        Dictionary<long, string> snapshotSegmentCallgraphsJsonList = new Dictionary<long, string>(5);
+                        Dictionary<long, string> snapshotSegmentErrorsJsonList = new Dictionary<long, string>(5);
+                        if (snapshotSegmentsJson != String.Empty)
                         {
-                            string snapshotSegmentDataFilePath = FilePathMap.SnapshotSegmentDataFilePath(snapshotFolderPath, snapshotSegment["id"].ToString());
-
-                            if (File.Exists(snapshotSegmentDataFilePath) == false)
+                            JArray snapshotSegmentsList = JArray.Parse(snapshotSegmentsJson);
+                            if (snapshotSegmentsList != null)
                             {
-                                string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                if (snapshotSegmentJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotSegmentJson, snapshotSegmentDataFilePath);
-                            }
-                        }
-
-                        // Get errors for segment
-                        foreach (JToken snapshotSegment in snapshotSegmentsList)
-                        {
-                            string snapshotSegmentErrorFilePath = FilePathMap.SnapshotSegmentErrorDataFilePath(snapshotFolderPath, snapshotSegment["id"].ToString());
-
-                            if (File.Exists(snapshotSegmentErrorFilePath) == false && (bool)snapshotSegment["errorOccurred"] == true)
-                            {
-                                string snapshotSegmentJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                if (snapshotSegmentJson != String.Empty)
+                                // Get details for segment
+                                foreach (JToken snapshotSegment in snapshotSegmentsList)
                                 {
-                                    // "[ ]" == empty data. Don't create the file
-                                    if (snapshotSegmentJson.Length > 3)
+                                    string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                    if (snapshotSegmentJson != String.Empty)
                                     {
-                                        FileIOHelper.SaveFileToPath(snapshotSegmentJson, snapshotSegmentErrorFilePath);
+                                        snapshotSegmentDetailsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
                                     }
                                 }
-                            }
-                        }
 
-                        // Get call graphs for segment
-                        foreach (JToken snapshotSegment in snapshotSegmentsList)
-                        {
-                            string snapshotSegmentCallGraphFilePath = FilePathMap.SnapshotSegmentCallGraphDataFilePath(snapshotFolderPath, snapshotSegment["id"].ToString());
-
-                            if (File.Exists(snapshotSegmentCallGraphFilePath) == false && ((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true))
-                            {
-                                // If the tier is Node.JS, the call graphs come from Process Snapshot
-                                bool getProcessCallGraph = false;
-                                string processRequestGUID = String.Empty;
-                                if (tiersNodeJSList != null && tiersNodeJSList.Count > 0)
+                                // Get errors for segment
+                                foreach (JToken snapshotSegment in snapshotSegmentsList)
                                 {
-                                    // Is this a Node.JS tier?
-                                    if (tiersNodeJSList.Count(t => t.id == (long)snapshotSegment["applicationComponentId"]) > 0)
+                                    if ((bool)snapshotSegment["errorOccurred"] == true)
                                     {
-                                        // Yes, it is
-
-                                        // Is there a process snapshot? Check Transaction Properties for its value
-                                        string snapshotSegmentDataFilePath = FilePathMap.SnapshotSegmentDataFilePath(snapshotFolderPath, snapshotSegment["id"].ToString());
-                                        JObject snapshotSegmentDetail = FileIOHelper.LoadJObjectFromFile(snapshotSegmentDataFilePath);
-                                        if (snapshotSegmentDetail != null)
+                                        string snapshotSegmentErrorJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                        if (snapshotSegmentErrorJson != String.Empty)
                                         {
-                                            if (snapshotSegmentDetail["transactionProperties"].HasValues == true)
+                                            // "[ ]" == empty data. Don't create the file
+                                            if (snapshotSegmentErrorJson.Length > 3)
                                             {
-                                                foreach (JToken transactionPropertyToken in snapshotSegmentDetail["transactionProperties"])
-                                                {
-                                                    if (transactionPropertyToken["name"].ToString() == "Process Snapshot GUIDs")
-                                                    {
-                                                        getProcessCallGraph = true;
-                                                        processRequestGUID = transactionPropertyToken["value"].ToString();
-                                                        break;
-                                                    }
-                                                }
+                                                snapshotSegmentErrorsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentErrorJson);
                                             }
                                         }
                                     }
                                 }
 
-                                // Ok, now either get call graph the usual way or process snapshot call graph
-                                if (getProcessCallGraph == true && processRequestGUID.Length > 0)
+                                // Get call graphs for segment
+                                foreach (JToken snapshotSegment in snapshotSegmentsList)
                                 {
-                                    string snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
-                                }
-                                else
-                                {
-                                    string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty) FileIOHelper.SaveFileToPath(snapshotSegmentJson, snapshotSegmentCallGraphFilePath);
+                                    if (((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true))
+                                    {
+                                        // If the tier is Node.JS, the call graphs come from Process Snapshot
+                                        bool getProcessCallGraph = false;
+                                        string processRequestGUID = String.Empty;
+                                        if (tiersNodeJSList != null && tiersNodeJSList.Count > 0)
+                                        {
+                                            // Is this a Node.JS tier?
+                                            if (tiersNodeJSList.Count(t => t.id == (long)snapshotSegment["applicationComponentId"]) > 0)
+                                            {
+                                                // Yes, it is
+
+                                                // Is there a process snapshot? Check Transaction Properties for its value
+                                                string snapshotSegmentDetailJson = snapshotSegmentDetailsJsonList[(long)snapshotSegment["id"]];
+                                                JObject snapshotSegmentDetail = JObject.Parse(snapshotSegmentDetailJson);
+                                                if (snapshotSegmentDetail != null)
+                                                {
+                                                    if (snapshotSegmentDetail["transactionProperties"].HasValues == true)
+                                                    {
+                                                        foreach (JToken transactionPropertyToken in snapshotSegmentDetail["transactionProperties"])
+                                                        {
+                                                            if (transactionPropertyToken["name"].ToString() == "Process Snapshot GUIDs")
+                                                            {
+                                                                getProcessCallGraph = true;
+                                                                processRequestGUID = transactionPropertyToken["value"].ToString();
+                                                                break;
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        // Ok, now either get call graph the usual way or process snapshot call graph
+                                        if (getProcessCallGraph == true && processRequestGUID.Length > 0)
+                                        {
+                                            string snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (snapshotSegmentJson != String.Empty)
+                                            {
+                                                snapshotSegmentCallgraphsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (snapshotSegmentJson != String.Empty)
+                                            {
+                                                snapshotSegmentCallgraphsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+
+                        #endregion
+
+                        #region Save results
+
+                        // Build a single JSON file for all the snapshot data
+                        StringBuilder sb = new StringBuilder(10240);
+
+                        // Start root object
+                        sb.AppendLine("{");
+
+                        // Snapshot object
+                        sb.AppendFormat("\"snapshot\" : {0},", snapshotToken.ToString(Newtonsoft.Json.Formatting.Indented));
+                        sb.AppendLine();
+
+                        // Segments object
+                        if (snapshotSegmentsJson.Length > 0)
+                        {
+                            sb.AppendLine("\"segments\" :");
+                            sb.Append(snapshotSegmentsJson);
+                            sb.AppendLine(",");
+                        }
+                        else
+                        {
+                            sb.AppendLine("\"segments\" : [],");
+                        }
+
+                        // Segment Details objects
+                        sb.AppendLine("\"segmentDetails\" : {");
+                        if (snapshotSegmentDetailsJsonList.Count > 0)
+                        {
+                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentDetailsJsonList);
+                        }
+                        sb.AppendLine("},");
+
+                        // Errors objects
+                        sb.AppendLine("\"errors\" : {");
+                        if (snapshotSegmentErrorsJsonList.Count > 0)
+                        {
+                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentErrorsJsonList);
+                        }
+                        sb.AppendLine("},");
+
+                        // Call graphs objects
+                        sb.AppendLine("\"callgraphs\" : {");
+                        if (snapshotSegmentCallgraphsJsonList.Count > 0)
+                        {
+                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentCallgraphsJsonList);
+                        }
+                        sb.AppendLine("}");
+
+                        // End root object
+                        sb.AppendLine("}");
+
+                        FileIOHelper.SaveFileToPath(sb.ToString(), snapshotDataFilePath);
+
+                        #endregion
                     }
-
-                    #endregion
-
                 }
 
                 if (progressToConsole == true)
@@ -679,8 +756,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
 
-            return entityList.Count;
+            return snapshotTokenList.Count;
         }
 
+        private void addListOfObjectsAsIndividualObjectsToJSONString(StringBuilder sb, Dictionary<long, string> keyValuePairs)
+        {
+            int currentIndex = 0;
+            int lastIndex = keyValuePairs.Count - 1;
+            foreach (KeyValuePair<long, string> kvp in keyValuePairs)
+            {
+                sb.AppendFormat("\"{0}\" : {1}", kvp.Key, kvp.Value);
+                if (currentIndex != lastIndex)
+                {
+                    sb.AppendLine(",");
+                }
+                else
+                {
+                    sb.AppendLine();
+                }
+                currentIndex++;
+            }
+        }
+
+        private void addListOfObjectsAsArrayToJSONString(StringBuilder sb, Dictionary<long, string> keyValuePairs)
+        {
+            int currentIndex = 0;
+            int lastIndex = keyValuePairs.Count - 1;
+            foreach (KeyValuePair<long, string> kvp in keyValuePairs)
+            {
+                sb.Append(kvp.Value);
+                if (currentIndex != lastIndex)
+                {
+                    sb.AppendLine(",");
+                }
+                else
+                {
+                    sb.AppendLine();
+                }
+                currentIndex++;
+            }
+        }
     }
 }

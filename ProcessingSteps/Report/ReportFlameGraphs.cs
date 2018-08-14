@@ -93,10 +93,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     EntityApplication application = applicationList[0];
 
-                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForApplicationIndexFilePath(jobTarget)) == true)
+                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget)) == true)
                                     {
                                         createFlameGraph(
-                                            FilePathMap.SnapshotsFoldedCallStacksForApplicationIndexFilePath(jobTarget),
+                                            FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget),
                                             FilePathMap.FlameGraphReportFilePath(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
@@ -104,10 +104,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             true);
                                     }
 
-                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForApplicationIndexFilePath(jobTarget)) == true)
+                                    if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(jobTarget)) == true)
                                     {
                                         createFlameGraph(
-                                            FilePathMap.SnapshotsFoldedCallStacksWithTimeForApplicationIndexFilePath(jobTarget),
+                                            FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(jobTarget),
                                             FilePathMap.FlameChartReportFilePath(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
@@ -131,10 +131,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityTier tier in tiersList)
                                     {
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, tier)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, tier)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, tier),
+                                                FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, tier),
                                                 FilePathMap.FlameGraphReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -142,10 +142,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 true);
                                         }
 
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, tier)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, tier)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, tier),
+                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, tier),
                                                 FilePathMap.FlameChartReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2} ({3:G}-{4:G})", tier.Controller, tier.ApplicationName, tier.TierName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -173,10 +173,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityNode node in nodesList)
                                     {
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, node)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, node)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, node),
+                                                FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, node),
                                                 FilePathMap.FlameGraphReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -184,10 +184,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 true);
                                         }
 
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, node)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, node)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, node),
+                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, node),
                                                 FilePathMap.FlameChartReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2}, Node {3} ({4:G}-{5:G})", node.Controller, node.ApplicationName, node.TierName, node.NodeName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -214,10 +214,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
                                     {
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, businessTransaction)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, businessTransaction)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksForEntityIndexFilePath(jobTarget, businessTransaction),
+                                                FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, businessTransaction),
                                                 FilePathMap.FlameGraphReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -225,10 +225,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 true);
                                         }
 
-                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, businessTransaction)) == true)
+                                        if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, businessTransaction)) == true)
                                         {
                                             createFlameGraph(
-                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeForEntityIndexFilePath(jobTarget, businessTransaction),
+                                                FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(jobTarget, businessTransaction),
                                                 FilePathMap.FlameChartReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, true),
                                                 String.Format("{0}/{1}/{2}, BT {3} ({4:G}-{5:G})", businessTransaction.Controller, businessTransaction.ApplicationName, businessTransaction.TierName, businessTransaction.BTName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                                 flameGraphTemplateString,
@@ -240,50 +240,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     Interlocked.Add(ref numEntitiesTotal, businessTransactionsList.Count);
 
                                     loggerConsole.Info("Flame Graphs for Business Transactions Done ({0} entities)", businessTransactionsList.Count);
-                                }
-
-                                #endregion
-                            },
-                            () =>
-                            {
-                                #region Snapshots
-
-                                List<Snapshot> snapshotsList = FileIOHelper.ReadListFromCSVFile<Snapshot>(FilePathMap.SnapshotsIndexFilePath(jobTarget), new SnapshotReportMap());
-                                if (snapshotsList != null)
-                                {
-                                    loggerConsole.Info("Flame Graphs for Snapshots ({0} entities)", snapshotsList.Count);
-
-                                    stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + snapshotsList.Count;
-
-                                    int j = 0;
-
-                                    var snapshotsListChunks = snapshotsList.BreakListIntoChunks(SNAPSHOTS_FLAMEGRAPH_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
-
-                                    Parallel.ForEach<List<Snapshot>, int>(
-                                        snapshotsListChunks,
-                                        () => 0,
-                                        (snapshotsListChunk, loop, subtotal) =>
-                                        {
-                                            subtotal += reportFlameGraphsSnapshots(
-                                                programOptions,
-                                                jobConfiguration,
-                                                jobTarget,
-                                                snapshotsListChunk,
-                                                flameGraphTemplateString,
-                                                methodCallLineClassToFrameworkTypeMappingDictionary,
-                                                false);
-                                            return subtotal;
-                                        },
-                                        (finalResult) =>
-                                        {
-                                            Interlocked.Add(ref j, finalResult);
-                                            Console.Write("[{0}].", j);
-                                        }
-                                    );
-
-                                    Interlocked.Add(ref numEntitiesTotal, snapshotsList.Count);
-
-                                    loggerConsole.Info("Flame Graphs for Snapshots Done ({0} entities)", snapshotsList.Count);
                                 }
 
                                 #endregion
@@ -514,7 +470,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                     flameGraphBox.Start = maxSampleWidth;
                     flameGraphBox.Samples = foldedStackLine.NumSamples;
-                    if (i > 0 && i < foldedStackLine.StackTimingArray.Length)
+                    if (i > 0 && i <= foldedStackLine.StackTimingArray.Length)
                     {
                         flameGraphBox.Duration = flameGraphBox.Duration + foldedStackLine.StackTimingArray[i - 1];
                     }
@@ -856,51 +812,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             #endregion
 
             return true;
-        }
-
-        private int reportFlameGraphsSnapshots(
-            ProgramOptions programOptions,
-            JobConfiguration jobConfiguration,
-            JobTarget jobTarget,
-            List<Snapshot> snapshotsList,
-            string flameGraphTemplateString,
-            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
-            bool progressToConsole)
-        {
-            int j = 0;
-
-            foreach (Snapshot snapshot in snapshotsList)
-            {
-                string snapshotFolderPath = FilePathMap.SnapshotIndexFolderPath(
-                    jobTarget,
-                    snapshot.TierName, snapshot.TierID,
-                    snapshot.BTName, snapshot.BTID,
-                    snapshot.OccurredUtc,
-                    snapshot.UserExperience,
-                    snapshot.RequestID);
-
-                if (File.Exists(FilePathMap.SnapshotFoldedCallStacksIndexFilePath(snapshotFolderPath)) == true)
-                {
-                    createFlameGraph(
-                        FilePathMap.SnapshotFoldedCallStacksIndexFilePath(snapshotFolderPath),
-                        FilePathMap.FlameGraphReportFilePath(snapshot, jobTarget, true),
-                        String.Format("{0}/{1}/{2}, BT {3} {4:G} {5} {6}", snapshot.Controller, snapshot.ApplicationName, snapshot.TierName, snapshot.BTName, snapshot.Occurred, snapshot.UserExperience, snapshot.RequestID),
-                        flameGraphTemplateString,
-                        methodCallLineClassToFrameworkTypeMappingDictionary,
-                        progressToConsole);
-                }
-
-                if (progressToConsole == true)
-                {
-                    j++;
-                    if (j % 1000 == 0)
-                    {
-                        Console.Write("[{0}].", j);
-                    }
-                }
-            }
-
-            return snapshotsList.Count;
         }
 
         private static string getFlameGraphBoxColorAsRGBString(int thisDepth, int maxDepth, Color startColor, Color endColor)

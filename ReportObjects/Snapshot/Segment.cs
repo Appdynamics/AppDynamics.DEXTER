@@ -49,6 +49,8 @@ namespace AppDynamics.Dexter.ReportObjects
         public string TakenSummary { get; set; }
         public string TakenReason { get; set; }
         public string TakenPolicy { get; set; }
+        public bool IsDelayedDeepDive { get; set; }
+        public long DelayedDeepDiveOffSet { get; set; }
 
         public string WarningThreshold { get; set; }
         public string CriticalThreshold { get; set; }

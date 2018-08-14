@@ -249,6 +249,7 @@
     <Compile Include="ReportObjects\Snapshot\Segment.cs" />
     <Compile Include="ReportObjects\Snapshot\DetectedError.cs" />
     <Compile Include="ReportObjects\Snapshot\ServiceEndpointCall.cs" />
+    <Compile Include="ReportObjects\Snapshot\IndexedSnapshotsResults.cs" />
     <Compile Include="ReportObjects\Snapshot\Snapshot.cs" />
     <Compile Include="ReportObjects\Event\Maps\HealthRuleViolationEventReportMap.cs" />
     <Compile Include="ReportObjects\Event\HealthRuleViolationEvent.cs" />
