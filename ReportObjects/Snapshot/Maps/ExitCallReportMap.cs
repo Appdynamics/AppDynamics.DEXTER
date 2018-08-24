@@ -32,6 +32,7 @@ namespace AppDynamics.Dexter.ReportObjects
 
             Map(m => m.Duration).Index(i); i++;
             Map(m => m.DurationRange).Index(i); i++;
+            Map(m => m.AvgDuration).Index(i); i++;
 
             Map(m => m.ExitType).Index(i); i++;
             Map(m => m.Detail).Index(i); i++;

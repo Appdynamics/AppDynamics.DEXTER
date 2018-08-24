@@ -921,16 +921,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.InformationPointsReportFilePath(), FilePathMap.InformationPointsIndexFilePath(jobTarget));
                         }
-                        // If it is the last one, let's append all Applications
-                        if (i == jobConfiguration.Target.Count - 1)
-                        {
-                            var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
-                            foreach (var controllerGroup in controllers)
-                            {
-                                FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0]));
-                                FileIOHelper.AppendTwoCSVFiles(FilePathMap.ControllersReportFilePath(), FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0]));
-                            }
-                        }
 
                         #endregion
                     }
@@ -955,6 +945,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         stepTimings.Add(stepTimingTarget);
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
+                }
+
+                // Let's append all Applications
+                var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
+                foreach (var controllerGroup in controllers)
+                {
+                    FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0]));
+                    FileIOHelper.AppendTwoCSVFiles(FilePathMap.ControllersReportFilePath(), FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0]));
                 }
 
                 return true;

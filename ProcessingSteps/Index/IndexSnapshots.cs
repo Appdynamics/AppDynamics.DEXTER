@@ -181,6 +181,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 // Prepare thread safe storage to dump all those chunks
                                                 ConcurrentBag<IndexedSnapshotsResults> indexedSnapshotsResultsBag = new ConcurrentBag<IndexedSnapshotsResults>();
 
+                                                int k = 0;
                                                 // Index them in parallel
                                                 Parallel.ForEach<List<JToken>, IndexedSnapshotsResults>(
                                                     listOfSnapshotsInHourChunks,
@@ -193,7 +194,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     (finalResult) =>
                                                     {
                                                         indexedSnapshotsResultsBag.Add(finalResult);
-                                                        Console.Write("[{0}].", finalResult.Snapshots.Count);
+                                                        Interlocked.Add(ref k, finalResult.Snapshots.Count);
+                                                        Console.Write("[{0}].", k);
                                                     }
                                                 );
 
@@ -248,7 +250,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             j += listOfBTSnapshotsInHour.Count;
 
                                             // Save results for this BT for all the Snapshots
-                                            if (indexedSnapshotsResults != null)
+                                            if (indexedSnapshotsResults != null && indexedSnapshotsResults.Snapshots.Count > 0)   
                                             {
                                                 // Sort things prettily
                                                 indexedSnapshotsResults.Snapshots = indexedSnapshotsResults.Snapshots.OrderBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
@@ -404,7 +406,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                                     {
                                                                         if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
                                                                         {
-                                                                            Console.Write("{0}({1}). ", businessTransaction.BTName, businessTransaction.BTID);
+                                                                            Console.Write("{0}({1})+", businessTransaction.BTName, businessTransaction.BTID);
 
                                                                             FileIOHelper.AppendTwoCSVFiles(snapshotsIndexFileStream, FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                                             FileIOHelper.AppendTwoCSVFiles(segmentsIndexFileStream, FilePathMap.SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
@@ -1367,6 +1369,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     exitCall.NumCalls = (int)exitCallToken["count"];
                                     exitCall.NumErrors = (int)exitCallToken["errorCount"];
                                     exitCall.HasErrors = exitCall.NumErrors != 0;
+
+                                    // Calculate duration
+                                    exitCall.AvgDuration = exitCall.Duration / exitCall.NumCalls;
 
                                     // Which Segment are we going to
                                     exitCall.ToSegmentID = 0;

@@ -61,6 +61,7 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public long Duration { get; set; }
         public string DurationRange { get; set; }
+        public double AvgDuration { get; set; }
 
         public string CallChain { get; set; }
 
