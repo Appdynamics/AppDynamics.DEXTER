@@ -47,7 +47,7 @@ As alternative to Excel, PowerBI visual analytics tool offers advanced explorati
 
 ![Detected Entities in PowerBI](../master/docs/introduction/DetectedEntitiesPowerBIOverview.png?raw=true)
 
-Detected Entities report also supports SIM applications.
+Detected entities are not limited to APM Applications. Server Infrastructure Monitoring inventory are supported in [Detected SIM Entities](../../wiki/Detected-SIM-Entities-Report) report, and Database Monitoring Queries, Sessions, Blocked Sessions and other interesting artifacts can be seen in [Detected DB Entities](../../wiki/Detected-DB-Entities-Report) report.
 
 ## Entity Metrics, Graphs and Flow Maps
 [Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
