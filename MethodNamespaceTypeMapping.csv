@@ -30,10 +30,10 @@ com.cybersource,CyberSource ECommerce,,
 com.dassault_systemes,3DS,,
 com.entrust,Entrust ECommerce,,
 com.exalead,3DS EXALEAD,,
-com.fasterxml.jackson,Jackson Core,,
-com.fasterxml.jackson.annotation,Jackson Annotation,,
-com.fasterxml.jackson.core,Jackson Core,,
-com.fasterxml.jackson.databind,Jackson DataBind,,
+com.fasterxml.jackson,Jackson Core,C2961D,E3B022
+com.fasterxml.jackson.annotation,Jackson Annotation,C2961D,E3B022
+com.fasterxml.jackson.core,Jackson Core,C2961D,E3B022
+com.fasterxml.jackson.databind,Jackson DataBind,C2961D,E3B022
 com.google,Google Core,FBBC05,FEEDBE
 com.ibm,IBM Core,00BFA9,00E5DB
 com.informix,Informix,00BFA9,00E5DB

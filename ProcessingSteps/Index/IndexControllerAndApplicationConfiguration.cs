@@ -1,5 +1,6 @@
 ﻿using AppDynamics.Dexter.DataObjects;
 using AppDynamics.Dexter.ReportObjects;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -74,6 +75,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 List<string> listOfControllersAlreadyProcessed = new List<string>(jobConfiguration.Target.Count);
 
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -137,9 +140,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Preload list of detected entities
 
                         // For later cross-reference
-                        List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
-                        List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
-                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
+                        List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
+                        List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
+                        List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
 
                         #endregion
 
@@ -190,21 +193,33 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         applicationConfiguration.EUMConfigExclude = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/eum-cloud-config/exclude-config"));
 
-                        JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/page-config")));
-                        if (ruleSetting != null)
+                        try
                         {
-                            applicationConfiguration.EUMConfigPage = ruleSetting.ToString();
+                            JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/page-config")));
+                            if (ruleSetting != null)
+                            {
+                                applicationConfiguration.EUMConfigPage = ruleSetting.ToString();
+                            }
                         }
-                        ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config")));
-                        if (ruleSetting != null)
+                        catch (JsonReaderException ex) {}
+                        try
                         {
-                            applicationConfiguration.EUMConfigMobilePage = ruleSetting.ToString();
+                            JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config")));
+                            if (ruleSetting != null)
+                            {
+                                applicationConfiguration.EUMConfigMobilePage = ruleSetting.ToString();
+                            }
                         }
-                        ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/eum-mobile-agent-config")));
-                        if (ruleSetting != null)
+                        catch (JsonReaderException ex) { }
+                        try
                         {
-                            applicationConfiguration.EUMConfigMobileAgent = ruleSetting.ToString();
+                            JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/eum-mobile-agent-config")));
+                            if (ruleSetting != null)
+                            {
+                                applicationConfiguration.EUMConfigMobileAgent = ruleSetting.ToString();
+                            }
                         }
+                        catch (JsonReaderException ex) { }
 
                         applicationConfiguration.AnalyticsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/analytics-dynamic-service-configurations"));
                         applicationConfiguration.WorkflowsConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/workflows"));
@@ -379,6 +394,97 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(businessTransactionEntryRulesList, new BusinessTransactionEntryRuleReportMap(), FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionEntryRulesList.Count;
+
+                        #endregion
+
+                        #region Service Endpoint Rules
+
+                        loggerConsole.Info("Service Endpoint Rules");
+
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesList = new List<ServiceEndpointEntryRule>();
+
+                        JObject serviceEndpointsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.ApplicationConfigurationSEPDataFilePath(jobTarget));
+                        if (serviceEndpointsContainer != null)
+                        {
+                            foreach (JObject serviceEndpointContainer in serviceEndpointsContainer["sepContainer"])
+                            {
+                                // SEP Autodetection Rules
+                                if (serviceEndpointContainer["entityType"].ToString() == "APPLICATION")
+                                {
+                                    if (serviceEndpointContainer["sEPMatchPointConfigs"] != null)
+                                    {
+                                        foreach (JObject serviceEndpoint in serviceEndpointContainer["sEPMatchPointConfigs"])
+                                        {
+                                            ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
+
+                                            serviceEndpointEntryRule.Controller = applicationConfiguration.Controller;
+                                            serviceEndpointEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+                                            serviceEndpointEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+                                            serviceEndpointEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+                                            serviceEndpointEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+                                            serviceEndpointEntryRule.AgentType = serviceEndpointContainer["agentType"].ToString();
+                                            serviceEndpointEntryRule.RuleName = serviceEndpoint["name"].ToString();
+                                            serviceEndpointEntryRule.EntryPointType = serviceEndpoint["entryPointType"].ToString();
+                                            serviceEndpointEntryRule.IsOverride = (bool)serviceEndpointContainer["override"];
+                                            serviceEndpointEntryRule.IsMonitoringEnabled = (bool)serviceEndpoint["enabled"];
+                                            serviceEndpointEntryRule.NamingConfigType = serviceEndpoint["namingSchemeType"].ToString();
+
+                                            if (serviceEndpoint["namingSchemeProperties"] != null) serviceEndpointEntryRule.DiscoveryType = serviceEndpoint["namingSchemeProperties"].ToString(); 
+
+                                            serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
+                                        }
+                                    }
+                                }
+                            }
+
+                            foreach (JObject serviceEndpointContainer in serviceEndpointsContainer["sepContainer"])
+                            {
+                                // Explicit SEP rule
+                                if (serviceEndpointContainer["entityType"].ToString() == "APPLICATION_COMPONENT")
+                                {
+                                    if (serviceEndpointContainer["sEPDefinitions"] != null)
+                                    {
+                                        foreach (JObject serviceEndpoint in serviceEndpointContainer["sEPDefinitions"])
+                                        {
+                                            ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
+
+                                            serviceEndpointEntryRule.Controller = applicationConfiguration.Controller;
+                                            serviceEndpointEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+                                            serviceEndpointEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+                                            serviceEndpointEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+                                            serviceEndpointEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+                                            if (tiersList != null)
+                                            {
+                                                APMTier tier = tiersList.Where(t => t.EntityID == (long)serviceEndpointContainer["entityId"]).FirstOrDefault();
+                                                if (tier != null)
+                                                {
+                                                    serviceEndpointEntryRule.TierName = tier.TierName;
+                                                }
+                                            }
+
+                                            serviceEndpointEntryRule.AgentType = serviceEndpointContainer["agentType"].ToString();
+                                            serviceEndpointEntryRule.RuleName = serviceEndpoint["definitionName"].ToString();
+                                            serviceEndpointEntryRule.EntryPointType = serviceEndpoint["entryPointType"].ToString();
+                                            serviceEndpointEntryRule.IsOverride = (bool)serviceEndpointContainer["override"];
+                                            serviceEndpointEntryRule.IsMonitoringEnabled = true;
+
+                                            serviceEndpointEntryRule.RuleRawValue = makeXMLFormattedAndIndented(serviceEndpoint["MatchPointRuleXml"].ToString());
+
+                                            serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumSEPRules = serviceEndpointEntryRulesList.Count;
+
+                        serviceEndpointEntryRulesList = serviceEndpointEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
+                        FileIOHelper.WriteListToCSVFile(serviceEndpointEntryRulesList, new ServiceEndpointEntryRuleReportMap(), FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + serviceEndpointEntryRulesList.Count;
 
                         #endregion
 
@@ -824,11 +930,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.ConfigurationReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.ConfigurationReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
@@ -843,6 +950,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BusinessTransactionEntryRulesReportFilePath(), FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.ServiceEndpointEntryRulesReportFilePath(), FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.BusinessTransactionEntryScopesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BusinessTransactionEntryScopesIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -1120,7 +1231,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Load the XmlDocument with the XML.
                 D.LoadXml(XML);
 
-                W.Formatting = Formatting.Indented;
+                W.Formatting = System.Xml.Formatting.Indented;
 
                 // Write the XML into a formatting XmlTextWriter
                 D.WriteContentTo(W);
@@ -1235,7 +1346,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return businessTransactionEntryRule;
         }
 
-        private static BusinessTransactionEntryRule fillBusinessTransactionEntryRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointCustomMatchPointConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBusinessTransaction> businessTransactionsList)
+        private static BusinessTransactionEntryRule fillBusinessTransactionEntryRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointCustomMatchPointConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<BusinessTransaction> businessTransactionsList)
         {
             BusinessTransactionEntryRule businessTransactionEntryRule = new BusinessTransactionEntryRule();
 
@@ -1263,7 +1374,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (businessTransactionsList != null)
             {
-                List<EntityBusinessTransaction> businessTransactionsForThisRule = new List<EntityBusinessTransaction>();
+                List<BusinessTransaction> businessTransactionsForThisRule = new List<BusinessTransaction>();
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName == businessTransactionEntryRule.RuleName).ToList());
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal == businessTransactionEntryRule.RuleName).ToList());
@@ -1273,7 +1384,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (businessTransactionsForThisRule.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder(32 * businessTransactionsForThisRule.Count);
-                    foreach (EntityBusinessTransaction bt in businessTransactionsForThisRule)
+                    foreach (BusinessTransaction bt in businessTransactionsForThisRule)
                     {
                         sb.AppendFormat("{0}/{1};\n", bt.TierName, bt.BTName);
                     }
@@ -1354,7 +1465,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return businessTransactionEntryScope;
         }
 
-        private static BusinessTransactionEntryRule20 fillBusinessTransactionEntryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransaction> businessTransactionsList)
+        private static BusinessTransactionEntryRule20 fillBusinessTransactionEntryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<BusinessTransaction> businessTransactionsList)
         {
             BusinessTransactionEntryRule20 businessTransactionEntryRule = new BusinessTransactionEntryRule20();
 
@@ -1423,7 +1534,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (businessTransactionsList != null)
             {
-                List<EntityBusinessTransaction> businessTransactionsForThisRule = new List<EntityBusinessTransaction>();
+                List<BusinessTransaction> businessTransactionsForThisRule = new List<BusinessTransaction>();
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName == businessTransactionEntryRule.RuleName).ToList());
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTName.StartsWith(String.Format("{0}.", businessTransactionEntryRule.RuleName))).ToList());
                 businessTransactionsForThisRule.AddRange(businessTransactionsList.Where(b => b.BTNameOriginal == businessTransactionEntryRule.RuleName).ToList());
@@ -1433,7 +1544,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (businessTransactionsForThisRule.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder(32 * businessTransactionsForThisRule.Count);
-                    foreach (EntityBusinessTransaction bt in businessTransactionsForThisRule)
+                    foreach (BusinessTransaction bt in businessTransactionsForThisRule)
                     {
                         sb.AppendFormat("{0}/{1};\n", bt.TierName, bt.BTName);
                     }
@@ -1448,7 +1559,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return businessTransactionEntryRule;
         }
 
-        private static List<BusinessTransactionDiscoveryRule20> fillBusinessTransactionDiscoveryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<EntityBusinessTransaction> businessTransactionsList)
+        private static List<BusinessTransactionDiscoveryRule20> fillBusinessTransactionDiscoveryRule20(XmlNode ruleConfigurationNode, XmlNode scopeToRuleMappingConfigurationNode, EntityApplicationConfiguration applicationConfiguration, List<BusinessTransaction> businessTransactionsList)
         {
             List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20List = new List<BusinessTransactionDiscoveryRule20>();
 
@@ -1515,7 +1626,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return businessTransactionDiscoveryRule20List;
         }
 
-        private static BackendDiscoveryRule fillBackendDiscoveryRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode backendDiscoveryConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBackend> backendsList)
+        private static BackendDiscoveryRule fillBackendDiscoveryRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode backendDiscoveryConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<Backend> backendsList)
         {
             BackendDiscoveryRule backendDiscoveryRule = new BackendDiscoveryRule();
 
@@ -1549,7 +1660,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (backendsList != null)
             {
-                List<EntityBackend> backendsForThisRule = new List<EntityBackend>();
+                List<Backend> backendsForThisRule = new List<Backend>();
 
                 // Try to find them by match first
                 backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName == backendDiscoveryRule.RuleName).ToList());
@@ -1566,7 +1677,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (backendsForThisRule.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder(32 * backendsForThisRule.Count);
-                    foreach (EntityBackend backend in backendsForThisRule)
+                    foreach (Backend backend in backendsForThisRule)
                     {
                         sb.AppendFormat("{0} ({1});\n", backend.BackendName, backend.BackendID);
                     }
@@ -1579,7 +1690,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return backendDiscoveryRule;
         }
 
-        private static CustomExitRule fillCustomExitRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode customExitConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<EntityBackend> backendsList)
+        private static CustomExitRule fillCustomExitRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode customExitConfigurationNode, EntityApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<Backend> backendsList)
         {
             CustomExitRule customExitRule = new CustomExitRule();
 
@@ -1612,7 +1723,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (backendsList != null)
             {
-                List<EntityBackend> backendsForThisRule = new List<EntityBackend>();
+                List<Backend> backendsForThisRule = new List<Backend>();
 
                 // Try to find them by match first
                 backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName == customExitRule.RuleName).ToList());
@@ -1629,7 +1740,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (backendsForThisRule.Count > 0)
                 {
                     StringBuilder sb = new StringBuilder(32 * backendsForThisRule.Count);
-                    foreach (EntityBackend backend in backendsForThisRule)
+                    foreach (Backend backend in backendsForThisRule)
                     {
                         sb.AppendFormat("{0} ({1});\n", backend.BackendName, backend.BackendID);
                     }
@@ -1837,7 +1948,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return httpDataCollector;
         }
 
-        private static EntityTierConfiguration fillEntityTierConfiguration(XmlNode applicationComponentNode, EntityApplicationConfiguration applicationConfiguration, List<EntityTier> tiersList, List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList)
+        private static EntityTierConfiguration fillEntityTierConfiguration(XmlNode applicationComponentNode, EntityApplicationConfiguration applicationConfiguration, List<APMTier> tiersList, List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsList)
         {
             EntityTierConfiguration entityTierConfiguration = new EntityTierConfiguration();
 
@@ -1852,7 +1963,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             entityTierConfiguration.TierType = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("component-type"));
             if (tiersList != null)
             {
-                EntityTier tier = tiersList.Where(t => t.TierName == entityTierConfiguration.TierName).FirstOrDefault();
+                APMTier tier = tiersList.Where(t => t.TierName == entityTierConfiguration.TierName).FirstOrDefault();
                 if (tier != null)
                 {
                     entityTierConfiguration.TierID = tier.TierID;
@@ -1877,7 +1988,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return entityTierConfiguration;
         }
 
-        private static EntityBusinessTransactionConfiguration fillEntityBusinessTransactionConfiguration(XmlNode applicationComponentNode, XmlNode businessTransactionConfigurationtNode, EntityApplicationConfiguration applicationConfiguration, List<EntityTier> tiersList, List<EntityBusinessTransaction> businessTransactionsList)
+        private static EntityBusinessTransactionConfiguration fillEntityBusinessTransactionConfiguration(XmlNode applicationComponentNode, XmlNode businessTransactionConfigurationtNode, EntityApplicationConfiguration applicationConfiguration, List<APMTier> tiersList, List<BusinessTransaction> businessTransactionsList)
         {
             EntityBusinessTransactionConfiguration entityBusinessTransactionConfiguration = new EntityBusinessTransactionConfiguration();
 
@@ -1890,7 +2001,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             entityBusinessTransactionConfiguration.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
             if (tiersList != null)
             {
-                EntityTier tier = tiersList.Where(t => t.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+                APMTier tier = tiersList.Where(t => t.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
                 if (tier != null)
                 {
                     entityBusinessTransactionConfiguration.TierID = tier.TierID;
@@ -1901,7 +2012,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             entityBusinessTransactionConfiguration.BTType = businessTransactionConfigurationtNode.Attributes["transaction-entry-point-type"].Value;
             if (businessTransactionsList != null)
             {
-                EntityBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTName == entityBusinessTransactionConfiguration.BTName && b.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
+                BusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.BTName == entityBusinessTransactionConfiguration.BTName && b.TierName == entityBusinessTransactionConfiguration.TierName).FirstOrDefault();
                 if (businessTransaction != null)
                 {
                     entityBusinessTransactionConfiguration.BTID = businessTransaction.BTID;

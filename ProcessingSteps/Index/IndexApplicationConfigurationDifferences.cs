@@ -165,6 +165,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        #region Service Endpoint Rules
+
+                        loggerConsole.Info("Service Endpoint Entry Rules");
+
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new ServiceEndpointEntryRuleReportMap());
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
+
+                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, serviceEndpointEntryRulesListReference, serviceEndpointEntryRulesListDifference));
+
+                        #endregion
+
                         #region MDS/Config 2.0 Scopes, BT Detection and BT Rules
 
                         loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");

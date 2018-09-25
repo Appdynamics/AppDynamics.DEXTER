@@ -153,17 +153,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                                List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
                                 if (applicationsList != null && applicationsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Applications ({0} entities, {1} timeranges)", applicationsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityApplication.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityApplication.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == APMApplication.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMApplication.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -176,17 +176,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tier
 
-                                List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
+                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
                                 if (tiersList != null && tiersList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Tiers ({0} entities, {1} timeranges)", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityTier.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityTier.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == APMTier.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMTier.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(tiersList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -199,18 +199,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null && nodesList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Nodes ({0} entities, {1} timeranges)", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityNode.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == APMNode.ENTITY_TYPE && m.Graph.Length > 0).ToList();
 
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityNode.ENTITY_FOLDER);
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMNode.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(nodesList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -223,17 +223,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
+                                List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
                                 if (backendsList != null && backendsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Backends ({0} entities, {1} timeranges)", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityBackend.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBackend.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == Backend.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, Backend.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, Backend.ENTITY_FOLDER, Backend.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, Backend.ENTITY_FOLDER, Backend.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(backendsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -246,17 +246,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
+                                List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
                                 if (businessTransactionsList != null && businessTransactionsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Business Transactions ({0} entities, {1} timeranges)", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityBusinessTransaction.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == BusinessTransaction.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, BusinessTransaction.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, BusinessTransaction.ENTITY_FOLDER, BusinessTransaction.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, BusinessTransaction.ENTITY_FOLDER, BusinessTransaction.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(businessTransactionsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -269,17 +269,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Service Endpoints
 
-                                List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointEntityReportMap());
+                                List<ServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointReportMap());
                                 if (serviceEndpointsList != null && serviceEndpointsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Service Endpoints ({0} entities, {1} timeranges)", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityServiceEndpoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == ServiceEndpoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, ServiceEndpoint.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, ServiceEndpoint.ENTITY_FOLDER, ServiceEndpoint.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, ServiceEndpoint.ENTITY_FOLDER, ServiceEndpoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(serviceEndpointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -292,16 +292,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Errors
 
-                                List<EntityError> errorsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorEntityReportMap());
+                                List<Error> errorsList = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorReportMap());
                                 if (errorsList != null && errorsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Errors ({0} entities, {1} timeranges)", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityError.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityError.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == Error.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, Error.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, Error.ENTITY_FOLDER, Error.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(errorsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -314,17 +314,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Information Points
 
-                                List<EntityInformationPoint> informationPointsList = FileIOHelper.ReadListFromCSVFile<EntityInformationPoint>(FilePathMap.InformationPointsIndexFilePath(jobTarget), new InformationPointEntityReportMap());
+                                List<InformationPoint> informationPointsList = FileIOHelper.ReadListFromCSVFile<InformationPoint>(FilePathMap.InformationPointsIndexFilePath(jobTarget), new InformationPointReportMap());
                                 if (informationPointsList != null && informationPointsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Metric Graphs Metrics for Information Points ({0} entities, {1} timeranges)", informationPointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     ExcelPackage excelReport = createIndividualEntityMetricGraphsReportTemplate(programOptions, jobConfiguration);
-                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == EntityInformationPoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
-                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityInformationPoint.ENTITY_FOLDER);
+                                    List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == InformationPoint.ENTITY_TYPE && m.Graph.Length > 0).ToList();
+                                    fillMetricValueTablesForEntityType(excelReport, REPORT_METRICS_GRAPHS_SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, InformationPoint.ENTITY_FOLDER);
 
-                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
-                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<EntityBase>().ToList(), jobConfiguration, jobTarget, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
+                                    fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, InformationPoint.ENTITY_FOLDER, InformationPoint.ENTITY_TYPE);
+                                    fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, InformationPoint.ENTITY_FOLDER, InformationPoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(informationPointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -601,7 +601,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private void fillMetricGraphsForEntityType(
             ExcelPackage excelReportMetrics,
             List<MetricExtractMapping> entityMetricExtractMappingList,
-            List<EntityBase> entityList,
+            List<APMEntityBase> entityList,
             JobConfiguration jobConfiguration,
             JobTarget jobTarget,
             string entityFolderName,
@@ -632,42 +632,42 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 switch (entityFolderName)
                 {
-                    case EntityApplication.ENTITY_FOLDER:
+                    case APMApplication.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_APPLICATIONS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_APPLICATIONS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 2;
                         break;
-                    case EntityTier.ENTITY_FOLDER:
+                    case APMTier.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_TIERS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_TIERS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 3;
                         break;
-                    case EntityNode.ENTITY_FOLDER:
+                    case APMNode.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_NODES_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_NODES, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityBackend.ENTITY_FOLDER:
+                    case Backend.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_BACKENDS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_BACKENDS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 3;
                         break;
-                    case EntityBusinessTransaction.ENTITY_FOLDER:
+                    case BusinessTransaction.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_BUSINESS_TRANSACTIONS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_BUSINESS_TRANSACTIONS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityServiceEndpoint.ENTITY_FOLDER:
+                    case ServiceEndpoint.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_SERVICE_ENDPOINTS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_SERVICE_ENDPOINTS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityError.ENTITY_FOLDER:
+                    case Error.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_ERRORS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_ERRORS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityInformationPoint.ENTITY_FOLDER:
+                    case InformationPoint.ENTITY_FOLDER:
                         sheetName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_SHEET_INFORMATION_POINTS_GRAPHS, metricMappingGroup.Key.Graph));
                         sheetEntityTableName = getShortenedNameForExcelSheet(String.Format(REPORT_METRICS_GRAPHS_TABLE_INFORMATION_POINTS, metricMappingGroup.Key.Graph));
                         columnsBeforeFirstHourRange = 3;
@@ -729,45 +729,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int entityTableHeaderRow = REPORT_METRICS_GRAPHS_GRAPH_SHEET_START_TABLE_AT;
                 switch (entityFolderName)
                 {
-                    case EntityApplication.ENTITY_FOLDER:
+                    case APMApplication.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "ApplicationName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "HasActivity";
                         break;
-                    case EntityTier.ENTITY_FOLDER:
+                    case APMTier.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "AgentType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
                         break;
-                    case EntityNode.ENTITY_FOLDER:
+                    case APMNode.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "NodeName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "AgentType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityBackend.ENTITY_FOLDER:
+                    case Backend.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "BackendName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "BackendType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
                         break;
-                    case EntityBusinessTransaction.ENTITY_FOLDER:
+                    case BusinessTransaction.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "BTName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "BTType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityServiceEndpoint.ENTITY_FOLDER:
+                    case ServiceEndpoint.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "SEPName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "SEPType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityError.ENTITY_FOLDER:
+                    case Error.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "ErrorName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "ErrorType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityInformationPoint.ENTITY_FOLDER:
+                    case InformationPoint.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "IPName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "IPType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
@@ -782,7 +782,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Output entity one at a time
                 for (int indexOfEntity = 0; indexOfEntity < entityList.Count; indexOfEntity++)
                 {
-                    EntityBase entity = entityList[indexOfEntity];
+                    APMEntityBase entity = entityList[indexOfEntity];
 
                     string entityNameForExcelTable = getShortenedEntityNameForExcelTable(entity.EntityName, entity.EntityID);
 
@@ -930,52 +930,52 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     // Output the first row
                     switch (entityFolderName)
                     {
-                        case EntityApplication.ENTITY_FOLDER:
+                        case APMApplication.ENTITY_FOLDER:
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entity.ApplicationName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityHasActivity;
                             break;
-                        case EntityTier.ENTITY_FOLDER:
-                            EntityTier entityTier = (EntityTier)entity;
+                        case APMTier.ENTITY_FOLDER:
+                            APMTier entityTier = (APMTier)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityTier.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityTier.TierType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;
                             break;
-                        case EntityNode.ENTITY_FOLDER:
-                            EntityNode entityNode = (EntityNode)entity;
+                        case APMNode.ENTITY_FOLDER:
+                            APMNode entityNode = (APMNode)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityNode.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityNode.NodeName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityNode.AgentType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityBackend.ENTITY_FOLDER:
-                            EntityBackend entityBackend = (EntityBackend)entity;
+                        case Backend.ENTITY_FOLDER:
+                            Backend entityBackend = (Backend)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityBackend.BackendName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityBackend.BackendType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;
                             break;
-                        case EntityBusinessTransaction.ENTITY_FOLDER:
-                            EntityBusinessTransaction entityBusinessTransaction = (EntityBusinessTransaction)entity;
+                        case BusinessTransaction.ENTITY_FOLDER:
+                            BusinessTransaction entityBusinessTransaction = (BusinessTransaction)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityBusinessTransaction.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityBusinessTransaction.BTName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityBusinessTransaction.BTType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityServiceEndpoint.ENTITY_FOLDER:
-                            EntityServiceEndpoint entityServiceEndpoint = (EntityServiceEndpoint)entity;
+                        case ServiceEndpoint.ENTITY_FOLDER:
+                            ServiceEndpoint entityServiceEndpoint = (ServiceEndpoint)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityServiceEndpoint.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityServiceEndpoint.SEPName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityServiceEndpoint.SEPType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityError.ENTITY_FOLDER:
-                            EntityError entityError = (EntityError)entity;
+                        case Error.ENTITY_FOLDER:
+                            Error entityError = (Error)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityError.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityError.ErrorName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityError.ErrorType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityInformationPoint.ENTITY_FOLDER:
-                            EntityInformationPoint entityInformationPoint = (EntityInformationPoint)entity;
+                        case InformationPoint.ENTITY_FOLDER:
+                            InformationPoint entityInformationPoint = (InformationPoint)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityInformationPoint.IPName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityInformationPoint.IPType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;
@@ -1035,7 +1035,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private void fillTransactionalScatterPlotsForEntityType(
             ExcelPackage excelReportMetrics,
             List<MetricExtractMapping> entityMetricExtractMappingList,
-            List<EntityBase> entityList,
+            List<APMEntityBase> entityList,
             JobConfiguration jobConfiguration,
             JobTarget jobTarget,
             string entityFolderName,
@@ -1063,39 +1063,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 switch (entityFolderName)
                 {
-                    case EntityApplication.ENTITY_FOLDER:
+                    case APMApplication.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_APPLICATIONS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_APPLICATIONS_SCATTER;
                         columnsBeforeFirstHourRange = 2;
                         break;
-                    case EntityTier.ENTITY_FOLDER:
+                    case APMTier.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_TIERS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_TIERS_SCATTER;
                         columnsBeforeFirstHourRange = 3;
                         break;
-                    case EntityNode.ENTITY_FOLDER:
+                    case APMNode.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_NODES_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_NODES_SCATTER;
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityBackend.ENTITY_FOLDER:
+                    case Backend.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_BACKENDS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_BACKENDS_SCATTER;
                         columnsBeforeFirstHourRange = 3;
                         break;
-                    case EntityBusinessTransaction.ENTITY_FOLDER:
+                    case BusinessTransaction.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_BUSINESS_TRANSACTIONS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_BUSINESS_TRANSACTIONS_SCATTER;
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityServiceEndpoint.ENTITY_FOLDER:
+                    case ServiceEndpoint.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_SERVICE_ENDPOINTS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_SERVICE_ENDPOINTS_SCATTER;
                         columnsBeforeFirstHourRange = 4;
                         break;
-                    case EntityError.ENTITY_FOLDER:
+                    case Error.ENTITY_FOLDER:
                         return;
-                    case EntityInformationPoint.ENTITY_FOLDER:
+                    case InformationPoint.ENTITY_FOLDER:
                         sheetName = REPORT_METRICS_GRAPHS_SHEET_INFORMATION_POINTS_SCATTER;
                         sheetEntityTableName = REPORT_METRICS_GRAPHS_TABLE_INFORMATION_POINTS_SCATTER;
                         columnsBeforeFirstHourRange = 3;
@@ -1164,45 +1164,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int entityTableHeaderRow = REPORT_METRICS_GRAPHS_GRAPH_SHEET_START_TABLE_AT;
                 switch (entityFolderName)
                 {
-                    case EntityApplication.ENTITY_FOLDER:
+                    case APMApplication.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "ApplicationName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "HasActivity";
                         break;
-                    case EntityTier.ENTITY_FOLDER:
+                    case APMTier.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "AgentType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
                         break;
-                    case EntityNode.ENTITY_FOLDER:
+                    case APMNode.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "NodeName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "AgentType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityBackend.ENTITY_FOLDER:
+                    case Backend.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "BackendName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "BackendType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
                         break;
-                    case EntityBusinessTransaction.ENTITY_FOLDER:
+                    case BusinessTransaction.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "BTName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "BTType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityServiceEndpoint.ENTITY_FOLDER:
+                    case ServiceEndpoint.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "SEPName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "SEPType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityError.ENTITY_FOLDER:
+                    case Error.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "TierName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "ErrorName";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "ErrorType";
                         sheetGraphs.Cells[entityTableHeaderRow, 4].Value = "HasActivity";
                         break;
-                    case EntityInformationPoint.ENTITY_FOLDER:
+                    case InformationPoint.ENTITY_FOLDER:
                         sheetGraphs.Cells[entityTableHeaderRow, 1].Value = "IPName";
                         sheetGraphs.Cells[entityTableHeaderRow, 2].Value = "IPType";
                         sheetGraphs.Cells[entityTableHeaderRow, 3].Value = "HasActivity";
@@ -1219,7 +1219,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Output entity one at a time
                 for (int indexOfEntity = 0; indexOfEntity < entityList.Count; indexOfEntity++)
                 {
-                    EntityBase entity = entityList[indexOfEntity];
+                    APMEntityBase entity = entityList[indexOfEntity];
 
                     string entityNameForExcelTable = getShortenedEntityNameForExcelTable(entity.EntityName, entity.EntityID);
 
@@ -1347,52 +1347,52 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     // Output the first row
                     switch (entityFolderName)
                     {
-                        case EntityApplication.ENTITY_FOLDER:
+                        case APMApplication.ENTITY_FOLDER:
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entity.ApplicationName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityHasActivity;
                             break;
-                        case EntityTier.ENTITY_FOLDER:
-                            EntityTier entityTier = (EntityTier)entity;
+                        case APMTier.ENTITY_FOLDER:
+                            APMTier entityTier = (APMTier)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityTier.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityTier.TierType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;
                             break;
-                        case EntityNode.ENTITY_FOLDER:
-                            EntityNode entityNode = (EntityNode)entity;
+                        case APMNode.ENTITY_FOLDER:
+                            APMNode entityNode = (APMNode)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityNode.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityNode.NodeName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityNode.AgentType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityBackend.ENTITY_FOLDER:
-                            EntityBackend entityBackend = (EntityBackend)entity;
+                        case Backend.ENTITY_FOLDER:
+                            Backend entityBackend = (Backend)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityBackend.BackendName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityBackend.BackendType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;
                             break;
-                        case EntityBusinessTransaction.ENTITY_FOLDER:
-                            EntityBusinessTransaction entityBusinessTransaction = (EntityBusinessTransaction)entity;
+                        case BusinessTransaction.ENTITY_FOLDER:
+                            BusinessTransaction entityBusinessTransaction = (BusinessTransaction)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityBusinessTransaction.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityBusinessTransaction.BTName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityBusinessTransaction.BTType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityServiceEndpoint.ENTITY_FOLDER:
-                            EntityServiceEndpoint entityServiceEndpoint = (EntityServiceEndpoint)entity;
+                        case ServiceEndpoint.ENTITY_FOLDER:
+                            ServiceEndpoint entityServiceEndpoint = (ServiceEndpoint)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityServiceEndpoint.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityServiceEndpoint.SEPName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityServiceEndpoint.SEPType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityError.ENTITY_FOLDER:
-                            EntityError entityError = (EntityError)entity;
+                        case Error.ENTITY_FOLDER:
+                            Error entityError = (Error)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityError.TierName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityError.ErrorName;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityError.ErrorType;
                             sheetGraphs.Cells[currentMaxRow, 4].Value = entityHasActivity;
                             break;
-                        case EntityInformationPoint.ENTITY_FOLDER:
-                            EntityInformationPoint entityInformationPoint = (EntityInformationPoint)entity;
+                        case InformationPoint.ENTITY_FOLDER:
+                            InformationPoint entityInformationPoint = (InformationPoint)entity;
                             sheetGraphs.Cells[currentMaxRow, 1].Value = entityInformationPoint.IPName;
                             sheetGraphs.Cells[currentMaxRow, 2].Value = entityInformationPoint.IPType;
                             sheetGraphs.Cells[currentMaxRow, 3].Value = entityHasActivity;

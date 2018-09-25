@@ -15,7 +15,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class ReportControlerSIMApplicationsAndEntities : JobStepReportBase
     {
-        #region Constants for Detected Entities Report contents
+        #region Constants for SIM Detected Entities Report contents
 
         private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
         private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_APPLICATIONS_LIST = "4.Applications";
@@ -149,7 +149,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.View.FreezePanes(REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_SIM_ENTITIES_SHEET_NODES_LIST);
@@ -388,8 +387,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS];
-                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -409,8 +408,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_APPLICATIONS_LIST];
-                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -439,8 +438,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_TIERS_LIST];
-                logger.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -467,8 +466,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_NODES_LIST];
-                logger.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -490,8 +489,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINES_LIST];
-                logger.Info("Machines Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machines Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -552,8 +551,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_PROPERTIES_LIST];
-                logger.Info("Machine Properties Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine Properties Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -601,8 +600,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_VOLUMES_LIST];
-                logger.Info("Machine Volumes Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine Volumes Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -650,8 +649,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_NETWORKS_LIST];
-                logger.Info("Machine Networks Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine Networks Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -707,8 +706,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_CPUS_LIST];
-                logger.Info("Machine CPUs Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine CPUs Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -757,8 +756,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_CONTAINERS_LIST];
-                logger.Info("Machine Containers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine Containers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -785,8 +784,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_MACHINE_PROCESSES_LIST];
-                logger.Info("Machine Processes Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Machine Processes Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];

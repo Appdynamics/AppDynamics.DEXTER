@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BackendMetricReportMap : ClassMap<EntityBackend>
+    public class BackendMetricReportMap : ClassMap<Backend>
     {
         public BackendMetricReportMap()
         {

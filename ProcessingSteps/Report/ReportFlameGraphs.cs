@@ -84,14 +84,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                                List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
                                 if (applicationList != null && applicationList.Count > 0)
                                 {
                                     loggerConsole.Info("Flame Graphs for Application");
 
                                     stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                                    EntityApplication application = applicationList[0];
+                                    APMApplication application = applicationList[0];
 
                                     if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget)) == true)
                                     {
@@ -124,12 +124,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tier
 
-                                List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
+                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Tiers ({0} entities)", tiersList.Count);
 
-                                    foreach (EntityTier tier in tiersList)
+                                    foreach (APMTier tier in tiersList)
                                     {
                                         if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, tier)) == true)
                                         {
@@ -166,12 +166,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Nodes ({0} entities)", nodesList.Count);
 
-                                    foreach (EntityNode node in nodesList)
+                                    foreach (APMNode node in nodesList)
                                     {
                                         if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, node)) == true)
                                         {
@@ -207,12 +207,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
+                                List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Business Transactions ({0} entities)", businessTransactionsList.Count);
 
-                                    foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                                    foreach (BusinessTransaction businessTransaction in businessTransactionsList)
                                     {
                                         if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexEntityFilePath(jobTarget, businessTransaction)) == true)
                                         {

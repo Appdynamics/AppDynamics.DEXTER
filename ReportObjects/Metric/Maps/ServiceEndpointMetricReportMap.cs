@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class ServiceEndpointMetricReportMap : ClassMap<EntityServiceEndpoint>
+    public class ServiceEndpointMetricReportMap : ClassMap<ServiceEndpoint>
     {
         public ServiceEndpointMetricReportMap()
         {

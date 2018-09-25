@@ -23,6 +23,14 @@
       "Application": "The name of SIM Application does not matter - there is only one in every Controller",
       "NameRegex": false,
       "Type": "SIM"
+    },
+    {
+      "Controller": "https://your.controller.here",
+      "UserName": "username@customer1",
+      "UserPassword": "your password or leave blank to be prompted",
+      "Application": ".*",
+      "NameRegex": true,
+      "Type": "DB"
     }
   ],
   "Input": {
@@ -31,7 +39,7 @@
       "To": "2018-07-01T10:00:00"
     },
     "Metrics": true,
-    "MetricsSelectionCriteria": [ "Transaction", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
+    "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
     "Flowmaps": true,
     "Configuration": true,
     "ConfigurationComparisonReferenceCriteria": {

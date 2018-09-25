@@ -44,6 +44,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS = "18.MIDCs";
         private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "19.HTTP DCs";
         private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "20.Call Graph Settings";
+        private const string REPORT_CONFIGURATION_SHEET_SERVICE_ENDPOINT_RULES_SETTINGS = "21.Service Endpoint Rules";
         private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES = "30.Config Differences";
         private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT = "30.Config Differences.Type";
 
@@ -68,6 +69,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_TABLE_TIER_SETTINGS = "t_Tiers";
         private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SETTINGS = "t_BusinessTransactions";
         private const string REPORT_CONFIGURATION_TABLE_AGENT_CALL_GRAPH_SETTINGS = "t_AgentCallGraphSettings";
+        private const string REPORT_CONFIGURATION_TABLE_SERVICE_ENDPOINT_ENTRY_RULES = "t_SEPEntryRules";
         private const string REPORT_CONFIGURATION_TABLE_CONFIGURATION_DIFFERENCES = "t_ConfigurationDifferrences";
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE = "p_BTEntryRulesType";
@@ -363,6 +365,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_SERVICE_ENDPOINT_RULES_SETTINGS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
@@ -434,6 +442,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BusinessTransactionEntryRulesReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Service Endpoint Entry Rules
+
+                loggerConsole.Info("List of Service Endpoint Entry Rules");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_SERVICE_ENDPOINT_RULES_SETTINGS];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ServiceEndpointEntryRulesReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -565,8 +582,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLERS];
-                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -586,8 +603,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS];
-                logger.Info("Controller Settings Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Controller Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -609,8 +626,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION];
-                logger.Info("Application Configuration Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Application Configuration Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -688,8 +705,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES];
-                logger.Info("Business Transaction Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transaction Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -715,8 +732,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES];
-                logger.Info("Business Transaction Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transaction Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -782,12 +799,38 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region Service Endpoint Entry Rules
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_SERVICE_ENDPOINT_RULES_SETTINGS];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_SERVICE_ENDPOINT_ENTRY_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
                 #region Business Transaction Scopes
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SCOPES];
-                logger.Info("Business Transaction Scopes Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transaction Scopes Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -811,8 +854,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES_20];
-                logger.Info("Business Transaction 2.0 Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transaction 2.0 Detection Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -836,8 +879,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Business Transaction Entry Rules 2.0
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_ENTRY_RULES_20];
-                logger.Info("Business Transaction 2.0 Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transaction 2.0 Entry Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -906,8 +949,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BACKEND_DISCOVERY_ENTRY_RULES];
-                logger.Info("Backend Discovery Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Backend Discovery Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -955,8 +998,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CUSTOM_EXIT_RULES];
-                logger.Info("Custom Exit Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Custom Exit Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1003,8 +1046,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_INFORMATION_POINT_RULES];
-                logger.Info("Information Point Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Information Point Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1027,8 +1070,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CONFIGURATION_PROPERTIES];
-                logger.Info("Agent Configuration Properties Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Agent Configuration Properties Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1078,8 +1121,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_METHOD_INVOCATION_DATA_COLLECTORS];
-                logger.Info("Method Invocation Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Method Invocation Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1098,8 +1141,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS];
-                logger.Info("HTTP Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("HTTP Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1122,8 +1165,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_TIER_SETTINGS];
-                logger.Info("Tier Settings Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Tier Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1145,8 +1188,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_SETTINGS];
-                logger.Info("Detected Business Transaction and Assigned Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1170,8 +1213,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS];
-                logger.Info("Agent Call Graph Settings Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Agent Call Graph Settings Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1193,8 +1236,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
-                logger.Info("Health Rules Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Health Rules Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1238,8 +1281,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES];
-                logger.Info("Configuration Differences Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Configuration Differences Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];

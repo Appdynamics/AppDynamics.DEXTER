@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class InformationPointMetricReportMap : ClassMap<EntityInformationPoint>
+    public class InformationPointMetricReportMap : ClassMap<InformationPoint>
     {
         public InformationPointMetricReportMap()
         {

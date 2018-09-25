@@ -1,5 +1,4 @@
-﻿using AppDynamics.Dexter.DataObjects;
-using AppDynamics.Dexter.ReportObjects;
+﻿using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -37,6 +35,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_SIM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -62,18 +67,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Tiers
 
-                        List<EntitySIMTier> tiersList = null;
+                        List<SIMTier> tiersList = null;
 
                         JArray tiersRESTList = FileIOHelper.LoadJArrayFromFile(FilePathMap.SIMTiersDataFilePath(jobTarget));
                         if (tiersRESTList != null)
                         {
                             loggerConsole.Info("Index List of Tiers ({0} entities)", tiersRESTList.Count);
 
-                            tiersList = new List<EntitySIMTier>(tiersRESTList.Count);
+                            tiersList = new List<SIMTier>(tiersRESTList.Count);
 
                             foreach (JToken tierREST in tiersRESTList)
                             {
-                                EntitySIMTier tier = new EntitySIMTier();
+                                SIMTier tier = new SIMTier();
                                 tier.ApplicationID = jobTarget.ApplicationID;
                                 tier.ApplicationName = jobTarget.Application;
                                 tier.Controller = jobTarget.Controller;
@@ -83,7 +88,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 // Will be filled later
                                 tier.NumNodes = 0;
 
-                                updateEntityWithDeeplinks(tier);
+                                updateEntityWithDeeplinks(tier, jobConfiguration.Input.TimeRange);
 
                                 tiersList.Add(tier);
                             }
@@ -98,18 +103,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Nodes
 
-                        List<EntitySIMNode> nodesList = null;
+                        List<SIMNode> nodesList = null;
 
                         JArray nodesRESTList = FileIOHelper.LoadJArrayFromFile(FilePathMap.SIMNodesDataFilePath(jobTarget));
                         if (nodesRESTList != null)
                         {
                             loggerConsole.Info("Index List of Nodes ({0} entities)", nodesRESTList.Count);
 
-                            nodesList = new List<EntitySIMNode>(nodesRESTList.Count);
+                            nodesList = new List<SIMNode>(nodesRESTList.Count);
 
                             foreach (JToken nodeREST in nodesRESTList)
                             {
-                                EntitySIMNode node = new EntitySIMNode();
+                                SIMNode node = new SIMNode();
                                 node.ApplicationID = jobTarget.ApplicationID;
                                 node.ApplicationName = jobTarget.Application;
                                 node.Controller = jobTarget.Controller;
@@ -117,7 +122,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 node.NodeName = nodeREST["name"].ToString();
                                 if (tiersList != null)
                                 {
-                                    EntitySIMTier tier = tiersList.Where(t => t.TierName == nodeREST["tierName"].ToString()).FirstOrDefault();
+                                    SIMTier tier = tiersList.Where(t => t.TierName == nodeREST["tierName"].ToString()).FirstOrDefault();
                                     if (tier != null)
                                     {
                                         node.TierID = tier.TierID;
@@ -126,7 +131,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
-                                updateEntityWithDeeplinks(node);
+                                updateEntityWithDeeplinks(node, jobConfiguration.Input.TimeRange);
 
                                 nodesList.Add(node);
                             }
@@ -136,34 +141,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + nodesList.Count;
 
-                            FileIOHelper.WriteListToCSVFile(tiersList, new SIMTierEntityReportMap(), FilePathMap.SIMTiersIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(nodesList, new SIMNodeEntityReportMap(), FilePathMap.SIMNodesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(tiersList, new SIMTierReportMap(), FilePathMap.SIMTiersIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(nodesList, new SIMNodeReportMap(), FilePathMap.SIMNodesIndexFilePath(jobTarget));
                         }
 
                         #endregion
 
                         #region Machines
 
-                        List<EntitySIMMachine> machinesList = null;
-                        List<EntitySIMMachineProperty> machinePropertiesAndTagsList = null;
-                        List<EntitySIMMachineCPU> machineCPUsList = null;
-                        List<EntitySIMMachineVolume> machineVolumesList = null;
-                        List<EntitySIMMachineNetwork> machineNetworksList = null;
-                        List<EntitySIMMachineContainer> machineContainersList = null;
-                        List<EntitySIMMachineProcess> machineProcessesList = null;
+                        List<Machine> machinesList = null;
+                        List<MachineProperty> machinePropertiesAndTagsList = null;
+                        List<MachineCPU> machineCPUsList = null;
+                        List<MachineVolume> machineVolumesList = null;
+                        List<MachineNetwork> machineNetworksList = null;
+                        List<MachineContainer> machineContainersList = null;
+                        List<MachineProcess> machineProcessesList = null;
 
                         JArray machinesRESTList = FileIOHelper.LoadJArrayFromFile(FilePathMap.SIMMachinesDataFilePath(jobTarget));
                         if (machinesRESTList != null)
                         {
                             loggerConsole.Info("Index Machines Configuration ({0} entities)", machinesRESTList.Count);
 
-                            machinesList = new List<EntitySIMMachine>(machinesRESTList.Count);
-                            machinePropertiesAndTagsList = new List<EntitySIMMachineProperty>(machinesRESTList.Count * 20);
-                            machineCPUsList = new List<EntitySIMMachineCPU>(machinesRESTList.Count);
-                            machineVolumesList = new List<EntitySIMMachineVolume>(machinesRESTList.Count * 3);
-                            machineNetworksList = new List<EntitySIMMachineNetwork>(machinesRESTList.Count * 3);
-                            machineContainersList = new List<EntitySIMMachineContainer>(machinesRESTList.Count * 10);
-                            machineProcessesList = new List<EntitySIMMachineProcess>(machinesRESTList.Count * 20);
+                            machinesList = new List<Machine>(machinesRESTList.Count);
+                            machinePropertiesAndTagsList = new List<MachineProperty>(machinesRESTList.Count * 20);
+                            machineCPUsList = new List<MachineCPU>(machinesRESTList.Count);
+                            machineVolumesList = new List<MachineVolume>(machinesRESTList.Count * 3);
+                            machineNetworksList = new List<MachineNetwork>(machinesRESTList.Count * 3);
+                            machineContainersList = new List<MachineContainer>(machinesRESTList.Count * 10);
+                            machineProcessesList = new List<MachineProcess>(machinesRESTList.Count * 20);
 
                             int j = 0;
 
@@ -177,7 +182,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     #region Machine summary
 
-                                    EntitySIMMachine machine = new EntitySIMMachine();
+                                    Machine machine = new Machine();
                                     machine.ApplicationID = jobTarget.ApplicationID;
                                     machine.ApplicationName = jobTarget.Application;
                                     machine.Controller = jobTarget.Controller;
@@ -185,26 +190,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     machine.MachineName = machineREST["name"].ToString();
                                     if (nodesList != null)
                                     {
-                                        EntitySIMNode nodeSIM = nodesList.Where(t => t.NodeID == (long)machineREST["simNodeId"]).FirstOrDefault();
-                                        if (nodeSIM != null)
+                                        try
                                         {
-                                            machine.TierID = nodeSIM.TierID;
-                                            machine.TierName = nodeSIM.TierName;
-                                            machine.NodeID = nodeSIM.NodeID;
-                                            machine.NodeName = nodeSIM.NodeName;
+                                            SIMNode nodeSIM = nodesList.Where(t => t.NodeID == (long)machineREST["simNodeId"]).FirstOrDefault();
+                                            if (nodeSIM != null)
+                                            {
+                                                machine.TierID = nodeSIM.TierID;
+                                                machine.TierName = nodeSIM.TierName;
+                                                machine.NodeID = nodeSIM.NodeID;
+                                                machine.NodeName = nodeSIM.NodeName;
+                                            }
                                         }
+                                        catch { }
                                     }
-                                    machine.MachineType = machineREST["type"].ToString();
-                                    machine.IsHistorical = (bool)machineREST["historical"];
-                                    machine.IsEnabled = (bool)machineREST["simEnabled"];
-                                    machine.DynamicMonitoringMode = machineREST["dynamicMonitoringMode"].ToString();
+                                    try {machine.MachineType = machineREST["type"].ToString(); } catch { }
+                                    try {machine.IsHistorical = (bool)machineREST["historical"]; } catch { }
+                                    try {machine.IsEnabled = (bool)machineREST["simEnabled"]; } catch { }
+                                    try {machine.DynamicMonitoringMode = machineREST["dynamicMonitoringMode"].ToString(); } catch { }
 
                                     try { machine.HostMachineID = (long)machineREST["agentConfig"]["rawConfig"]["_agentRegistrationSupplementalConfig"]["hostSimMachineId"]; } catch { }
                                     try { machine.DotnetCompatibilityMode = (bool)machineREST["agentConfig"]["rawConfig"]["_dotnetRegistrationRequestConfig"]["dotnetCompatibilityMode"]; } catch { }
-                                    machine.ForceMachineInstanceRegistration = (bool)machineREST["agentConfig"]["rawConfig"]["_machineInstanceRegistrationRequestConfig"]["forceMachineInstanceRegistration"];
+                                    try { machine.ForceMachineInstanceRegistration = (bool)machineREST["agentConfig"]["rawConfig"]["_machineInstanceRegistrationRequestConfig"]["forceMachineInstanceRegistration"]; } catch { }
 
-                                    machine.AgentConfigFeatures = machineREST["agentConfig"]["rawConfig"]["_features"]["features"].ToString(Newtonsoft.Json.Formatting.None);
-                                    machine.ControllerConfigFeatures = machineREST["controllerConfig"]["rawConfig"]["_features"]["features"].ToString(Newtonsoft.Json.Formatting.None);
+                                    try { machine.AgentConfigFeatures = machineREST["agentConfig"]["rawConfig"]["_features"]["features"].ToString(Newtonsoft.Json.Formatting.None); } catch { }
+                                    try { machine.ControllerConfigFeatures = machineREST["controllerConfig"]["rawConfig"]["_features"]["features"].ToString(Newtonsoft.Json.Formatting.None); } catch { }
 
                                     if (machineREST["memory"].HasValues == true)
                                     {
@@ -212,10 +221,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         try { machine.MemSwap = (int)machineREST["memory"]["Swap"]["sizeMb"]; } catch { }
                                     }
 
-                                    machine.MachineInfo = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["machineInfo"].ToString();
-                                    machine.JVMInfo = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["jvmInfo"].ToString();
-                                    machine.InstallDirectory = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["installDirectory"].ToString();
-                                    machine.AgentVersionRaw = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["agentVersion"].ToString();
+                                    try {machine.MachineInfo = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["machineInfo"].ToString(); } catch { }
+                                    try {machine.JVMInfo = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["jvmInfo"].ToString(); } catch { }
+                                    try {machine.InstallDirectory = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["installDirectory"].ToString(); } catch { }
+                                    try {machine.AgentVersionRaw = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["agentVersion"].ToString(); } catch { }
                                     if (machine.AgentVersionRaw != String.Empty)
                                     {
                                         // Machine agent looks like that 
@@ -240,61 +249,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                     }
-                                    machine.AutoRegisterAgent = (bool)machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["autoRegisterAgent"];
+                                    try { machine.AutoRegisterAgent = (bool)machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["autoRegisterAgent"]; } catch { }
                                     try { machine.AgentType = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["agentType"].ToString(); } catch { }
-                                    JToken jToken = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["applicationNames"];
-                                    if (jToken.Type == JTokenType.Array && jToken.First != null)
+                                    try
                                     {
-                                        if (jToken.Count() > 0)
+                                        JToken jToken = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["applicationNames"];
+                                        if (jToken.Type == JTokenType.Array && jToken.First != null)
                                         {
-                                            if (jToken.Count() == 1)
+                                            if (jToken.Count() > 0)
                                             {
-                                                machine.APMApplicationName = jToken.First.ToString();
-                                            }
-                                            else
-                                            {
-                                                machine.APMApplicationName = jToken.ToString(Newtonsoft.Json.Formatting.None);
+                                                if (jToken.Count() == 1)
+                                                {
+                                                    machine.APMApplicationName = jToken.First.ToString();
+                                                }
+                                                else
+                                                {
+                                                    machine.APMApplicationName = jToken.ToString(Newtonsoft.Json.Formatting.None);
+                                                }
                                             }
                                         }
                                     }
-                                    machine.APMTierName = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["tierName"].ToString();
-                                    machine.APMNodeName = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["nodeName"].ToString();
+                                    catch { }
+                                    try {machine.APMTierName = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["tierName"].ToString(); } catch { }
+                                    try {machine.APMNodeName = machineREST["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"]["nodeName"].ToString(); } catch { }
 
                                     #endregion
 
                                     #region Properties
 
-                                    foreach (JProperty property in machineREST["properties"])
+                                    if (machineREST["properties"] != null)
                                     {
-                                        EntitySIMMachineProperty machineProp = new EntitySIMMachineProperty();
-                                        machineProp.ApplicationID = machine.ApplicationID;
-                                        machineProp.ApplicationName = machine.ApplicationName;
-                                        machineProp.Controller = machine.Controller;
-                                        machineProp.TierID = machine.TierID;
-                                        machineProp.TierName = machine.TierName;
-                                        machineProp.NodeID = machine.NodeID;
-                                        machineProp.NodeName = machine.NodeName;
-                                        machineProp.MachineID = machine.MachineID;
-                                        machineProp.MachineName = machine.MachineName;
-
-                                        machineProp.PropType = "Property";
-                                        machineProp.PropName = property.Name;
-                                        machineProp.PropValue = property.Value.ToString();
-
-                                        machine.NumProps++;
-
-                                        machinePropertiesAndTagsList.Add(machineProp);
-                                    }
-
-                                    #endregion
-
-                                    #region Tags
-
-                                    foreach (JProperty property in machineREST["tags"])
-                                    {
-                                        foreach (JToken propertyValue in property.Value)
+                                        foreach (JProperty property in machineREST["properties"])
                                         {
-                                            EntitySIMMachineProperty machineProp = new EntitySIMMachineProperty();
+                                            MachineProperty machineProp = new MachineProperty();
                                             machineProp.ApplicationID = machine.ApplicationID;
                                             machineProp.ApplicationName = machine.ApplicationName;
                                             machineProp.Controller = machine.Controller;
@@ -305,11 +292,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             machineProp.MachineID = machine.MachineID;
                                             machineProp.MachineName = machine.MachineName;
 
-                                            machineProp.PropType = "Tag";
+                                            machineProp.PropType = "Property";
                                             machineProp.PropName = property.Name;
-                                            machineProp.PropValue = propertyValue.ToString();
+                                            machineProp.PropValue = property.Value.ToString();
 
-                                            machine.NumTags++;
+                                            machine.NumProps++;
 
                                             machinePropertiesAndTagsList.Add(machineProp);
                                         }
@@ -317,98 +304,138 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #endregion
 
+                                    #region Tags
+
+                                    if (machineREST["tags"] != null)
+                                    {
+                                        foreach (JProperty property in machineREST["tags"])
+                                        {
+                                            foreach (JToken propertyValue in property.Value)
+                                            {
+                                                MachineProperty machineProp = new MachineProperty();
+                                                machineProp.ApplicationID = machine.ApplicationID;
+                                                machineProp.ApplicationName = machine.ApplicationName;
+                                                machineProp.Controller = machine.Controller;
+                                                machineProp.TierID = machine.TierID;
+                                                machineProp.TierName = machine.TierName;
+                                                machineProp.NodeID = machine.NodeID;
+                                                machineProp.NodeName = machine.NodeName;
+                                                machineProp.MachineID = machine.MachineID;
+                                                machineProp.MachineName = machine.MachineName;
+
+                                                machineProp.PropType = "Tag";
+                                                machineProp.PropName = property.Name;
+                                                machineProp.PropValue = propertyValue.ToString();
+
+                                                machine.NumTags++;
+
+                                                machinePropertiesAndTagsList.Add(machineProp);
+                                            }
+                                        }
+                                    }
+                                    #endregion
+
                                     #region CPUs
 
-                                    foreach (JObject cpu in machineREST["cpus"])
+                                    if (machineREST["cpus"] != null)
                                     {
-                                        EntitySIMMachineCPU machineCPU = new EntitySIMMachineCPU();
-                                        machineCPU.ApplicationID = machine.ApplicationID;
-                                        machineCPU.ApplicationName = machine.ApplicationName;
-                                        machineCPU.Controller = machine.Controller;
-                                        machineCPU.TierID = machine.TierID;
-                                        machineCPU.TierName = machine.TierName;
-                                        machineCPU.NodeID = machine.NodeID;
-                                        machineCPU.NodeName = machine.NodeName;
-                                        machineCPU.MachineID = machine.MachineID;
-                                        machineCPU.MachineName = machine.MachineName;
+                                        foreach (JObject cpu in machineREST["cpus"])
+                                        {
+                                            MachineCPU machineCPU = new MachineCPU();
+                                            machineCPU.ApplicationID = machine.ApplicationID;
+                                            machineCPU.ApplicationName = machine.ApplicationName;
+                                            machineCPU.Controller = machine.Controller;
+                                            machineCPU.TierID = machine.TierID;
+                                            machineCPU.TierName = machine.TierName;
+                                            machineCPU.NodeID = machine.NodeID;
+                                            machineCPU.NodeName = machine.NodeName;
+                                            machineCPU.MachineID = machine.MachineID;
+                                            machineCPU.MachineName = machine.MachineName;
 
-                                        machineCPU.CPUID = cpu["cpuId"].ToString();
-                                        try { machineCPU.NumCores = (int)cpu["coreCount"]; } catch { }
-                                        try { machineCPU.NumLogical = (int)cpu["logicalCount"]; } catch { }
-                                        try { machineCPU.Vendor = cpu["properties"]["Vendor"].ToString(); } catch { }
-                                        machineCPU.Flags = String.Empty;
-                                        try { machineCPU.Flags = cpu["properties"]["Flags"].ToString(); } catch { }
-                                        machineCPU.NumFlags = machineCPU.Flags.Split(' ').Length;
-                                        try { machineCPU.Model = cpu["properties"]["Model Name"].ToString(); } catch { }
-                                        try { machineCPU.Speed = cpu["properties"]["Max Speed MHz"].ToString(); } catch { }
+                                            machineCPU.CPUID = cpu["cpuId"].ToString();
+                                            try { machineCPU.NumCores = (int)cpu["coreCount"]; } catch { }
+                                            try { machineCPU.NumLogical = (int)cpu["logicalCount"]; } catch { }
+                                            try { machineCPU.Vendor = cpu["properties"]["Vendor"].ToString(); } catch { }
+                                            machineCPU.Flags = String.Empty;
+                                            try { machineCPU.Flags = cpu["properties"]["Flags"].ToString(); } catch { }
+                                            machineCPU.NumFlags = machineCPU.Flags.Split(' ').Length;
+                                            try { machineCPU.Model = cpu["properties"]["Model Name"].ToString(); } catch { }
+                                            try { machineCPU.Speed = cpu["properties"]["Max Speed MHz"].ToString(); } catch { }
 
-                                        machine.NumCPUs++;
+                                            machine.NumCPUs++;
 
-                                        machineCPUsList.Add(machineCPU);
+                                            machineCPUsList.Add(machineCPU);
+                                        }
                                     }
 
                                     #endregion
 
                                     #region Volumes
 
-                                    foreach (JObject volume in machineREST["volumes"])
+                                    if (machineREST["volumes"] != null)
                                     {
-                                        EntitySIMMachineVolume machineVolume = new EntitySIMMachineVolume();
-                                        machineVolume.ApplicationID = machine.ApplicationID;
-                                        machineVolume.ApplicationName = machine.ApplicationName;
-                                        machineVolume.Controller = machine.Controller;
-                                        machineVolume.TierID = machine.TierID;
-                                        machineVolume.TierName = machine.TierName;
-                                        machineVolume.NodeID = machine.NodeID;
-                                        machineVolume.NodeName = machine.NodeName;
-                                        machineVolume.MachineID = machine.MachineID;
-                                        machineVolume.MachineName = machine.MachineName;
+                                        foreach (JObject volume in machineREST["volumes"])
+                                        {
+                                            MachineVolume machineVolume = new MachineVolume();
+                                            machineVolume.ApplicationID = machine.ApplicationID;
+                                            machineVolume.ApplicationName = machine.ApplicationName;
+                                            machineVolume.Controller = machine.Controller;
+                                            machineVolume.TierID = machine.TierID;
+                                            machineVolume.TierName = machine.TierName;
+                                            machineVolume.NodeID = machine.NodeID;
+                                            machineVolume.NodeName = machine.NodeName;
+                                            machineVolume.MachineID = machine.MachineID;
+                                            machineVolume.MachineName = machine.MachineName;
 
-                                        machineVolume.MountPoint = volume["mountPoint"].ToString();
-                                        machineVolume.Partition = volume["partition"].ToString();
-                                        try { machineVolume.SizeMB = (int)volume["properties"]["Size (MB)"]; } catch { }
-                                        try { machineVolume.PartitionMetricName = volume["properties"]["PartitionMetricName"].ToString(); } catch { }
-                                        try { machineVolume.VolumeMetricName = volume["properties"]["VolumeMetricName"].ToString(); } catch { }
+                                            machineVolume.MountPoint = volume["mountPoint"].ToString();
+                                            machineVolume.Partition = volume["partition"].ToString();
+                                            try { machineVolume.SizeMB = (int)volume["properties"]["Size (MB)"]; } catch { }
+                                            try { machineVolume.PartitionMetricName = volume["properties"]["PartitionMetricName"].ToString(); } catch { }
+                                            try { machineVolume.VolumeMetricName = volume["properties"]["VolumeMetricName"].ToString(); } catch { }
 
-                                        machine.NumVolumes++;
+                                            machine.NumVolumes++;
 
-                                        machineVolumesList.Add(machineVolume);
+                                            machineVolumesList.Add(machineVolume);
+                                        }
                                     }
 
                                     #endregion
 
                                     #region Networks
 
-                                    foreach (JObject network in machineREST["networkInterfaces"])
+                                    if (machineREST["networkInterfaces"] != null)
                                     {
-                                        EntitySIMMachineNetwork machineNetwork = new EntitySIMMachineNetwork();
-                                        machineNetwork.ApplicationID = machine.ApplicationID;
-                                        machineNetwork.ApplicationName = machine.ApplicationName;
-                                        machineNetwork.Controller = machine.Controller;
-                                        machineNetwork.TierID = machine.TierID;
-                                        machineNetwork.TierName = machine.TierName;
-                                        machineNetwork.NodeID = machine.NodeID;
-                                        machineNetwork.NodeName = machine.NodeName;
-                                        machineNetwork.MachineID = machine.MachineID;
-                                        machineNetwork.MachineName = machine.MachineName;
+                                        foreach (JObject network in machineREST["networkInterfaces"])
+                                        {
+                                            MachineNetwork machineNetwork = new MachineNetwork();
+                                            machineNetwork.ApplicationID = machine.ApplicationID;
+                                            machineNetwork.ApplicationName = machine.ApplicationName;
+                                            machineNetwork.Controller = machine.Controller;
+                                            machineNetwork.TierID = machine.TierID;
+                                            machineNetwork.TierName = machine.TierName;
+                                            machineNetwork.NodeID = machine.NodeID;
+                                            machineNetwork.NodeName = machine.NodeName;
+                                            machineNetwork.MachineID = machine.MachineID;
+                                            machineNetwork.MachineName = machine.MachineName;
 
-                                        machineNetwork.NetworkName = network["name"].ToString();
-                                        machineNetwork.MacAddress = network["macAddress"].ToString();
-                                        machineNetwork.IP4Address = network["ip4Address"].ToString();
-                                        machineNetwork.IP6Address = network["ip6Address"].ToString();
-                                        try { machineNetwork.IP4Gateway = network["properties"]["IPv4 Default Gateway"].ToString(); } catch { }
-                                        try { machineNetwork.IP6Gateway = network["properties"]["IPv6 Default Gateway"].ToString(); } catch { }
-                                        try { machineNetwork.PluggedIn = network["properties"]["Plugged In"].ToString(); } catch { }
-                                        try { machineNetwork.Enabled = network["properties"]["Enabled"].ToString(); } catch { }
-                                        try { machineNetwork.State = network["properties"]["Operational State"].ToString(); } catch { }
-                                        try { machineNetwork.Speed = (int)network["properties"]["Speed"]; } catch { }
-                                        try { machineNetwork.Duplex = network["properties"]["Duplex"].ToString(); } catch { }
-                                        try { machineNetwork.MTU = network["properties"]["MTU"].ToString(); } catch { }
-                                        try { machineNetwork.NetworkMetricName = network["properties"]["MetricName"].ToString(); } catch { }
+                                            machineNetwork.NetworkName = network["name"].ToString();
+                                            machineNetwork.MacAddress = network["macAddress"].ToString();
+                                            machineNetwork.IP4Address = network["ip4Address"].ToString();
+                                            machineNetwork.IP6Address = network["ip6Address"].ToString();
+                                            try { machineNetwork.IP4Gateway = network["properties"]["IPv4 Default Gateway"].ToString(); } catch { }
+                                            try { machineNetwork.IP6Gateway = network["properties"]["IPv6 Default Gateway"].ToString(); } catch { }
+                                            try { machineNetwork.PluggedIn = network["properties"]["Plugged In"].ToString(); } catch { }
+                                            try { machineNetwork.Enabled = network["properties"]["Enabled"].ToString(); } catch { }
+                                            try { machineNetwork.State = network["properties"]["Operational State"].ToString(); } catch { }
+                                            try { machineNetwork.Speed = (int)network["properties"]["Speed"]; } catch { }
+                                            try { machineNetwork.Duplex = network["properties"]["Duplex"].ToString(); } catch { }
+                                            try { machineNetwork.MTU = network["properties"]["MTU"].ToString(); } catch { }
+                                            try { machineNetwork.NetworkMetricName = network["properties"]["MetricName"].ToString(); } catch { }
 
-                                        machine.NumNetworks++;
+                                            machine.NumNetworks++;
 
-                                        machineNetworksList.Add(machineNetwork);
+                                            machineNetworksList.Add(machineNetwork);
+                                        }
                                     }
 
                                     #endregion
@@ -419,7 +446,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         foreach (JObject container in machineContainerREST)
                                         {
-                                            EntitySIMMachineContainer machineContainer = new EntitySIMMachineContainer();
+                                            MachineContainer machineContainer = new MachineContainer();
                                             machineContainer.ApplicationID = machine.ApplicationID;
                                             machineContainer.ApplicationName = machine.ApplicationName;
                                             machineContainer.Controller = machine.Controller;
@@ -465,7 +492,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             foreach (JObject process in machineProcessGroup["processes"])
                                             {
-                                                EntitySIMMachineProcess machineProcess = new EntitySIMMachineProcess();
+                                                MachineProcess machineProcess = new MachineProcess();
                                                 machineProcess.ApplicationID = machine.ApplicationID;
                                                 machineProcess.ApplicationName = machine.ApplicationName;
                                                 machineProcess.Controller = machine.Controller;
@@ -512,7 +539,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #endregion
 
-                                    updateEntityWithDeeplinks(machine);
+                                    updateEntityWithDeeplinks(machine, jobConfiguration.Input.TimeRange);
 
                                     machinesList.Add(machine);
                                 }
@@ -535,13 +562,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + machinesList.Count;
 
-                            FileIOHelper.WriteListToCSVFile(machinesList, new SIMMachineEntityReportMap(), FilePathMap.SIMMachinesIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machinePropertiesAndTagsList, new SIMMachineEntityPropertyReportMap(), FilePathMap.SIMMachinePropertiesIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machineCPUsList, new SIMMachineEntityCPUReportMap(), FilePathMap.SIMMachineCPUsIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machineVolumesList, new SIMMachineEntityVolumeReportMap(), FilePathMap.SIMMachineVolumesIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machineNetworksList, new SIMMachineEntityNetworkReportMap(), FilePathMap.SIMMachineNetworksIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machineContainersList, new SIMMachineEntityContainerReportMap(), FilePathMap.SIMMachineContainersIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(machineProcessesList, new SIMMachineEntityProcessReportMap(), FilePathMap.SIMMachineProcessesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machinesList, new MachineReportMap(), FilePathMap.SIMMachinesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machinePropertiesAndTagsList, new MachinePropertyReportMap(), FilePathMap.SIMMachinePropertiesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machineCPUsList, new MachineCPUReportMap(), FilePathMap.SIMMachineCPUsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machineVolumesList, new MachineVolumeReportMap(), FilePathMap.SIMMachineVolumesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machineNetworksList, new MachineNetworkReportMap(), FilePathMap.SIMMachineNetworksIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machineContainersList, new MachineContainerReportMap(), FilePathMap.SIMMachineContainersIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(machineProcessesList, new MachineProcessReportMap(), FilePathMap.SIMMachineProcessesIndexFilePath(jobTarget));
 
                             Console.WriteLine("{0} done", machinesRESTList.Count);
                         }
@@ -554,8 +581,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                        List<EntitySIMApplication> applicationsList = new List<EntitySIMApplication>(1);
-                        EntitySIMApplication applicationRow = new EntitySIMApplication();
+                        List<SIMApplication> applicationsList = new List<SIMApplication>(1);
+                        SIMApplication applicationRow = new SIMApplication();
                         applicationRow.ApplicationID = jobTarget.ApplicationID;
                         applicationRow.ApplicationName = jobTarget.Application;
                         applicationRow.Controller = jobTarget.Controller;
@@ -572,22 +599,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             applicationRow.NumMachines = machinesList.Count;
                         }
 
-                        updateEntityWithDeeplinks(applicationRow);
+                        updateEntityWithDeeplinks(applicationRow, jobConfiguration.Input.TimeRange);
 
                         applicationsList.Add(applicationRow);
 
-                        FileIOHelper.WriteListToCSVFile(applicationsList, new SIMApplicationEntityReportMap(), FilePathMap.SIMApplicationIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(applicationsList, new SIMApplicationReportMap(), FilePathMap.SIMApplicationIndexFilePath(jobTarget));
 
                         #endregion
 
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.SIMEntitiesReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.SIMEntitiesReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
@@ -689,12 +717,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return true;
         }
 
-        private void updateEntityWithDeeplinks(EntitySIMBase entityRow)
+        private void updateEntityWithDeeplinks(SIMEntityBase entityRow)
         {
             updateEntityWithDeeplinks(entityRow, null);
         }
 
-        private void updateEntityWithDeeplinks(EntitySIMBase entityRow, JobTimeRange jobTimeRange)
+        private void updateEntityWithDeeplinks(SIMEntityBase entityRow, JobTimeRange jobTimeRange)
         {
             // Decide what kind of timerange
             string DEEPLINK_THIS_TIMERANGE = DEEPLINK_TIMERANGE_LAST_15_MINUTES;
@@ -707,26 +735,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
 
             // Determine what kind of entity we are dealing with and adjust accordingly
-            if (entityRow is EntitySIMApplication)
+            if (entityRow is SIMApplication)
             {
                 entityRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_SIMAPPLICATION, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntitySIMTier)
+            else if (entityRow is SIMTier)
             {
-                EntitySIMTier entity = (EntitySIMTier)entityRow;
+                SIMTier entity = (SIMTier)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_SIMAPPLICATION, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntitySIMNode)
+            else if (entityRow is SIMNode)
             {
-                EntitySIMNode entity = (EntitySIMNode)entityRow;
+                SIMNode entity = (SIMNode)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_SIMAPPLICATION, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntitySIMMachine)
+            else if (entityRow is Machine)
             {
-                EntitySIMMachine entity = (EntitySIMMachine)entityRow;
+                Machine entity = (Machine)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_SIMAPPLICATION, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.MachineLink = String.Format(DEEPLINK_SIMMACHINE, entity.Controller, entity.ApplicationID, entity.MachineID, DEEPLINK_THIS_TIMERANGE);

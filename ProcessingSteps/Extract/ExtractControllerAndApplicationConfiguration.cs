@@ -1,4 +1,5 @@
 ﻿using AppDynamics.Dexter.ReportObjects;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -82,6 +83,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Application configuration
                         string applicationConfigXml = controllerApi.GetApplicationConfiguration(jobTarget.ApplicationID);
                         if (applicationConfigXml != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.ApplicationConfigurationDataFilePath(jobTarget));
+
+                        #endregion
+
+                        #region Service Endpoints
+
+                        // SEPs are not included in the extracted XML
+                        // There is Flash/Flex API but I am not going to call it
+                        // Otherwise there is accounts API https://docs.appdynamics.com/display/PRO45/Access+Swagger+and+Accounts+API
+                        // This includes this one:
+                        // GET /accounts/{acctId}/applications/{appId}/sep      Get all ServiceEndPointConfigs for application
+                        // It requires pretty high admin level access but hey, it's not Flash
+
+                        loggerConsole.Info("Service Endpoint Configuration");
+
+                        string myAccountJSON = controllerApi.GetAccountsMyAccount();
+                        if (myAccountJSON != String.Empty)
+                        {
+                            JObject myAccount = JObject.Parse(myAccountJSON);
+                            if (myAccount != null)
+                            {
+                                long accountID = -1;
+                                try { accountID = (long)myAccount["id"]; } catch { }
+
+                                if (accountID != -1)
+                                {
+                                    string applicationConfigSEPJSON = controllerApi.GetApplicationSEPConfiguration(accountID, jobTarget.ApplicationID);
+                                    if (applicationConfigSEPJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigSEPJSON, FilePathMap.ApplicationConfigurationSEPDataFilePath(jobTarget));
+                                }
+                            }
+                        }
 
                         #endregion
                     }

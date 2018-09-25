@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class TierMetricReportMap : ClassMap<EntityTier>
+    public class TierMetricReportMap : ClassMap<APMTier>
     {
         public TierMetricReportMap()
         {

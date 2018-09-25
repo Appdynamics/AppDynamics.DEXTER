@@ -26,6 +26,8 @@ namespace AppDynamics.Dexter
 
             try
             {
+                logger.Trace("AppDynamics DEXTER Version {0}", Assembly.GetEntryAssembly().GetName().Version);
+                loggerConsole.Trace("AppDynamics DEXTER Version {0}", Assembly.GetEntryAssembly().GetName().Version);
                 logger.Trace("Starting at local {0:o}/UTC {1:o}, Version={2}, Parameters={3}", DateTime.Now, DateTime.UtcNow, Assembly.GetEntryAssembly().GetName().Version, String.Join(" ", args));
                 logger.Trace("Timezone {0} {1} {2}", TimeZoneInfo.Local.DisplayName, TimeZoneInfo.Local.StandardName, TimeZoneInfo.Local.BaseUtcOffset);
                 logger.Trace("Framework {0}", RuntimeInformation.FrameworkDescription);
@@ -415,10 +417,11 @@ namespace AppDynamics.Dexter
 
                                 // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
                                 string applicationsAPMJSON = controllerApi.GetApplicationsAPM();
-                                if (applicationsAPMJSON.Length > 0)
+                                if (applicationsAPMJSON != String.Empty && applicationsAPMJSON.Length > 0)
                                 {
                                     JArray applicationsInTarget = JArray.Parse(applicationsAPMJSON);
 
+                                    // Filter to the regex or exact match
                                     IEnumerable<JToken> applicationsMatchingCriteria = null;
                                     if (jobTarget.NameRegex == true)
                                     {
@@ -526,11 +529,17 @@ namespace AppDynamics.Dexter
 
                                 break;
 
+                            case JobStepBase.APPLICATION_TYPE_MOBILE:
+
+                                loggerConsole.Warn("Target [{0}] Application type '{1}' is not yet implemented", i + 1, JobStepBase.APPLICATION_TYPE_MOBILE);
+
+                                break;
+
                             case JobStepBase.APPLICATION_TYPE_SIM:
 
                                 #region Find SIM application
 
-                                string applicationSIMJSON = controllerApi.GetApplicationSIM();
+                                string applicationSIMJSON = controllerApi.GetSIMApplication();
                                 if (applicationSIMJSON.Length > 0)
                                 {
                                     JObject applicationSIMInTarget = JObject.Parse(applicationSIMJSON);
@@ -551,6 +560,86 @@ namespace AppDynamics.Dexter
 
                                         logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
                                         loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
+                                    }
+                                }
+
+                                #endregion
+
+                                break;
+
+                            case JobStepBase.APPLICATION_TYPE_DB:
+
+                                #region Find Database application
+
+                                // Now we know we have access to Controller. Let's get Database Collectors and expand them into multiple targets if there is a wildcard/regex
+                                controllerApi.PrivateApiLogin();
+
+                                string applicationsAllTypesJSON = controllerApi.GetAllApplicationsAllTypes();
+                                if (applicationsAllTypesJSON.Length > 0)
+                                {
+                                    JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
+
+                                    if (applicationsAll["dbMonApplication"] != null && applicationsAll["dbMonApplication"]["name"].ToString() == "Database Monitoring")
+                                    {
+                                        // Get database collectors
+                                        long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.From);
+                                        long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.To);
+
+                                        string collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls45(fromTimeUnix, toTimeUnix);
+                                        if (collectorsJSON == String.Empty) collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls44(fromTimeUnix, toTimeUnix);
+
+                                        if (collectorsJSON != String.Empty && collectorsJSON.Length > 0)
+                                        {
+                                            JObject collectorsContainer = JObject.Parse(collectorsJSON);
+                                            if (collectorsContainer != null && collectorsContainer["data"] != null)
+                                            {
+                                                JArray dbCollectorsInTarget = (JArray)collectorsContainer["data"];
+
+                                                // Filter to the regex or exact match
+                                                IEnumerable<JToken> dbCollectorsMatchingCriteria = null;
+                                                if (jobTarget.NameRegex == true)
+                                                {
+                                                    if (jobTarget.Application == "*")
+                                                    {
+                                                        jobTarget.Application = ".*";
+                                                    }
+                                                    Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
+                                                    dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
+                                                        dbColl => regexApplication.Match(dbColl["name"].ToString()).Success == true);
+                                                }
+                                                else
+                                                {
+                                                    dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
+                                                        dbColl => String.Compare(dbColl["name"].ToString(), jobTarget.Application, true) == 0);
+                                                }
+
+                                                if (dbCollectorsMatchingCriteria.Count() == 0)
+                                                {
+                                                    logger.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+                                                    loggerConsole.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+
+                                                    continue;
+                                                }
+
+                                                foreach (JObject dbCollector in dbCollectorsMatchingCriteria)
+                                                {
+                                                    // Create a copy of target application for each individual application
+                                                    JobTarget jobTargetExpanded = new JobTarget();
+                                                    jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                                    jobTargetExpanded.UserName = jobTarget.UserName;
+                                                    jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                                    jobTargetExpanded.Application = dbCollector["name"].ToString();
+                                                    jobTargetExpanded.ApplicationID = (long)dbCollector["id"];
+                                                    jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_DB;
+
+                                                    expandedJobTargets.Add(jobTargetExpanded);
+
+                                                    logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
+                                                    loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
@@ -619,13 +708,6 @@ namespace AppDynamics.Dexter
 
                 // Flush all the logs before shutting down
                 LogManager.Flush();
-                //LogManager.Configuration.AllTargets
-                //    .OfType<BufferingTargetWrapper>()
-                //    .ToList()
-                //    .ForEach(b => b.Flush(e =>
-                //    {
-                //        do nothing here
-                //    }));
             }
         }
 

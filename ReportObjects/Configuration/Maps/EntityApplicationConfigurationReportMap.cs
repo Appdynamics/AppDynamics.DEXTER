@@ -18,6 +18,7 @@ namespace AppDynamics.Dexter.ReportObjects
             Map(m => m.NumBT20DiscoveryRules).Index(i); i++;
             Map(m => m.NumBT20EntryRules).Index(i); i++;
             Map(m => m.NumBT20ExcludeRules).Index(i); i++;
+            Map(m => m.NumSEPRules).Index(i); i++;
             Map(m => m.NumBackendRules).Index(i); i++;
             Map(m => m.NumInfoPointRules).Index(i); i++;
             Map(m => m.NumAgentProps).Index(i); i++;

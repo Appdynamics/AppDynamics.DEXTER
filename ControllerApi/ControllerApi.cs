@@ -51,6 +51,7 @@ namespace AppDynamics.Dexter
             httpClient.DefaultRequestHeaders.Add("User-Agent", String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version));
 
             // If customer controller certificates are not in trusted store, let's not fail
+            // Yes, that's not particularly secure, but it makes the tool work on the machines where the certificates in the controller are not trusted by the retrieving client
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
 
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
@@ -101,12 +102,36 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region APM metadata
+        #region All Applications metadata
+
+        public string GetAllApplicationsAllTypes()
+        {
+            return this.apiGET("controller/restui/applicationManagerUiBean/getApplicationsAllTypes", "application/json", true);
+        }
+
+        #endregion
+
+
+        #region APM Application configuration
 
         public string GetApplicationConfiguration(long applicationID)
         {
             return this.apiGET(String.Format("controller/ConfigObjectImportExportServlet?applicationId={0}", applicationID), "text/xml", false);
         }
+
+        public string GetAccountsMyAccount()
+        {
+            return this.apiGET("/api/accounts/myaccount", "application/vnd.appd.cntrl+json", false);
+        }
+
+        public string GetApplicationSEPConfiguration(long accountID, long applicationID)
+        {
+            return this.apiGET(String.Format("api/accounts/{0}/applications/{1}/sep", accountID, applicationID), "application/vnd.appd.cntrl+json", false);
+        }
+
+        #endregion
+
+        #region APM metadata
 
         public string GetApplicationsAPM()
         {
@@ -171,6 +196,11 @@ namespace AppDynamics.Dexter
         public string GetListOfBackendsAdditionalDetail(long applicationID)
         {
             return this.apiGET(String.Format("controller/restui/backendUiService/backendListViewData/{0}/false?time-range=last_15_minutes.BEFORE_NOW.-1.-1.15", applicationID), "application/json", true);
+        }
+
+        public string GetBackendToDBMonMapping(long backendID)
+        {
+            return this.apiGET(String.Format("controller/restui/databases/backendMapping/getMappedDBServer?backendId={0}", backendID), "application/json", true);
         }
 
         public string GetListOfServiceEndpoints(string applicationName)
@@ -602,6 +632,408 @@ namespace AppDynamics.Dexter
 
         #endregion
 
+        #region SIM metadata 
+
+        public string GetSIMApplication()
+        {
+            return this.apiGET("controller/sim/v2/user/app", "application/json", false);
+        }
+
+        public string GetSIMListOfTiers()
+        {
+            return this.apiGET("controller/sim/v2/user/app/tiers", "application/json", false);
+        }
+
+        public string GetSIMListOfNodes()
+        {
+            return this.apiGET("controller/sim/v2/user/app/nodes", "application/json", false);
+        }
+
+        public string GetSIMListOfMachines()
+        {
+            return this.apiGET("controller/sim/v2/user/machines", "application/json", false);
+        }
+
+        public string GetSIMListOfGroups()
+        {
+            return this.apiGET("controller/sim/v2/user/groups", "application/json", false);
+        }
+
+        public string GetSIMMachine(long machineID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}", machineID), "application/json", false);
+        }
+
+        public string GetSIMMachineDockerContainers(long machineID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}/docker/containers", machineID), "application/json", false);
+        }
+
+        public string GetSIMListOfServiceAvailability()
+        {
+            return this.apiGET("controller/sim/v2/user/sam/targets/http", "application/json", false);
+        }
+
+        public string GetSIMServiceAvailability(long saID)
+        {
+            return this.apiGET(String.Format("controller/sim/v2/user/sam/targets/http/{0}", saID), "application/json", false);
+        }
+
+        #endregion
+
+        #region SIM Data
+
+        public string GetSIMMachineProcesses(long machineID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/sim/v2/user/machines/{0}/processes?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&limit=1000&sortBy=CLASS", 
+                machineID,
+                endTimeInUnixEpochFormat,
+                startTimeInUnixEpochFormat,
+                durationBetweenTimes), 
+            "application/json", 
+            false);
+        }
+
+        public string GetSIMServiceAvailabilityEvents(long saID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/sim/v2/user/sam/target/{0}/events?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&maxCount=5000",
+                saID,
+                endTimeInUnixEpochFormat,
+                startTimeInUnixEpochFormat,
+                durationBetweenTimes),
+            "application/json",
+            false);
+        }
+
+        #endregion
+
+        #region EUM metadata
+
+        public string GetApplicationsEUM()
+        {
+            return this.apiGET("controller/restui/eumApplications/getEumWebApplications", "application/json", true);
+        }
+
+        #endregion
+
+        #region DB metadata
+
+        public string GetDBCollectorsConfiguration()
+        {
+            return this.apiGET("controller/rest/databases/collectors", "application/json", false);
+        }
+
+        public string GetDBRegisteredCollectorsCalls45(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""requestFilter"": {{}},
+    ""resultColumns"": [""HEALTH"", ""QUERIES"", ""TIME_SPENT"", ""CPU""],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [{{
+        ""column"": ""QUERIES"",
+        ""direction"": ""DESC""
+        }}
+    ],
+    ""timeRangeStart"": {0},
+    ""timeRangeEnd"": {1}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/list", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBRegisteredCollectorsCalls44(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""requestFilter"": {{}},
+    ""resultColumns"": [""HEALTH"", ""QUERIES"", ""TIME_SPENT"", ""CPU""],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [{{
+        ""column"": ""QUERIES"",
+        ""direction"": ""DESC""
+        }}
+    ],
+    ""timeRangeStart"": {0},
+    ""timeRangeEnd"": {1}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/list", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBRegisteredCollectorsTimeSpent45(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""requestFilter"": {{}},
+    ""resultColumns"": [""HEALTH"", ""QUERIES"", ""TIME_SPENT"", ""CPU""],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [{{
+        ""column"": ""TIME_SPENT"",
+        ""direction"": ""DESC""
+        }}
+    ],
+    ""timeRangeStart"": {0},
+    ""timeRangeEnd"": {1}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/list", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBRegisteredCollectorsTimeSpent44(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""requestFilter"": {{}},
+    ""resultColumns"": [""HEALTH"", ""QUERIES"", ""TIME_SPENT"", ""CPU""],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [{{
+        ""column"": ""TIME_SPENT"",
+        ""direction"": ""DESC""
+        }}
+    ],
+    ""timeRangeStart"": {0},
+    ""timeRangeEnd"": {1}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/list", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBAllWaitStates(long dbCollectorID)
+        {
+            return this.apiGET(String.Format("controller/databasesui/waitStateFiltering/getAllWaitStatesForDBServer/{0}", dbCollectorID), "application/json", true);
+        }
+
+        #endregion
+
+        #region DB data
+
+        public string GetDCurrentWaitStates(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long differenceInMinutes)
+        {
+            return this.apiGET(String.Format("controller/restui/databases/reports/waitReportData?dbId={0}&isCluster=false&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", dbCollectorID, startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, differenceInMinutes), "application/json", true);
+        }
+
+        public string GetDBQueries(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""cluster"": false,
+	""serverId"": {0},
+	""field"": ""query-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2},
+	""waitStateIds"": [],
+	""useTimeBasedCorrelation"": false
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBClients(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""client-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/clientListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBSessions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""session-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBBlockingSessions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/restui/databases/getBlockingTreeData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
+                    dbCollectorID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSession(long dbCollectorID, long sessionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/restui/databases/getBlockingTreeChildrenData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&blockigSessionId={1}",
+                    dbCollectorID,
+                    sessionID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBDatabases(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""schema-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBUsers(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""db-user-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBModules(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""module-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBPrograms(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""field"": ""program-id"",
+	""size"": 5000,
+	""filterBy"": ""time"",
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBBusinessTransactions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+	""serverId"": {0},
+	""cluster"": false,
+	""size"": 5000,
+	""startTime"": {1},
+	""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/snapshot/getBTListViewData", "application/json", requestBody, "application/json", true);
+        }
+
+        #endregion
+
         #region Data retrieval 
 
         /// <summary>
@@ -720,92 +1152,6 @@ namespace AppDynamics.Dexter
                 logger.Trace("{0}/{1} POST as {2} took {3:c} ({4} ms)", this.ControllerUrl, restAPIUrl, this.UserName, stopWatch.Elapsed.ToString("c"), stopWatch.ElapsedMilliseconds);
                 logger.Trace("POST body {0}", requestBody);
             }
-        }
-
-        #endregion
-
-        #region SIM metadata 
-
-        public string GetApplicationSIM()
-        {
-            return this.apiGET("controller/sim/v2/user/app", "application/json", false);
-        }
-
-        public string GetSIMListOfTiers()
-        {
-            return this.apiGET("controller/sim/v2/user/app/tiers", "application/json", false);
-        }
-
-        public string GetSIMListOfNodes()
-        {
-            return this.apiGET("controller/sim/v2/user/app/nodes", "application/json", false);
-        }
-
-        public string GetSIMListOfMachines()
-        {
-            return this.apiGET("controller/sim/v2/user/machines", "application/json", false);
-        }
-
-        public string GetSIMListOfGroups()
-        {
-            return this.apiGET("controller/sim/v2/user/groups", "application/json", false);
-        }
-
-        public string GetSIMMachine(long machineID)
-        {
-            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}", machineID), "application/json", false);
-        }
-
-        public string GetSIMMachineDockerContainers(long machineID)
-        {
-            return this.apiGET(String.Format("controller/sim/v2/user/machines/{0}/docker/containers", machineID), "application/json", false);
-        }
-
-        public string GetSIMListOfServiceAvailability()
-        {
-            return this.apiGET("controller/sim/v2/user/sam/targets/http", "application/json", false);
-        }
-
-        public string GetSIMServiceAvailability(long saID)
-        {
-            return this.apiGET(String.Format("controller/sim/v2/user/sam/targets/http/{0}", saID), "application/json", false);
-        }
-
-        #endregion
-
-        #region SIM Data
-
-        public string GetSIMMachineProcesses(long machineID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
-        {
-            return this.apiGET(
-                String.Format("controller/sim/v2/user/machines/{0}/processes?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&limit=1000&sortBy=CLASS", 
-                machineID,
-                endTimeInUnixEpochFormat,
-                startTimeInUnixEpochFormat,
-                durationBetweenTimes), 
-            "application/json", 
-            false);
-        }
-
-        public string GetSIMServiceAvailabilityEvents(long saID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
-        {
-            return this.apiGET(
-                String.Format("controller/sim/v2/user/sam/target/{0}/events?timeRange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}&maxCount=5000",
-                saID,
-                endTimeInUnixEpochFormat,
-                startTimeInUnixEpochFormat,
-                durationBetweenTimes),
-            "application/json",
-            false);
-        }
-
-        #endregion
-
-        #region EUM metadata
-
-        public string GetApplicationsEUM()
-        {
-            return this.apiGET("controller/restui/eumApplications/getEumWebApplications", "application/json", true);
         }
 
         #endregion

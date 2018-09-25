@@ -308,7 +308,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         internal static void adjustColumnsOfEntityRowTableInMetricReport(string entityType, ExcelWorksheet sheet, ExcelTable table)
         {
-            if (entityType == EntityApplication.ENTITY_TYPE)
+            if (entityType == APMApplication.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -317,7 +317,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityTier.ENTITY_TYPE)
+            else if (entityType == APMTier.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -329,7 +329,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityNode.ENTITY_TYPE)
+            else if (entityType == APMNode.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -341,7 +341,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityBackend.ENTITY_TYPE)
+            else if (entityType == Backend.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -352,7 +352,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityBusinessTransaction.ENTITY_TYPE)
+            else if (entityType == BusinessTransaction.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -364,7 +364,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityServiceEndpoint.ENTITY_TYPE)
+            else if (entityType == ServiceEndpoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -376,7 +376,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityError.ENTITY_TYPE)
+            else if (entityType == Error.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -387,7 +387,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityInformationPoint.ENTITY_TYPE)
+            else if (entityType == InformationPoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -412,23 +412,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
             sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
 
-            if (entityType == EntityApplication.ENTITY_TYPE)
+            if (entityType == APMApplication.ENTITY_TYPE)
             {
             }
-            else if (entityType == EntityTier.ENTITY_TYPE)
+            else if (entityType == APMTier.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityNode.ENTITY_TYPE)
+            else if (entityType == APMNode.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityBackend.ENTITY_TYPE)
+            else if (entityType == Backend.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["BackendName"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityBusinessTransaction.ENTITY_TYPE)
+            else if (entityType == BusinessTransaction.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;

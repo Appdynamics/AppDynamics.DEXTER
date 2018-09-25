@@ -21,6 +21,8 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumBT20DiscoveryRules { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
+        public int NumSEPRules { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumBackendRules { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumInfoPointRules { get; set; }

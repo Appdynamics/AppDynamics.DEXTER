@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class ApplicationSnapshotReportMap : ClassMap<EntityApplication>
+    public class ApplicationSnapshotReportMap : ClassMap<APMApplication>
     {
         public ApplicationSnapshotReportMap()
         {
