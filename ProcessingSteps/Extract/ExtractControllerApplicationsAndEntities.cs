@@ -13,7 +13,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
     public class ExtractControllerApplicationsAndEntities : JobStepBase
     {
         private const int NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS = 5;
+        private const int BACKEND_PROPERTIES_EXTRACT_NUMBER_OF_THREADS = 5;
         private const int ENTITIES_EXTRACT_NUMBER_OF_NODES_TO_PROCESS_PER_THREAD = 10;
+        private const int ENTITIES_EXTRACT_NUMBER_OF_BACKENDS_TO_PROCESS_PER_THREAD = 10;
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -133,6 +135,47 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         backendsJSON = controllerApi.GetListOfBackendsAdditionalDetail(jobTarget.ApplicationID);
                         if (backendsJSON != String.Empty) FileIOHelper.SaveFileToPath(backendsJSON, FilePathMap.BackendsDetailDataFilePath(jobTarget));
 
+                        List<AppDRESTBackend> backendsList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTBackend>(FilePathMap.BackendsDataFilePath(jobTarget));
+                        if (backendsList != null)
+                        {
+                            loggerConsole.Info("DBMon Mappings for Backends ({0} entities)", backendsList.Count);
+
+                            int j = 0;
+
+                            var listOfBackendsInHourChunks = backendsList.BreakListIntoChunks(ENTITIES_EXTRACT_NUMBER_OF_BACKENDS_TO_PROCESS_PER_THREAD);
+
+                            Parallel.ForEach<List<AppDRESTBackend>, int>(
+                                listOfBackendsInHourChunks,
+                                new ParallelOptions { MaxDegreeOfParallelism = BACKEND_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
+                                () => 0,
+                                (listOfBackendsInHourChunk, loop, subtotal) =>
+                                {
+                                    // Set up controller access
+                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                    // Login into private API
+                                    controllerApiParallel.PrivateApiLogin();
+
+                                    foreach (AppDRESTBackend backend in listOfBackendsInHourChunk)
+                                    {
+                                        if (File.Exists(FilePathMap.BackendToDBMonMappingDataFilePath(jobTarget, backend)) == false)
+                                        {
+                                            string backendToDBMonMappingJSON = controllerApi.GetBackendToDBMonMapping(backend.id);
+                                            if (backendToDBMonMappingJSON != String.Empty) FileIOHelper.SaveFileToPath(backendToDBMonMappingJSON, FilePathMap.BackendToDBMonMappingDataFilePath(jobTarget, backend));
+                                        }
+                                    }
+
+                                    return listOfBackendsInHourChunk.Count;
+                                },
+                                (finalResult) =>
+                                {
+                                    Interlocked.Add(ref j, finalResult);
+                                    Console.Write("[{0}].", j);
+                                }
+                            );
+
+                            loggerConsole.Info("Completed {0} Backends", backendsList.Count);
+                        }
+
                         #endregion
 
                         #region Business Transactions
@@ -203,10 +246,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (AppDRESTNode node in listOfNodesInHourChunk)
                                     {
-                                        if (File.Exists(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node)) == false)
+                                        if (File.Exists(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, node)) == false)
                                         {
                                             string nodePropertiesJSON = controllerApi.GetNodeProperties(node.id);
-                                            if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
+                                            if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, node));
                                         }
                                     }
                                     

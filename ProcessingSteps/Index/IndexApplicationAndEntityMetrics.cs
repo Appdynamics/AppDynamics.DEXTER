@@ -35,6 +35,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 List<MetricExtractMapping> entityMetricExtractMappingList = getMetricsExtractMappingList(jobConfiguration);
 
                 // Process each target
@@ -71,21 +78,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                                List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
                                 if (applicationsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Applications ({0} entities, {1} timeranges)", applicationsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -93,18 +100,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityApplication> applicationsFullList = entitiesFullDictionary.Values.OfType<EntityApplication>().ToList().OrderBy(o => o.ApplicationName).ThenBy(o => o.From).ToList();
+                                        List<APMApplication> applicationsFullList = entitiesFullDictionary.Values.OfType<APMApplication>().ToList().OrderBy(o => o.ApplicationName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(applicationsFullList, new ApplicationMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(applicationsFullList, new ApplicationMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityApplication> applicationsHourlyAllList = new List<EntityApplication>(applicationsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<APMApplication> applicationsHourlyAllList = new List<APMApplication>(applicationsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -113,25 +120,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityApplication> applicationsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityApplication>().ToList();
+                                            List<APMApplication> applicationsHourlyList = entitiesHourlyDictionary.Values.OfType<APMApplication>().ToList();
                                             applicationsHourlyAllList.AddRange(applicationsHourlyList);
                                         }
 
                                         // Sort them
                                         applicationsHourlyAllList = applicationsHourlyAllList.OrderBy(o => o.ApplicationName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(applicationsHourlyAllList, new ApplicationMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(applicationsHourlyAllList, new ApplicationMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * applicationsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -141,8 +148,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityApplication.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, APMApplication.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -153,7 +160,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -169,26 +176,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tier
 
-                                List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
+                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Tiers ({0} entities, {1} timeranges)", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = tiersList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
-                                        Dictionary<string, EntityBase> entitiesFullDictionaryByName = new Dictionary<string, EntityBase>(entitiesFullDictionary.Count);
-                                        foreach (KeyValuePair<long, EntityBase> kvp in entitiesFullDictionary)
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = tiersList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<string, APMEntityBase> entitiesFullDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesFullDictionary.Count);
+                                        foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesFullDictionary)
                                         {
                                             entitiesFullDictionaryByName.Add(kvp.Value.EntityName, kvp.Value);
                                         }
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, entitiesFullDictionaryByName, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, entitiesFullDictionaryByName, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -196,18 +203,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityTier> tiersFullList = entitiesFullDictionary.Values.OfType<EntityTier>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
+                                        List<APMTier> tiersFullList = entitiesFullDictionary.Values.OfType<APMTier>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(tiersFullList, new TierMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(tiersFullList, new TierMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityTier> tiersHourlyAllList = new List<EntityTier>(tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<APMTier> tiersHourlyAllList = new List<APMTier>(tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -216,30 +223,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = tiersList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
-                                            Dictionary<string, EntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, EntityBase>(entitiesHourlyDictionary.Count);
-                                            foreach (KeyValuePair<long, EntityBase> kvp in entitiesHourlyDictionary)
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = tiersList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<string, APMEntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesHourlyDictionary.Count);
+                                            foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesHourlyDictionary)
                                             {
                                                 entitiesHourlyDictionaryByName.Add(kvp.Value.EntityName, kvp.Value);
                                             }
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, entitiesHourlyDictionaryByName, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, entitiesHourlyDictionaryByName, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityTier> tiersHourlyList = entitiesHourlyDictionary.Values.OfType<EntityTier>().ToList();
+                                            List<APMTier> tiersHourlyList = entitiesHourlyDictionary.Values.OfType<APMTier>().ToList();
                                             tiersHourlyAllList.AddRange(tiersHourlyList);
                                         }
 
                                         // Sort them
                                         tiersHourlyAllList = tiersHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(tiersHourlyAllList, new TierMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(tiersHourlyAllList, new TierMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -249,8 +256,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityTier.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, APMTier.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -261,7 +268,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -277,30 +284,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Nodes ({0} entities, {1} timeranges)", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = nodesList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
-                                        Dictionary<string, EntityBase> entitiesFullDictionaryByName = new Dictionary<string, EntityBase>(entitiesFullDictionary.Count);
-                                        foreach (KeyValuePair<long, EntityBase> kvp in entitiesFullDictionary)
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = nodesList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<string, APMEntityBase> entitiesFullDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesFullDictionary.Count);
+                                        foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesFullDictionary)
                                         {
                                             try
                                             {
-                                                entitiesFullDictionaryByName.Add(String.Format("{0}-{1}", ((EntityNode)(kvp.Value)).TierName, kvp.Value.EntityName), kvp.Value);
+                                                entitiesFullDictionaryByName.Add(String.Format("{0}-{1}", ((APMNode)(kvp.Value)).TierName, kvp.Value.EntityName), kvp.Value);
                                             }
                                             catch { }
                                         }
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, entitiesFullDictionaryByName, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, entitiesFullDictionaryByName, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -308,18 +315,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityNode> nodesFullList = entitiesFullDictionary.Values.OfType<EntityNode>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
+                                        List<APMNode> nodesFullList = entitiesFullDictionary.Values.OfType<APMNode>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(nodesFullList, new NodeMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(nodesFullList, new NodeMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityNode> nodesHourlyAllList = new List<EntityNode>(nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<APMNode> nodesHourlyAllList = new List<APMNode>(nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -328,34 +335,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = nodesList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
-                                            Dictionary<string, EntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, EntityBase>(entitiesHourlyDictionary.Count);
-                                            foreach (KeyValuePair<long, EntityBase> kvp in entitiesHourlyDictionary)
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = nodesList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<string, APMEntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesHourlyDictionary.Count);
+                                            foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesHourlyDictionary)
                                             {
                                                 try
                                                 {
-                                                    entitiesHourlyDictionaryByName.Add(String.Format("{0}-{1}", ((EntityNode)(kvp.Value)).TierName, kvp.Value.EntityName), kvp.Value);
+                                                    entitiesHourlyDictionaryByName.Add(String.Format("{0}-{1}", ((APMNode)(kvp.Value)).TierName, kvp.Value.EntityName), kvp.Value);
                                                 }
                                                 catch { }
                                             }
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, entitiesHourlyDictionaryByName, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, entitiesHourlyDictionaryByName, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityNode> nodesHourlyList = entitiesHourlyDictionary.Values.OfType<EntityNode>().ToList();
+                                            List<APMNode> nodesHourlyList = entitiesHourlyDictionary.Values.OfType<APMNode>().ToList();
                                             nodesHourlyAllList.AddRange(nodesHourlyList);
                                         }
 
                                         // Sort them
                                         nodesHourlyAllList = nodesHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(nodesHourlyAllList, new NodeMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(nodesHourlyAllList, new NodeMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -365,8 +372,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityNode.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, APMNode.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -377,7 +384,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -393,21 +400,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
+                                List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
                                 if (backendsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Backends ({0} entities, {1} timeranges)", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Backend.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = backendsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = backendsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, Backend.ENTITY_FOLDER, Backend.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -415,18 +422,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityBackend> backendsFullList = entitiesFullDictionary.Values.OfType<EntityBackend>().ToList().OrderBy(o => o.BackendType).OrderBy(o => o.BackendName).ThenBy(o => o.From).ToList();
+                                        List<Backend> backendsFullList = entitiesFullDictionary.Values.OfType<Backend>().ToList().OrderBy(o => o.BackendType).OrderBy(o => o.BackendName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(backendsFullList, new BackendMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(backendsFullList, new BackendMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, Backend.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, Backend.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityBackend> backendsHourlyAllList = new List<EntityBackend>(backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<Backend> backendsHourlyAllList = new List<Backend>(backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -435,25 +442,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = backendsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = backendsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, Backend.ENTITY_FOLDER, Backend.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityBackend> backendsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityBackend>().ToList();
+                                            List<Backend> backendsHourlyList = entitiesHourlyDictionary.Values.OfType<Backend>().ToList();
                                             backendsHourlyAllList.AddRange(backendsHourlyList);
                                         }
 
                                         // Sort them
                                         backendsHourlyAllList = backendsHourlyAllList.OrderBy(o => o.BackendType).OrderBy(o => o.BackendName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(backendsHourlyAllList, new BackendMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(backendsHourlyAllList, new BackendMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, Backend.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -463,8 +470,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityBackend.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, Backend.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, Backend.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -475,7 +482,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, Backend.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -491,21 +498,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
+                                List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Business Transactions ({0} entities, {1} timeranges)", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, BusinessTransaction.ENTITY_FOLDER, BusinessTransaction.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -513,18 +520,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityBusinessTransaction> businessTransactionsFullList = entitiesFullDictionary.Values.OfType<EntityBusinessTransaction>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.BTName).ThenBy(o => o.From).ToList();
+                                        List<BusinessTransaction> businessTransactionsFullList = entitiesFullDictionary.Values.OfType<BusinessTransaction>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.BTName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityBusinessTransaction> businessTransactionsHourlyAllList = new List<EntityBusinessTransaction>(businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<BusinessTransaction> businessTransactionsHourlyAllList = new List<BusinessTransaction>(businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -533,25 +540,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, BusinessTransaction.ENTITY_FOLDER, BusinessTransaction.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityBusinessTransaction> businessTransactionsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityBusinessTransaction>().ToList();
+                                            List<BusinessTransaction> businessTransactionsHourlyList = entitiesHourlyDictionary.Values.OfType<BusinessTransaction>().ToList();
                                             businessTransactionsHourlyAllList.AddRange(businessTransactionsHourlyList);
                                         }
 
                                         // Sort them
                                         businessTransactionsHourlyAllList = businessTransactionsHourlyAllList.OrderBy(o => o.TierName).OrderBy(o => o.BTName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(businessTransactionsHourlyAllList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(businessTransactionsHourlyAllList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -561,8 +568,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -573,7 +580,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -589,21 +596,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Service Endpoints
 
-                                List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointEntityReportMap());
+                                List<ServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointReportMap());
                                 if (serviceEndpointsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Service Endpoints ({0} entities, {1} timeranges)", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = serviceEndpointsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, ServiceEndpoint.ENTITY_FOLDER, ServiceEndpoint.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -611,18 +618,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityServiceEndpoint> serviceEndpointsFullList = entitiesFullDictionary.Values.OfType<EntityServiceEndpoint>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.SEPName).ThenBy(o => o.From).ToList();
+                                        List<ServiceEndpoint> serviceEndpointsFullList = entitiesFullDictionary.Values.OfType<ServiceEndpoint>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.SEPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityServiceEndpoint> serviceEndpointsHourlyAllList = new List<EntityServiceEndpoint>(serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<ServiceEndpoint> serviceEndpointsHourlyAllList = new List<ServiceEndpoint>(serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -631,25 +638,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = serviceEndpointsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, ServiceEndpoint.ENTITY_FOLDER, ServiceEndpoint.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityServiceEndpoint> serviceEndpointsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityServiceEndpoint>().ToList();
+                                            List<ServiceEndpoint> serviceEndpointsHourlyList = entitiesHourlyDictionary.Values.OfType<ServiceEndpoint>().ToList();
                                             serviceEndpointsHourlyAllList.AddRange(serviceEndpointsHourlyList);
                                         }
 
                                         // Sort them
                                         serviceEndpointsHourlyAllList = serviceEndpointsHourlyAllList.OrderBy(o => o.TierName).OrderBy(o => o.SEPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsHourlyAllList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsHourlyAllList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -659,8 +666,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -671,7 +678,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -687,21 +694,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Errors
 
-                                List<EntityError> errorsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorEntityReportMap());
+                                List<Error> errorsList = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorReportMap());
                                 if (errorsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Errors ({0} entities, {1} timeranges)", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Error.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = errorsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, Error.ENTITY_FOLDER, Error.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -709,18 +716,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityError> errorsFullList = entitiesFullDictionary.Values.OfType<EntityError>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
+                                        List<Error> errorsFullList = entitiesFullDictionary.Values.OfType<Error>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(errorsFullList, new ErrorMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(errorsFullList, new ErrorMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, Error.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, Error.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityError> errorsHourlyAllList = new List<EntityError>(errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<Error> errorsHourlyAllList = new List<Error>(errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -729,25 +736,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = errorsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, Error.ENTITY_FOLDER, Error.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityError> errorsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityError>().ToList();
+                                            List<Error> errorsHourlyList = entitiesHourlyDictionary.Values.OfType<Error>().ToList();
                                             errorsHourlyAllList.AddRange(errorsHourlyList);
                                         }
 
                                         // Sort them
                                         errorsHourlyAllList = errorsHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(errorsHourlyAllList, new ErrorMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(errorsHourlyAllList, new ErrorMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, Error.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -757,8 +764,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityError.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, Error.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, Error.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -769,7 +776,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, Error.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -785,21 +792,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Information Points
 
-                                List<EntityInformationPoint> informationPointsList = FileIOHelper.ReadListFromCSVFile<EntityInformationPoint>(FilePathMap.InformationPointsIndexFilePath(jobTarget), new InformationPointEntityReportMap());
+                                List<InformationPoint> informationPointsList = FileIOHelper.ReadListFromCSVFile<InformationPoint>(FilePathMap.InformationPointsIndexFilePath(jobTarget), new InformationPointReportMap());
                                 if (informationPointsList != null)
                                 {
                                     loggerConsole.Info("Index Metrics for Information Points ({0} entities, {1} timeranges)", informationPointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, EntityBase> entitiesFullDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
+                                        readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, InformationPoint.ENTITY_FOLDER, InformationPoint.ENTITY_TYPE);
 
-                                        foreach (EntityBase entity in entitiesFullDictionary.Values)
+                                        foreach (APMEntityBase entity in entitiesFullDictionary.Values)
                                         {
                                             updateEntityWithDeeplinks(entity, jobConfiguration.Input.TimeRange);
                                             updateEntityRowWithDurationAndActivityStatus(entity, jobConfiguration.Input.TimeRange);
@@ -807,18 +814,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Sort them
-                                        List<EntityInformationPoint> informationPointsFullList = entitiesFullDictionary.Values.OfType<EntityInformationPoint>().ToList().OrderBy(o => o.IPName).ThenBy(o => o.From).ToList();
+                                        List<InformationPoint> informationPointsFullList = entitiesFullDictionary.Values.OfType<InformationPoint>().ToList().OrderBy(o => o.IPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER)) == false)
                                     {
-                                        List<EntityInformationPoint> informationPointsHourlyAllList = new List<EntityInformationPoint>(informationPointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
+                                        List<InformationPoint> informationPointsHourlyAllList = new List<InformationPoint>(informationPointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
                                         Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -827,25 +834,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, EntityBase> entitiesHourlyDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (EntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
-                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE, metricValuesDictionary);
+                                            readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, InformationPoint.ENTITY_FOLDER, InformationPoint.ENTITY_TYPE, metricValuesDictionary);
 
-                                            foreach (EntityBase entity in entitiesHourlyDictionary.Values)
+                                            foreach (APMEntityBase entity in entitiesHourlyDictionary.Values)
                                             {
                                                 updateEntityWithDeeplinks(entity, jobTimeRange);
                                                 updateEntityRowWithDurationAndActivityStatus(entity, jobTimeRange);
                                                 entity.ARTRange = getDurationRangeAsString(entity.ART);
                                             }
 
-                                            List<EntityInformationPoint> informationPointsHourlyList = entitiesHourlyDictionary.Values.OfType<EntityInformationPoint>().ToList();
+                                            List<InformationPoint> informationPointsHourlyList = entitiesHourlyDictionary.Values.OfType<InformationPoint>().ToList();
                                             informationPointsHourlyAllList.AddRange(informationPointsHourlyList);
                                         }
 
                                         // Sort them
                                         informationPointsHourlyAllList = informationPointsHourlyAllList.OrderBy(o => o.IPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(informationPointsHourlyAllList, new InformationPointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(informationPointsHourlyAllList, new InformationPointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * informationPointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -855,8 +862,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 List<MetricValue> metricValuesSorted = metricValuesListContainer.Value.OrderBy(o => o.EntityID).ThenBy(o => o.MetricID).ThenBy(o => o.EventTimeStampUtc).ToList();
 
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER, metricValuesListContainer.Key));
-                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricValuesIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER, metricValuesListContainer.Key));
+                                                FileIOHelper.WriteListToCSVFile(metricValuesSorted, new MetricValueReportMap(), FilePathMap.MetricReportPerAppFilePath(jobTarget, InformationPoint.ENTITY_FOLDER, metricValuesListContainer.Key));
 
                                                 List<EntityHourlyMetricValueLocation> entityMetricValuesLocationsForSingleMetric = getEntityHourlyMetricValueLocationsInTable(metricValuesSorted, jobConfiguration.Input.HourlyTimeRanges);
                                                 if (entityMetricValuesLocationsForSingleMetric != null)
@@ -867,7 +874,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
 
                                         // Save entity and metric index lookup
-                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(entityMetricValuesLocations, new EntityHourlyMetricValueLocationReportMap(), FilePathMap.MetricsLocationIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
@@ -886,82 +893,83 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.MetricsReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.MetricsReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityApplication.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityApplication.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityTier.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityTier.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityNode.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityNode.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityBackend.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityBackend.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityBusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityBusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityError.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityError.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(EntityInformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(EntityInformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(Backend.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, Backend.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(Backend.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, Backend.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(BusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(BusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(ServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(ServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(Error.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, Error.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(Error.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, Error.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(InformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(InformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER));
 
                         // Combine the generated detailed metric value files
                         foreach (MetricExtractMapping metricExtractMapping in entityMetricExtractMappingList)
                         {
                             switch (metricExtractMapping.EntityType)
                             {
-                                case EntityApplication.ENTITY_TYPE:
+                                case APMApplication.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityApplication.ENTITY_FOLDER, metricExtractMapping.FolderName), 
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName), 
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityTier.ENTITY_TYPE:
+                                case APMTier.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityTier.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(APMTier.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityNode.ENTITY_TYPE:
+                                case APMNode.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityNode.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(APMNode.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityBackend.ENTITY_TYPE:
+                                case Backend.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityBackend.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(Backend.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, Backend.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityBusinessTransaction.ENTITY_TYPE:
+                                case BusinessTransaction.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityBusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(BusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityServiceEndpoint.ENTITY_TYPE:
+                                case ServiceEndpoint.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(ServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityError.ENTITY_TYPE:
+                                case Error.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityError.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(Error.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, Error.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
-                                case EntityInformationPoint.ENTITY_TYPE:
+                                case InformationPoint.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(EntityInformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
-                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, EntityInformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
+                                        FilePathMap.MetricReportFilePath(InformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricValuesIndexFilePath(jobTarget, InformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 default:
@@ -1031,8 +1039,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         }
 
         private void readRolledUpRangeOfMetricsIntoEntities(
-            Dictionary<long, EntityBase> entitiesDictionaryByID,
-            Dictionary<string, EntityBase> entitiesDictionaryByName,
+            Dictionary<long, APMEntityBase> entitiesDictionaryByID,
+            Dictionary<string, APMEntityBase> entitiesDictionaryByName,
             JobTimeRange jobTimeRange,
             JobTarget jobTarget,
             List<MetricExtractMapping> entityMetricExtractMappingList,
@@ -1051,8 +1059,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         }
 
         private void readGranularRangeOfMetricsIntoEntities(
-            Dictionary<long, EntityBase> entitiesDictionaryByID,
-            Dictionary<string, EntityBase> entitiesDictionaryByName,
+            Dictionary<long, APMEntityBase> entitiesDictionaryByID,
+            Dictionary<string, APMEntityBase> entitiesDictionaryByName,
             JobTimeRange jobTimeRange,
             JobTarget jobTarget,
             List<MetricExtractMapping> entityMetricExtractMappingList,
@@ -1087,11 +1095,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private List<MetricValue> readMetricsIntoEntities(
             List<AppDRESTMetric> metricData,
-            Dictionary<long, EntityBase> entitiesDictionaryByID,
-            Dictionary<string, EntityBase> entitiesDictionaryByName,
+            Dictionary<long, APMEntityBase> entitiesDictionaryByID,
+            Dictionary<string, APMEntityBase> entitiesDictionaryByName,
             JobTimeRange jobTimeRange)
         {
-            EntityBase entity;
+            APMEntityBase entity;
 
             int timerangeDuration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;
 
@@ -1578,7 +1586,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return metricValues;
         }
 
-        private List<MetricValue> readMetricValuesIntoEntity(EntityBase entity, string metricName, AppDRESTMetric appDRESTMetric, int timerangeDuration)
+        private List<MetricValue> readMetricValuesIntoEntity(APMEntityBase entity, string metricName, AppDRESTMetric appDRESTMetric, int timerangeDuration)
         {
             List<MetricValue> metricValues = new List<MetricValue>(appDRESTMetric.metricValues.Count);
             if (entity.MetricsIDs == null)
@@ -1739,7 +1747,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return entityMetricsValueLocationList;
         }
 
-        private void updateEntityRowWithDurationAndActivityStatus(EntityBase entityRow, JobTimeRange jobTimeRange)
+        private void updateEntityRowWithDurationAndActivityStatus(APMEntityBase entityRow, JobTimeRange jobTimeRange)
         {
             // Duration
             entityRow.Duration = (int)(jobTimeRange.To - jobTimeRange.From).Duration().TotalMinutes;

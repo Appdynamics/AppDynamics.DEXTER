@@ -35,6 +35,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -289,10 +296,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Application
 
-                        List<EntityApplication> applicationList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                        List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
                         if (applicationList != null && applicationList.Count > 0)
                         {
-                            EntityApplication applicationsRow = applicationList[0];
+                            APMApplication applicationsRow = applicationList[0];
 
                             applicationsRow.NumEvents = eventsList.Count;
                             applicationsRow.NumEventsError = eventsList.Count(e => e.Severity == "ERROR");
@@ -322,11 +329,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.EventsReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.EventsReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one

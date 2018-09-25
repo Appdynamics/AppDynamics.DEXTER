@@ -453,8 +453,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_CONTROLLERS];
-                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -474,8 +474,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_APPLICATIONS];
-                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -485,7 +485,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInMetricReport(EntityApplication.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
 
                     ExcelAddress cfAddressNum = new ExcelAddress(REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshots"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshots"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
@@ -512,8 +512,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SNAPSHOTS];
-                logger.Info("Snapshots Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Snapshots Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -637,8 +637,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SEGMENTS];
-                logger.Info("Segments Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Segments Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -768,8 +768,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_EXIT_CALLS];
-                logger.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Exit Calls Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -905,8 +905,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_SERVICE_ENDPOINT_CALLS];
-                logger.Info("Service Endpoint Calls Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Service Endpoint Calls Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -991,8 +991,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_DETECTED_ERRORS];
-                logger.Info("Detected Errors Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Detected Errors Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1082,8 +1082,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_SNAPSHOTS_SHEET_BUSINESS_DATA];
-                logger.Info("Detected Business Data ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Detected Business Data ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_SNAPSHOTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];

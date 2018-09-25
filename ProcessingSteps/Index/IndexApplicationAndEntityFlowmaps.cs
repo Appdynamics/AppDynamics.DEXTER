@@ -35,6 +35,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -69,7 +76,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                                List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
                                 if (applicationList != null && applicationList.Count > 0)
                                 {
                                     loggerConsole.Info("Index Flowmap for Application");
@@ -119,14 +126,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tiers
 
-                                List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
+                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Tiers ({0} entities)", tiersList.Count);
 
                                     FileIOHelper.DeleteFile(FilePathMap.TiersFlowmapIndexFilePath(jobTarget));
 
-                                    foreach (EntityTier tier in tiersList)
+                                    foreach (APMTier tier in tiersList)
                                     {
                                         List<ActivityFlow> activityFlowsList = convertFlowmapTier(tier, jobTarget, jobConfiguration.Input.TimeRange);
 
@@ -147,14 +154,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Nodes ({0} entities)", nodesList.Count);
 
                                     FileIOHelper.DeleteFile(FilePathMap.NodesFlowmapIndexFilePath(jobTarget));
 
-                                    foreach (EntityNode node in nodesList)
+                                    foreach (APMNode node in nodesList)
                                     {
                                         List<ActivityFlow> activityFlowsList = convertFlowmapNode(node, jobTarget, jobConfiguration.Input.TimeRange);
 
@@ -175,14 +182,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
+                                List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
                                 if (backendsList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Backends ({0} entities)", backendsList.Count);
 
                                     FileIOHelper.DeleteFile(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget));
 
-                                    foreach (EntityBackend backend in backendsList)
+                                    foreach (Backend backend in backendsList)
                                     {
                                         List<ActivityFlow> activityFlowsList = convertFlowmapBackend(backend, jobTarget, jobConfiguration.Input.TimeRange);
 
@@ -203,14 +210,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
+                                List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Index Flowmap for Business Transactions ({0} entities)", businessTransactionsList.Count);
 
                                     FileIOHelper.DeleteFile(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget));
 
-                                    foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                                    foreach (BusinessTransaction businessTransaction in businessTransactionsList)
                                     {
                                         List<ActivityFlow> activityFlowsList = convertFlowmapsBusinessTransaction(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange);
 
@@ -232,11 +239,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.ActivityGridReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.ActivityGridReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
@@ -309,7 +317,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return (jobConfiguration.Input.Flowmaps == true);
         }
 
-        private List<ActivityFlow> convertFlowmapApplication(EntityApplication application, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapApplication(APMApplication application, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, jobTimeRange));
             if (flowmapData == null)
@@ -361,20 +369,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRow.FromEntityID;
                             activityFlowRow.CallType = "Total";
-                            activityFlowRow.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRow.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRow.FromLink = String.Format(DEEPLINK_TIER, activityFlowRow.Controller, activityFlowRow.ApplicationID, activityFlowRow.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
                             activityFlowRow.CallType = "Total";
-                            activityFlowRow.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRow.FromType = Backend.ENTITY_TYPE;
                             activityFlowRow.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRow.Controller, activityFlowRow.ApplicationID, activityFlowRow.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowRow.CallType = "Total";
-                            activityFlowRow.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRow.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRow.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRow.Controller, activityFlowRow.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -460,18 +468,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_TIER:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
-                            activityFlowRowTemplate.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -490,17 +498,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     switch (entityConnection["targetNodeDefinition"]["entityType"].ToString())
                     {
                         case ENTITY_TYPE_FLOWMAP_TIER:
-                            activityFlowRowTemplate.ToType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.ToType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
-                            activityFlowRowTemplate.ToType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -583,7 +591,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapTier(EntityTier tier, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapTier(APMTier tier, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.TierFlowmapDataFilePath(jobTarget, jobTimeRange, tier));
             if (flowmapData == null)
@@ -642,18 +650,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_TIER:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
-                            activityFlowRowTemplate.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -672,17 +680,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     switch (entityConnection["targetNodeDefinition"]["entityType"].ToString())
                     {
                         case ENTITY_TYPE_FLOWMAP_TIER:
-                            activityFlowRowTemplate.ToType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.ToType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
-                            activityFlowRowTemplate.ToType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -774,7 +782,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapNode(EntityNode node, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapNode(APMNode node, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeFlowmapDataFilePath(jobTarget, jobTimeRange, node));
             if (flowmapData == null)
@@ -836,25 +844,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_NODE:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_NODE_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityNode.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMNode.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_NODE, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_TIER:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
-                            activityFlowRowTemplate.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -873,22 +881,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     switch (entityConnection["targetNodeDefinition"]["entityType"].ToString())
                     {
                         case "APPLICATION_COMPONENT_NODE":
-                            activityFlowRowTemplate.ToType = EntityNode.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMNode.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_NODE, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_TIER:
-                            activityFlowRowTemplate.ToType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.ToType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
-                            activityFlowRowTemplate.ToType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -981,7 +989,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapBackend(EntityBackend backend, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapBackend(Backend backend, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.BackendFlowmapDataFilePath(jobTarget, jobTimeRange, backend));
             if (flowmapData == null)
@@ -1041,18 +1049,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_TIER:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
-                            activityFlowRowTemplate.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -1071,17 +1079,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     switch (entityConnection["targetNodeDefinition"]["entityType"].ToString())
                     {
                         case ENTITY_TYPE_FLOWMAP_TIER:
-                            activityFlowRowTemplate.ToType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.ToType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
-                            activityFlowRowTemplate.ToType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -1173,7 +1181,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapsBusinessTransaction(EntityBusinessTransaction businessTransaction, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapsBusinessTransaction(BusinessTransaction businessTransaction, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.BusinessTransactionFlowmapDataFilePath(jobTarget, jobTimeRange, businessTransaction));
             if (flowmapData == null)
@@ -1240,18 +1248,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_TIER:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             entityIdForMetricBrowser = activityFlowRowTemplate.FromEntityID;
-                            activityFlowRowTemplate.FromType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.FromType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
-                            activityFlowRowTemplate.FromType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.FromLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
@@ -1270,17 +1278,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     switch (entityConnection["targetNodeDefinition"]["entityType"].ToString())
                     {
                         case ENTITY_TYPE_FLOWMAP_TIER:
-                            activityFlowRowTemplate.ToType = EntityTier.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMTier.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_TIER, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_BACKEND:
-                            activityFlowRowTemplate.ToType = EntityBackend.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = Backend.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_BACKEND, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ApplicationID, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
-                            activityFlowRowTemplate.ToType = EntityApplication.ENTITY_TYPE;
+                            activityFlowRowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowRowTemplate.ToLink = String.Format(DEEPLINK_APPLICATION, activityFlowRowTemplate.Controller, activityFlowRowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 

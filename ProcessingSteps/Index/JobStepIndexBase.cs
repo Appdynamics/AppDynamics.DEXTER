@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -36,6 +37,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string DEEPLINK_METRIC_TIER_TARGET_METRIC_ID = "APPLICATION_COMPONENT.{0}.{1}";
         internal const string DEEPLINK_METRIC_NODE_TARGET_METRIC_ID = "APPLICATION_COMPONENT_NODE.{0}.{1}";
 
+        // DB Links
+        internal const string DEEPLINK_DBAPPLICATION = @"{0}/controller/#/location=DB_MONITORING_SERVER_LIST&timeRange={1}";
+        internal const string DEEPLINK_DBCOLLECTOR = @"{0}/controller/#/location=DB_MONITORING_SERVER_DASHBOARD&timeRange={2}&databaseId={1}";
+        internal const string DEEPLINK_DBQUERY = @"{0}/controller/#/location=DB_MONITORING_QUERY_DETAILS&timeRange={3}&databaseId={1}&&queryHashCode={2}";
+
         #endregion
 
         #region Constants for various strings mapping to Entity types in Flowmaps and Events
@@ -52,24 +58,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Mapping of long entity types to human readable ones
         internal static Dictionary<string, string> entityTypeStringMapping = new Dictionary<string, string>
         {
-            {ENTITY_TYPE_FLOWMAP_APPLICATION, EntityApplication.ENTITY_TYPE},
+            {ENTITY_TYPE_FLOWMAP_APPLICATION, APMApplication.ENTITY_TYPE},
             {ENTITY_TYPE_FLOWMAP_APPLICATION_MOBILE, "Mobile App"},
-            {ENTITY_TYPE_FLOWMAP_TIER, EntityTier.ENTITY_TYPE},
-            {ENTITY_TYPE_FLOWMAP_NODE, EntityNode.ENTITY_TYPE},
+            {ENTITY_TYPE_FLOWMAP_TIER, APMTier.ENTITY_TYPE},
+            {ENTITY_TYPE_FLOWMAP_NODE, APMNode.ENTITY_TYPE},
             {ENTITY_TYPE_FLOWMAP_MACHINE, "Machine"},
-            {ENTITY_TYPE_FLOWMAP_BUSINESS_TRANSACTION, EntityBusinessTransaction.ENTITY_TYPE},
-            {ENTITY_TYPE_FLOWMAP_BACKEND, EntityBackend.ENTITY_TYPE },
+            {ENTITY_TYPE_FLOWMAP_BUSINESS_TRANSACTION, BusinessTransaction.ENTITY_TYPE},
+            {ENTITY_TYPE_FLOWMAP_BACKEND, Backend.ENTITY_TYPE },
             {ENTITY_TYPE_FLOWMAP_HEALTH_RULE, "Health Rule"}
         };
 
         #endregion
 
-        internal void updateEntityWithDeeplinks(EntityBase entityRow)
+        internal void updateEntityWithDeeplinks(APMEntityBase entityRow)
         {
             updateEntityWithDeeplinks(entityRow, null);
         }
 
-        internal void updateEntityWithDeeplinks(EntityBase entityRow, JobTimeRange jobTimeRange)
+        internal void updateEntityWithDeeplinks(APMEntityBase entityRow, JobTimeRange jobTimeRange)
         {
             // Decide what kind of timerange
             string DEEPLINK_THIS_TIMERANGE = DEEPLINK_TIMERANGE_LAST_15_MINUTES;
@@ -84,23 +90,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
             // Determine what kind of entity we are dealing with and adjust accordingly
             string deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_APPLICATION_TARGET_METRIC_ID;
             long entityIdForMetricBrowser = entityRow.ApplicationID;
-            if (entityRow is EntityApplication)
+            if (entityRow is APMApplication)
             {
                 entityRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entityRow.Controller, entityRow.ApplicationID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntityTier)
+            else if (entityRow is APMTier)
             {
-                EntityTier entity = (EntityTier)entityRow;
+                APMTier entity = (APMTier)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.TierID;
             }
-            else if (entityRow is EntityNode)
+            else if (entityRow is APMNode)
             {
-                EntityNode entity = (EntityNode)entityRow;
+                APMNode entity = (APMNode)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
@@ -108,16 +114,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_NODE_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.NodeID;
             }
-            else if (entityRow is EntityBackend)
+            else if (entityRow is Backend)
             {
-                EntityBackend entity = (EntityBackend)entityRow;
+                Backend entity = (Backend)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.BackendLink = String.Format(DEEPLINK_BACKEND, entity.Controller, entity.ApplicationID, entity.BackendID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntityBusinessTransaction)
+            else if (entityRow is BusinessTransaction)
             {
-                EntityBusinessTransaction entity = (EntityBusinessTransaction)entityRow;
+                BusinessTransaction entity = (BusinessTransaction)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
@@ -125,25 +131,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.TierID;
             }
-            else if (entityRow is EntityServiceEndpoint)
+            else if (entityRow is ServiceEndpoint)
             {
-                EntityServiceEndpoint entity = (EntityServiceEndpoint)entityRow;
+                ServiceEndpoint entity = (ServiceEndpoint)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.SEPLink = String.Format(DEEPLINK_SERVICE_ENDPOINT, entity.Controller, entity.ApplicationID, entity.TierID, entity.SEPID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntityError)
+            else if (entityRow is Error)
             {
-                EntityError entity = (EntityError)entityRow;
+                Error entity = (Error)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.ErrorLink = String.Format(DEEPLINK_ERROR, entity.Controller, entity.ApplicationID, entity.ErrorID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is EntityInformationPoint)
+            else if (entityRow is InformationPoint)
             {
-                EntityInformationPoint entity = (EntityInformationPoint)entityRow;
+                InformationPoint entity = (InformationPoint)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
                 entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.IPLink = String.Format(DEEPLINK_INFORMATION_POINT, entity.Controller, entity.ApplicationID, entity.IPID, DEEPLINK_THIS_TIMERANGE);
@@ -238,5 +244,116 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
             return "17: t>300000"; ;
         }
+
+        internal string getSQLClauseType(string sqlStatement, int lengthToSeekThrough)
+        {
+            if (sqlStatement.Length < lengthToSeekThrough) lengthToSeekThrough = sqlStatement.Length;
+
+            if (new Regex(@"\bCREATE\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "CREATE";
+            }
+            else if (new Regex(@"\bALTER\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "ALTER";
+            }
+            else if (new Regex(@"\bTRUNCATE\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "TRUNCATE";
+            }
+            else if (new Regex(@"\bDROP\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "DROP";
+            }
+            else if (new Regex(@"\bGRANT\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "GRANT";
+            }
+            else if (new Regex(@"\bREVOKE\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "REVOKE";
+            }
+            else if (new Regex(@"\bSELECT\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "SELECT";
+            }
+            else if (new Regex(@"\bINSERT\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "INSERT";
+            }
+            else if (new Regex(@"\bUPDATE\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "UPDATE";
+            }
+            else if (new Regex(@"\bDELETE\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "DELETE";
+            }
+            else if (new Regex(@"\bEXEC\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "PROCCALL";
+            }
+            else if (new Regex(@"\bCALL\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "PROCCALL";
+            }
+            else if (new Regex(@"\bSET\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "SET";
+            }
+            else if (new Regex(@"\bPREPARED STATEMENT\s", RegexOptions.IgnoreCase).Match(sqlStatement, 0, lengthToSeekThrough).Success == true)
+            {
+                return "PREPSTMT";
+            }
+
+            return String.Empty;
+        }
+
+        internal string getSQLJoinType(string sqlStatement)
+        {
+            if (new Regex(@"\bINNER JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "INNER";
+            }
+            else if (new Regex(@"\bLEFT JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true || new Regex(@"\bLEFT OUTER JOIN", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "LEFT";
+            }
+            else if (new Regex(@"\bRIGHT JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true || new Regex(@"\bRIGHT OUTER JOIN", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "RIGHT";
+            }
+            else if (new Regex(@"\bFULL JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true || new Regex(@"\bFULL OUTER JOIN", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "FULL";
+            }
+            else if (new Regex(@"\bSELF JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "SELF";
+            }
+            else if (new Regex(@"\bCARTESIAN JOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true || new Regex(@"\bCROSS JOIN", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "CROSS";
+            }
+            else if (new Regex(@"\bJOIN\s", RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return "INNER";
+            }
+
+            return String.Empty;
+        }
+
+        internal bool doesSQLStatementContain(string sqlStatement, string valueToCheckFor)
+        {
+            if (new Regex(valueToCheckFor, RegexOptions.IgnoreCase).Match(sqlStatement).Success == true)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
     }
 }

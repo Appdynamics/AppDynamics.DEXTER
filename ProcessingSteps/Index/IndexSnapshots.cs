@@ -42,6 +42,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -67,66 +74,66 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Load logical model
 
-                        List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
-                        List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
-                        List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
-                        List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
-                        List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointEntityReportMap());
-                        List<EntityError> errorsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorEntityReportMap());
+                        List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
+                        List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                        List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
+                        List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
+                        List<ServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointReportMap());
+                        List<Error> errorsList = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorReportMap());
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.MethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
-                        Dictionary<long, EntityTier> tiersDictionary = null;
+                        Dictionary<long, APMTier> tiersDictionary = null;
                         if (tiersList != null)
                         {
                             tiersDictionary = tiersList.ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            tiersDictionary = new Dictionary<long, EntityTier>();
+                            tiersDictionary = new Dictionary<long, APMTier>();
                         }
-                        Dictionary<long, EntityNode> nodesDictionary = null;
+                        Dictionary<long, APMNode> nodesDictionary = null;
                         if (nodesList != null)
                         {
                             nodesDictionary = nodesList.ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            nodesDictionary = new Dictionary<long, EntityNode>();
+                            nodesDictionary = new Dictionary<long, APMNode>();
                         }
-                        Dictionary<long, EntityBackend> backendsDictionary = null;
+                        Dictionary<long, Backend> backendsDictionary = null;
                         if (backendsList != null)
                         {
                             backendsDictionary = backendsList.ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            backendsDictionary = new Dictionary<long, EntityBackend>();
+                            backendsDictionary = new Dictionary<long, Backend>();
                         }
-                        Dictionary<long, EntityBusinessTransaction> businessTransactionsDictionary = null;
+                        Dictionary<long, BusinessTransaction> businessTransactionsDictionary = null;
                         if (businessTransactionsList != null)
                         {
                             businessTransactionsDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            businessTransactionsDictionary = new Dictionary<long, EntityBusinessTransaction>();
+                            businessTransactionsDictionary = new Dictionary<long, BusinessTransaction>();
                         }
-                        Dictionary<long, EntityServiceEndpoint> serviceEndpointsDictionary = null;
+                        Dictionary<long, ServiceEndpoint> serviceEndpointsDictionary = null;
                         if (serviceEndpointsList != null)
                         {
-                            serviceEndpointsDictionary = serviceEndpointsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                            serviceEndpointsDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            serviceEndpointsDictionary = new Dictionary<long, EntityServiceEndpoint>();
+                            serviceEndpointsDictionary = new Dictionary<long, ServiceEndpoint>();
                         }
-                        Dictionary<long, EntityError> errorsDictionary = null;
+                        Dictionary<long, Error> errorsDictionary = null;
                         if (errorsList != null)
                         {
-                            errorsDictionary = errorsList.ToDictionary(e => e.EntityID, e => e.Clone());
+                            errorsDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => e.Clone());
                         }
                         else
                         {
-                            errorsDictionary = new Dictionary<long, EntityError>();
+                            errorsDictionary = new Dictionary<long, Error>();
                         }
 
                         // Load and bucketize the framework mappings
@@ -162,7 +169,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     List<JToken> listOfBTSnapshotsInHour = listOfBTSnapshotsInHourGroup.ToList();
 
-                                    EntityBusinessTransaction businessTransaction = null;
+                                    BusinessTransaction businessTransaction = null;
                                     if (businessTransactionsDictionary.TryGetValue(listOfBTSnapshotsInHourGroup.Key, out businessTransaction) == true)
                                     {
                                         Console.Write("{0}({1})({2} snapshots) starting. ", businessTransaction.BTName, businessTransaction.BTID, listOfBTSnapshotsInHour.Count);
@@ -275,7 +282,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsWithTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                 foreach (long nodeID in indexedSnapshotsResults.FoldedCallStacksNodesNoTiming.Keys)
                                                 {
-                                                    EntityNode nodeForFoldedStack = null;
+                                                    APMNode nodeForFoldedStack = null;
                                                     if (nodesDictionary.TryGetValue(nodeID, out nodeForFoldedStack) == true)
                                                     {
                                                         Dictionary<string, FoldedStackLine> foldedCallStacksList = indexedSnapshotsResults.FoldedCallStacksNodesNoTiming[nodeID];
@@ -285,7 +292,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 }
                                                 foreach (long nodeID in indexedSnapshotsResults.FoldedCallStacksNodesWithTiming.Keys)
                                                 {
-                                                    EntityNode nodeForFoldedStack = null;
+                                                    APMNode nodeForFoldedStack = null;
                                                     if (nodesDictionary.TryGetValue(nodeID, out nodeForFoldedStack) == true)
                                                     {
                                                         Dictionary<string, FoldedStackLine> foldedCallStacksList = indexedSnapshotsResults.FoldedCallStacksNodesWithTiming[nodeID];
@@ -324,8 +331,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget));
 
-                        List<EntityApplication> applicationList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
-                        EntityApplication applicationsRow = null;
+                        List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
+                        APMApplication applicationsRow = null;
                         if (applicationList != null && applicationList.Count > 0)
                         {
                             applicationsRow = applicationList[0];
@@ -402,7 +409,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                             {
                                                                 using (FileStream methodCallLinesOccurrencesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget), FileMode.Append))
                                                                 {
-                                                                    foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                                                                    foreach (BusinessTransaction businessTransaction in businessTransactionsList)
                                                                     {
                                                                         if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
                                                                         {
@@ -442,11 +449,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         loggerConsole.Info("Combine Snapshots for All Applications");
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.SnapshotsReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.SnapshotsReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
@@ -510,7 +518,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                             {
                                 // Go through BTs
-                                foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                                foreach (BusinessTransaction businessTransaction in businessTransactionsList)
                                 {
                                     // Flame graph
                                     if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == false) foldedCallStacksBusinessTransactionsList[businessTransaction.BTID] = new Dictionary<string, FoldedStackLine>(50);
@@ -531,7 +539,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
 
                                     // Nodes for this BT
-                                    foreach (EntityNode node in nodesList)
+                                    foreach (APMNode node in nodesList)
                                     {
                                         if (node.TierID == businessTransaction.TierID)
                                         {   
@@ -563,9 +571,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Fold Stacks for Tiers");
 
-                            foreach (EntityTier tier in tiersList)
+                            foreach (APMTier tier in tiersList)
                             {
-                                foreach (EntityNode node in nodesList)
+                                foreach (APMNode node in nodesList)
                                 {
                                     if (node.TierID == tier.TierID)
                                     {
@@ -588,7 +596,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Fold Stacks for Application");
 
-                            foreach (EntityTier tier in tiersList)
+                            foreach (APMTier tier in tiersList)
                             {
                                 // Flame graph
                                 if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == true)
@@ -609,7 +617,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Save Fold Stacks for Business Transactions");
 
-                            foreach (EntityBusinessTransaction businessTransaction in businessTransactionsList)
+                            foreach (BusinessTransaction businessTransaction in businessTransactionsList)
                             {
                                 if (foldedCallStacksBusinessTransactionsList.ContainsKey(businessTransaction.BTID) == true && foldedCallStacksBusinessTransactionsList[businessTransaction.BTID].Count > 0)
                                 {
@@ -623,7 +631,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Save Fold Stacks for Tiers ");
 
-                            foreach (EntityTier tier in tiersList)
+                            foreach (APMTier tier in tiersList)
                             {
                                 if (foldedCallStacksTiersList.ContainsKey(tier.TierID) == true && foldedCallStacksTiersList[tier.TierID].Count > 0)
                                 {
@@ -637,7 +645,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Save Fold Stacks for Nodes");
 
-                            foreach (EntityNode node in nodesList)
+                            foreach (APMNode node in nodesList)
                             {
                                 if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == true && foldedCallStacksNodesList[node.NodeID].Count > 0)
                                 {
@@ -722,12 +730,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             JobTarget jobTarget,
             JobTimeRange jobTimeRange,
             List<JToken> snapshotsList,
-            Dictionary<long, EntityTier> tiersDictionary,
-            Dictionary<long, EntityNode> nodesDictionary,
-            Dictionary<long, EntityBackend> backendsDictionary,
-            Dictionary<long, EntityBusinessTransaction> businessTransactionsDictionary,
-            Dictionary<long, EntityServiceEndpoint> serviceEndpointsDictionary,
-            Dictionary<long, EntityError> errorsDictionary,
+            Dictionary<long, APMTier> tiersDictionary,
+            Dictionary<long, APMNode> nodesDictionary,
+            Dictionary<long, Backend> backendsDictionary,
+            Dictionary<long, BusinessTransaction> businessTransactionsDictionary,
+            Dictionary<long, ServiceEndpoint> serviceEndpointsDictionary,
+            Dictionary<long, Error> errorsDictionary,
             List<MethodInvocationDataCollector> methodInvocationDataCollectorsList,
             Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,            
             bool progressToConsole)
@@ -769,7 +777,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     snapshot.TierName = snapshotToken["applicationComponentName"].ToString();
                     if (tiersDictionary != null)
                     {
-                        EntityTier tier = null;
+                        APMTier tier = null;
                         if (tiersDictionary.TryGetValue(snapshot.TierID, out tier) == true)
                         {
                             snapshot.TierType = tier.TierType;
@@ -779,7 +787,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     snapshot.BTName = snapshotToken["businessTransactionName"].ToString();
                     if (businessTransactionsDictionary != null)
                     {
-                        EntityBusinessTransaction businessTransaction = null;
+                        BusinessTransaction businessTransaction = null;
                         if (businessTransactionsDictionary.TryGetValue(snapshot.BTID, out businessTransaction) == true)
                         {
                             snapshot.BTType = businessTransaction.BTType;
@@ -789,7 +797,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     snapshot.NodeName = snapshotToken["applicationComponentNodeName"].ToString();
                     if (nodesDictionary != null)
                     {
-                        EntityNode node = null;
+                        APMNode node = null;
                         if (nodesDictionary.TryGetValue(snapshot.NodeID, out node) == true)
                         {
                             snapshot.AgentType = node.AgentType;
@@ -915,7 +923,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 segment.TierName = snapshotSegmentToken["applicationComponentName"].ToString();
                                 if (tiersDictionary != null)
                                 {
-                                    EntityTier tier = null;
+                                    APMTier tier = null;
                                     if (tiersDictionary.TryGetValue(snapshot.TierID, out tier) == true)
                                     {
                                         segment.TierType = tier.TierType;
@@ -928,7 +936,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 segment.NodeName = snapshotSegmentToken["applicationComponentNodeName"].ToString();
                                 if (nodesDictionary != null)
                                 {
-                                    EntityNode node = null;
+                                    APMNode node = null;
                                     if (nodesDictionary.TryGetValue(snapshot.NodeID, out node) == true)
                                     {
                                         segment.AgentType = node.AgentType;
@@ -1090,7 +1098,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         long tierID = -1;
                                         if (long.TryParse(callChainToken.Substring(10), out tierID) == true)
                                         {
-                                            EntityTier tier = null;
+                                            APMTier tier = null;
                                             if (tiersDictionary.TryGetValue(tierID, out tier) == true)
                                             {
                                                 sbCallChain.AppendFormat("({0})->", tier.TierName);
@@ -1106,7 +1114,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         long backendID = -1;
                                         if (long.TryParse(callChainToken.Substring(17).TrimEnd(']', '}'), out backendID) == true)
                                         {
-                                            EntityBackend backend = null;
+                                            Backend backend = null;
                                             if (backendsDictionary.TryGetValue(backendID, out backend) == true)
                                             {
                                                 //sbCallChain.AppendFormat("<{0}><{1}>>->", backendRow.BackendName, backendRow.BackendType);
@@ -1170,7 +1178,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (exitCallToken["toComponentId"].ToString().StartsWith("{[UNRESOLVED]") == true)
                                     {
                                         // Backend
-                                        exitCall.ToEntityType = EntityBackend.ENTITY_TYPE;
+                                        exitCall.ToEntityType = Backend.ENTITY_TYPE;
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "backendId").FirstOrDefault();
                                         if (goingToProperty != null)
                                         {
@@ -1193,7 +1201,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     else if (exitCallToken["toComponentId"].ToString().StartsWith("App:") == true)
                                     {
                                         // Application in same controller
-                                        exitCall.ToEntityType = EntityApplication.ENTITY_TYPE;
+                                        exitCall.ToEntityType = APMApplication.ENTITY_TYPE;
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "appId").FirstOrDefault();
                                         if (goingToProperty != null)
                                         {
@@ -1216,7 +1224,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     else if (exitCallToken["toComponentId"].ToString().StartsWith("ExApp:") == true)
                                     {
                                         // Application in Federated controller
-                                        exitCall.ToEntityType = EntityApplication.ENTITY_TYPE;
+                                        exitCall.ToEntityType = APMApplication.ENTITY_TYPE;
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "appId").FirstOrDefault();
                                         if (goingToProperty != null)
                                         {
@@ -1239,7 +1247,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     else
                                     {
                                         // Tier
-                                        exitCall.ToEntityType = EntityTier.ENTITY_TYPE;
+                                        exitCall.ToEntityType = APMTier.ENTITY_TYPE;
                                         try { exitCall.ToEntityID = (long)exitCallToken["toComponentId"]; } catch { }
                                         JToken goingToProperty = exitCallToken["properties"].Where(p => p["name"].ToString() == "to").FirstOrDefault();
                                         if (goingToProperty != null)
@@ -1427,114 +1435,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 case "batch update":
                                                 default:
                                                     // Get SQL statement type
-                                                    if (new Regex(@"\bCREATE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "CREATE";
-                                                    }
-                                                    else if (new Regex(@"\bALTER\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "ALTER";
-                                                    }
-                                                    else if (new Regex(@"\bTRUNCATE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "TRUNCATE";
-                                                    }
-                                                    else if (new Regex(@"\bDROP\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "DROP";
-                                                    }
-                                                    else if (new Regex(@"\bGRANT\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "GRANT";
-                                                    }
-                                                    else if (new Regex(@"\bREVOKE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "REVOKE";
-                                                    }
-                                                    else if (new Regex(@"\bSELECT\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "SELECT";
-                                                    }
-                                                    else if (new Regex(@"\bINSERT\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "INSERT";
-                                                    }
-                                                    else if (new Regex(@"\bUPDATE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "UPDATE";
-                                                    }
-                                                    else if (new Regex(@"\bDELETE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "DELETE";
-                                                    }
-                                                    else if (new Regex(@"\bEXEC\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "PROCCALL";
-                                                    }
-                                                    else if (new Regex(@"\bCALL\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "PROCCALL";
-                                                    }
-                                                    else if (new Regex(@"\bSET\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "SET";
-                                                    }
-                                                    else if (new Regex(@"\bPREPARED STATEMENT\s", RegexOptions.IgnoreCase).Match(exitCall.Detail, 0, lengthToSeekThrough).Success == true)
-                                                    {
-                                                        exitCall.SQLClauseType = "PREPSTMT";
-                                                    }
+                                                    exitCall.SQLClauseType = getSQLClauseType(exitCall.Detail, lengthToSeekThrough);
 
                                                     // Check other clauses
-                                                    if (new Regex(@"\bWHERE\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLWhere = true;
-                                                    }
-                                                    if (new Regex(@"\bGROUP BY\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLGroupBy = true;
-                                                    }
-                                                    if (new Regex(@"\bORDER BY\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLOrderBy = true;
-                                                    }
-                                                    if (new Regex(@"\bHAVING\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLHaving = true;
-                                                    }
-                                                    if (new Regex(@"\bUNION\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLUnion = true;
-                                                    }
+                                                    exitCall.SQLWhere = doesSQLStatementContain(exitCall.Detail, @"\bWHERE\s");
+                                                    exitCall.SQLGroupBy = doesSQLStatementContain(exitCall.Detail, @"\bGROUP BY\s");
+                                                    exitCall.SQLOrderBy = doesSQLStatementContain(exitCall.Detail, @"\bORDER BY\s");
+                                                    exitCall.SQLHaving = doesSQLStatementContain(exitCall.Detail, @"\bHAVING\s");
+                                                    exitCall.SQLUnion = doesSQLStatementContain(exitCall.Detail, @"\bUNION\s");
 
                                                     // Get join type if present
-                                                    if (new Regex(@"\bINNER JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "INNER";
-                                                    }
-                                                    else if (new Regex(@"\bLEFT JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true || new Regex(@"\bLEFT OUTER JOIN", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "LEFT";
-                                                    }
-                                                    else if (new Regex(@"\bRIGHT JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true || new Regex(@"\bRIGHT OUTER JOIN", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "RIGHT";
-                                                    }
-                                                    else if (new Regex(@"\bFULL JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true || new Regex(@"\bFULL OUTER JOIN", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "FULL";
-                                                    }
-                                                    else if (new Regex(@"\bSELF JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "SELF";
-                                                    }
-                                                    else if (new Regex(@"\bCARTESIAN JOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true || new Regex(@"\bCROSS JOIN", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "CROSS";
-                                                    }
-                                                    else if (new Regex(@"\bJOIN\s", RegexOptions.IgnoreCase).Match(exitCall.Detail).Success == true)
-                                                    {
-                                                        exitCall.SQLJoinType = "INNER";
-                                                    }
+                                                    exitCall.SQLJoinType = getSQLJoinType(exitCall.Detail);
 
                                                     break;
                                             }
@@ -1587,7 +1498,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (exitCall.ExitType == "CUSTOM")
                                     {
                                         // Look up whether this Exit type is something prettier than CUSTOM
-                                        EntityBackend backend = null;
+                                        Backend backend = null;
                                         if (backendsDictionary.TryGetValue(exitCall.ToEntityID, out backend) == true)
                                         {
                                             exitCall.ExitType = backend.BackendType;
@@ -1636,7 +1547,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     if (serviceEndpointsDictionary != null)
                                     {
-                                        EntityServiceEndpoint serviceEndpoint = null;
+                                        ServiceEndpoint serviceEndpoint = null;
                                         if (serviceEndpointsDictionary.TryGetValue(serviceEndpointID, out serviceEndpoint) == true)
                                         {
                                             serviceEndpointCall.SEPID = serviceEndpoint.SEPID;
@@ -1664,7 +1575,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         long errorID = (long)((JValue)errorToken).Value;
 
-                                        EntityError error = null;
+                                        Error error = null;
                                         if (errorsDictionary.TryGetValue(errorID, out error) == true)
                                         {
                                             DetectedError detectedError = new DetectedError();
@@ -2275,13 +2186,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #region Update counts of calls and types of destinations for Segment
 
-                                segment.NumCallsToTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityTier.ENTITY_TYPE).Sum(e => e.NumCalls);
-                                segment.NumCallsToBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityBackend.ENTITY_TYPE).Sum(e => e.NumCalls);
-                                segment.NumCallsToApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_TYPE).Sum(e => e.NumCalls);
+                                segment.NumCallsToTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == APMTier.ENTITY_TYPE).Sum(e => e.NumCalls);
+                                segment.NumCallsToBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == Backend.ENTITY_TYPE).Sum(e => e.NumCalls);
+                                segment.NumCallsToApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == APMApplication.ENTITY_TYPE).Sum(e => e.NumCalls);
 
-                                segment.NumCalledTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityTier.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
-                                segment.NumCalledBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityBackend.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
-                                segment.NumCalledApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == EntityApplication.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
+                                segment.NumCalledTiers = exitCallsListInThisSegment.Where(e => e.ToEntityType == APMTier.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
+                                segment.NumCalledBackends = exitCallsListInThisSegment.Where(e => e.ToEntityType == Backend.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
+                                segment.NumCalledApplications = exitCallsListInThisSegment.Where(e => e.ToEntityType == APMApplication.ENTITY_TYPE).GroupBy(e => e.ToEntityName).Count();
 
                                 segment.NumSEPs = serviceEndpointCallsListInThisSegment.Count();
 

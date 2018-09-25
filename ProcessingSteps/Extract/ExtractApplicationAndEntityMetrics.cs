@@ -71,7 +71,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityApplication.ENTITY_FOLDER, EntityApplication.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -79,7 +79,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tiers
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityTier.ENTITY_FOLDER, EntityTier.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -87,7 +87,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityNode.ENTITY_FOLDER, EntityNode.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -95,7 +95,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Backends
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityBackend.ENTITY_FOLDER, EntityBackend.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, Backend.ENTITY_FOLDER, Backend.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -103,7 +103,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityBusinessTransaction.ENTITY_FOLDER, EntityBusinessTransaction.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, BusinessTransaction.ENTITY_FOLDER, BusinessTransaction.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -111,7 +111,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Service Endpoints
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityServiceEndpoint.ENTITY_FOLDER, EntityServiceEndpoint.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, ServiceEndpoint.ENTITY_FOLDER, ServiceEndpoint.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -119,7 +119,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Errors
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityError.ENTITY_FOLDER, EntityError.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, Error.ENTITY_FOLDER, Error.ENTITY_TYPE);
 
                                 #endregion
                             },
@@ -127,7 +127,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Information Points
 
-                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, EntityInformationPoint.ENTITY_FOLDER, EntityInformationPoint.ENTITY_TYPE);
+                                getMetricsForEntities(jobTarget, jobConfiguration, entityMetricExtractMappingList, InformationPoint.ENTITY_FOLDER, InformationPoint.ENTITY_TYPE);
 
                                 #endregion
                             }
@@ -212,6 +212,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Get the full range
                 JobTimeRange jobTimeRange = jobConfiguration.Input.TimeRange;
 
+                loggerConsole.Trace("{0} {1}", metricExtractMapping.EntityType, metricExtractMapping.MetricPath);
                 logger.Info("Retrieving metric in Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricExtractMapping.MetricPath, jobTimeRange.From, jobTimeRange.To);
 
                 string metricsJson = String.Empty;

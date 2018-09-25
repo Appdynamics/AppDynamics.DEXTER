@@ -568,8 +568,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
-                logger.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Controllers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -589,8 +589,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST];
-                logger.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Applications Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -600,7 +600,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityApplication.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(APMApplication.ENTITY_TYPE, sheet, table);
 
                     ExcelAddress cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
@@ -630,8 +630,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST];
-                logger.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Tiers Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -641,7 +641,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityTier.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(APMTier.ENTITY_TYPE, sheet, table);
 
                     ExcelAddress cfAddressNum = new ExcelAddress(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
                     var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
@@ -680,8 +680,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODES_LIST];
-                logger.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Nodes Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -691,7 +691,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityNode.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(APMNode.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODES_TYPE_APPAGENT_PIVOT];
@@ -739,8 +739,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_STARTUP_OPTIONS_LIST];
-                logger.Info("Node Startup Options Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Node Startup Options Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -750,7 +750,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityNodeProperty.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(NodeProperty.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_STARTUP_OPTIONS_TYPE_PIVOT];
@@ -802,8 +802,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_PROPERTIES_LIST];
-                logger.Info("Node VM Properties Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Node VM Properties Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -813,7 +813,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityNodeProperty.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(NodeProperty.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_PROPERTIES_TYPE_PIVOT];
@@ -865,8 +865,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_ENVIRONMENT_VARIABLES_LIST];
-                logger.Info("Node Environment Variables Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Node Environment Variables Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -876,7 +876,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityNodeProperty.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(NodeProperty.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_NODE_ENVIRONMENT_VARIABLES_TYPE_PIVOT];
@@ -932,8 +932,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_LIST];
-                logger.Info("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Backends Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -943,7 +943,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityBackend.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(Backend.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BACKENDS_TYPE_PIVOT];
@@ -985,8 +985,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_LIST];
-                logger.Info("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Business Transactions Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -996,7 +996,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityBusinessTransaction.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(BusinessTransaction.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_BUSINESS_TRANSACTIONS_TYPE_PIVOT];
@@ -1044,8 +1044,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_LIST];
-                logger.Info("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Service Endpoints Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1055,7 +1055,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityServiceEndpoint.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(ServiceEndpoint.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_SERVICE_ENDPOINTS_TYPE_PIVOT];
@@ -1101,8 +1101,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LIST];
-                logger.Info("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Errors Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1112,7 +1112,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityError.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(Error.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_ERRORS_TYPE_PIVOT];
@@ -1160,8 +1160,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Make table
                 sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_INFORMATION_POINTS_LIST];
-                logger.Info("Information Points Sheet ({0} rows)", sheet.Dimension.Rows);
-                loggerConsole.Info("Information Points Sheet ({0} rows)", sheet.Dimension.Rows);
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
@@ -1171,7 +1171,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    adjustColumnsOfEntityRowTableInEntitiesReport(EntityInformationPoint.ENTITY_TYPE, sheet, table);
+                    adjustColumnsOfEntityRowTableInEntitiesReport(InformationPoint.ENTITY_TYPE, sheet, table);
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_INFORMATION_POINTS_TYPE_PIVOT];
@@ -1288,12 +1288,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private static void adjustColumnsOfEntityRowTableInEntitiesReport(string entityType, ExcelWorksheet sheet, ExcelTable table)
         {
-            if (entityType == EntityApplication.ENTITY_TYPE)
+            if (entityType == APMApplication.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityTier.ENTITY_TYPE)
+            else if (entityType == APMTier.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -1301,7 +1301,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["TierType"].Position + 1).Width = 10;
                 sheet.Column(table.Columns["AgentType"].Position + 1).Width = 15;
             }
-            else if (entityType == EntityNode.ENTITY_TYPE)
+            else if (entityType == APMNode.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
@@ -1312,7 +1312,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["MachineName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["MachineAgentVersion"].Position + 1).Width = 10;
             }
-            else if (entityType == EntityBackend.ENTITY_TYPE)
+            else if (entityType == Backend.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
@@ -1329,7 +1329,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["Prop4Value"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Prop5Value"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityBusinessTransaction.ENTITY_TYPE)
+            else if (entityType == BusinessTransaction.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
@@ -1338,7 +1338,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["BTNameOriginal"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTType"].Position + 1).Width = 10;
             }
-            else if (entityType == EntityServiceEndpoint.ENTITY_TYPE)
+            else if (entityType == ServiceEndpoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
@@ -1346,7 +1346,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["SEPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["SEPType"].Position + 1).Width = 10;
             }
-            else if (entityType == EntityError.ENTITY_TYPE)
+            else if (entityType == Error.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
@@ -1361,14 +1361,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["ErrorLevel4"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ErrorLevel5"].Position + 1).Width = 20;
             }
-            else if (entityType == EntityInformationPoint.ENTITY_TYPE)
+            else if (entityType == InformationPoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["IPName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["IPType"].Position + 1).Width = 10;
             }
-            else if (entityType == EntityNodeProperty.ENTITY_TYPE)
+            else if (entityType == NodeProperty.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;

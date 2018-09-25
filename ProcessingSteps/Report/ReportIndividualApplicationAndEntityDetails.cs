@@ -183,16 +183,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<EntityApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new ApplicationEntityReportMap());
-                                List<EntityApplication> applicationMetricsList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
+                                List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationIndexFilePath(jobTarget), new APMApplicationReportMap());
+                                List<APMApplication> applicationMetricsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
                                 if (applicationsList != null && applicationsList.Count > 0 &&
                                     applicationMetricsList != null && applicationMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Applications ({0} entities, {1} timeranges)", applicationsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in applicationsList)
+                                    foreach (APMEntityBase entity in applicationsList)
                                     {
-                                        EntityBase entityWithMetrics = applicationMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = applicationMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -201,7 +201,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityApplication.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMApplication.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -234,16 +234,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tier
 
-                                List<EntityTier> tiersList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.TiersIndexFilePath(jobTarget), new TierEntityReportMap());
-                                List<EntityTier> tiersMetricsList = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap());
+                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.TiersIndexFilePath(jobTarget), new APMTierReportMap());
+                                List<APMTier> tiersMetricsList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER), new TierMetricReportMap());
                                 if (tiersList != null && tiersList.Count > 0 &&
                                     tiersMetricsList != null && tiersMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Tiers ({0} entities, {1} timeranges)", tiersList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in tiersList)
+                                    foreach (APMEntityBase entity in tiersList)
                                     {
-                                        EntityBase entityWithMetrics = tiersMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = tiersMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -252,7 +252,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityTier.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMTier.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -285,16 +285,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<EntityNode> nodesList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.NodesIndexFilePath(jobTarget), new NodeEntityReportMap());
-                                List<EntityNode> nodesMetricsList = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.NodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                                List<APMNode> nodesMetricsList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER), new NodeMetricReportMap());
                                 if (nodesList != null && nodesList.Count > 0 &&
                                     nodesMetricsList != null && nodesMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Nodes ({0} entities, {1} timeranges)", nodesList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in nodesList)
+                                    foreach (APMEntityBase entity in nodesList)
                                     {
-                                        EntityBase entityWithMetrics = nodesMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = nodesMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -303,7 +303,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityNode.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMNode.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -336,16 +336,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Backends
 
-                                List<EntityBackend> backendsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendEntityReportMap());
-                                List<EntityBackend> backendsMetricsList = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap());
+                                List<Backend> backendsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.BackendsIndexFilePath(jobTarget), new BackendReportMap());
+                                List<Backend> backendsMetricsList = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Backend.ENTITY_FOLDER), new BackendMetricReportMap());
                                 if (backendsList != null && backendsList.Count > 0 &&
                                     backendsMetricsList != null && backendsMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Backends ({0} entities, {1} timeranges)", backendsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in backendsList)
+                                    foreach (APMEntityBase entity in backendsList)
                                     {
-                                        EntityBase entityWithMetrics = backendsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = backendsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -354,7 +354,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBackend.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, Backend.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -387,16 +387,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<EntityBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionEntityReportMap());
-                                List<EntityBusinessTransaction> businessTransactionsMetricsList = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
+                                List<BusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget), new BusinessTransactionReportMap());
+                                List<BusinessTransaction> businessTransactionsMetricsList = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
                                 if (businessTransactionsList != null && businessTransactionsList.Count > 0 &&
                                     businessTransactionsMetricsList != null && businessTransactionsMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Business Transactions ({0} entities, {1} timeranges)", businessTransactionsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in businessTransactionsList)
+                                    foreach (APMEntityBase entity in businessTransactionsList)
                                     {
-                                        EntityBase entityWithMetrics = businessTransactionsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = businessTransactionsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -405,7 +405,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityBusinessTransaction.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, BusinessTransaction.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -438,16 +438,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Service Endpoints
 
-                                List<EntityServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointEntityReportMap());
-                                List<EntityServiceEndpoint> serviceEndpointsMetricsList = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap());
+                                List<ServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.ServiceEndpointsIndexFilePath(jobTarget), new ServiceEndpointReportMap());
+                                List<ServiceEndpoint> serviceEndpointsMetricsList = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap());
                                 if (serviceEndpointsList != null && serviceEndpointsList.Count > 0 &&
                                     serviceEndpointsMetricsList != null && serviceEndpointsMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Service Endpoints ({0} entities, {1} timeranges)", serviceEndpointsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in serviceEndpointsList)
+                                    foreach (APMEntityBase entity in serviceEndpointsList)
                                     {
-                                        EntityBase entityWithMetrics = serviceEndpointsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = serviceEndpointsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -456,7 +456,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityServiceEndpoint.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, ServiceEndpoint.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -489,16 +489,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Errors
 
-                                List<EntityError> errorsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorEntityReportMap());
-                                List<EntityError> errorsMetricsList = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap());
+                                List<Error> errorsList = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.ErrorsIndexFilePath(jobTarget), new ErrorReportMap());
+                                List<Error> errorsMetricsList = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Error.ENTITY_FOLDER), new ErrorMetricReportMap());
                                 if (errorsList != null && errorsList.Count > 0 &&
                                     errorsMetricsList != null && errorsMetricsList.Count > 0)
                                 {
                                     loggerConsole.Info("Report Entity Details for Errors ({0} entities, {1} timeranges)", errorsList.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                                    foreach (EntityBase entity in errorsList)
+                                    foreach (APMEntityBase entity in errorsList)
                                     {
-                                        EntityBase entityWithMetrics = errorsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
+                                        APMEntityBase entityWithMetrics = errorsMetricsList.Where(e => e.EntityID == entity.EntityID).FirstOrDefault();
                                         if (entityWithMetrics != null && entityWithMetrics.HasActivity == false)
                                         {
                                             logger.Trace("No metric activity in Entity Type {0} Entity {1}, skipping Entity Details output", entity.EntityType, entity.EntityName);
@@ -507,7 +507,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         ExcelPackage excelEntitiesDetail = createIndividualEntityDetailReportTemplate(programOptions, jobConfiguration, jobTarget);
                                         List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entity.EntityType && m.Graph == TRANSACTIONS_METRICS_SET).ToList();
-                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, EntityError.ENTITY_FOLDER);
+                                        fillMetricValueTablesForEntityType(excelEntitiesDetail, REPORT_ENTITY_DETAILS_SHEET_METRICS, entityMetricExtractMappingListFiltered, jobTarget, Error.ENTITY_FOLDER);
 
                                         fillIndividualEntityMetricReportForEntity(
                                             programOptions,
@@ -710,7 +710,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             JobConfiguration jobConfiguration,
             JobTarget jobTarget,
             ExcelPackage excelEntityDetail,
-            EntityBase entity,
+            APMEntityBase entity,
             List<MetricExtractMapping> entityMetricExtractMappingList,
             List<Event> eventsAllList,
             List<HealthRuleViolationEvent> healthRuleViolationEventsAllList,
@@ -758,58 +758,58 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+                if (entity.EntityType == APMApplication.ENTITY_TYPE)
                 {
-                    List<EntityApplication> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
-                    List<EntityApplication> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
+                    List<APMApplication> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
+                    List<APMApplication> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER), new ApplicationMetricReportMap());
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ApplicationMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ApplicationMetricReportMap());
                 }
-                else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+                else if (entity.EntityType == APMTier.ENTITY_TYPE)
                 {
-                    List<EntityTier> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
-                    List<EntityTier> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityTier>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+                    List<APMTier> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+                    List<APMTier> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER), new TierMetricReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new TierMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new TierMetricReportMap());
                 }
-                else if (entity.EntityType == EntityNode.ENTITY_TYPE)
+                else if (entity.EntityType == APMNode.ENTITY_TYPE)
                 {
-                    List<EntityNode> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
-                    List<EntityNode> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityNode>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+                    List<APMNode> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+                    List<APMNode> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER), new NodeMetricReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new NodeMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new NodeMetricReportMap());
                 }
-                else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
+                else if (entity.EntityType == Backend.ENTITY_TYPE)
                 {
-                    List<EntityBackend> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
-                    List<EntityBackend> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBackend>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBackend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+                    List<Backend> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Backend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+                    List<Backend> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<Backend>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, Backend.ENTITY_FOLDER), new BackendMetricReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BackendMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BackendMetricReportMap());
                 }
-                else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
+                else if (entity.EntityType == BusinessTransaction.ENTITY_TYPE)
                 {
-                    List<EntityBusinessTransaction> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
-                    List<EntityBusinessTransaction> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransaction>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+                    List<BusinessTransaction> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+                    List<BusinessTransaction> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<BusinessTransaction>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, BusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BusinessTransactionMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BusinessTransactionMetricReportMap());
                 }
-                else if (entity.EntityType == EntityServiceEndpoint.ENTITY_TYPE)
+                else if (entity.EntityType == ServiceEndpoint.ENTITY_TYPE)
                 {
-                    List<EntityServiceEndpoint> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
-                    List<EntityServiceEndpoint> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityServiceEndpoint>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
+                    List<ServiceEndpoint> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
+                    List<ServiceEndpoint> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<ServiceEndpoint>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, ServiceEndpoint.ENTITY_FOLDER), new ServiceEndpointMetricReportMap()).Where(e => e.SEPID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ServiceEndpointMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ServiceEndpointMetricReportMap());
                 }
-                else if (entity.EntityType == EntityError.ENTITY_TYPE)
+                else if (entity.EntityType == Error.ENTITY_TYPE)
                 {
-                    List<EntityError> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
-                    List<EntityError> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<EntityError>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, EntityError.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
+                    List<Error> entitiesFullRangeFiltered = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.EntitiesFullIndexFilePath(jobTarget, Error.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
+                    List<Error> entitiesHourRangeFiltered = FileIOHelper.ReadListFromCSVFile<Error>(FilePathMap.EntitiesHourIndexFilePath(jobTarget, Error.ENTITY_FOLDER), new ErrorMetricReportMap()).Where(e => e.ErrorID == entity.EntityID).ToList();
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ErrorMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ErrorMetricReportMap());
@@ -909,7 +909,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             MemoryStream memoryStreamActivityFlow = null;
             try
             {
-                if (entity.EntityType == EntityApplication.ENTITY_TYPE)
+                if (entity.EntityType == APMApplication.ENTITY_TYPE)
                 {
                     List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
 
@@ -917,25 +917,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     //EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), 0, sheet, fromRow, 1);
                 }
-                else if (entity.EntityType == EntityTier.ENTITY_TYPE)
+                else if (entity.EntityType == APMTier.ENTITY_TYPE)
                 {
                     List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
 
                     memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new TierActivityFlowReportMap());
                 }
-                else if (entity.EntityType == EntityNode.ENTITY_TYPE)
+                else if (entity.EntityType == APMNode.ENTITY_TYPE)
                 {
                     List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
 
                     memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new NodeActivityFlowReportMap());
                 }
-                else if (entity.EntityType == EntityBackend.ENTITY_TYPE)
+                else if (entity.EntityType == Backend.ENTITY_TYPE)
                 {
                     List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
 
                     memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BackendActivityFlowReportMap());
                 }
-                else if (entity.EntityType == EntityBusinessTransaction.ENTITY_TYPE)
+                else if (entity.EntityType == BusinessTransaction.ENTITY_TYPE)
                 {
                     List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
 
@@ -975,32 +975,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             switch (entity.EntityType)
             {
-                case EntityApplication.ENTITY_TYPE:
+                case APMApplication.ENTITY_TYPE:
                     // The Application report has all events
                     eventsFilteredList = eventsAllList;
                     break;
 
-                case EntityTier.ENTITY_TYPE:
+                case APMTier.ENTITY_TYPE:
                     // Filter events for the Tier
                     if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsAllList.Where(e => e.TierID == ((EntityTier)entity).TierID).ToList();
+                        eventsFilteredList = eventsAllList.Where(e => e.TierID == ((APMTier)entity).TierID).ToList();
                     }
                     break;
 
-                case EntityNode.ENTITY_TYPE:
+                case APMNode.ENTITY_TYPE:
                     // Filter events for the Node
                     if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsAllList.Where(e => e.NodeID == ((EntityNode)entity).NodeID).ToList();
+                        eventsFilteredList = eventsAllList.Where(e => e.NodeID == ((APMNode)entity).NodeID).ToList();
                     }
                     break;
 
-                case EntityBusinessTransaction.ENTITY_TYPE:
+                case BusinessTransaction.ENTITY_TYPE:
                     // Filter events for the Business Transaction
                     if (eventsAllList != null)
                     {
-                        eventsFilteredList = eventsAllList.Where(e => e.BTID == ((EntityBusinessTransaction)entity).BTID).ToList();
+                        eventsFilteredList = eventsAllList.Where(e => e.BTID == ((BusinessTransaction)entity).BTID).ToList();
                     }
                     break;
 
@@ -1042,18 +1042,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             switch (entity.EntityType)
             {
-                case EntityApplication.ENTITY_TYPE:
+                case APMApplication.ENTITY_TYPE:
                     // The Application report has all snapshots, segments, call exits etc.
                     snapshotsFilteredList = snapshotsAllList;
 
                     break;
 
-                case EntityTier.ENTITY_TYPE:
+                case APMTier.ENTITY_TYPE:
                     // Filter snapshots starting at this Tier
                     List<Snapshot> snapshotsStartingAtThisEntity = null;
                     if (snapshotsAllList != null)
                     {
-                        snapshotsStartingAtThisEntity = snapshotsAllList.Where(s => s.TierID == ((EntityTier)entity).TierID).ToList();
+                        snapshotsStartingAtThisEntity = snapshotsAllList.Where(s => s.TierID == ((APMTier)entity).TierID).ToList();
                     }
 
                     // Filter snapshots that start elsewhere, but include this tier
@@ -1061,7 +1061,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     segmentsFilteredList = new List<Segment>();
                     if (segmentsAllList != null && snapshotsAllList != null)
                     {
-                        var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == ((EntityTier)entity).TierID).ToList().Select(e => e.RequestID).Distinct();
+                        var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == ((APMTier)entity).TierID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
                         {
                             Snapshot snapshotForThisRequest = snapshotsAllList.Find(s => s.RequestID == requestID);
@@ -1083,12 +1083,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     break;
 
-                case EntityNode.ENTITY_TYPE:
+                case APMNode.ENTITY_TYPE:
                     // Filter snapshots starting at this Tier and Node
                     snapshotsStartingAtThisEntity = null;
                     if (snapshotsAllList != null)
                     {
-                        snapshotsStartingAtThisEntity = snapshotsAllList.Where(s => s.TierID == ((EntityNode)entity).TierID && s.NodeID == ((EntityNode)entity).NodeID).ToList();
+                        snapshotsStartingAtThisEntity = snapshotsAllList.Where(s => s.TierID == ((APMNode)entity).TierID && s.NodeID == ((APMNode)entity).NodeID).ToList();
                     }
 
                     // Filter snapshots starting elsewhere, but including this Tier and Node
@@ -1096,7 +1096,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     segmentsFilteredList = new List<Segment>();
                     if (segmentsAllList != null && snapshotsAllList != null)
                     {
-                        var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == ((EntityNode)entity).TierID && s.NodeID == ((EntityNode)entity).NodeID).ToList().Select(e => e.RequestID).Distinct();
+                        var uniqueSnapshotIDs = segmentsAllList.Where(s => s.TierID == ((APMNode)entity).TierID && s.NodeID == ((APMNode)entity).NodeID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
                         {
                             Snapshot snapshotForThisRequest = snapshotsAllList.Find(s => s.RequestID == requestID);
@@ -1118,11 +1118,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     break;
 
-                case EntityBackend.ENTITY_TYPE:
+                case Backend.ENTITY_TYPE:
                     // Filter snapshots calling this Backend
                     if (exitCallsAllList != null)
                     {
-                        var uniqueSnapshotIDs = exitCallsAllList.Where(e => e.ToEntityID == ((EntityBackend)entity).BackendID).ToList().Select(e => e.RequestID).Distinct();
+                        var uniqueSnapshotIDs = exitCallsAllList.Where(e => e.ToEntityID == ((Backend)entity).BackendID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
                         {
                             if (snapshotsAllList != null)
@@ -1134,20 +1134,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     break;
 
-                case EntityBusinessTransaction.ENTITY_TYPE:
+                case BusinessTransaction.ENTITY_TYPE:
                     // Filter everything by BTs 
                     if (snapshotsAllList != null)
                     {
-                        snapshotsFilteredList = snapshotsAllList.Where(s => s.BTID == ((EntityBusinessTransaction)entity).BTID).ToList();
+                        snapshotsFilteredList = snapshotsAllList.Where(s => s.BTID == ((BusinessTransaction)entity).BTID).ToList();
                     }
 
                     break;
 
-                case EntityServiceEndpoint.ENTITY_TYPE:
+                case ServiceEndpoint.ENTITY_TYPE:
                     // Filter snapshots that call this SEP
                     if (serviceEndpointCallsAllList != null)
                     {
-                        var uniqueSnapshotIDs = serviceEndpointCallsAllList.Where(s => s.SEPID == ((EntityServiceEndpoint)entity).SEPID).ToList().Select(e => e.RequestID).Distinct();
+                        var uniqueSnapshotIDs = serviceEndpointCallsAllList.Where(s => s.SEPID == ((ServiceEndpoint)entity).SEPID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
                         {
                             if (snapshotsAllList != null)
@@ -1159,11 +1159,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     break;
 
-                case EntityError.ENTITY_TYPE:
+                case Error.ENTITY_TYPE:
                     // Filter snapshots that had this error
                     if (detectedErrorsAllList != null)
                     {
-                        var uniqueSnapshotIDs = detectedErrorsAllList.Where(e => e.ErrorID == ((EntityError)entity).ErrorID).ToList().Select(e => e.RequestID).Distinct();
+                        var uniqueSnapshotIDs = detectedErrorsAllList.Where(e => e.ErrorID == ((Error)entity).ErrorID).ToList().Select(e => e.RequestID).Distinct();
                         foreach (string requestID in uniqueSnapshotIDs)
                         {
                             if (snapshotsAllList != null)
@@ -1325,7 +1325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // Add summaries from the hourly metric breakdowns
                 if (tableDetails != null)
                 {
-                    if (entity.EntityType != EntityError.ENTITY_TYPE)
+                    if (entity.EntityType != Error.ENTITY_TYPE)
                     {
                         sheet.Cells[1, columnIndexTimeRangeStart + 0].Value = "Calls";
                         sheet.Cells[2, columnIndexTimeRangeStart + 0].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["Calls"].Position + 1].Value.ToString();
@@ -1551,7 +1551,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet.Cells[fromRow, 1].Value = "Type";
                 sheet.Cells[fromRow, 2].Value = "SubType";
-                sheet.Cells[fromRow, 3].Value = EntityTier.ENTITY_TYPE;
+                sheet.Cells[fromRow, 3].Value = APMTier.ENTITY_TYPE;
                 sheet.Cells[fromRow, 4].Value = "BT";
                 sheet.Cells[fromRow, 5].Value = "Trigger";
 
@@ -1711,7 +1711,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // At this point we have the snapshots partitioned just the way we want them
                 // Each entry is guaranteed to have at least one item
 
-                sheet.Cells[fromRow, 1].Value = EntityTier.ENTITY_TYPE;
+                sheet.Cells[fromRow, 1].Value = APMTier.ENTITY_TYPE;
                 sheet.Cells[fromRow, 2].Value = "BT";
                 sheet.Cells[fromRow, 3].Value = " ";
                 sheet.Cells[fromRow, 4].Value = "  ";

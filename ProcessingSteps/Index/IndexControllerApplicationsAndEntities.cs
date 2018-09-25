@@ -37,6 +37,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
+                {
+                    return true;
+                }
+
+                bool reportFolderCleaned = false;
+
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
                 {
@@ -67,7 +74,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         loggerConsole.Info("Index List of Controllers");
 
                         // Create this row 
-                        EntityController controller = new EntityController();
+                        Controller controller = new Controller();
                         controller.Controller = jobTarget.Controller;
                         controller.ControllerLink = String.Format(DEEPLINK_CONTROLLER, controller.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
                         controller.UserName = jobTarget.UserName;
@@ -113,12 +120,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         // Output single controller report CSV
-                        List<EntityController> controllerList = new List<EntityController>(1);
+                        List<Controller> controllerList = new List<Controller>(1);
                         controllerList.Add(controller);
 
                         if (File.Exists(FilePathMap.ControllerIndexFilePath(jobTarget)) == false)
                         {
-                            FileIOHelper.WriteListToCSVFile(controllerList, new ControllerEntityReportMap(), FilePathMap.ControllerIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(controllerList, new ControllerReportMap(), FilePathMap.ControllerIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -126,24 +133,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Nodes and Node Properties
 
                         List<AppDRESTNode> nodesRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTNode>(FilePathMap.NodesDataFilePath(jobTarget));
-                        List<EntityNode> nodesList = null;
-                        List<EntityNodeProperty> entityNodeStartupOptionsList = null;
-                        List<EntityNodeProperty> entityNodePropertiesList = null;
-                        List<EntityNodeProperty> entityNodeEnvironmentVariablesList = null;
+                        List<APMNode> nodesList = null;
+                        List<NodeProperty> entityNodeStartupOptionsList = null;
+                        List<NodeProperty> entityNodePropertiesList = null;
+                        List<NodeProperty> entityNodeEnvironmentVariablesList = null;
                         if (nodesRESTList != null)
                         {
                             loggerConsole.Info("Index List of Nodes and Node Properties ({0} entities)", nodesRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + nodesRESTList.Count;
 
-                            nodesList = new List<EntityNode>(nodesRESTList.Count);
-                            entityNodeStartupOptionsList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
-                            entityNodePropertiesList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
-                            entityNodeEnvironmentVariablesList = new List<EntityNodeProperty>(nodesRESTList.Count * 25);
+                            nodesList = new List<APMNode>(nodesRESTList.Count);
+                            entityNodeStartupOptionsList = new List<NodeProperty>(nodesRESTList.Count * 25);
+                            entityNodePropertiesList = new List<NodeProperty>(nodesRESTList.Count * 25);
+                            entityNodeEnvironmentVariablesList = new List<NodeProperty>(nodesRESTList.Count * 25);
 
                             foreach (AppDRESTNode node in nodesRESTList)
                             {
-                                EntityNode nodeRow = new EntityNode();
+                                APMNode nodeRow = new APMNode();
                                 nodeRow.NodeID = node.id;
                                 nodeRow.AgentPresent = node.appAgentPresent;
                                 nodeRow.AgentType = node.agentType;
@@ -177,7 +184,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     // Apache agent looks like this
                                     // Proxy v4.2.5.1 GA SHA-1:.ad6c804882f518b3350f422489866ea2008cd664 #13146 35-4.2.5.next-build
 
-                                    Regex regexVersion = new Regex(@"(?i).*v(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
+                                    Regex regexVersion = new Regex(@"(?i)(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
                                     Match match = regexVersion.Match(nodeRow.AgentVersion);
                                     if (match != null)
                                     {
@@ -202,7 +209,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     //Machine Agent v3.8.3.0 GA Build Date 2014 - 06 - 06 17:09:13
                                     //Machine Agent v4.1.7.1 GA Build Date 2015 - 11 - 24 20:49:24
 
-                                    Regex regexVersion = new Regex(@"(?i).*v(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
+                                    Regex regexVersion = new Regex(@"(?i)(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
                                     Match match = regexVersion.Match(nodeRow.MachineAgentVersion);
                                     if (match != null)
                                     {
@@ -221,7 +228,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithDeeplinks(nodeRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(nodeRow, jobTarget, jobConfiguration.Input.TimeRange);
 
-                                JObject nodeProperties = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, node));
+                                JObject nodeProperties = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, node));
                                 if (nodeProperties != null)
                                 {
                                     nodeRow.AgentRuntime = nodeProperties["latestAgentRuntime"].ToString();
@@ -239,7 +246,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         nodeRow.NumStartupOptions = nodeProperties["latestVmStartupOptions"].Count();
                                         foreach (JValue nodeStartupOptionObject in nodeProperties["latestVmStartupOptions"])
                                         {
-                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            NodeProperty nodePropertyRow = new NodeProperty();
                                             nodePropertyRow.NodeID = nodeRow.NodeID;
                                             nodePropertyRow.AgentType = nodeRow.AgentType;
                                             nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
@@ -286,7 +293,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         nodeRow.NumProperties = nodeProperties["latestVmSystemProperties"].Count();
                                         foreach (JObject nodePropertyObject in nodeProperties["latestVmSystemProperties"])
                                         {
-                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            NodeProperty nodePropertyRow = new NodeProperty();
                                             nodePropertyRow.NodeID = nodeRow.NodeID;
                                             nodePropertyRow.AgentType = nodeRow.AgentType;
                                             nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
@@ -307,7 +314,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         nodeRow.NumEnvVariables = nodeProperties["latestEnvironmentVariables"].Count();
                                         foreach (JObject nodePropertyObject in nodeProperties["latestEnvironmentVariables"])
                                         {
-                                            EntityNodeProperty nodePropertyRow = new EntityNodeProperty();
+                                            NodeProperty nodePropertyRow = new NodeProperty();
                                             nodePropertyRow.NodeID = nodeRow.NodeID;
                                             nodePropertyRow.AgentType = nodeRow.AgentType;
                                             nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
@@ -334,7 +341,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             entityNodePropertiesList = entityNodePropertiesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
                             entityNodeEnvironmentVariablesList = entityNodeEnvironmentVariablesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(nodesList, new NodeEntityReportMap(), FilePathMap.NodesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(nodesList, new APMNodeReportMap(), FilePathMap.NodesIndexFilePath(jobTarget));
                             FileIOHelper.WriteListToCSVFile(entityNodeStartupOptionsList, new NodePropertyReportMap(), FilePathMap.NodeStartupOptionsIndexFilePath(jobTarget));
                             FileIOHelper.WriteListToCSVFile(entityNodePropertiesList, new NodePropertyReportMap(), FilePathMap.NodePropertiesIndexFilePath(jobTarget));
                             FileIOHelper.WriteListToCSVFile(entityNodeEnvironmentVariablesList, new NodePropertyReportMap(), FilePathMap.NodeEnvironmentVariablesIndexFilePath(jobTarget));
@@ -346,14 +353,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<AppDRESTBackend> backendsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTBackend>(FilePathMap.BackendsDataFilePath(jobTarget));
                         List<AppDRESTTier> tiersRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTTier>(FilePathMap.TiersDataFilePath(jobTarget));
-                        List<EntityBackend> backendsList = null;
+                        List<Backend> backendsList = null;
                         if (backendsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Backends ({0} entities)", backendsRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + backendsRESTList.Count;
 
-                            backendsList = new List<EntityBackend>(backendsRESTList.Count);
+                            backendsList = new List<Backend>(backendsRESTList.Count);
 
                             JObject backendsDetailsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.BackendsDetailDataFilePath(jobTarget));
                             JArray backendsDetails = null;
@@ -364,7 +371,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (AppDRESTBackend backend in backendsRESTList)
                             {
-                                EntityBackend backendRow = new EntityBackend();
+                                Backend backendRow = new Backend();
                                 backendRow.ApplicationName = jobTarget.Application;
                                 backendRow.ApplicationID = jobTarget.ApplicationID;
                                 backendRow.BackendID = backend.id;
@@ -441,6 +448,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
+                                JObject backendToDBMonMapping = FileIOHelper.LoadJObjectFromFile(FilePathMap.BackendToDBMonMappingDataFilePath(jobTarget, backend));
+                                if (backendToDBMonMapping != null)
+                                {
+                                    backendRow.DBMonCollectorName = backendToDBMonMapping["name"].ToString();
+                                    backendRow.DBMonCollectorType = backendToDBMonMapping["type"].ToString();
+                                    backendRow.DBMonCollectorConfigID = (long)backendToDBMonMapping["id"];
+                                }
+
                                 updateEntityWithDeeplinks(backendRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(backendRow, jobTarget, jobConfiguration.Input.TimeRange);
 
@@ -449,7 +464,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             backendsList = backendsList.OrderBy(o => o.BackendType).ThenBy(o => o.BackendName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(backendsList, new BackendEntityReportMap(), FilePathMap.BackendsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(backendsList, new BackendReportMap(), FilePathMap.BackendsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -457,18 +472,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Business Transactions
 
                         List<AppDRESTBusinessTransaction> businessTransactionsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTBusinessTransaction>(FilePathMap.BusinessTransactionsDataFilePath(jobTarget));
-                        List<EntityBusinessTransaction> businessTransactionList = null;
+                        List<BusinessTransaction> businessTransactionList = null;
                         if (businessTransactionsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Business Transactions ({0} entities)", businessTransactionsRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionsRESTList.Count;
 
-                            businessTransactionList = new List<EntityBusinessTransaction>(businessTransactionsRESTList.Count);
+                            businessTransactionList = new List<BusinessTransaction>(businessTransactionsRESTList.Count);
 
                             foreach (AppDRESTBusinessTransaction businessTransaction in businessTransactionsRESTList)
                             {
-                                EntityBusinessTransaction businessTransactionRow = new EntityBusinessTransaction();
+                                BusinessTransaction businessTransactionRow = new BusinessTransaction();
                                 businessTransactionRow.ApplicationID = jobTarget.ApplicationID;
                                 businessTransactionRow.ApplicationName = jobTarget.Application;
                                 businessTransactionRow.BTID = businessTransaction.id;
@@ -496,7 +511,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             businessTransactionList = businessTransactionList.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(businessTransactionList, new BusinessTransactionEntityReportMap(), FilePathMap.BusinessTransactionsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(businessTransactionList, new BusinessTransactionReportMap(), FilePathMap.BusinessTransactionsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -504,14 +519,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Service Endpoints
 
                         List<AppDRESTMetric> serviceEndpointsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTMetric>(FilePathMap.ServiceEndpointsDataFilePath(jobTarget));
-                        List<EntityServiceEndpoint> serviceEndpointsList = null;
+                        List<ServiceEndpoint> serviceEndpointsList = null;
                         if (serviceEndpointsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Service Endpoints ({0} entities)", serviceEndpointsRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + serviceEndpointsRESTList.Count;
 
-                            serviceEndpointsList = new List<EntityServiceEndpoint>(serviceEndpointsRESTList.Count);
+                            serviceEndpointsList = new List<ServiceEndpoint>(serviceEndpointsRESTList.Count);
 
                             JObject serviceEndpointsDetailsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.ServiceEndpointsDetailDataFilePath(jobTarget));
                             JArray serviceEndpointsDetails = null;
@@ -522,34 +537,62 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (AppDRESTMetric serviceEndpoint in serviceEndpointsRESTList)
                             {
-                                EntityServiceEndpoint serviceEndpointRow = new EntityServiceEndpoint();
+                                ServiceEndpoint serviceEndpointRow = new ServiceEndpoint();
                                 serviceEndpointRow.ApplicationID = jobTarget.ApplicationID;
                                 serviceEndpointRow.ApplicationName = jobTarget.Application;
                                 serviceEndpointRow.Controller = jobTarget.Controller;
 
-                                // metricName
-                                // BTM|Application Diagnostic Data|SEP:4855|Calls per Minute
-                                //                                     ^^^^
-                                //                                     ID
-                                serviceEndpointRow.SEPID = Convert.ToInt32(serviceEndpoint.metricName.Split('|')[2].Split(':')[1]);
-
-                                // metricPath
-                                // Service Endpoints|ECommerce-Services|/appdynamicspilot/rest|Calls per Minute
-                                //                                      ^^^^^^^^^^^^^^^^^^^^^^
-                                //                                      SEP Name
-                                serviceEndpointRow.SEPName = serviceEndpoint.metricPath.Split('|')[2];
-
-                                serviceEndpointRow.TierName = serviceEndpoint.metricPath.Split('|')[1];
-                                if (tiersRESTList != null)
+                                // Parse ID
+                                try
                                 {
+                                    // metricName
+                                    // BTM|Application Diagnostic Data|SEP:4855|Calls per Minute
+                                    //                                     ^^^^
+                                    //                                     ID
+                                    serviceEndpointRow.SEPID = Convert.ToInt32(serviceEndpoint.metricName.Split('|')[2].Split(':')[1]);
+                                }
+                                catch (IndexOutOfRangeException ex)
+                                {
+                                    serviceEndpointRow.SEPID = -1;
+                                }
+
+                                string[] metricPathTokens = serviceEndpoint.metricPath.Split('|');
+                                if (metricPathTokens.Length > 0)
+                                {
+                                    // Parse Tier
                                     // metricPath
                                     // Service Endpoints|ECommerce-Services|/appdynamicspilot/rest|Calls per Minute
                                     //                   ^^^^^^^^^^^^^^^^^^
                                     //                   Tier
-                                    AppDRESTTier tierForThisEntity = tiersRESTList.Where(tier => tier.name == serviceEndpointRow.TierName).FirstOrDefault();
-                                    if (tierForThisEntity != null)
+                                    try
                                     {
-                                        serviceEndpointRow.TierID = tierForThisEntity.id;
+                                        serviceEndpointRow.TierName = metricPathTokens[1];
+                                    }
+                                    catch (IndexOutOfRangeException ex)
+                                    {
+                                        serviceEndpointRow.TierName = "COULD NOT PARSE";
+                                    }
+                                    if (tiersRESTList != null)
+                                    {
+                                        AppDRESTTier tierForThisEntity = tiersRESTList.Where(tier => tier.name == serviceEndpointRow.TierName).FirstOrDefault();
+                                        if (tierForThisEntity != null)
+                                        {
+                                            serviceEndpointRow.TierID = tierForThisEntity.id;
+                                        }
+                                    }
+
+                                    // Parse Name
+                                    // metricPath
+                                    // Service Endpoints|ECommerce-Services|/appdynamicspilot/rest|Calls per Minute
+                                    //                                      ^^^^^^^^^^^^^^^^^^^^^^
+                                    //                                      SEP Name
+                                    try
+                                    {
+                                        serviceEndpointRow.SEPName = metricPathTokens[2];
+                                    }
+                                    catch (IndexOutOfRangeException ex)
+                                    {
+                                        serviceEndpointRow.SEPName = "COULD NOT PARSE";
                                     }
                                 }
 
@@ -568,7 +611,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             serviceEndpointsList = serviceEndpointsList.OrderBy(o => o.TierName).ThenBy(o => o.SEPName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(serviceEndpointsList, new ServiceEndpointEntityReportMap(), FilePathMap.ServiceEndpointsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(serviceEndpointsList, new ServiceEndpointReportMap(), FilePathMap.ServiceEndpointsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -576,22 +619,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Errors
 
                         List<AppDRESTMetric> errorsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTMetric>(FilePathMap.ErrorsDataFilePath(jobTarget));
-                        List<EntityError> errorList = null;
+                        List<Error> errorList = null;
                         if (errorsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Errors ({0} entities)", errorsRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + errorsRESTList.Count;
 
-                            errorList = new List<EntityError>(errorsRESTList.Count);
+                            errorList = new List<Error>(errorsRESTList.Count);
 
                             foreach (AppDRESTMetric error in errorsRESTList)
                             {
-                                EntityError errorRow = new EntityError();
+                                Error errorRow = new Error();
                                 errorRow.ApplicationID = jobTarget.ApplicationID;
                                 errorRow.ApplicationName = jobTarget.Application;
                                 errorRow.Controller = jobTarget.Controller;
 
+                                // Parse ID
                                 // metricName
                                 // BTM|Application Diagnostic Data|Error:11626|Errors per Minute
                                 //                                       ^^^^^
@@ -604,13 +648,48 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     errorRow.ErrorID = -1;
                                 }
-                                // metricPath
-                                // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
-                                //                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                                //                           Error Name
-                                errorRow.ErrorName = error.metricPath.Split('|')[2];
 
-                                errorRow.ErrorType = EntityError.ENTITY_TYPE;
+                                string[] metricPathTokens = error.metricPath.Split('|');
+                                if (metricPathTokens.Length > 0)
+                                {
+                                    // Parse Tier
+                                    // metricPath
+                                    // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
+                                    //        ^^^^^^^^^^^^^^^^^^
+                                    //        Tier
+                                    try
+                                    {
+                                        errorRow.TierName = metricPathTokens[1];
+                                    }
+                                    catch (IndexOutOfRangeException ex)
+                                    {
+                                        errorRow.TierName = "COULD NOT PARSE";
+                                    }
+                                    if (tiersRESTList != null)
+                                    {
+                                        AppDRESTTier tierForThisEntity = tiersRESTList.Where(tier => tier.name == errorRow.TierName).FirstOrDefault();
+                                        if (tierForThisEntity != null)
+                                        {
+                                            errorRow.TierID = tierForThisEntity.id;
+                                        }
+                                    }
+
+                                    // Parse Name
+                                    // metricPath
+                                    // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
+                                    //                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                                    //                           Error Name
+                                    try
+                                    {
+                                        errorRow.ErrorName = metricPathTokens[2];
+                                    }
+                                    catch (IndexOutOfRangeException ex)
+                                    {
+                                        errorRow.ErrorName = "COULD NOT PARSE";
+                                    }
+                                }
+
+                                errorRow.ErrorType = Error.ENTITY_TYPE;
                                 // Do some analysis of the error type based on their name
                                 if (errorRow.ErrorName.IndexOf("exception", 0, StringComparison.OrdinalIgnoreCase) >= 0)
                                 {
@@ -658,19 +737,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
-                                errorRow.TierName = error.metricPath.Split('|')[1];
-                                if (tiersRESTList != null)
-                                {
-                                    // metricPath
-                                    // Errors|ECommerce-Services|CommunicationsException : EOFException|Errors per Minute
-                                    //        ^^^^^^^^^^^^^^^^^^
-                                    //        Tier
-                                    AppDRESTTier tierForThisEntity = tiersRESTList.Where(tier => tier.name == errorRow.TierName).FirstOrDefault();
-                                    if (tierForThisEntity != null)
-                                    {
-                                        errorRow.TierID = tierForThisEntity.id;
-                                    }
-                                }
 
                                 updateEntityWithDeeplinks(errorRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(errorRow, jobTarget, jobConfiguration.Input.TimeRange);
@@ -681,7 +747,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             errorList = errorList.OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(errorList, new ErrorEntityReportMap(), FilePathMap.ErrorsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(errorList, new ErrorReportMap(), FilePathMap.ErrorsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -689,14 +755,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Information Points
 
                         List<AppDRESTMetric> informationPointsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTMetric>(FilePathMap.InformationPointsDataFilePath(jobTarget));
-                        List<EntityInformationPoint> informationPointsList = null;
+                        List<InformationPoint> informationPointsList = null;
                         if (informationPointsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Information points ({0} entities)", informationPointsRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + informationPointsRESTList.Count;
 
-                            informationPointsList = new List<EntityInformationPoint>(informationPointsRESTList.Count);
+                            informationPointsList = new List<InformationPoint>(informationPointsRESTList.Count);
 
                             JObject informationPointsDetailsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.InformationPointsDetailDataFilePath(jobTarget));
                             JArray informationPointsDetails = null;
@@ -707,7 +773,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (AppDRESTMetric informationPoint in informationPointsRESTList)
                             {
-                                EntityInformationPoint informationPointRow = new EntityInformationPoint();
+                                InformationPoint informationPointRow = new InformationPoint();
                                 informationPointRow.ApplicationID = jobTarget.ApplicationID;
                                 informationPointRow.ApplicationName = jobTarget.Application;
                                 informationPointRow.Controller = jobTarget.Controller;
@@ -759,25 +825,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             informationPointsList = informationPointsList.OrderBy(o => o.IPName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(informationPointsList, new InformationPointEntityReportMap(), FilePathMap.InformationPointsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(informationPointsList, new InformationPointReportMap(), FilePathMap.InformationPointsIndexFilePath(jobTarget));
                         }
 
                         #endregion
 
                         #region Tiers
 
-                        List<EntityTier> tiersList = null;
+                        List<APMTier> tiersList = null;
                         if (tiersRESTList != null)
                         {
                             loggerConsole.Info("Index List of Tiers ({0} entities)", tiersRESTList.Count);
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + tiersRESTList.Count;
 
-                            tiersList = new List<EntityTier>(tiersRESTList.Count);
+                            tiersList = new List<APMTier>(tiersRESTList.Count);
 
                             foreach (AppDRESTTier tier in tiersRESTList)
                             {
-                                EntityTier tierRow = new EntityTier();
+                                APMTier tierRow = new APMTier();
                                 tierRow.AgentType = tier.agentType;
                                 tierRow.ApplicationID = jobTarget.ApplicationID;
                                 tierRow.ApplicationName = jobTarget.Application;
@@ -793,11 +859,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                                 if (serviceEndpointsList != null)
                                 {
-                                    tierRow.NumSEPs = serviceEndpointsList.Where<EntityServiceEndpoint>(s => s.TierID == tierRow.TierID).Count();
+                                    tierRow.NumSEPs = serviceEndpointsList.Where<ServiceEndpoint>(s => s.TierID == tierRow.TierID).Count();
                                 }
                                 if (errorList != null)
                                 {
-                                    tierRow.NumErrors = errorList.Where<EntityError>(s => s.TierID == tierRow.TierID).Count();
+                                    tierRow.NumErrors = errorList.Where<Error>(s => s.TierID == tierRow.TierID).Count();
                                 }
 
                                 updateEntityWithDeeplinks(tierRow);
@@ -809,7 +875,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Sort them
                             tiersList = tiersList.OrderBy(o => o.TierName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(tiersList, new TierEntityReportMap(), FilePathMap.TiersIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(tiersList, new APMTierReportMap(), FilePathMap.TiersIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -822,15 +888,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                            List<EntityApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<EntityApplication>(FilePathMap.ApplicationsIndexFilePath(jobTarget), new ApplicationEntityReportMap());
+                            List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.ApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
 
                             if (applicationsList == null || applicationsList.Count == 0)
                             {
                                 // First time, let's output these rows
-                                applicationsList = new List<EntityApplication>(applicationsRESTList.Count);
+                                applicationsList = new List<APMApplication>(applicationsRESTList.Count);
                                 foreach (AppDRESTApplication application in applicationsRESTList)
                                 {
-                                    EntityApplication applicationsRow = new EntityApplication();
+                                    APMApplication applicationsRow = new APMApplication();
                                     applicationsRow.ApplicationName = application.name;
                                     applicationsRow.Description = application.description;
                                     applicationsRow.ApplicationID = application.id;
@@ -844,7 +910,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
 
                             // Update counts of entities for this application row
-                            EntityApplication applicationRow = applicationsList.Where(a => a.ApplicationID == jobTarget.ApplicationID).FirstOrDefault();
+                            APMApplication applicationRow = applicationsList.Where(a => a.ApplicationID == jobTarget.ApplicationID).FirstOrDefault();
                             if (applicationRow != null)
                             {
                                 if (tiersList != null) applicationRow.NumTiers = tiersList.Count;
@@ -855,17 +921,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 if (errorList != null) applicationRow.NumErrors = errorList.Count;
                                 if (informationPointsList != null) applicationRow.NumIPs = informationPointsList.Count;
 
-                                List<EntityApplication> applicationRows = new List<EntityApplication>(1);
+                                List<APMApplication> applicationRows = new List<APMApplication>(1);
                                 applicationRows.Add(applicationRow);
 
                                 // Write just this row for this application
-                                FileIOHelper.WriteListToCSVFile(applicationRows, new ApplicationEntityReportMap(), FilePathMap.ApplicationIndexFilePath(jobTarget));
+                                FileIOHelper.WriteListToCSVFile(applicationRows, new APMApplicationReportMap(), FilePathMap.ApplicationIndexFilePath(jobTarget));
                             }
 
                             // Sort them
                             applicationsList = applicationsList.OrderBy(o => o.Controller).ThenBy(o => o.ApplicationName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(applicationsList, new ApplicationEntityReportMap(), FilePathMap.ApplicationsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(applicationsList, new APMApplicationReportMap(), FilePathMap.ApplicationsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -873,11 +939,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Combine All for Report CSV
 
                         // If it is the first one, clear out the combined folder
-                        if (i == 0)
+                        if (reportFolderCleaned == false)
                         {
                             FileIOHelper.DeleteFolder(FilePathMap.EntitiesReportFolderPath());
                             Thread.Sleep(1000);
                             FileIOHelper.CreateFolder(FilePathMap.EntitiesReportFolderPath());
+                            reportFolderCleaned = true;
                         }
 
                         // Append all the individual application files into one
@@ -951,8 +1018,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                 foreach (var controllerGroup in controllers)
                 {
-                    FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0]));
-                    FileIOHelper.AppendTwoCSVFiles(FilePathMap.ControllersReportFilePath(), FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0]));
+                    if (File.Exists(FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0])) == true && new FileInfo(FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0])).Length > 0)
+                    {
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationsReportFilePath(), FilePathMap.ApplicationsIndexFilePath(controllerGroup.ToList()[0]));
+                    }
+                    if (File.Exists(FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0])) == true && new FileInfo(FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0])).Length > 0)
+                    {
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.ControllersReportFilePath(), FilePathMap.ControllerIndexFilePath(controllerGroup.ToList()[0]));
+                    }
                 }
 
                 return true;
@@ -987,7 +1060,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return true;
         }
 
-        private void updateEntityWithEntityDetailAndFlameGraphLinks(EntityBase entity, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private void updateEntityWithEntityDetailAndFlameGraphLinks(APMEntityBase entity, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             entity.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", FilePathMap.EntityMetricAndDetailExcelReportFilePath(entity, jobTarget, jobTimeRange, false));
             entity.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<FlGraph>"")", FilePathMap.FlameGraphReportFilePath(entity, jobTarget, jobTimeRange, false));

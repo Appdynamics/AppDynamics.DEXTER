@@ -139,7 +139,8 @@ namespace AppDynamics.Dexter
                         {
                             Double numValue;
                             bool boolValue;
-                            DateTime dateValue;
+                            DateTime dateTimeValue;
+                            TimeSpan timeSpanValue;
 
                             // Try some casting
                             if (Double.TryParse(fieldValue, NumberStyles.Any, NumberFormatInfo.InvariantInfo, out numValue) == true)
@@ -152,10 +153,24 @@ namespace AppDynamics.Dexter
                                 // Boolean
                                 cell.Value = boolValue;
                             }
-                            else if (DateTime.TryParse(fieldValue, out dateValue))
+                            else if (TimeSpan.TryParse(fieldValue, out timeSpanValue))
+                            {
+                                // TimeSpan
+                                cell.Value = timeSpanValue;
+                                cell.Style.Numberformat.Format = "[h]:mm:ss";
+                                //if (headerRowValues[csvFieldIndex] == "EventTime")
+                                //{
+                                //    cell.Style.Numberformat.Format = "hh:mm";
+                                //}
+                                //else
+                                //{
+                                //    cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
+                                //}
+                            }
+                            else if (DateTime.TryParse(fieldValue, out dateTimeValue))
                             {
                                 // DateTime
-                                cell.Value = dateValue;
+                                cell.Value = dateTimeValue;
                                 if (headerRowValues[csvFieldIndex] == "EventTime")
                                 {
                                     cell.Style.Numberformat.Format = "hh:mm";

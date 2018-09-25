@@ -179,6 +179,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string APPLICATION_TYPE_APM = "APM";
         internal const string APPLICATION_TYPE_SIM = "SIM";
         internal const string APPLICATION_TYPE_WEB = "WEB";
+        internal const string APPLICATION_TYPE_MOBILE = "MOBILE";
+        internal const string APPLICATION_TYPE_DB = "DB";
 
         #endregion
 
