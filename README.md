@@ -151,7 +151,7 @@ net471\AppDynamics.Dexter.exe --jobfile MyJob.json
 
 For example, on MacOS or Linux:
 ```
-dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
+dotnet netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
 ```
 
 ## Review Results
