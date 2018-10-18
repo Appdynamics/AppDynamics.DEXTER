@@ -164,9 +164,9 @@ Framework | Folder | Command
 .NET Core self-contained | core-linux | `core-linux/AppDynamics.Dexter --jobfile MyJob.json`
 
 # Review Results
-You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
+You will see the results in the [Output](../../wiki/Home#output-folder-structure) folder.
 
-To understand what you are looking at, read [Description of Excel Reports](../../wiki/#excel-report-descriptions).
+To understand what you are looking at, read [Description of Excel Reports](../../wiki/Home#excel-report-descriptions).
 
 # Useful Links
 ## Documentation 
