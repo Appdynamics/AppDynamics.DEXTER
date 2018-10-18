@@ -130,7 +130,7 @@ Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusern
 ## Job File
 Specify data to operate on with [Job File](../../wiki/Job-File). Review some of the [Job File Examples](../../wiki/Job-File-Examples).
 
-You can find a job file template in `full-win\DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
+The template job file is called `DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
 
 Alternatively, create the Job File using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
  
