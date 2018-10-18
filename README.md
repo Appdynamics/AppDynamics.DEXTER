@@ -128,7 +128,7 @@ Download latest release from [Releases](https://github.com/Appdynamics/AppDynami
 Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusername/DEXTER`.
 
 ## Job File
-Specify data to operate on with [Job File](Job-File). Review some of the [Job File Examples](Job-File-Examples).
+Specify data to operate on with [Job File](../../wiki/Job-File). Review some of the [Job File Examples](../../wiki/Job-File-Examples).
 
 You can find a job file template in `full-win\DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
 
