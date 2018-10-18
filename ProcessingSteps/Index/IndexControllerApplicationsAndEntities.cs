@@ -228,6 +228,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithDeeplinks(nodeRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(nodeRow, jobTarget, jobConfiguration.Input.TimeRange);
 
+                                // Node properties (JVM Tab)
                                 JObject nodeProperties = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, node));
                                 if (nodeProperties != null)
                                 {
@@ -332,6 +333,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
+                                // Node metadata (Agent Tab)
+                                JObject nodeMetadata = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeMetadataDataFilePath(jobTarget, node));
+                                if (nodeMetadata != null)
+                                {
+                                    if (nodeMetadata["applicationComponentNode"].HasValues == true && nodeMetadata["applicationComponentNode"]["metaInfo"].HasValues == true)
+                                    {
+                                        nodeRow.NumProperties = nodeRow.NumProperties + nodeMetadata["applicationComponentNode"]["metaInfo"].Count();
+
+                                        foreach (JObject nodePropertyObject in nodeMetadata["applicationComponentNode"]["metaInfo"])
+                                        {
+                                            NodeProperty nodePropertyRow = new NodeProperty();
+                                            nodePropertyRow.NodeID = nodeRow.NodeID;
+                                            nodePropertyRow.AgentType = nodeRow.AgentType;
+                                            nodePropertyRow.ApplicationName = nodeRow.ApplicationName;
+                                            nodePropertyRow.ApplicationID = nodeRow.ApplicationID;
+                                            nodePropertyRow.Controller = nodeRow.Controller;
+                                            nodePropertyRow.NodeName = nodeRow.NodeName;
+                                            nodePropertyRow.TierID = nodeRow.TierID;
+                                            nodePropertyRow.TierName = nodeRow.TierName;
+
+                                            nodePropertyRow.PropName = nodePropertyObject["name"].ToString();
+                                            nodePropertyRow.PropValue = nodePropertyObject["value"].ToString();
+
+                                            entityNodePropertiesList.Add(nodePropertyRow);
+                                        }
+                                    }
+                                }
+
                                 nodesList.Add(nodeRow);
                             }
 
@@ -379,37 +408,37 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 backendRow.BackendType = backend.exitPointType;
                                 backendRow.Controller = jobTarget.Controller;
                                 backendRow.NumProps = backend.properties.Count;
-                                if (backend.properties.Count >= 1)
+                                if (backendRow.NumProps >= 1)
                                 {
                                     backendRow.Prop1Name = backend.properties[0].name;
                                     backendRow.Prop1Value = backend.properties[0].value;
                                 }
-                                if (backend.properties.Count >= 2)
+                                if (backendRow.NumProps >= 2)
                                 {
                                     backendRow.Prop2Name = backend.properties[1].name;
                                     backendRow.Prop2Value = backend.properties[1].value;
                                 }
-                                if (backend.properties.Count >= 3)
+                                if (backendRow.NumProps >= 3)
                                 {
                                     backendRow.Prop3Name = backend.properties[2].name;
                                     backendRow.Prop3Value = backend.properties[2].value;
                                 }
-                                if (backend.properties.Count >= 4)
+                                if (backendRow.NumProps >= 4)
                                 {
                                     backendRow.Prop4Name = backend.properties[3].name;
                                     backendRow.Prop4Value = backend.properties[3].value;
                                 }
-                                if (backend.properties.Count >= 5)
+                                if (backendRow.NumProps >= 5)
                                 {
                                     backendRow.Prop5Name = backend.properties[4].name;
                                     backendRow.Prop5Value = backend.properties[4].value;
                                 }
-                                if (backend.properties.Count >= 6)
+                                if (backendRow.NumProps >= 6)
                                 {
                                     backendRow.Prop6Name = backend.properties[5].name;
                                     backendRow.Prop6Value = backend.properties[5].value;
                                 }
-                                if (backend.properties.Count >= 7)
+                                if (backendRow.NumProps >= 7)
                                 {
                                     backendRow.Prop7Name = backend.properties[6].name;
                                     backendRow.Prop7Value = backend.properties[6].value;
@@ -556,6 +585,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     serviceEndpointRow.SEPID = -1;
                                 }
 
+                                // Parse SEP name, Tier name and Tier ID
                                 string[] metricPathTokens = serviceEndpoint.metricPath.Split('|');
                                 if (metricPathTokens.Length > 0)
                                 {
@@ -596,11 +626,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
-                                JObject serviceEndpointDetail = (JObject)serviceEndpointsDetails.Where(s => (long)s["id"] == serviceEndpointRow.SEPID).FirstOrDefault();
-                                if (serviceEndpointDetail != null)
+                                // Consult the SEP details for the IDs of SEP or the SEP Type
+                                if (serviceEndpointRow.SEPID != -1)
                                 {
-                                    serviceEndpointRow.SEPType = serviceEndpointDetail["type"].ToString();
+                                    // If we successfully parsed Service Endpoint ID from metric path, look it up in the SEP details JSON
+                                    JObject serviceEndpointDetail = (JObject)serviceEndpointsDetails.Where(s => (long)s["id"] == serviceEndpointRow.SEPID).FirstOrDefault();
+                                    if (serviceEndpointDetail != null)
+                                    {
+                                        serviceEndpointRow.SEPType = serviceEndpointDetail["type"].ToString();
+                                    }
                                 }
+                                else
+                                {
+                                    // If we did not successfully parse Service Endpoint ID from metric path, let's look it up by Tier name and SEP name
+                                    JObject serviceEndpointDetail = (JObject)serviceEndpointsDetails.Where(s => (long)s["applicationComponentId"] == serviceEndpointRow.TierID && s["name"].ToString() == serviceEndpointRow.SEPName).FirstOrDefault();
+                                    if (serviceEndpointDetail != null)
+                                    {
+                                        serviceEndpointRow.SEPID = (long)serviceEndpointDetail["id"];
+                                        serviceEndpointRow.SEPType = serviceEndpointDetail["type"].ToString();
+                                    }
+                                }
+
 
                                 updateEntityWithDeeplinks(serviceEndpointRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(serviceEndpointRow, jobTarget, jobConfiguration.Input.TimeRange);
@@ -646,7 +692,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                                 catch (IndexOutOfRangeException ex)
                                 {
-                                    errorRow.ErrorID = -1;
+                                    // No error ID in the path. Let's take the MetricID as error number, and make it negative to indicate it is not real
+                                    errorRow.ErrorID = error.metricId * -1;
                                 }
 
                                 string[] metricPathTokens = error.metricPath.Split('|');
@@ -736,7 +783,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         errorRow.HttpCode = httpCode;
                                     }
                                 }
-
 
                                 updateEntityWithDeeplinks(errorRow);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(errorRow, jobTarget, jobConfiguration.Input.TimeRange);
@@ -833,6 +879,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Tiers
 
                         List<APMTier> tiersList = null;
+                        List<ResolvedBackend> resolvedBackendsList = null;
                         if (tiersRESTList != null)
                         {
                             loggerConsole.Info("Index List of Tiers ({0} entities)", tiersRESTList.Count);
@@ -840,6 +887,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + tiersRESTList.Count;
 
                             tiersList = new List<APMTier>(tiersRESTList.Count);
+                            resolvedBackendsList = new List<ResolvedBackend>(tiersRESTList.Count * 10);
 
                             foreach (AppDRESTTier tier in tiersRESTList)
                             {
@@ -870,12 +918,84 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithEntityDetailAndFlameGraphLinks(tierRow, jobTarget, jobConfiguration.Input.TimeRange);
 
                                 tiersList.Add(tierRow);
+
+                                JArray resolvedBackends = FileIOHelper.LoadJArrayFromFile(FilePathMap.BackendToTierMappingDataFilePath(jobTarget, tier));
+                                if (resolvedBackends != null)
+                                {
+                                    foreach (JToken resolvedBackendToken in resolvedBackends)
+                                    {
+                                        ResolvedBackend resolvedBackend = new ResolvedBackend();
+
+                                        resolvedBackend.Controller = jobTarget.Controller;
+                                        resolvedBackend.ApplicationID = jobTarget.ApplicationID;
+                                        resolvedBackend.ApplicationName = jobTarget.Application;
+                                        resolvedBackend.TierName = tierRow.TierName;
+                                        resolvedBackend.TierID = tierRow.TierID;
+                                        try { resolvedBackend.BackendName = resolvedBackendToken["displayName"].ToString(); } catch { }
+                                        try { resolvedBackend.BackendID = (long)resolvedBackendToken["id"]; } catch { }
+                                        try { resolvedBackend.BackendType = resolvedBackendToken["resolutionInfo"]["exitPointType"].ToString(); } catch { }
+
+                                        try { resolvedBackend.CreatedOnUtc = UnixTimeHelper.ConvertFromUnixTimestamp((long)resolvedBackendToken["createdOn"]); } catch { }
+                                        try { resolvedBackend.CreatedOn = resolvedBackend.CreatedOnUtc.ToLocalTime(); } catch { }
+
+                                        if (nodesList != null)
+                                        {
+                                            APMNode node = nodesList.Where(n => n.TierID == tierRow.TierID && n.NodeID == (long)resolvedBackendToken["applicationComponentNodeId"]).FirstOrDefault();
+                                            if (node != null)
+                                            {
+                                                resolvedBackend.NodeName = node.NodeName;
+                                                resolvedBackend.NodeID = node.NodeID;
+                                            }
+                                        }
+
+                                        resolvedBackend.NumProps = resolvedBackendToken["resolutionInfo"]["properties"].Count();
+                                        if (resolvedBackend.NumProps >= 1)
+                                        {
+                                            resolvedBackend.Prop1Name = resolvedBackendToken["resolutionInfo"]["properties"][0]["name"].ToString();
+                                            resolvedBackend.Prop1Value = resolvedBackendToken["resolutionInfo"]["properties"][0]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 2)
+                                        {
+                                            resolvedBackend.Prop2Name = resolvedBackendToken["resolutionInfo"]["properties"][1]["name"].ToString();
+                                            resolvedBackend.Prop2Value = resolvedBackendToken["resolutionInfo"]["properties"][1]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 3)
+                                        {
+                                            resolvedBackend.Prop3Name = resolvedBackendToken["resolutionInfo"]["properties"][2]["name"].ToString();
+                                            resolvedBackend.Prop3Value = resolvedBackendToken["resolutionInfo"]["properties"][2]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 4)
+                                        {
+                                            resolvedBackend.Prop4Name = resolvedBackendToken["resolutionInfo"]["properties"][3]["name"].ToString();
+                                            resolvedBackend.Prop4Value = resolvedBackendToken["resolutionInfo"]["properties"][3]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 5)
+                                        {
+                                            resolvedBackend.Prop5Name = resolvedBackendToken["resolutionInfo"]["properties"][4]["name"].ToString();
+                                            resolvedBackend.Prop5Value = resolvedBackendToken["resolutionInfo"]["properties"][4]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 6)
+                                        {
+                                            resolvedBackend.Prop6Name = resolvedBackendToken["resolutionInfo"]["properties"][5]["name"].ToString();
+                                            resolvedBackend.Prop6Value = resolvedBackendToken["resolutionInfo"]["properties"][5]["value"].ToString();
+                                        }
+                                        if (resolvedBackend.NumProps >= 7)
+                                        {
+                                            resolvedBackend.Prop7Name = resolvedBackendToken["resolutionInfo"]["properties"][6]["name"].ToString();
+                                            resolvedBackend.Prop7Value = resolvedBackendToken["resolutionInfo"]["properties"][6]["value"].ToString();
+                                        }
+
+                                        resolvedBackendsList.Add(resolvedBackend);
+                                    }
+                                }
                             }
 
                             // Sort them
                             tiersList = tiersList.OrderBy(o => o.TierName).ToList();
+                            resolvedBackendsList = resolvedBackendsList.OrderBy(o => o.TierName).ThenBy(o => o.BackendType).ThenBy(o => o.BackendName).ToList();
 
                             FileIOHelper.WriteListToCSVFile(tiersList, new APMTierReportMap(), FilePathMap.TiersIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(resolvedBackendsList, new ResolvedBackendReportMap(), FilePathMap.MappedBackendsIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -971,6 +1091,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BackendsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BackendsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BackendsReportFilePath(), FilePathMap.BackendsIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.MappedBackendsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.MappedBackendsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.MappedBackendsReportFilePath(), FilePathMap.MappedBackendsIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BusinessTransactionsIndexFilePath(jobTarget)).Length > 0)
                         {

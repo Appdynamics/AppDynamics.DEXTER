@@ -11,6 +11,7 @@ namespace AppDynamics.Dexter.ReportObjects
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.BackendName).Index(i); i++;
             Map(m => m.BackendType).Index(i); i++;
+
             Map(m => m.NumProps).Index(i); i++;
             Map(m => m.Prop1Name).Index(i); i++;
             Map(m => m.Prop1Value).Index(i); i++;

@@ -14,5 +14,6 @@ namespace AppDynamics.Dexter
         public bool Configuration { get; set; }
         public JobTarget ConfigurationComparisonReferenceCriteria { get; set; }
         public bool Events { get; set; }
+        public bool UsersGroupsRolesPermissions { get; set; }
     }
 }

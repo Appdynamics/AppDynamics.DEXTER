@@ -1458,7 +1458,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     if (exitCall.ExitType == "HTTP" ||
                                         exitCall.ExitType == "WCF" ||
-                                        exitCall.ExitType == "WEB_SERVICE")
+                                        exitCall.ExitType == "WEB_SERVICE" ||
+                                        exitCall.ExitType == "DOTNETRemoting")
                                     {
                                         if (exitCall.Detail != null && exitCall.Detail.Length > 0)
                                         {

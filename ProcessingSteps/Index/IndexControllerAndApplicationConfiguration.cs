@@ -917,6 +917,51 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        #region Developer Mode Nodes
+
+                        loggerConsole.Info("Developer Mode Nodes");
+
+                        List<DeveloperModeNode> developerModeSettingsList = new List<DeveloperModeNode>();
+
+                        JArray developerModeTiersArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.DeveloperModeNodesDataFilePath(jobTarget));
+
+                        if (developerModeTiersArray != null && developerModeTiersArray.Count > 0)
+                        {
+                            foreach (JToken developerModeBusinessTransactionToken in developerModeTiersArray)
+                            {
+                                foreach (JToken developerModeNodeToken in developerModeBusinessTransactionToken["children"])
+                                {
+                                    DeveloperModeNode developerModeSetting = new DeveloperModeNode();
+
+                                    if ((bool)developerModeNodeToken["enabled"] == true)
+                                    {
+                                        developerModeSetting.Controller = applicationConfiguration.Controller;
+                                        developerModeSetting.ApplicationName = applicationConfiguration.ApplicationName;
+                                        developerModeSetting.ApplicationID = applicationConfiguration.ApplicationID;
+
+                                        developerModeSetting.TierName = developerModeBusinessTransactionToken["componentName"].ToString();
+                                        developerModeSetting.TierID = (long)developerModeBusinessTransactionToken["componentId"];
+
+                                        developerModeSetting.BTName = developerModeBusinessTransactionToken["name"].ToString();
+                                        developerModeSetting.BTID = (long)developerModeBusinessTransactionToken["id"];
+
+                                        developerModeSetting.NodeName = developerModeNodeToken["name"].ToString();
+                                        developerModeSetting.NodeID = (long)developerModeNodeToken["id"];
+
+                                        developerModeSettingsList.Add(developerModeSetting);
+                                    }
+                                }
+                            }
+                        }
+
+                        developerModeSettingsList = developerModeSettingsList.OrderBy(d => d.TierName).ThenBy(d => d.BTName).ThenBy(d => d.NodeName).ToList();
+                        FileIOHelper.WriteListToCSVFile(developerModeSettingsList, new DeveloperModeNodeReportMap(), FilePathMap.DeveloperModeNodesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + developerModeSettingsList.Count;
+
+
+                        #endregion
+
                         #region Application Settings
 
                         List<EntityApplicationConfiguration> applicationConfigurationsList = new List<EntityApplicationConfiguration>(1);
@@ -1006,6 +1051,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.HealthRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.HealthRulesIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.HealthRulesReportFilePath(), FilePathMap.HealthRulesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.DeveloperModeNodesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.DeveloperModeNodesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.DeveloperModeNodesReportFilePath(), FilePathMap.DeveloperModeNodesIndexFilePath(jobTarget));
                         }
 
                         // If it is the last one, let's append all Controller settings

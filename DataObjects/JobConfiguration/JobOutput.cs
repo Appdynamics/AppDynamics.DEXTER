@@ -10,5 +10,6 @@
         public bool FlameGraphs { get; set; }
         public bool Configuration { get; set; }
         public bool Events { get; set; }
+        public bool UsersGroupsRolesPermissions { get; set; }
     }
 }

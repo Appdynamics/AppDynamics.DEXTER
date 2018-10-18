@@ -241,6 +241,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     // Set up controller access
                                     ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+
                                     // Login into private API
                                     controllerApiParallel.PrivateApiLogin();
 
@@ -251,8 +252,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             string nodePropertiesJSON = controllerApi.GetNodeProperties(node.id);
                                             if (nodePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(nodePropertiesJSON, FilePathMap.NodeRuntimePropertiesDataFilePath(jobTarget, node));
                                         }
+                                        if (File.Exists(FilePathMap.NodeMetadataDataFilePath(jobTarget, node)) == false)
+                                        {
+                                            string nodeMetadataJSON = controllerApi.GetNodeMetadata(jobTarget.ApplicationID, node.id);
+                                            if (nodeMetadataJSON != String.Empty) FileIOHelper.SaveFileToPath(nodeMetadataJSON, FilePathMap.NodeMetadataDataFilePath(jobTarget, node));
+                                        }
                                     }
-                                    
+
                                     return listOfNodesInHourChunk.Count;
                                 },
                                 (finalResult) =>
@@ -263,6 +269,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             );
 
                             loggerConsole.Info("Completed {0} Nodes", nodesList.Count);
+                        }
+
+                        #endregion
+
+                        #region Backend to Tier Mappings
+
+                        List<AppDRESTTier> tiersRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTTier>(FilePathMap.TiersDataFilePath(jobTarget));
+                        if (tiersRESTList != null)
+                        {
+                            loggerConsole.Info("Backend to Tier Mappings ({0} entities)", tiersRESTList.Count);
+
+                            int j = 0;
+
+                            foreach (AppDRESTTier tier in tiersRESTList)
+                            {
+                                string backendMappingsJSON = controllerApi.GetBackendToTierMapping(tier.id);
+                                if (backendMappingsJSON != String.Empty && backendMappingsJSON != "[ ]") FileIOHelper.SaveFileToPath(backendMappingsJSON, FilePathMap.BackendToTierMappingDataFilePath(jobTarget, tier));
+
+                                if (j % 10 == 0)
+                                {
+                                    Console.Write("[{0}].", j);
+                                }
+                                j++;
+                            }
+
+                            loggerConsole.Info("Completed {0} Tiers", tiersRESTList.Count);
                         }
 
                         #endregion

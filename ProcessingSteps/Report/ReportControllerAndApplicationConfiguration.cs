@@ -18,7 +18,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Constants for Configuration Report contents
 
         private const string REPORT_CONFIGURATION_SHEET_CONTROLLERS = "3.Controllers";
-
         private const string REPORT_CONFIGURATION_SHEET_CONTROLLER_SETTINGS = "4.Controller Settings";
         private const string REPORT_CONFIGURATION_SHEET_APPLICATION_CONFIGURATION = "5.Application Configuration";
         private const string REPORT_CONFIGURATION_SHEET_BUSINESS_TRANSACTION_DISCOVERY_RULES = "6.BT Discovery Rules";
@@ -45,6 +44,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_SHEET_HTTP_DATA_COLLECTORS = "19.HTTP DCs";
         private const string REPORT_CONFIGURATION_SHEET_AGENT_CALL_GRAPH_SETTINGS = "20.Call Graph Settings";
         private const string REPORT_CONFIGURATION_SHEET_SERVICE_ENDPOINT_RULES_SETTINGS = "21.Service Endpoint Rules";
+        private const string REPORT_CONFIGURATION_SHEET_DEVELOPER_MODE_NODES = "22.Developer Mode Nodes";
         private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES = "30.Config Differences";
         private const string REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES_PIVOT = "30.Config Differences.Type";
 
@@ -70,6 +70,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_TABLE_BUSINESS_TRANSACTION_SETTINGS = "t_BusinessTransactions";
         private const string REPORT_CONFIGURATION_TABLE_AGENT_CALL_GRAPH_SETTINGS = "t_AgentCallGraphSettings";
         private const string REPORT_CONFIGURATION_TABLE_SERVICE_ENDPOINT_ENTRY_RULES = "t_SEPEntryRules";
+        private const string REPORT_CONFIGURATION_TABLE_DEVELOPER_MODE_NODES = "t_DevModeNodes";
         private const string REPORT_CONFIGURATION_TABLE_CONFIGURATION_DIFFERENCES = "t_ConfigurationDifferrences";
 
         private const string REPORT_CONFIGURATION_PIVOT_BT_RULES_TYPE = "p_BTEntryRulesType";
@@ -371,6 +372,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_DEVELOPER_MODE_NODES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT + 1, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(REPORT_CONFIGURATION_SHEET_CONFIGURATION_DIFFERENCES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
@@ -564,6 +571,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_HEALTH_RULES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.HealthRulesReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Developer Mode Nodes
+
+                loggerConsole.Info("List of Developer Mode Nodes");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_DEVELOPER_MODE_NODES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DeveloperModeNodesReportFilePath(), 0, sheet, REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1273,6 +1289,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
                     sheet.Column(3).Width = 20;
+                }
+
+                #endregion
+
+                #region Developer Mode Nodes
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_CONFIGURATION_SHEET_DEVELOPER_MODE_NODES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_CONFIGURATION_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_CONFIGURATION_TABLE_DEVELOPER_MODE_NODES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
                 }
 
                 #endregion

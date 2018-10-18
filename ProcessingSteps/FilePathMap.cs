@@ -28,10 +28,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONFIGURATION_COMPARISON_FOLDER_NAME = "CMPR";
         private const string PROCESSES_FOLDER_NAME = "PROC";
         private const string QUERIES_FOLDER_NAME = "QUERY";
+        private const string RBAC_REPOSITORY_FOLDER_NAME = "RBAC.0";
+        private const string RBAC_FOLDER_NAME = "RBAC";
 
         // Metadata file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
         private const string EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME = "seps.json";
+        private const string EXTRACT_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME = "devmode.json";
         private const string EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME = "settings.json";
         private const string EXTRACT_CONTROLLER_VERSION_FILE_NAME = "controllerversion.xml";
 
@@ -48,7 +51,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME = "informationpoints.json";
         private const string EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME = "informationpointsdetail.json";
         private const string EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME = "node.{0}.json";
+        private const string EXTRACT_ENTITY_NODE_METADATA_FILE_NAME = "nodemeta.{0}.json";
         private const string EXTRACT_ENTITY_BACKEND_TO_DBMON_MAPPING_FILE_NAME = "dbmonmap.{0}.json";
+        private const string EXTRACT_ENTITY_BACKEND_TO_TIER_MAPPING_FILE_NAME = "backendmapping.json";
 
         // SIM metadata file names
         private const string EXTRACT_ENTITY_GROUPS_FILE_NAME = "groups.json";
@@ -75,10 +80,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_BLOCKING_SESSIONS_FILE_NAME = "blockedsessions.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_BLOCKED_SESSION_FILE_NAME = "blockedsession.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
         private const string EXTRACT_DATABASES_FILE_NAME = "databases.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
-        private const string EXTRACT_USERS_FILE_NAME = "users.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+        private const string EXTRACT_DB_USERS_FILE_NAME = "users.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_MODULES_FILE_NAME = "modules.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_PROGRAMS_FILE_NAME = "programs.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+
+        // RBAC data file names
+        private const string EXTRACT_USERS_FILE_NAME = "users.json";
+        private const string EXTRACT_GROUPS_FILE_NAME = "groups.json";
+        private const string EXTRACT_ROLES_FILE_NAME = "roles.json";
+        private const string EXTRACT_USER_FILE_NAME = "user.{0}.json";
+        private const string EXTRACT_GROUP_FILE_NAME = "group.{0}.json";
+        private const string EXTRACT_GROUP_USERS_FILE_NAME = "usersingroup.{0}.json";
+        private const string EXTRACT_ROLE_FILE_NAME = "role.{0}.json";
+        private const string EXTRACT_SECURITY_PROVIDER_FILE_NAME = "securityprovider.json";
+        private const string EXTRACT_STRONG_PASSWORDS_FILE_NAME = "strongpasswords.json";
 
         // Metric data file names
         private const string EXTRACT_METRIC_FULL_FILE_NAME = "full.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -87,6 +103,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Events data file names
         private const string HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+        private const string AUDIT_EVENTS_FILE_NAME = "auditevents.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+        private const string NOTIFICATIONS_FILE_NAME = "notifications.json";
 
         // SIM Service Availability events data file names
         private const string SERVICE_AVAILABILITY_EVENTS_FILE_NAME = "saevents.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
@@ -121,6 +139,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
         private const string CONVERT_ENTITY_ERRORS_FILE_NAME = "errors.csv";
         private const string CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME = "informationpoints.csv";
+        private const string CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME = "mappedbackends.csv";
 
         // Detected SIM entity report conversion file names
         private const string CONVERT_SIM_MACHINES_FILE_NAME = "machines.csv";
@@ -145,6 +164,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_DB_PROGRAMS_FILE_NAME = "programs.csv";
         private const string CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
 
+        // RBAC report conversion file names
+        private const string CONVERT_USERS_FILE_NAME = "users.csv";
+        private const string CONVERT_GROUPS_FILE_NAME = "groups.csv";
+        private const string CONVERT_ROLES_FILE_NAME = "roles.csv";
+        private const string CONVERT_PERMISSIONS_FILE_NAME = "permissions.csv";
+        private const string CONVERT_GROUP_MEMBERSHIPS_FILE_NAME = "groupmemberships.csv";
+        private const string CONVERT_ROLE_MEMBERSHIPS_FILE_NAME = "rolememberships.csv";
+        private const string CONVERT_USER_PERMISSIONS_FILE_NAME = "userpermissions.csv";
+        private const string CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME = "controller.rbac.csv";
+
         // Settings report list conversion file names
         private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
         private const string APPLICATION_CONFIGURATION_FILE_NAME = "application.configuration.csv";
@@ -164,6 +193,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.configuration.csv";
         private const string APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
         private const string APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME = "healthrules.csv";
+        private const string APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME = "devmodenodes.csv";
 
         // Configuration comparison report list conversion file names
         private const string CONFIGURATION_DIFFERENCES_FILE_NAME = "configuration.differences.csv";
@@ -181,6 +211,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "application.events.csv";
         private const string CONVERT_EVENTS_FILE_NAME = "events.csv";
         private const string CONVERT_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
+        private const string CONVERT_AUDIT_EVENTS_FILE_NAME = "auditevents.csv";
 
         // Snapshots files
         private const string CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME = "application.snapshots.csv";
@@ -210,7 +241,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Folded call stacks rollups for each BT and Nodes
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME = "snapshots.foldedcallstacks.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME = "snapshots.foldedcallstackswithtime.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
-
 
         // Snapshot files
         private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
@@ -247,6 +277,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "Snapshots.MethodCallLines.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -403,6 +434,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
         }
 
+        public string BackendToTierMappingDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(tier.name, tier.id),
+                EXTRACT_ENTITY_BACKEND_TO_TIER_MAPPING_FILE_NAME);
+        }
+
         public string BusinessTransactionsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
@@ -473,6 +516,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             string reportFileName = String.Format(
                 EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME,
+                getShortenedEntityNameForFileSystem(node.name, node.id));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
+                reportFileName);
+        }
+
+        public string NodeMetadataDataFilePath(JobTarget jobTarget, AppDRESTNode node)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_NODE_METADATA_FILE_NAME,
                 getShortenedEntityNameForFileSystem(node.name, node.id));
 
             return Path.Combine(
@@ -596,6 +655,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ENTITY_BACKENDS_FILE_NAME);
+        }
+
+        public string MappedBackendsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME);
         }
 
         public string BusinessTransactionsIndexFilePath(JobTarget jobTarget)
@@ -731,6 +801,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ENTITY_BACKENDS_FILE_NAME);
+        }
+
+        public string MappedBackendsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME);
         }
 
         public string BusinessTransactionsReportFilePath()
@@ -1315,7 +1394,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         public string DBUsersDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
-                EXTRACT_USERS_FILE_NAME,
+                EXTRACT_DB_USERS_FILE_NAME,
                 jobTimeRange.From,
                 jobTimeRange.To);
 
@@ -1701,6 +1780,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME);
         }
 
+        public string DeveloperModeNodesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
+        }
+
         #endregion
 
         #region Configuration Index
@@ -1901,6 +1991,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
         }
 
+        public string DeveloperModeNodesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
+        }
+
         #endregion
 
         #region Configuration Report
@@ -2075,6 +2176,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
         }
 
+        public string DeveloperModeNodesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_FOLDER_NAME,
+                APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
+        }
+
         public string ConfigurationExcelReportFilePath(JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
@@ -2134,6 +2244,313 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 CONFIGURATION_COMPARISON_FOLDER_NAME,
                 CONFIGURATION_DIFFERENCES_FILE_NAME);
+        }
+
+        #endregion
+
+
+        #region RBAC Data
+
+        public string UsersDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                EXTRACT_USERS_FILE_NAME);
+        }
+
+        public string GroupsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                EXTRACT_GROUPS_FILE_NAME);
+        }
+
+        public string RolesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                EXTRACT_ROLES_FILE_NAME);
+        }
+
+        public string UserDataFilePath(JobTarget jobTarget, string userName, long userID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_USER_FILE_NAME,
+                getShortenedEntityNameForFileSystem(userName, userID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string GroupDataFilePath(JobTarget jobTarget, string groupName, long groupID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_GROUP_FILE_NAME,
+                getShortenedEntityNameForFileSystem(groupName, groupID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string GroupUsersDataFilePath(JobTarget jobTarget, string groupName, long groupID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_GROUP_USERS_FILE_NAME,
+                getShortenedEntityNameForFileSystem(groupName, groupID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                reportFileName);
+        }
+
+
+        public string RoleDataFilePath(JobTarget jobTarget, string roleName, long roleID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ROLE_FILE_NAME,
+                getShortenedEntityNameForFileSystem(roleName, roleID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string SecurityProviderTypeDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                EXTRACT_SECURITY_PROVIDER_FILE_NAME);
+        }
+
+        public string StrongPasswordsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                RBAC_REPOSITORY_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                EXTRACT_STRONG_PASSWORDS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region RBAC Index
+
+        public string UsersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_USERS_FILE_NAME);
+        }
+
+        public string GroupsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_GROUPS_FILE_NAME);
+        }
+
+        public string RolesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_ROLES_FILE_NAME);
+        }
+
+        public string PermissionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_PERMISSIONS_FILE_NAME);
+        }        
+
+        public string GroupMembershipsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
+        }
+
+        public string RoleMembershipsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
+        }
+
+        public string UserPermissionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_USER_PERMISSIONS_FILE_NAME);
+        }        
+
+        public string RBACControllerSummaryIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
+        }
+
+        #endregion
+
+        #region RBAC Report
+
+        public string UsersGroupsRolesPermissionsReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME);
+        }
+
+        public string UsersGroupsRolesPermissionsExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string UsersReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_USERS_FILE_NAME);
+        }
+
+        public string GroupsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_GROUPS_FILE_NAME);
+        }
+
+        public string RolesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_ROLES_FILE_NAME);
+        }
+
+        public string PermissionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_PERMISSIONS_FILE_NAME);
+        }
+
+        public string GroupMembershipsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
+        }
+
+        public string RoleMembershipsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
+        }
+
+        public string UserPermissionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_USER_PERMISSIONS_FILE_NAME);
+        }
+
+        public string RBACControllerSummaryReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                RBAC_FOLDER_NAME,
+                CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
+        }
+
+        public string RBACExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
         }
 
         #endregion
@@ -2734,6 +3151,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
+        public string AuditEventsDataFilePath(JobTarget jobTarget)
+        {
+            string reportFileName = String.Format(
+                AUDIT_EVENTS_FILE_NAME,
+                this.JobConfiguration.Input.TimeRange.From,
+                this.JobConfiguration.Input.TimeRange.To);
+            
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                reportFileName);
+        }
+
+        public string NotificationsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                NOTIFICATIONS_FILE_NAME);
+        }
+        
+
         #endregion
 
         #region Events Index
@@ -2771,6 +3212,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_APPLICATION_EVENTS_FILE_NAME);
         }
 
+        public string AuditEventsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONVERT_AUDIT_EVENTS_FILE_NAME);
+        }
+
         #endregion
 
         #region Events Report
@@ -2799,6 +3249,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 EVENTS_FOLDER_NAME,
                 CONVERT_EVENTS_FILE_NAME);
+        }
+
+        public string AuditEventsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                EVENTS_FOLDER_NAME,
+                CONVERT_AUDIT_EVENTS_FILE_NAME);
         }
 
         public string ApplicationEventsReportFilePath()

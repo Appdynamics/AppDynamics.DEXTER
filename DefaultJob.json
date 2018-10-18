@@ -4,8 +4,8 @@
       "Controller": "https://your.controller.here",
       "UserName": "username@customer1",
       "UserPassword": "your password or leave blank to be prompted",
-      "Application": "YourApplication",
-      "NameRegex": false,
+      "Application": ".*",
+      "NameRegex": true,
       "Type": "APM"
     },
     {
@@ -35,8 +35,8 @@
   ],
   "Input": {
     "TimeRange": {
-      "From": "2018-07-01T09:00:00",
-      "To": "2018-07-01T10:00:00"
+      "From": "2018-10-17T09:00:00",
+      "To": "2018-10-17T10:00:00"
     },
     "Metrics": true,
     "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
@@ -106,7 +106,8 @@
         "Partial": true,
         "None": true
       }
-    }
+    },
+    "UsersGroupsRolesPermissions": true
   },
   "Output": {
     "DetectedEntities": true,
@@ -116,6 +117,7 @@
     "Events": true,
     "Configuration": true,
     "Snapshots": true,
-    "FlameGraphs": true
+    "FlameGraphs": true,
+    "UsersGroupsRolesPermissions": true
   }
 }

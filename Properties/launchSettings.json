@@ -2,10 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "--jobfile \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\tmna-prod-spps.json\" -o D:\\AppD.Dexter.Out\\"
-    },
-    "newProfile1": {
-      "commandName": "Executable"
+      "commandLineArgs": "--jobfile \"D:\\AppD.Dexter.Out\\AllScripts\\allscripts.crash.pe1.json\" -o D:\\AppD.Dexter.Out\\AllScripts"
     }
   }
 }
