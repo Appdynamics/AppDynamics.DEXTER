@@ -1328,22 +1328,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     if (entity.EntityType != Error.ENTITY_TYPE)
                     {
                         sheet.Cells[1, columnIndexTimeRangeStart + 0].Value = "Calls";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 0].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["Calls"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 0].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["Calls"].Position + 1].Value;
                         sheet.Cells[1, columnIndexTimeRangeStart + 6].Value = "CPM";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 6].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["CPM"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 6].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["CPM"].Position + 1].Value;
                         sheet.Cells[1, columnIndexTimeRangeStart + 12].Value = "ART";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 12].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["ART"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 12].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["ART"].Position + 1].Value;
                         sheet.Cells[1, columnIndexTimeRangeStart + 18].Value = "Errors";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 18].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["Errors"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 18].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["Errors"].Position + 1].Value;
                         sheet.Cells[1, columnIndexTimeRangeStart + 24].Value = "EPM";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 24].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["EPM"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 24].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["EPM"].Position + 1].Value;
                         sheet.Cells[1, columnIndexTimeRangeStart + 30].Value = "Errors %";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 30].Value = String.Format("{0}%", sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["ErrorsPercentage"].Position + 1].Value.ToString());
+                        sheet.Cells[2, columnIndexTimeRangeStart + 30].Value = String.Format("{0}%", sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["ErrorsPercentage"].Position + 1].Value);
                     }
                     else
                     {
                         sheet.Cells[1, columnIndexTimeRangeStart + 24].Value = "EPM";
-                        sheet.Cells[2, columnIndexTimeRangeStart + 24].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["EPM"].Position + 1].Value.ToString();
+                        sheet.Cells[2, columnIndexTimeRangeStart + 24].Value = sheetDetails.Cells[tableDetails.Address.Start.Row + 1 + i, tableDetails.Columns["EPM"].Position + 1].Value;
                     }
                 }
 

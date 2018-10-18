@@ -1,8 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.0;net471</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.1;net471</TargetFrameworks>
+    <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <ApplicationIcon>SearchContract.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
     <AssemblyName>AppDynamics.Dexter</AssemblyName>
@@ -35,7 +36,6 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
-    <None Remove="App.config" />
     <None Remove="packages.config" />
     <None Remove="README.md" />
   </ItemGroup>

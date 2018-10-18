@@ -18,7 +18,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for DB Detected Entities Report contents
 
-        private const string REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
+        private const string REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string REPORT_DETECTED_DB_ENTITIES_SHEET_APPLICATIONS_LIST = "4.Applications";
         private const string REPORT_DETECTED_DB_ENTITIES_SHEET_COLLECTOR_DEFINITIONS_LIST = "5.Collector Definitions";
         private const string REPORT_DETECTED_DB_ENTITIES_SHEET_COLLECTORS_LIST = "6.Collectors";
@@ -67,7 +67,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_MODULES_TYPE = "p_ModuleType";
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_PROGRAMS_TYPE = "p_ProgramsType";
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_WAITSTATES_TYPE = "p_WaitStateType";
-        //private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_MACHINE_PROCESSES_TYPE = "p_MachineProcessesType";
 
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOTCOLLECTORS_TYPE_GRAPH = "g_CollectorsType";
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_QUERIES_TYPE_GRAPH = "g_QueryType";
@@ -78,7 +77,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_MODULES_TYPE_GRAPH = "g_ModuleType";
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_PROGRAMS_TYPE_GRAPH = "g_ProgramType";
         private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_WAITSTATES_TYPE_GRAPH = "g_WaitStateType";
-        //private const string REPORT_DETECTED_DB_ENTITIES_PIVOT_MACHINE_PROCESSES_TYPE_GRAPH = "g_MachineProcessesType";
 
         private const int REPORT_DETECTED_DB_ENTITIES_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_DETECTED_DB_ENTITIES_PIVOT_SHEET_START_PIVOT_AT = 7;
@@ -151,7 +149,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -358,7 +356,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllersReportFilePath(), 0, sheet, REPORT_DETECTED_DB_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
@@ -485,7 +483,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_DB_ENTITIES_SHEET_CONTROLLERS_LIST];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_DB_ENTITIES_LIST_SHEET_START_TABLE_AT)

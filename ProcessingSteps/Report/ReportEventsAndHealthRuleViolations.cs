@@ -27,6 +27,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS = "6.Health Rule Violations";
         private const string REPORT_DETECTED_EVENTS_SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "6.Health Rule Violations.Type";
 
+        private const string REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS = "7.Audit Events";
+        private const string REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS_PIVOT = "7.Audit Events.Type";
+        private const string REPORT_DETECTED_EVENTS_AUDIT_SHEET_EVENTS_TIMELINE_PIVOT = "7.Audit Events.Timeline";
+
         private const string REPORT_DETECTED_EVENTS_TABLE_CONTROLLERS = "t_Controllers";
         private const string REPORT_DETECTED_EVENTS_TABLE_APPLICATIONS = "t_Applications";
 
@@ -34,14 +38,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string REPORT_DETECTED_EVENTS_TABLE_EVENTS = "t_Events";
         private const string REPORT_DETECTED_EVENTS_TABLE_HEALTH_RULE_VIOLATION_EVENTS = "t_HealthRuleViolationEvents";
+        private const string REPORT_DETECTED_EVENTS_TABLE_AUDIT_EVENTS = "t_AuditEvents";
 
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE = "p_EventsType";
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TIMELINE = "p_EventsTimeline";
         private const string REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE = "p_HealthRuleViolationEventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TYPE = "p_AuditEventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TIMELINE = "p_AuditEventsTimeline";
 
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TYPE_GRAPH = "g_EventsType";
         private const string REPORT_DETECTED_EVENTS_PIVOT_EVENTS_TIMELINE_GRAPH = "g_EventsTimeline";
         private const string REPORT_DETECTED_EVENTS_PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE_GRAPH = "g_HealthRuleViolationEventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TYPE_GRAPH = "g_AuditEventsType";
+        private const string REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TIMELINE_GRAPH = "g_AuditEventsTimeline";
 
         private const int REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT = 7;
@@ -174,6 +183,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Pivot";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 1].Value = "See Duration";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_AUDIT_SHEET_EVENTS_TIMELINE_PIVOT);
+                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 4, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_EVENTS_AUDIT_SHEET_EVENTS_TIMELINE_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
                 #endregion
 
                 #region Report file variables
@@ -221,6 +260,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region Audit Events
+
+                loggerConsole.Info("List of Audit Events");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.AuditEventsReportFilePath(), 0, sheet, REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
                 loggerConsole.Info("Finalize Events and Health Rule Violations Report File");
 
                 #region Controllers sheet
@@ -414,6 +461,74 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(4).Width = 20;
                     sheet.Column(5).Width = 20;
                     sheet.Column(6).Width = 20;
+                }
+
+                #endregion
+
+                #region Audit Events
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_DETECTED_EVENTS_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_DETECTED_EVENTS_TABLE_AUDIT_EVENTS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Username"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["LoginType"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Action"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["EntityName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["EntityType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_SHEET_AUDIT_EVENTS_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TYPE);
+                    setDefaultPivotTableSettings(pivot);
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "Action");
+                    addRowFieldToPivot(pivot, "EntityType");
+                    addRowFieldToPivot(pivot, "EntityName");
+                    addColumnFieldToPivot(pivot, "LoginType", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "UserName", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "EntityID", DataFieldFunctions.Count);
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TYPE_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 30;
+
+                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_EVENTS_AUDIT_SHEET_EVENTS_TIMELINE_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_EVENTS_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_EVENTS_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TIMELINE);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "UserName");
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    addColumnFieldToPivot(pivot, "Action", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "EntityType", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "EntityName", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "EntityID", DataFieldFunctions.Count);
+
+                    chart = sheet.Drawings.AddChart(REPORT_DETECTED_EVENTS_PIVOT_AUDIT_EVENTS_TIMELINE_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
                 }
 
                 #endregion

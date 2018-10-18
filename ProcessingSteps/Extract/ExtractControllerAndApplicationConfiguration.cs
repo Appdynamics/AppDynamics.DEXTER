@@ -115,6 +115,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         #endregion
+
+                        #region Dev mode information
+
+                        loggerConsole.Info("Developer Mode Nodes");
+
+                        controllerApi.PrivateApiLogin();
+
+                        string devModeConfigurationJSON = controllerApi.GetDeveloperModeConfiguration(jobTarget.ApplicationID);
+                        if (devModeConfigurationJSON != String.Empty) FileIOHelper.SaveFileToPath(devModeConfigurationJSON, FilePathMap.DeveloperModeNodesDataFilePath(jobTarget));
+
+                        #endregion
+
                     }
                     catch (Exception ex)
                     {

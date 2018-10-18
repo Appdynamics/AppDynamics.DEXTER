@@ -19,6 +19,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ExtractControllerSIMApplicationsAndEntities,
                 JobStatus.ExtractControllerDBApplicationsAndEntities,
                 JobStatus.ExtractControllerAndApplicationConfiguration,
+                JobStatus.ExtractUsersGroupsRolesAndPermissions,
                 JobStatus.ExtractApplicationAndEntityMetrics,
                 JobStatus.ExtractApplicationAndEntityFlowmaps,
                 JobStatus.ExtractEventsAndHealthRuleViolations,
@@ -30,6 +31,7 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexControllerDBApplicationsAndEntities,
                 JobStatus.IndexControllerAndApplicationConfiguration,
                 JobStatus.IndexApplicationConfigurationComparison,
+                JobStatus.IndexUsersGroupsRolesAndPermissions,
                 JobStatus.IndexApplicationAndEntityMetrics,
                 JobStatus.IndexApplicationAndEntityFlowmaps,
                 JobStatus.IndexEventsAndHealthRuleViolations,
@@ -40,6 +42,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportControlerSIMApplicationsAndEntities,
                 JobStatus.ReportControlerDBApplicationsAndEntities,
                 JobStatus.ReportControllerAndApplicationConfiguration,
+                JobStatus.ReportUsersGroupsRolesAndPermissions,
                 JobStatus.ReportApplicationAndEntityMetrics,
                 JobStatus.ReportApplicationAndEntityMetricGraphs,
                 JobStatus.ReportEventsAndHealthRuleViolations,
@@ -167,6 +170,9 @@ namespace AppDynamics.Dexter
                 case JobStatus.ExtractControllerAndApplicationConfiguration:
                     return new ExtractControllerAndApplicationConfiguration();
 
+                case JobStatus.ExtractUsersGroupsRolesAndPermissions:
+                    return new ExtractUsersGroupsRolesAndPermissions();
+
                 case JobStatus.ExtractApplicationAndEntityMetrics:
                     return new ExtractApplicationAndEntityMetrics();
 
@@ -195,6 +201,9 @@ namespace AppDynamics.Dexter
                 case JobStatus.IndexApplicationConfigurationComparison:
                     return new IndexApplicationConfigurationComparison();
 
+                case JobStatus.IndexUsersGroupsRolesAndPermissions:
+                    return new IndexUsersGroupsRolesAndPermissions();
+
                 case JobStatus.IndexApplicationAndEntityMetrics:
                     return new IndexApplicationAndEntityMetrics();
 
@@ -219,6 +228,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportControllerAndApplicationConfiguration:
                     return new ReportControllerAndApplicationConfiguration();
+
+                case JobStatus.ReportUsersGroupsRolesAndPermissions:
+                    return new ReportUsersGroupsRolesAndPermissions();
 
                 case JobStatus.ReportEventsAndHealthRuleViolations:
                     return new ReportEventsAndHealthRuleViolations();

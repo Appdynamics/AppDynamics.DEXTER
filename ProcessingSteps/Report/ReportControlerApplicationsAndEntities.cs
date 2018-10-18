@@ -17,10 +17,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for Detected Entities Report contents
 
-        private const string REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
+        private const string REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string REPORT_DETECTED_ENTITIES_SHEET_APPLICATIONS_LIST = "4.Applications";
         private const string REPORT_DETECTED_ENTITIES_SHEET_TIERS_LIST = "5.Tiers";
-        private const string REPORT_DETECTED_ENTITIES_SHEET_TIERS_PIVOT = "5.Tiers.Pivot";
+        private const string REPORT_DETECTED_ENTITIES_SHEET_TIERS_TYPE_PIVOT = "5.Tiers.Type";
         private const string REPORT_DETECTED_ENTITIES_SHEET_NODES_LIST = "6.Nodes";
         private const string REPORT_DETECTED_ENTITIES_SHEET_NODES_TYPE_APPAGENT_PIVOT = "6.Nodes.Type.AppAgent";
         private const string REPORT_DETECTED_ENTITIES_SHEET_NODES_TYPE_MACHINEAGENT_PIVOT = "6.Nodes.Type.MachineAgent";
@@ -47,6 +47,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_ENTITIES_SHEET_ERRORS_LOCATION_PIVOT_LOCATION = "10.Errors.Location";
         private const string REPORT_DETECTED_ENTITIES_SHEET_INFORMATION_POINTS_LIST = "11.Information Points";
         private const string REPORT_DETECTED_ENTITIES_SHEET_INFORMATION_POINTS_TYPE_PIVOT = "11.Information Points.Type";
+        private const string REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_LIST = "12.Mapped Backends";
+        private const string REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_TYPE_PIVOT = "12.Mapped Backends.Type";
 
         private const string REPORT_DETECTED_ENTITIES_TABLE_TOC = "t_TOC";
         private const string REPORT_DETECTED_ENTITIES_TABLE_CONTROLLERS = "t_Controllers";
@@ -61,6 +63,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_ENTITIES_TABLE_SERVICE_ENDPOINTS = "t_ServiceEndpoints";
         private const string REPORT_DETECTED_ENTITIES_TABLE_ERRORS = "t_Errors";
         private const string REPORT_DETECTED_ENTITIES_TABLE_INFORMATION_POINTS = "t_InformationPoints";
+        private const string REPORT_DETECTED_ENTITIES_TABLE_MAPPED_BACKENDS = "t_MappedBackends";
 
         private const string REPORT_DETECTED_ENTITIES_PIVOT_TIERS = "p_Tiers";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_NODES_TYPE_APPAGENT = "p_NodesTypeAppAgent";
@@ -80,6 +83,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_ENTITIES_PIVOT_ERRORS_TYPE = "p_ErrorsType";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_ERRORS_LOCATION = "p_ErrorsLocation";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_INFORMATION_POINTS_TYPE = "p_InformationPointsType";
+        private const string REPORT_DETECTED_ENTITIES_PIVOT_MAPPED_BACKENDS_TYPE = "p_MappedBackends";
 
         private const string REPORT_DETECTED_ENTITIES_PIVOT_TIERS_GRAPH = "g_Tiers";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_NODES_TYPE_APPAGENT_GRAPH = "g_NodesTypeAppAgent";
@@ -95,6 +99,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_DETECTED_ENTITIES_PIVOT_SERVICE_ENDPOINTS_TYPE_GRAPH = "g_ServiceEndpointsType";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_ERRORS_TYPE_GRAPH = "g_ErrorsType";
         private const string REPORT_DETECTED_ENTITIES_PIVOT_INFORMATION_POINTS_TYPE_GRAPH = "g_InformationPointsType";
+        private const string REPORT_DETECTED_ENTITIES_PIVOT_MAPPED_BACKENDS_TYPE_GRAPH = "g_MappedBackends";
 
         private const int REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT = 4;
         private const int REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT = 7;
@@ -167,7 +172,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -184,11 +189,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.Cells[2, 1].Value = "See Pivot";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_ENTITIES_SHEET_TIERS_PIVOT);
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_ENTITIES_SHEET_TIERS_TYPE_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_TIERS_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_TIERS_TYPE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -455,6 +460,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_ENTITIES_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "Mapped Backends by Type";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_TYPE_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_TYPE_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_LIST);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_ENTITIES_PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
                 #endregion
 
                 loggerConsole.Info("Fill Detected Entities Report File");
@@ -470,7 +493,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllersReportFilePath(), 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
@@ -562,12 +585,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region Mapped Backends
+
+                loggerConsole.Info("List of Backends");
+
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MappedBackendsReportFilePath(), 0, sheet, REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);                
+
+                #endregion
+
                 loggerConsole.Info("Finalize Detected Entities Report File");
 
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_CONTROLLERS_LIST];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
@@ -656,7 +688,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
                     // Make pivot
-                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_PIVOT];
+                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_TIERS_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_ENTITIES_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_DETECTED_ENTITIES_PIVOT_TIERS);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "Controller");
@@ -1190,6 +1222,53 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
                     sheet.Column(3).Width = 20;
+                }
+
+                #endregion
+
+                #region Mapped Backends
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_LIST];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[REPORT_DETECTED_ENTITIES_LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, REPORT_DETECTED_ENTITIES_TABLE_MAPPED_BACKENDS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BackendName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["BackendType"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["Prop1Name"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["Prop2Name"].Position + 1).Width = 25;
+
+                    // Make pivot
+                    sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_ENTITIES_SHEET_MAPPED_BACKENDS_TYPE_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[REPORT_DETECTED_ENTITIES_PIVOT_SHEET_START_PIVOT_AT + REPORT_DETECTED_ENTITIES_PIVOT_SHEET_CHART_HEIGHT, 1], range, REPORT_DETECTED_ENTITIES_PIVOT_MAPPED_BACKENDS_TYPE);
+                    setDefaultPivotTableSettings(pivot);
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "BackendName");
+                    addColumnFieldToPivot(pivot, "BackendType", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "BackendID", DataFieldFunctions.Count);
+
+                    ExcelChart chart = sheet.Drawings.AddChart(REPORT_DETECTED_ENTITIES_PIVOT_BACKENDS_TYPE_GRAPH, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
                 }
 
                 #endregion

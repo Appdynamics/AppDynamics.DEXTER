@@ -17,7 +17,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for SIM Detected Entities Report contents
 
-        private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS = "3.Controllers";
+        private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_APPLICATIONS_LIST = "4.Applications";
         private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_TIERS_LIST = "5.Tiers";
         private const string REPORT_DETECTED_SIM_ENTITIES_SHEET_NODES_LIST = "6.Nodes";
@@ -133,7 +133,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS);
+                sheet = excelReport.Workbook.Worksheets.Add(REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -286,7 +286,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllersReportFilePath(), 0, sheet, REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
@@ -386,7 +386,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[REPORT_DETECTED_SIM_ENTITIES_SHEET_CONTROLLERS_LIST];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > REPORT_DETECTED_SIM_ENTITIES_LIST_SHEET_START_TABLE_AT)

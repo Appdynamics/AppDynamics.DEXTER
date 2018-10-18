@@ -40,6 +40,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                List<string> listOfControllersAlreadyProcessed = new List<string>(jobConfiguration.Target.Count);
+
                 bool reportFolderCleaned = false;
 
                 // Process each target
@@ -67,7 +69,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Health Rule violations
 
-                        loggerConsole.Info("Index health rule violations");
+                        loggerConsole.Info("Index Health Rule Violations");
 
                         List<HealthRuleViolationEvent> healthRuleViolationList = new List<HealthRuleViolationEvent>();
 
@@ -78,10 +80,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (File.Exists(FilePathMap.HealthRuleViolationsDataFilePath(jobTarget)))
                         {
-                            JArray eventsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.HealthRuleViolationsDataFilePath(jobTarget));
-                            if (eventsInHour != null)
+                            JArray healthRuleViolationEvents = FileIOHelper.LoadJArrayFromFile(FilePathMap.HealthRuleViolationsDataFilePath(jobTarget));
+                            if (healthRuleViolationEvents != null)
                             {
-                                foreach (JObject interestingEvent in eventsInHour)
+                                foreach (JObject interestingEvent in healthRuleViolationEvents)
                                 {
                                     HealthRuleViolationEvent eventRow = new HealthRuleViolationEvent();
                                     eventRow.Controller = jobTarget.Controller;
@@ -166,7 +168,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         }
 
-                        loggerConsole.Info("{0} events", healthRuleViolationList.Count);
+                        loggerConsole.Info("{0} Health Rule Violation events", healthRuleViolationList.Count);
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + healthRuleViolationList.Count;
 
@@ -179,19 +181,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Events
 
-                        loggerConsole.Info("Index events");
+                        loggerConsole.Info("Index Events");
 
                         List<Event> eventsList = new List<Event>();
                         foreach (string eventType in EVENT_TYPES)
                         {
-                            loggerConsole.Info("Type {0} events", eventType);
+                            loggerConsole.Info("Type {0} Events", eventType);
 
                             if (File.Exists(FilePathMap.EventsDataFilePath(jobTarget, eventType)))
                             {
-                                JArray eventsInHour = FileIOHelper.LoadJArrayFromFile(FilePathMap.EventsDataFilePath(jobTarget, eventType));
-                                if (eventsInHour != null)
+                                JArray events = FileIOHelper.LoadJArrayFromFile(FilePathMap.EventsDataFilePath(jobTarget, eventType));
+                                if (events != null)
                                 {
-                                    foreach (JObject interestingEvent in eventsInHour)
+                                    foreach (JObject interestingEvent in events)
                                     {
                                         Event eventRow = new Event();
                                         eventRow.Controller = jobTarget.Controller;
@@ -209,7 +211,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         if (interestingEvent["triggeredEntity"].HasValues == true)
                                         {
-                                            eventRow.TriggeredEntityID = (int)interestingEvent["triggeredEntity"]["entityId"];
+                                            eventRow.TriggeredEntityID = (long)interestingEvent["triggeredEntity"]["entityId"];
                                             eventRow.TriggeredEntityName = interestingEvent["triggeredEntity"]["name"].ToString();
                                             string entityType = interestingEvent["triggeredEntity"]["entityType"].ToString();
                                             if (entityTypeStringMapping.ContainsKey(entityType) == true)
@@ -283,6 +285,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                             }
                         }
+
+                        // Only output this once per controller
+                        if (listOfControllersAlreadyProcessed.Contains(jobTarget.Controller) == false)
+                        {
+                            listOfControllersAlreadyProcessed.Add(jobTarget.Controller);
+
+                            loggerConsole.Info("Index Notification Events");
+
+                            JObject notificationsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.NotificationsDataFilePath(jobTarget));
+                            if (notificationsContainer != null)
+                            {
+                                foreach (JObject interestingEvent in notificationsContainer["notifications"])
+                                {
+                                    if ((long)interestingEvent["notificationData"]["applicationId"] < 0)
+                                    {
+                                        foreach (JObject affectedEntity in interestingEvent["notificationData"]["affectedEntities"])
+                                        {
+                                            Event eventRow = new Event();
+                                            eventRow.Controller = jobTarget.Controller;
+
+                                            eventRow.EventID = (long)interestingEvent["id"];
+                                            try
+                                            {
+                                                eventRow.OccurredUtc = UnixTimeHelper.ConvertFromUnixTimestamp((long)interestingEvent["notificationData"]["time"]);
+                                                eventRow.Occurred = eventRow.OccurredUtc.ToLocalTime();
+                                            }
+                                            catch { }
+                                            try { eventRow.Type = interestingEvent["notificationData"]["eventType"].ToString(); } catch { }
+                                            try { eventRow.Severity = interestingEvent["notificationData"]["severity"].ToString(); } catch { }
+                                            try { eventRow.Summary = interestingEvent["notificationData"]["summary"].ToString(); } catch { }
+
+                                            try { eventRow.TriggeredEntityID = (long)affectedEntity["entityId"]; } catch { }
+                                            try { eventRow.TriggeredEntityType = affectedEntity["entityType"].ToString(); } catch { }
+
+                                            eventRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, eventRow.Controller, DEEPLINK_THIS_TIMERANGE);
+
+                                            eventsList.Add(eventRow);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         loggerConsole.Info("{0} events", eventsList.Count);
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + eventsList.Count;
@@ -291,6 +336,56 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         eventsList = eventsList.OrderBy(o => o.Type).ThenBy(o => o.Occurred).ThenBy(o => o.Severity).ToList();
 
                         FileIOHelper.WriteListToCSVFile<Event>(eventsList, new EventReportMap(), FilePathMap.EventsIndexFilePath(jobTarget));
+
+                        #endregion
+
+                        #region Audit Events
+
+                        if (File.Exists(FilePathMap.AuditEventsIndexFilePath(jobTarget)) == false)
+                        {
+                            List<AuditEvent> auditEventsList = new List<AuditEvent>();
+
+                            loggerConsole.Info("Index Audit Log events");
+
+                            JArray auditEvents = FileIOHelper.LoadJArrayFromFile(FilePathMap.AuditEventsDataFilePath(jobTarget));
+                            if (auditEvents != null)
+                            {
+                                foreach (JObject interestingEvent in auditEvents)
+                                {
+                                    AuditEvent eventRow = new AuditEvent();
+
+                                    eventRow.Controller = jobTarget.Controller;
+                                    //eventRow.ApplicationName = jobTarget.Application;
+                                    //eventRow.ApplicationID = jobTarget.ApplicationID;
+
+                                    try { eventRow.EntityID = (long)interestingEvent["objectId"]; } catch { }
+                                    try { eventRow.EntityType = interestingEvent["objectType"].ToString(); } catch { }
+                                    try { eventRow.EntityName = interestingEvent["objectName"].ToString(); } catch { }
+
+                                    try { eventRow.UserName = interestingEvent["userName"].ToString(); } catch { }
+                                    try { eventRow.AccountName = interestingEvent["accountName"].ToString(); } catch { }
+                                    try { eventRow.LoginType = interestingEvent["securityProviderType"].ToString(); } catch { }
+
+                                    try { eventRow.Action = interestingEvent["action"].ToString(); } catch { }
+                                    try { eventRow.EntityID = (long)interestingEvent["objectId"]; } catch { }
+                                    try { eventRow.EntityType = interestingEvent["objectType"].ToString(); } catch { }
+                                    try { eventRow.EntityName = interestingEvent["objectName"].ToString(); } catch { }
+
+                                    try { eventRow.OccurredUtc = UnixTimeHelper.ConvertFromUnixTimestamp((long)interestingEvent["timeStamp"]); } catch { }
+                                    try { eventRow.Occurred = eventRow.OccurredUtc.ToLocalTime(); } catch { }
+
+                                    auditEventsList.Add(eventRow);
+                                }
+                            }
+
+                            auditEventsList = auditEventsList.OrderBy(o => o.Occurred).ToList();
+
+                            loggerConsole.Info("{0} Audit events", auditEventsList.Count);
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + auditEventsList.Count;
+
+                            FileIOHelper.WriteListToCSVFile<AuditEvent>(auditEventsList, new AuditEventReportMap(), FilePathMap.AuditEventsIndexFilePath(jobTarget));
+                        }
 
                         #endregion
 
@@ -349,6 +444,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.EventsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.EventsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.EventsReportFilePath(), FilePathMap.EventsIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.AuditEventsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.AuditEventsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.AuditEventsReportFilePath(), FilePathMap.AuditEventsIndexFilePath(jobTarget));
                         }
 
                         #endregion

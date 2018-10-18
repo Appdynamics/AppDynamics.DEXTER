@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -95,6 +96,31 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         );
                         loggerConsole.Info("{0} events total", numEventsTotal);
+
+                        #endregion
+
+                        #region Notifications
+
+                        if (File.Exists(FilePathMap.NotificationsDataFilePath(jobTarget)) == false)
+                        {
+                            loggerConsole.Info("Extract Notifications");
+
+                            controllerApi.PrivateApiLogin();
+
+                            string notificationsJSON = controllerApi.GetNotifications();
+                            if (notificationsJSON != String.Empty) FileIOHelper.SaveFileToPath(notificationsJSON, FilePathMap.NotificationsDataFilePath(jobTarget));
+                        }
+
+                        #endregion
+
+                        #region Audit Log Events
+
+                        if (File.Exists(FilePathMap.AuditEventsDataFilePath(jobTarget)) == false)
+                        {
+                            loggerConsole.Info("Extract List of Controller Audit Log events ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
+
+                            numEventsTotal = numEventsTotal + extractAuditLogEvents(jobConfiguration, jobTarget, controllerApi);
+                        }
 
                         #endregion
 
@@ -219,6 +245,37 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
 
             return listOfEvents.Count;
+        }
+
+        private int extractAuditLogEvents(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi)
+        {
+            JArray listOfAuditEvents = new JArray();
+            foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
+            {
+                string auditEventsJSON = controllerApi.GetAuditEvents(jobTimeRange.From, jobTimeRange.To);
+                if (auditEventsJSON != String.Empty)
+                {
+                    JArray listOfAuditEventsInTimeRange = JArray.Parse(auditEventsJSON);
+                    if (listOfAuditEventsInTimeRange != null)
+                    {
+                        // Load audit log events
+                        foreach (JObject auditEvent in listOfAuditEventsInTimeRange)
+                        {
+                            listOfAuditEvents.Add(auditEvent);
+                        }
+                    }
+                }
+            }
+
+            if (listOfAuditEvents.Count > 0)
+            {
+                FileIOHelper.WriteJArrayToFile(listOfAuditEvents, FilePathMap.AuditEventsDataFilePath(jobTarget));
+
+                logger.Info("{0} audit events from {1:o} to {2:o}", listOfAuditEvents.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                loggerConsole.Info("{0} audit events", listOfAuditEvents.Count);
+            }
+
+            return listOfAuditEvents.Count;
         }
     }
 }

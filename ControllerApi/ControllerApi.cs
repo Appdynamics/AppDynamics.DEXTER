@@ -55,7 +55,7 @@ namespace AppDynamics.Dexter
             ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
 
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
-#if (NETCOREAPP2_0)
+#if (NETCOREAPP2_1)
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 #else
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
@@ -111,7 +111,6 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-
         #region APM Application configuration
 
         public string GetApplicationConfiguration(long applicationID)
@@ -121,12 +120,17 @@ namespace AppDynamics.Dexter
 
         public string GetAccountsMyAccount()
         {
-            return this.apiGET("/api/accounts/myaccount", "application/vnd.appd.cntrl+json", false);
+            return this.apiGET("api/accounts/myaccount", "application/vnd.appd.cntrl+json", false);
         }
 
         public string GetApplicationSEPConfiguration(long accountID, long applicationID)
         {
             return this.apiGET(String.Format("api/accounts/{0}/applications/{1}/sep", accountID, applicationID), "application/vnd.appd.cntrl+json", false);
+        }
+
+        public string GetDeveloperModeConfiguration(long applicationID)
+        {
+            return this.apiGET(String.Format("controller/restui/applicationManagerUiBean/getDevModeConfig/{0}", applicationID), "application/json", true);
         }
 
         #endregion
@@ -173,6 +177,11 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/restui/nodeUiService/appAgentByNodeId/{0}", nodeID), "application/json", true);
         }
 
+        public string GetNodeMetadata(long applicationID, long nodeID)
+        {
+            return this.apiGET(String.Format("controller/restui/components/getNodeViewData/{0}/{1}", applicationID, nodeID), "application/json", true);
+        }
+
         public string GetListOfBusinessTransactions(string applicationName)
         {
             return this.apiGET(String.Format("controller/rest/applications/{0}/business-transactions?output=JSON", applicationName), "application/json", false);
@@ -201,6 +210,11 @@ namespace AppDynamics.Dexter
         public string GetBackendToDBMonMapping(long backendID)
         {
             return this.apiGET(String.Format("controller/restui/databases/backendMapping/getMappedDBServer?backendId={0}", backendID), "application/json", true);
+        }
+
+        public string GetBackendToTierMapping(long tierID)
+        {
+            return this.apiGET(String.Format("controller/restui/backendUiService/resolvedBackendsForTier/{0}", tierID), "application/json", true);
         }
 
         public string GetListOfServiceEndpoints(string applicationName)
@@ -614,7 +628,7 @@ namespace AppDynamics.Dexter
                     startTimeInUnixEpochFormat,
                     endTimeInUnixEpochFormat),
                 "application/json",
-                true);
+                false);
         }
 
         public string GetEvents(long applicationID, string eventType, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
@@ -627,7 +641,17 @@ namespace AppDynamics.Dexter
                     startTimeInUnixEpochFormat,
                     endTimeInUnixEpochFormat),
                 "application/json",
-                true);
+                false);
+        }
+
+        public string GetNotifications()
+        {
+            return this.apiGET("controller/restui/notificationUiService/notifications", "application/json", true);
+        }
+
+        public string GetAuditEvents(DateTime startTime, DateTime endTime)
+        {
+            return this.apiGET(String.Format("controller/ControllerAuditHistory?startTime={0:yyyy-MM-ddThh:mm:ss.fff}-0000&endTime={1:yyyy-MM-ddThh:mm:ss.fff}-0000", startTime, endTime), "application/json", false);
         }
 
         #endregion
@@ -1030,6 +1054,87 @@ namespace AppDynamics.Dexter
                 endTimeInUnixEpochFormat);
 
             return this.apiPOST("controller/databasesui/snapshot/getBTListViewData", "application/json", requestBody, "application/json", true);
+        }
+
+        #endregion
+
+        #region RBAC 
+
+        public string GetUsers()
+        {
+            return this.apiGET("controller/api/rbac/v1/users", "application/json", false);
+        }
+
+        public string GetUsersExtended()
+        {
+            return this.apiGET("controller/restui/userAdministrationUiService/users", "application/json", true);
+        }
+
+        public string GetUser(long userID)
+        {
+            return this.apiGET(String.Format("controller/api/rbac/v1/users/{0}", userID), "application/json", false);
+        }
+
+        public string GetUserExtended(long userID)
+        {
+            return this.apiGET(String.Format("controller/restui/userAdministrationUiService/users/{0}", userID), "application/json", true);
+        }
+
+
+        public string GetGroups()
+        {
+            return this.apiGET("controller/api/rbac/v1/groups", "application/json", false);
+        }
+
+        public string GetGroupsExtended()
+        {
+            return this.apiGET("controller/restui/groupAdministrationUiService/groupSummaries", "application/json", true);
+        }
+
+        public string GetGroup(long groupID)
+        {
+            return this.apiGET(String.Format("controller/api/rbac/v1/groups/{0}", groupID), "application/json", false);
+        }
+
+        public string GetGroupExtended(long groupID)
+        {
+            return this.apiGET(String.Format("controller/restui/groupAdministrationUiService/group/{0}", groupID), "application/json", true);
+        }
+
+        public string GetUsersInGroup(long groupID)
+        {
+            return this.apiGET(String.Format("controller/restui/groupAdministrationUiService/groups/userids/{0}", groupID), "application/json", true);
+        }
+
+
+        public string GetRoles()
+        {
+            return this.apiGET("controller/api/rbac/v1/roles", "application/json", false);
+        }
+
+        public string GetRolesExtended()
+        {
+            return this.apiGET("controller/restui/accountRoleAdministrationUiService/accountRoleSummaries", "application/json", true);
+        }
+
+        public string GetRole(long roleID)
+        {
+            return this.apiGET(String.Format("controller/api/rbac/v1/roles/{0}", roleID), "application/json", false);
+        }
+
+        public string GetRoleExtended(long roleID)
+        {
+            return this.apiGET(String.Format("controller/restui/accountRoleAdministrationUiService/accountRoles/{0}", roleID), "application/json", true);
+        }
+
+        public string GetSecurityProviderType()
+        {
+            return this.apiGET("controller/restui/accountAdmin/getSecurityProviderType", "application/json", true);
+        }
+
+        public string GetRequireStrongPasswords()
+        {
+            return this.apiGET("controller/restui/accountAdmin/getRequireStrongPasswords", "application/json", true);
         }
 
         #endregion
