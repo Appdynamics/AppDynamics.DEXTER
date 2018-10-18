@@ -1,11 +1,47 @@
 # Introduction
-AppDynamics provides a rich source of information about your monitored applications, including the performance of individual business activities, dependency flow between application components, and details on every business transaction in an instrumented environment. 
+AppDynamics provides a rich source of information about your monitored applications.
 
-AppDynamics APM provides a rich toolkit for turning the vast corpus of data captured by AppDynamics into valuable insights.
+AppDynamics DEXTER (Data Extraction and Enhanced Reporting) helps you understand that information in new ways. You can analyze this information in a number of data warehousing and visualization applications, and combine it with your own data to generate customized reports.
 
-AppDynamics DEXTER (Data Extraction and Enhanced Reporting) can make this process even faster and simpler. DEXTER provides new ways to unlock the data stored in the AppDynamics platform. You can analyze this information in a number of data warehousing and visualization applications, and combine it with your own data to generate customized reports.
+# Get Started
+## Install Application
+Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (AppDynamics.DEXTER.#.#.#.#.zip)
 
-# Turn Data Store into Data Warehouse
+Unzip it, and run! If you're on a Mac, you can drag it to your Applications directory.
+
+## Job File
+
+DEXTER takes a [Job File](Job-File) to know what info to collect and reports to generate.
+
+Create the Job file using [DEXTER-UI](https://appdynamics.github.io/dexter-ui). Or, modify and use the job file template in `full-win\DefaultJob.json`.
+ 
+## Run DEXTER
+
+### Windows
+
+`core-win\AppDynamics.Dexter --jobfile MyJob.json`
+
+### MAC OS
+
+`core-osx/AppDynamics.Dexter --jobfile MyJob.json`
+
+### Linux
+
+`core-linux/AppDynamics.Dexter --jobfile MyJob.json`
+
+# Review Results
+You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
+
+To understand what you are looking at, read [Description of Excel Reports](../../wiki/#excel-report-descriptions).
+
+## Documentation 
+If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Home#walkthrough).
+
+Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
+
+# So, Why DEXTER?
+
+## Turn Data Store into Data Warehouse
 If you’re familiar with data warehousing terminology, think of DEXTER as an extract/transform/load (ETL) utility for AppDynamics data. It extracts information from the AppDynamics platform, transforms it into an enriched, query-able form for faster access, and loads it into variety of reports for:
 * Application logical model (applications, tiers, nodes, backends, business transactions)
 * Performance metrics (average response time, calls, errors per minute, CPU, memory, JVM, JMX, GC metrics)
@@ -16,7 +52,7 @@ If you’re familiar with data warehousing terminology, think of DEXTER as an ex
 
 By extracting the data from AppDynamics, converting it into queryable format and storing it locally, the data can be preserved with full fidelity indefinitely and interrogated in new and novel ways.
 
-# Scenarios Enabled by This Tool
+## Scenarios Enabled by This Tool
 Here are some scenarios that are possible with data provided by AppDynamics DEXTER:
 * Investigation of what is detected and reporting across multiple Controllers and multiple Applications
 * Evaluating what components (Tiers, Nodes, Backends, Business Transactions) are reporting and what load they have
@@ -121,58 +157,7 @@ Server Infrastructure Monitoring inventory of Machines, CPUs, Disks and Processe
 
 Database Monitoring Queries, Sessions, Blocked Sessions and other interesting database-related artifacts can be seen in [Detected DB Entities](../../wiki/Detected-DB-Entities-Report) report.
 
-# Get Started
-## Install Application
-Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (AppDynamics.DEXTER.#.#.#.#.zip)
-
-Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusername/DEXTER`.
-
-## Job File
-Specify data to operate on with [Job File](Job-File). Review some of the [Job File Examples](Job-File-Examples).
-
-You can find a job file template in `full-win\DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
-
-Alternatively, create the Job File using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
- 
-## Run Application
-DEXTER ships with .NET Full Framework 4.7.2 and .NET Core Framework 2.1 versions for full flexibility.
-
-When running on Windows, you can choose to run version built using .NET Full or .NET Core. If you choose .NET Core, you can run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
-
-When running on Mac or Linux, run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
-
-### Windows
-
-Framework | Folder | Command
--- | -- | --
-.NET Full <br/>[Install](https://www.microsoft.com/net/download/Windows/run) | full-win | `full-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/Windows/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore21) | core | `dotnet core\AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-win | `core-win\AppDynamics.Dexter --jobfile MyJob.json`
-
-### MAC OS
-
-Framework | Folder | Command
--- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/macos/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-osx | `core-osx/AppDynamics.Dexter --jobfile MyJob.json`
-
-### Linux
-
-Framework | Folder | Command
--- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/linux/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-linux | `core-linux/AppDynamics.Dexter --jobfile MyJob.json`
-
-# Review Results
-You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
-
-To understand what you are looking at, read [Description of Excel Reports](../../wiki/#excel-report-descriptions).
-
 # Useful Links
-## Documentation 
-If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Home#walkthrough).
-
-Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
 
 ## Support
 If you need help with issues and/or intepretation of results, read [Getting Support](../../wiki#getting-support).
