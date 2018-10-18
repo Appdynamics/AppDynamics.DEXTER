@@ -121,26 +121,27 @@ Server Infrastructure Monitoring inventory of Machines, CPUs, Disks and Processe
 
 Database Monitoring Queries, Sessions, Blocked Sessions and other interesting database-related artifacts can be seen in [Detected DB Entities](../../wiki/Detected-DB-Entities-Report) report.
 
-# Install Application
+# Get Started
+## Install Application
 Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (AppDynamics.DEXTER.#.#.#.#.zip)
 
 Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusername/DEXTER`.
 
-# Job File
+## Job File
 Specify data to operate on with [Job File](Job-File). Review some of the [Job File Examples](Job-File-Examples).
 
 You can find a job file template in `full-win\DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
 
 Alternatively, create the Job File using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
-
-# Run Application
+ 
+## Run Application
 DEXTER ships with .NET Full Framework 4.7.2 and .NET Core Framework 2.1 versions for full flexibility.
 
 When running on Windows, you can choose to run version built using .NET Full or .NET Core. If you choose .NET Core, you can run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
 
 When running on Mac or Linux, run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
 
-## Windows
+### Windows
 
 Framework | Folder | Command
 -- | -- | --
@@ -148,14 +149,14 @@ Framework | Folder | Command
 .NET Core <br/>[Install](https://www.microsoft.com/net/download/Windows/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore21) | core | `dotnet core\AppDynamics.Dexter.dll -j MyJob.json`
 .NET Core self-contained | core-win | `core-win\AppDynamics.Dexter --jobfile MyJob.json`
 
-## MAC OS
+### MAC OS
 
 Framework | Folder | Command
 -- | -- | --
 .NET Core <br/>[Install](https://www.microsoft.com/net/download/macos/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
 .NET Core self-contained | core-osx | `core-osx/AppDynamics.Dexter --jobfile MyJob.json`
 
-## Linux
+### Linux
 
 Framework | Folder | Command
 -- | -- | --
