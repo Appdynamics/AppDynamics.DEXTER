@@ -122,42 +122,51 @@ Server Infrastructure Monitoring inventory of Machines, CPUs, Disks and Processe
 Database Monitoring Queries, Sessions, Blocked Sessions and other interesting database-related artifacts can be seen in [Detected DB Entities](../../wiki/Detected-DB-Entities-Report) report.
 
 # Get Started
-## Necessary Software
-AppDynamics DEXTER is a console application that runs on Windows, MacOS and Linux. You will need:
-* Windows, Mac or Linux workstation with decent amount of CPU and disk space. SSD preferred
-* Access to the target Controllers running 4.2, 4.3 or 4.4 release of AppDynamics platform
-* Access to Excel or other spreadsheet application to render Excel documents
-
-## Install .NET Framework
-* Windows - .NET Full 4.7.1 https://www.microsoft.com/net/download/Windows/run
-* Linux - .NET Core 2.0 https://www.microsoft.com/net/download/linux/run
-* MacOS - .NET Core 2.0 https://www.microsoft.com/net/download/macos/run
-
 ## Install Application
-Download latest release from [Releases](../../releases) section, (`AppDynamics.DEXTER.#.#.#.#.zip`)
+Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (AppDynamics.DEXTER.#.#.#.#.zip)
 
-Unzip to some location, for example, `C:\AppDynamics\DEXTER`
+Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusername/DEXTER`.
 
-## Specify What to Do in Job File
-Provide instructions on what to get, from where, and how much in [Job File](../../wiki/Job-File), editing it in Text Editor OR creating it using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
+## Job File
+Specify data to operate on with [Job File](../../wiki/Job-File). Review some of the [Job File Examples](../../wiki/Job-File-Examples).
 
+The template job file is called `DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
+
+Alternatively, create the Job File using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
+ 
 ## Run Application
-When running on Windows, you can choose to run version built using .NET Framework 4.7.1 or .NET Core Framework 2.0.x. When running on Mac or Linux, you need to use .NET Core Framework 2.0.x version.
+DEXTER ships with .NET Full Framework 4.7.2 and .NET Core Framework 2.1 versions for full flexibility.
 
-For example, on Windows:
-```
-net471\AppDynamics.Dexter.exe --jobfile MyJob.json
-```
+When running on Windows, you can choose to run version built using .NET Full or .NET Core. If you choose .NET Core, you can run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
 
-For example, on MacOS or Linux:
-```
-dotnet exec netcoreapp2.0/AppDynamics.Dexter.dll -j MyJob.json
-```
+When running on Mac or Linux, run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
 
-## Review Results
-You will see the results in the [Output](../../wiki/#output-folder-structure) folder.
+### Windows
 
-To understand what you are looking at, read [Description of Excel Reports](../../wiki/#excel-report-descriptions).
+Framework | Folder | Command
+-- | -- | --
+.NET Full <br/>[Install](https://www.microsoft.com/net/download/Windows/run) | full-win | `full-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
+.NET Core <br/>[Install](https://www.microsoft.com/net/download/Windows/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore21) | core | `dotnet core\AppDynamics.Dexter.dll -j MyJob.json`
+.NET Core self-contained | core-win | `core-win\AppDynamics.Dexter --jobfile MyJob.json`
+
+### MAC OS
+
+Framework | Folder | Command
+-- | -- | --
+.NET Core <br/>[Install](https://www.microsoft.com/net/download/macos/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
+.NET Core self-contained | core-osx | `core-osx/AppDynamics.Dexter --jobfile MyJob.json`
+
+### Linux
+
+Framework | Folder | Command
+-- | -- | --
+.NET Core <br/>[Install](https://www.microsoft.com/net/download/linux/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
+.NET Core self-contained | core-linux | `core-linux/AppDynamics.Dexter --jobfile MyJob.json`
+
+# Review Results
+You will see the results in the [Output](../../wiki/Home#output-folder-structure) folder.
+
+To understand what you are looking at, read [Description of Excel Reports](../../wiki/Home#excel-report-descriptions).
 
 # Useful Links
 ## Documentation 
