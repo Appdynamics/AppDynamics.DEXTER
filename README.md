@@ -25,7 +25,7 @@ Here are some scenarios that are possible with data provided by AppDynamics DEXT
 * Health Checks for On-Premises Controller – grabbing of data from for later investigation, when Controller is no longer accessible
 * Extraction and preservation of fine-grained Metric, Flow map and Snapshot data for interesting time ranges (such as load test, application outage, interesting customer load) with goal of investigation and comparison in the future
 * Visualization and correlation of Events, Health Rules Snapshots to the Metric data  
-* Discovery and data mining of of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
+* Discovery and data mining of Snapshots by the types and contents of the Exits (HTTP call and SQL query parameters), Data Collectors, entities involved (Tier, Backend, Error, Service Endpoint and Applications) and Call Graph data
 
 The 3 part [Walkthrough](../../wiki/Home#walkthrough) gives an overview and screenshots of the tool in action.
 
