@@ -145,22 +145,22 @@ When running on Mac or Linux, run portable (where you have to install .NET Core 
 
 Framework | Folder | Command
 -- | -- | --
-.NET Full <br/>[Install](https://www.microsoft.com/net/download/Windows/run) | full-win | `full-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/Windows/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore21) | core | `dotnet core\AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-win | `core-win\AppDynamics.Dexter --jobfile MyJob.json`
+.NET Full <br/>[Install](https://dotnet.microsoft.com/download?initial-os=windows) | full-win | `full-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
+.NET Core <br/>[Install](https://dotnet.microsoft.com/download?initial-os=windows), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore2x) | core | `dotnet core\AppDynamics.Dexter.dll --jobfile MyJob.json`
+.NET Core self-contained | core-win | `core-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
 
 ### MAC OS
 
 Framework | Folder | Command
 -- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/macos/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
+.NET Core <br/>[Install](https://dotnet.microsoft.com/download?initial-os=macos), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll --jobfile MyJob.json`
 .NET Core self-contained | core-osx | `core-osx/AppDynamics.Dexter --jobfile MyJob.json`
 
 ### Linux
 
 Framework | Folder | Command
 -- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/linux/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
+.NET Core <br/>[Install](https://dotnet.microsoft.com/download?initial-os=linux), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll --jobfile MyJob.json`
 .NET Core self-contained | core-linux | `core-linux/AppDynamics.Dexter --jobfile MyJob.json`
 
 # Review Results
