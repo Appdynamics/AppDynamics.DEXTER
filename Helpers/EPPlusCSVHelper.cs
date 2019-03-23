@@ -1,9 +1,9 @@
-﻿using OfficeOpenXml;
-using System;
+﻿using CsvHelper;
 using NLog;
-using System.IO;
-using CsvHelper;
+using OfficeOpenXml;
+using System;
 using System.Globalization;
+using System.IO;
 
 namespace AppDynamics.Dexter
 {
@@ -23,7 +23,7 @@ namespace AppDynamics.Dexter
             {
                 using (StreamReader sr = new StreamReader(csvStream))
                 {
-                    return ReadCSVIntoExcelRage(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
+                    return ReadCSVIntoExcelRange(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
                 }
             }
             catch (Exception ex)
@@ -50,7 +50,7 @@ namespace AppDynamics.Dexter
             {
                 using (StreamReader sr = File.OpenText(csvFilePath))
                 {
-                    return ReadCSVIntoExcelRage(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
+                    return ReadCSVIntoExcelRange(sr, skipLinesFromBeginning, sheet, startRow, startColumn);
                 }
             }
             catch (Exception ex)
@@ -62,13 +62,17 @@ namespace AppDynamics.Dexter
             return null;
         }
 
-        public static ExcelRangeBase ReadCSVIntoExcelRage(StreamReader sr, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
+        public static ExcelRangeBase ReadCSVIntoExcelRange(StreamReader sr, int skipLinesFromBeginning, ExcelWorksheet sheet, int startRow, int startColumn)
         {
             int csvRowIndex = -1;
             int numColumnsInCSV = 0;
             string[] headerRowValues = null;
 
             CsvParser csvParser = new CsvParser(sr);
+
+            // mm/dd/yyyy hh:mm:ss is the USA
+            // d/MM/yyyy is the AUS
+            string cellDateTimeFormat = String.Format("{0} hh:mm:ss", CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern);
 
             // Read all rows
             while (true)
@@ -101,14 +105,10 @@ namespace AppDynamics.Dexter
                     foreach (string fieldValue in rowValues)
                     {
                         ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
-                        if (fieldValue.StartsWith("=") == true)
+                        if (fieldValue.StartsWith("=HYPERLINK") == true)
                         {
                             cell.Formula = fieldValue;
-
-                            if (fieldValue.StartsWith("=HYPERLINK") == true)
-                            {
-                                cell.StyleName = "HyperLinkStyle";
-                            }
+                            cell.StyleName = "HyperLinkStyle";
                         }
                         else if (fieldValue.StartsWith("http://") == true || fieldValue.StartsWith("https://") == true)
                         {
@@ -158,14 +158,6 @@ namespace AppDynamics.Dexter
                                 // TimeSpan
                                 cell.Value = timeSpanValue;
                                 cell.Style.Numberformat.Format = "[h]:mm:ss";
-                                //if (headerRowValues[csvFieldIndex] == "EventTime")
-                                //{
-                                //    cell.Style.Numberformat.Format = "hh:mm";
-                                //}
-                                //else
-                                //{
-                                //    cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
-                                //}
                             }
                             else if (DateTime.TryParse(fieldValue, out dateTimeValue))
                             {
@@ -177,7 +169,7 @@ namespace AppDynamics.Dexter
                                 }
                                 else
                                 {
-                                    cell.Style.Numberformat.Format = "mm/dd/yyyy hh:mm:ss";
+                                    cell.Style.Numberformat.Format = cellDateTimeFormat;
                                 }
                             }
                             else

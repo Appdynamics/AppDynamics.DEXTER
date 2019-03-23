@@ -5,6 +5,7 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,6 +31,7 @@ namespace AppDynamics.Dexter
                 loggerConsole.Trace("AppDynamics DEXTER Version {0}", Assembly.GetEntryAssembly().GetName().Version);
                 logger.Trace("Starting at local {0:o}/UTC {1:o}, Version={2}, Parameters={3}", DateTime.Now, DateTime.UtcNow, Assembly.GetEntryAssembly().GetName().Version, String.Join(" ", args));
                 logger.Trace("Timezone {0} {1} {2}", TimeZoneInfo.Local.DisplayName, TimeZoneInfo.Local.StandardName, TimeZoneInfo.Local.BaseUtcOffset);
+                logger.Trace("Culture {0}({1}), ShortDate={2}, ShortTime={3}, All={4}", CultureInfo.CurrentCulture.DisplayName, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture.DateTimeFormat.ShortTimePattern, String.Join(";", CultureInfo.CurrentCulture.DateTimeFormat.GetAllDateTimePatterns()));
                 logger.Trace("Framework {0}", RuntimeInformation.FrameworkDescription);
                 logger.Trace("OS Architecture {0}", RuntimeInformation.OSArchitecture);
                 logger.Trace("OS {0}", RuntimeInformation.OSDescription);
@@ -375,228 +377,195 @@ namespace AppDynamics.Dexter
 
                             loggerConsole.Warn("Enter Password for user {0} for {1}:", jobTarget.UserName, jobTarget.Controller);
 
-                            String password = ReadPassword('*');
-                            Console.WriteLine();
-                            if (password.Length == 0)
+                            try
                             {
-                                logger.Warn("User specified empty password");
-                                loggerConsole.Warn("Password can not be empty");
+                                String password = ReadPassword('*');
+                                Console.WriteLine();
+                                if (password.Length == 0)
+                                {
+                                    logger.Warn("User specified empty password");
+                                    loggerConsole.Warn("Password can not be empty");
+
+                                    continue;
+                                }
+                                jobTarget.UserPassword = AESEncryptionHelper.Encrypt(password);
+                            }
+                            catch (InvalidOperationException ex)
+                            {
+                                logger.Error(ex);
+                                loggerConsole.Warn("Unable to read password from console. Are you running Bash on Windows? If yes, please run in cmd or Powershell, or specify password in job file");
+                                continue;
+                            }
+                        }
+
+                        #endregion
+
+                        using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
+                        {
+
+                            #region Validate target Controller is accessible
+
+                            // If reached here, we have all the properties to go query for list of Applications
+                            if (controllerApi.IsControllerAccessible() == false)
+                            {
+                                logger.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
+                                loggerConsole.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
 
                                 continue;
                             }
-                            jobTarget.UserPassword = AESEncryptionHelper.Encrypt(password);
-                        }
 
-                        #endregion
+                            #endregion
 
-                        #region Validate target Controller is accessible
+                            if (jobTarget.Type == null || jobTarget.Type == String.Empty)
+                            {
+                                jobTarget.Type = JobStepBase.APPLICATION_TYPE_APM;
+                            }
 
-                        // If reached here, we have all the properties to go query for list of Applications
-                        //ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, jobTarget.UserPassword);
-                        ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                        if (controllerApi.IsControllerAccessible() == false)
-                        {
-                            logger.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
-                            loggerConsole.Warn("Target [{0}] Controller {1} not accessible", i + 1, controllerApi);
+                            switch (jobTarget.Type)
+                            {
+                                case JobStepBase.APPLICATION_TYPE_APM:
 
-                            continue;
-                        }
+                                    #region Find APM applications
 
-                        #endregion
-
-                        if (jobTarget.Type == null || jobTarget.Type == String.Empty)
-                        {
-                            jobTarget.Type = JobStepBase.APPLICATION_TYPE_APM;
-                        }
-
-                        switch (jobTarget.Type)
-                        {
-                            case JobStepBase.APPLICATION_TYPE_APM:
-
-                                #region Expand list of APM Applications using regex, if present
-
-                                // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
-                                string applicationsAPMJSON = controllerApi.GetApplicationsAPM();
-                                if (applicationsAPMJSON != String.Empty && applicationsAPMJSON.Length > 0)
-                                {
-                                    JArray applicationsInTarget = JArray.Parse(applicationsAPMJSON);
-
-                                    // Filter to the regex or exact match
-                                    IEnumerable<JToken> applicationsMatchingCriteria = null;
-                                    if (jobTarget.NameRegex == true)
+                                    // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
+                                    string applicationsAPMJSON = controllerApi.GetAPMApplications();
+                                    if (applicationsAPMJSON != String.Empty && applicationsAPMJSON.Length > 0)
                                     {
-                                        if (jobTarget.Application == "*")
+                                        JArray applicationsInController = JArray.Parse(applicationsAPMJSON);
+
+                                        // Filter to the regex or exact match
+                                        IEnumerable<JToken> applicationsMatchingCriteria = null;
+                                        if (jobTarget.NameRegex == true)
                                         {
-                                            jobTarget.Application = ".*";
-                                        }
-                                        Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
-                                        applicationsMatchingCriteria = applicationsInTarget.Where(
-                                            app => regexApplication.Match(app["name"].ToString()).Success == true);
-                                    }
-                                    else
-                                    {
-                                        applicationsMatchingCriteria = applicationsInTarget.Where(
-                                            app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
-                                    }
-
-                                    if (applicationsMatchingCriteria.Count() == 0)
-                                    {
-                                        logger.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
-                                        loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
-
-                                        continue;
-                                    }
-
-                                    foreach (JObject application in applicationsMatchingCriteria)
-                                    {
-                                        // Create a copy of target application for each individual application
-                                        JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
-
-                                        jobTargetExpanded.UserName = jobTarget.UserName;
-                                        jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                        jobTargetExpanded.Application = application["name"].ToString();
-                                        jobTargetExpanded.ApplicationID = (long)application["id"];
-                                        jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_APM;
-
-                                        expandedJobTargets.Add(jobTargetExpanded);
-
-                                        logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                        loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                    }
-                                }
-
-                                #endregion
-
-                                break;
-
-                            case JobStepBase.APPLICATION_TYPE_WEB:
-
-                                #region Expand list of EUM Applications using regex, if present
-
-                                // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
-                                controllerApi.PrivateApiLogin();
-                                string applicationsEUMJSON = controllerApi.GetApplicationsEUM();
-                                if (applicationsEUMJSON.Length > 0)
-                                {
-                                    JArray applicationsInTarget = JArray.Parse(applicationsEUMJSON);
-
-                                    IEnumerable<JToken> applicationsMatchingCriteria = null;
-                                    if (jobTarget.NameRegex == true)
-                                    {
-                                        if (jobTarget.Application == "*")
-                                        {
-                                            jobTarget.Application = ".*";
-                                        }
-                                        Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
-                                        applicationsMatchingCriteria = applicationsInTarget.Where(
-                                            app => regexApplication.Match(app["name"].ToString()).Success == true);
-                                    }
-                                    else
-                                    {
-                                        applicationsMatchingCriteria = applicationsInTarget.Where(
-                                            app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
-                                    }
-
-                                    if (applicationsMatchingCriteria.Count() == 0)
-                                    {
-                                        logger.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
-                                        loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2}", i + 1, jobTarget.Controller, jobTarget.Application);
-
-                                        continue;
-                                    }
-
-                                    foreach (JObject application in applicationsMatchingCriteria)
-                                    {
-                                        // Create a copy of target application for each individual application
-                                        JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
-
-                                        jobTargetExpanded.UserName = jobTarget.UserName;
-                                        jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                        jobTargetExpanded.Application = application["name"].ToString();
-                                        jobTargetExpanded.ApplicationID = (long)application["id"];
-                                        jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_WEB;
-
-                                        expandedJobTargets.Add(jobTargetExpanded);
-
-                                        logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                        loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                    }
-                                }
-
-                                #endregion
-
-                                break;
-
-                            case JobStepBase.APPLICATION_TYPE_MOBILE:
-
-                                loggerConsole.Warn("Target [{0}] Application type '{1}' is not yet implemented", i + 1, JobStepBase.APPLICATION_TYPE_MOBILE);
-
-                                break;
-
-                            case JobStepBase.APPLICATION_TYPE_SIM:
-
-                                #region Find SIM application
-
-                                string applicationSIMJSON = controllerApi.GetSIMApplication();
-                                if (applicationSIMJSON.Length > 0)
-                                {
-                                    JObject applicationSIMInTarget = JObject.Parse(applicationSIMJSON);
-
-                                    if (applicationSIMInTarget["id"] != null && applicationSIMInTarget["name"].ToString() == "Server & Infrastructure Monitoring")
-                                    {
-                                        // Create a copy of target application for each individual application
-                                        JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
-
-                                        jobTargetExpanded.UserName = jobTarget.UserName;
-                                        jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                        jobTargetExpanded.Application = applicationSIMInTarget["name"].ToString();
-                                        jobTargetExpanded.ApplicationID = (long)applicationSIMInTarget["id"];
-                                        jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_SIM;
-
-                                        expandedJobTargets.Add(jobTargetExpanded);
-
-                                        logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                        loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                    }
-                                }
-
-                                #endregion
-
-                                break;
-
-                            case JobStepBase.APPLICATION_TYPE_DB:
-
-                                #region Find Database application
-
-                                // Now we know we have access to Controller. Let's get Database Collectors and expand them into multiple targets if there is a wildcard/regex
-                                controllerApi.PrivateApiLogin();
-
-                                string applicationsAllTypesJSON = controllerApi.GetAllApplicationsAllTypes();
-                                if (applicationsAllTypesJSON.Length > 0)
-                                {
-                                    JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
-
-                                    if (applicationsAll["dbMonApplication"] != null && applicationsAll["dbMonApplication"]["name"].ToString() == "Database Monitoring")
-                                    {
-                                        // Get database collectors
-                                        long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.From);
-                                        long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.To);
-
-                                        string collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls45(fromTimeUnix, toTimeUnix);
-                                        if (collectorsJSON == String.Empty) collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls44(fromTimeUnix, toTimeUnix);
-
-                                        if (collectorsJSON != String.Empty && collectorsJSON.Length > 0)
-                                        {
-                                            JObject collectorsContainer = JObject.Parse(collectorsJSON);
-                                            if (collectorsContainer != null && collectorsContainer["data"] != null)
+                                            if (jobTarget.Application == "*")
                                             {
-                                                JArray dbCollectorsInTarget = (JArray)collectorsContainer["data"];
+                                                jobTarget.Application = ".*";
+                                            }
+                                            Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
+                                            applicationsMatchingCriteria = applicationsInController.Where(
+                                                app => regexApplication.Match(app["name"].ToString()).Success == true);
+                                        }
+                                        else
+                                        {
+                                            applicationsMatchingCriteria = applicationsInController.Where(
+                                                app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
+                                        }
 
-                                                // Filter to the regex or exact match
-                                                IEnumerable<JToken> dbCollectorsMatchingCriteria = null;
+                                        if (applicationsMatchingCriteria.Count() == 0)
+                                        {
+                                            logger.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
+                                            loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
+
+                                            continue;
+                                        }
+
+                                        foreach (JObject application in applicationsMatchingCriteria)
+                                        {
+                                            // Create a copy of target application for each individual application
+                                            JobTarget jobTargetExpanded = new JobTarget();
+                                            jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                            jobTargetExpanded.UserName = jobTarget.UserName;
+                                            jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                            jobTargetExpanded.Application = application["name"].ToString();
+                                            jobTargetExpanded.ApplicationID = (long)application["id"];
+                                            jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_APM;
+
+                                            expandedJobTargets.Add(jobTargetExpanded);
+
+                                            logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                            loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    break;
+
+                                case JobStepBase.APPLICATION_TYPE_WEB:
+
+                                    #region Find EUM Web applications
+
+                                    // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
+                                    controllerApi.PrivateApiLogin();
+
+                                    string applicationsAllTypesJSON = controllerApi.GetAllApplicationsAllTypes();
+                                    if (applicationsAllTypesJSON.Length > 0)
+                                    {
+                                        JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
+
+                                        if (applicationsAll["eumWebApplications"] != null)
+                                        {
+                                            JArray applicationsInController = (JArray)applicationsAll["eumWebApplications"];
+
+                                            IEnumerable<JToken> applicationsMatchingCriteria = null;
+                                            if (jobTarget.NameRegex == true)
+                                            {
+                                                if (jobTarget.Application == "*")
+                                                {
+                                                    jobTarget.Application = ".*";
+                                                }
+                                                Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
+                                                applicationsMatchingCriteria = applicationsInController.Where(
+                                                    app => regexApplication.Match(app["name"].ToString()).Success == true);
+                                            }
+                                            else
+                                            {
+                                                applicationsMatchingCriteria = applicationsInController.Where(
+                                                    app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
+                                            }
+
+                                            if (applicationsMatchingCriteria.Count() == 0)
+                                            {
+                                                logger.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
+                                                loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
+
+                                                continue;
+                                            }
+
+                                            foreach (JObject application in applicationsMatchingCriteria)
+                                            {
+                                                // Create a copy of target application for each individual application
+                                                JobTarget jobTargetExpanded = new JobTarget();
+                                                jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                                jobTargetExpanded.UserName = jobTarget.UserName;
+                                                jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                                jobTargetExpanded.Application = application["name"].ToString();
+                                                jobTargetExpanded.ApplicationID = (long)application["id"];
+                                                jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_WEB;
+
+                                                expandedJobTargets.Add(jobTargetExpanded);
+
+                                                logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                                loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                            }
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    break;
+
+                                case JobStepBase.APPLICATION_TYPE_MOBILE:
+
+                                    #region Find EUM Mobile applications
+
+                                    // Now we know we have access to Controller. Let's get Applications and expand them into multiple targets if there is a wildcard/regex
+                                    controllerApi.PrivateApiLogin();
+
+                                    string applicationsMobileJSON = controllerApi.GetMOBILEApplications();
+                                    if (applicationsMobileJSON.Length > 0)
+                                    {
+                                        JArray applicationsMobile = JArray.Parse(applicationsMobileJSON);
+
+                                        foreach (JObject applicationMobile in applicationsMobile)
+                                        {
+                                            JArray applicationsInTarget = (JArray)applicationMobile["children"];
+
+                                            if (applicationsInTarget.Count > 0)
+                                            {
+                                                IEnumerable<JToken> applicationsMatchingCriteria = null;
                                                 if (jobTarget.NameRegex == true)
                                                 {
                                                     if (jobTarget.Application == "*")
@@ -604,24 +573,24 @@ namespace AppDynamics.Dexter
                                                         jobTarget.Application = ".*";
                                                     }
                                                     Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
-                                                    dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
-                                                        dbColl => regexApplication.Match(dbColl["name"].ToString()).Success == true);
+                                                    applicationsMatchingCriteria = applicationsInTarget.Where(
+                                                        app => regexApplication.Match(app["name"].ToString()).Success == true);
                                                 }
                                                 else
                                                 {
-                                                    dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
-                                                        dbColl => String.Compare(dbColl["name"].ToString(), jobTarget.Application, true) == 0);
+                                                    applicationsMatchingCriteria = applicationsInTarget.Where(
+                                                        app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
                                                 }
 
-                                                if (dbCollectorsMatchingCriteria.Count() == 0)
+                                                if (applicationsMatchingCriteria.Count() == 0)
                                                 {
-                                                    logger.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
-                                                    loggerConsole.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+                                                    logger.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
+                                                    loggerConsole.Warn("Target [{0}] Controller {1} does not have Application {2} [{3}]", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type);
 
                                                     continue;
                                                 }
 
-                                                foreach (JObject dbCollector in dbCollectorsMatchingCriteria)
+                                                foreach (JObject application in applicationsMatchingCriteria)
                                                 {
                                                     // Create a copy of target application for each individual application
                                                     JobTarget jobTargetExpanded = new JobTarget();
@@ -629,28 +598,176 @@ namespace AppDynamics.Dexter
 
                                                     jobTargetExpanded.UserName = jobTarget.UserName;
                                                     jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                                    jobTargetExpanded.Application = dbCollector["name"].ToString();
-                                                    jobTargetExpanded.ApplicationID = (long)dbCollector["id"];
-                                                    jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_DB;
+                                                    jobTargetExpanded.Application = application["name"].ToString();
+                                                    jobTargetExpanded.ApplicationID = (long)application["mobileAppId"];
+                                                    jobTargetExpanded.ParentApplicationID = (long)application["applicationId"];
+                                                    jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_MOBILE;
 
                                                     expandedJobTargets.Add(jobTargetExpanded);
 
-                                                    logger.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
-                                                    loggerConsole.Info("Target [{0}] Controller {1} Application {2}=>{3} ({4})", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Application, jobTargetExpanded.Type);
+                                                    logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                                    loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
                                                 }
                                             }
                                         }
                                     }
-                                }
 
-                                #endregion
+                                    #endregion
 
-                                break;
+                                    break;
 
-                            default:
-                                logger.Warn("Target [{0}] Unknown application type '{1}'", i + 1, jobTarget.Type);
-                                loggerConsole.Warn("Target [{0}] Unknown application type '{1}'", i + 1, jobTarget.Type);
-                                break;
+                                case JobStepBase.APPLICATION_TYPE_SIM:
+
+                                    #region Find SIM application
+
+                                    string applicationSIMJSON = controllerApi.GetSIMApplication();
+                                    if (applicationSIMJSON.Length > 0)
+                                    {
+                                        JObject applicationSIMInController = JObject.Parse(applicationSIMJSON);
+
+                                        if (applicationSIMInController["id"] != null && applicationSIMInController["name"].ToString().Equals("Server & Infrastructure Monitoring", StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            // Create a copy of target application for each individual application
+                                            JobTarget jobTargetExpanded = new JobTarget();
+                                            jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                            jobTargetExpanded.UserName = jobTarget.UserName;
+                                            jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                            jobTargetExpanded.Application = applicationSIMInController["name"].ToString();
+                                            jobTargetExpanded.ApplicationID = (long)applicationSIMInController["id"];
+                                            jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_SIM;
+
+                                            expandedJobTargets.Add(jobTargetExpanded);
+
+                                            logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                            loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    break;
+
+                                case JobStepBase.APPLICATION_TYPE_DB:
+
+                                    #region Find Database application
+
+                                    // Now we know we have access to Controller. Let's get Database Collectors and expand them into multiple targets if there is a wildcard/regex
+                                    controllerApi.PrivateApiLogin();
+
+                                    applicationsAllTypesJSON = controllerApi.GetAllApplicationsAllTypes();
+                                    if (applicationsAllTypesJSON.Length > 0)
+                                    {
+                                        JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
+
+                                        if (applicationsAll["dbMonApplication"] != null && applicationsAll["dbMonApplication"]["name"].ToString().Equals("Database Monitoring", StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            // Get database collectors
+                                            long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.From);
+                                            long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.To);
+
+                                            string collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls(fromTimeUnix, toTimeUnix, "4.5");
+                                            if (collectorsJSON == String.Empty) collectorsJSON = controllerApi.GetDBRegisteredCollectorsCalls(fromTimeUnix, toTimeUnix, "4.4");
+
+                                            if (collectorsJSON != String.Empty && collectorsJSON.Length > 0)
+                                            {
+                                                JObject collectorsContainer = JObject.Parse(collectorsJSON);
+                                                if (collectorsContainer != null && collectorsContainer["data"] != null)
+                                                {
+                                                    JArray dbCollectorsInTarget = (JArray)collectorsContainer["data"];
+
+                                                    // Filter to the regex or exact match
+                                                    IEnumerable<JToken> dbCollectorsMatchingCriteria = null;
+                                                    if (jobTarget.NameRegex == true)
+                                                    {
+                                                        if (jobTarget.Application == "*")
+                                                        {
+                                                            jobTarget.Application = ".*";
+                                                        }
+                                                        Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
+                                                        dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
+                                                            dbColl => regexApplication.Match(dbColl["name"].ToString()).Success == true);
+                                                    }
+                                                    else
+                                                    {
+                                                        dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
+                                                            dbColl => String.Compare(dbColl["name"].ToString(), jobTarget.Application, true) == 0);
+                                                    }
+
+                                                    if (dbCollectorsMatchingCriteria.Count() == 0)
+                                                    {
+                                                        logger.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+                                                        loggerConsole.Warn("Target [{0}] Controller {1} does not have DB Collector {2}", i + 1, jobTarget.Controller, jobTarget.Application);
+
+                                                        continue;
+                                                    }
+
+                                                    foreach (JObject dbCollector in dbCollectorsMatchingCriteria)
+                                                    {
+                                                        // Create a copy of target application for each individual application
+                                                        JobTarget jobTargetExpanded = new JobTarget();
+                                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                                        jobTargetExpanded.UserName = jobTarget.UserName;
+                                                        jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                                        jobTargetExpanded.Application = dbCollector["name"].ToString();
+                                                        jobTargetExpanded.ApplicationID = (long)applicationsAll["dbMonApplication"]["id"];
+                                                        jobTargetExpanded.DBCollectorID = (long)dbCollector["id"];
+                                                        jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_DB;
+
+                                                        expandedJobTargets.Add(jobTargetExpanded);
+
+                                                        logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                                        loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    break;
+
+                                case JobStepBase.APPLICATION_TYPE_BIQ:
+
+                                    #region Find Analytics application
+
+                                    // Now we know we have access to Controller. Let's get Database Collectors and expand them into multiple targets if there is a wildcard/regex
+                                    controllerApi.PrivateApiLogin();
+
+                                    applicationsAllTypesJSON = controllerApi.GetAllApplicationsAllTypes();
+                                    if (applicationsAllTypesJSON.Length > 0)
+                                    {
+                                        JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
+
+                                        if (applicationsAll["analyticsApplication"] != null && applicationsAll["analyticsApplication"]["name"].ToString().StartsWith("AppDynamics Analytics", StringComparison.CurrentCultureIgnoreCase))
+                                        {
+                                            JobTarget jobTargetExpanded = new JobTarget();
+                                            jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+
+                                            jobTargetExpanded.UserName = jobTarget.UserName;
+                                            jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                            jobTargetExpanded.Application = applicationsAll["analyticsApplication"]["name"].ToString();
+                                            jobTargetExpanded.ApplicationID = (long)applicationsAll["analyticsApplication"]["id"];
+                                            jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_BIQ;
+
+                                            expandedJobTargets.Add(jobTargetExpanded);
+
+                                            logger.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                            loggerConsole.Info("Target [{0}] {1}/{2} [{3}] => {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTargetExpanded.Type, jobTargetExpanded.Application);
+                                        }
+                                    }
+
+                                    #endregion
+
+                                    break;
+
+                                default:
+                                    logger.Warn("Target [{0}] Unknown application type '{1}'", i + 1, jobTarget.Type);
+                                    loggerConsole.Warn("Target [{0}] Unknown application type '{1}'", i + 1, jobTarget.Type);
+                                    break;
+                            }
                         }
                     }
 
@@ -667,15 +784,15 @@ namespace AppDynamics.Dexter
                     }
 
                     // Sort them to be pretty
-                    expandedJobTargets = expandedJobTargets.OrderBy(o => o.Controller).ThenBy(o => o.Application).ToList();
+                    expandedJobTargets = expandedJobTargets.OrderBy(o => o.Controller).ThenBy(o => o.Type).ThenBy(o => o.Application).ToList();
 
                     // Save expanded targets
                     jobConfiguration.Target = expandedJobTargets;
 
                     #endregion
 
-                    // Add status to the overall job
-                    jobConfiguration.Status = JobStatus.ExtractControllerApplicationsAndEntities;
+                    // Add status to the overall job, setting it to the beginning
+                    jobConfiguration.Status = JobStatus.ExtractControllerVersionAndApplications;
 
                     // Save the resulting JSON file to the job target folder
                     if (FileIOHelper.WriteJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)

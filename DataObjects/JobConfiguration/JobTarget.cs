@@ -9,6 +9,8 @@ namespace AppDynamics.Dexter
         public string UserPassword { get; set; }
         public string Application { get; set; }
         public long ApplicationID { get; set; }
+        public long DBCollectorID { get; set; }
+        public long ParentApplicationID { get; set; }
         public bool NameRegex { get; set; }
         public string Type { get; set; }
 
@@ -19,7 +21,7 @@ namespace AppDynamics.Dexter
 
         public override string ToString()
         {
-            return String.Format("JobTarget: {0}/{1}({2})", this.Controller, this.Application, this.ApplicationID);
+            return String.Format("JobTarget: {0}/{1}({2})[{3}]", this.Controller, this.Application, this.ApplicationID, this.Type);
         }
     }
 }

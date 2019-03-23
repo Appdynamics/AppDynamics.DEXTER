@@ -1,4 +1,5 @@
-﻿using AppDynamics.Dexter.ReportObjects;
+﻿using AppDynamics.Dexter.ReportObjectMaps;
+using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -12,7 +13,7 @@ using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class IndexApplicationConfigurationComparison : JobStepIndexBase
+    public class IndexApplicationConfigurationDifferences : JobStepIndexBase
     {
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -132,8 +133,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Application Summary");
 
-                        List<EntityApplicationConfiguration> applicationConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<EntityApplicationConfiguration>(FilePathMap.ApplicationConfigurationIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new EntityApplicationConfigurationReportMap());
-                        List<EntityApplicationConfiguration> applicationConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<EntityApplicationConfiguration>(FilePathMap.ApplicationConfigurationIndexFilePath(jobTarget), new EntityApplicationConfigurationReportMap());
+                        List<APMApplicationConfiguration> applicationConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new APMApplicationConfigurationReportMap());
+                        List<APMApplicationConfiguration> applicationConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobTarget), new APMApplicationConfigurationReportMap());
 
                         if (applicationConfigurationsListReference != null && applicationConfigurationsListReference.Count > 0 &&
                             applicationConfigurationsListDifference != null && applicationConfigurationsListDifference.Count > 0)
@@ -147,8 +148,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Business Transaction Detection Rules");
 
-                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.BusinessTransactionDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRuleReportMap());
-                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.BusinessTransactionDiscoveryRulesIndexFilePath(jobTarget), new BusinessTransactionDiscoveryRuleReportMap());
+                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRuleReportMap());
+                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(jobTarget), new BusinessTransactionDiscoveryRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionDiscoveryRulesListReference, businessTransactionDiscoveryRulesListDifference));
 
@@ -158,8 +159,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Business Transaction Include and Exclude Rules");
 
-                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleReportMap());
-                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.BusinessTransactionEntryRulesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleReportMap());
+                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleReportMap());
+                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryRulesListReference, businessTransactionEntryRulesListDifference));
 
@@ -169,8 +170,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Service Endpoint Entry Rules");
 
-                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new ServiceEndpointEntryRuleReportMap());
-                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.ServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new ServiceEndpointEntryRuleReportMap());
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, serviceEndpointEntryRulesListReference, serviceEndpointEntryRulesListDifference));
 
@@ -180,18 +181,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");
 
-                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.BusinessTransactionEntryScopesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleScopeReportMap());
-                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.BusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleScopeReportMap());
+                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleScopeReportMap());
+                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleScopeReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryScopeListReference, businessTransactionEntryScopeListDifference));
 
-                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.BusinessTransactionEntryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRule20ReportMap());
-                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.BusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
+                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRule20ReportMap());
+                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryRules20ListReference, businessTransactionEntryRules20ListDifference));
 
-                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.BusinessTransactionDiscoveryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRule20ReportMap());
-                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.BusinessTransactionDiscoveryRules20IndexFilePath(jobTarget), new BusinessTransactionDiscoveryRule20ReportMap());
+                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRule20ReportMap());
+                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobTarget), new BusinessTransactionDiscoveryRule20ReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionDiscoveryRule20ListReference, businessTransactionDiscoveryRule20ListDifference));
 
@@ -201,8 +202,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Backend Detection Rules");
 
-                        List<BackendDiscoveryRule> backendDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.BackendDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BackendDiscoveryRuleReportMap());
-                        List<BackendDiscoveryRule> backendDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.BackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
+                        List<BackendDiscoveryRule> backendDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BackendDiscoveryRuleReportMap());
+                        List<BackendDiscoveryRule> backendDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, backendDiscoveryRulesListReference, backendDiscoveryRulesListDifference));
 
@@ -212,8 +213,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Custom Exit Rules");
 
-                        List<CustomExitRule> customExitRulesListReference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.CustomExitRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new CustomExitRuleReportMap());
-                        List<CustomExitRule> customExitRulesListDifference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.CustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
+                        List<CustomExitRule> customExitRulesListReference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new CustomExitRuleReportMap());
+                        List<CustomExitRule> customExitRulesListDifference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, customExitRulesListReference, customExitRulesListDifference));
 
@@ -223,8 +224,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Agent Configuration Properties");
 
-                        List<AgentConfigurationProperty> agentConfigurationPropertiesListReference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.AgentConfigurationPropertiesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentConfigurationPropertyReportMap());
-                        List<AgentConfigurationProperty> agentConfigurationPropertiesListDifference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.AgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
+                        List<AgentConfigurationProperty> agentConfigurationPropertiesListReference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentConfigurationPropertyReportMap());
+                        List<AgentConfigurationProperty> agentConfigurationPropertiesListDifference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, agentConfigurationPropertiesListReference, agentConfigurationPropertiesListDifference));
 
@@ -234,8 +235,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Information Point Rules");
 
-                        List<InformationPointRule> informationPointRulesListReference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.InformationPointRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new InformationPointRuleReportMap());
-                        List<InformationPointRule> informationPointRulesListDifference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.InformationPointRulesIndexFilePath(jobTarget), new InformationPointRuleReportMap());
+                        List<InformationPointRule> informationPointRulesListReference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new InformationPointRuleReportMap());
+                        List<InformationPointRule> informationPointRulesListDifference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(jobTarget), new InformationPointRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, informationPointRulesListReference, informationPointRulesListDifference));
 
@@ -245,8 +246,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors");
 
-                        List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransactionConfiguration>(FilePathMap.EntityBusinessTransactionConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new EntityBusinessTransactionConfigurationReportMap());
-                        List<EntityBusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<EntityBusinessTransactionConfiguration>(FilePathMap.EntityBusinessTransactionConfigurationsIndexFilePath(jobTarget), new EntityBusinessTransactionConfigurationReportMap());
+                        List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionConfigurationReportMap());
+                        List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(jobTarget), new BusinessTransactionConfigurationReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, entityBusinessTransactionConfigurationsListReference, entityBusinessTransactionConfigurationsListDifference));
 
@@ -256,8 +257,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Tier Settings");
 
-                        List<EntityTierConfiguration> entityTierConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<EntityTierConfiguration>(FilePathMap.EntityTierConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new EntityTierConfigurationReportMap());
-                        List<EntityTierConfiguration> entityTierConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<EntityTierConfiguration>(FilePathMap.EntityTierConfigurationsIndexFilePath(jobTarget), new EntityTierConfigurationReportMap());
+                        List<TierConfiguration> entityTierConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new TierConfigurationReportMap());
+                        List<TierConfiguration> entityTierConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(jobTarget), new TierConfigurationReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, entityTierConfigurationsListReference, entityTierConfigurationsListDifference));
 
@@ -267,13 +268,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Data Collectors");
 
-                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.MethodInvocationDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new MethodInvocationDataCollectorReportMap());
-                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.MethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new MethodInvocationDataCollectorReportMap());
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, methodInvocationDataCollectorsListReference, methodInvocationDataCollectorsListDifference));
 
-                        List<HTTPDataCollector> httpDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.HttpDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HTTPDataCollectorReportMap());
-                        List<HTTPDataCollector> httpDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.HttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
+                        List<HTTPDataCollector> httpDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HTTPDataCollectorReportMap());
+                        List<HTTPDataCollector> httpDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, httpDataCollectorsListReference, httpDataCollectorsListDifference));
 
@@ -283,8 +284,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Call Graph Settings");
 
-                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListReference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.AgentCallGraphSettingsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentCallGraphSettingReportMap());
-                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.AgentCallGraphSettingsIndexFilePath(jobTarget), new AgentCallGraphSettingReportMap());
+                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListReference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentCallGraphSettingReportMap());
+                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobTarget), new AgentCallGraphSettingReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, agentCallGraphSettingCollectorsListReference, agentCallGraphSettingCollectorsListDifference));
 
@@ -294,8 +295,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Health Rules");
 
-                        List<HealthRule> healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.HealthRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HealthRuleReportMap());
-                        List<HealthRule> healthRulesListDifference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.HealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
+                        List<HealthRule> healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HealthRuleReportMap());
+                        List<HealthRule> healthRulesListDifference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
 
                         configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, healthRulesListReference, healthRulesListDifference));
 
@@ -320,7 +321,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             reportFolderCleaned = true;
                         }
 
-                        // Append all the individual application files into one
+                        // Append all the individual report files into one
                         if (File.Exists(FilePathMap.ConfigurationComparisonIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ConfigurationComparisonIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.ConfigurationComparisonReportFilePath(), FilePathMap.ConfigurationComparisonIndexFilePath(jobTarget));

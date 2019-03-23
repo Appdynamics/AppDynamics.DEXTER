@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AppDynamics DEXTER")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Turn your APM data store into a Data Warehouse with advanced reporting, including entities, configuration, metrics, flowmaps, events, snapshots and call graph flame graphs")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Cisco/AppDynamics")]
 [assembly: AssemblyProduct("DEXTER - Data EXTraction and Enhanced Reporting")]
-[assembly: AssemblyCopyright("Copyright © 2017-2018")]
+[assembly: AssemblyCopyright("Copyright © 2017-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.36")]
-[assembly: AssemblyFileVersion("1.0.0.36")]
+[assembly: AssemblyVersion("1.2.37.0")]
+[assembly: AssemblyFileVersion("1.2.37.0")]

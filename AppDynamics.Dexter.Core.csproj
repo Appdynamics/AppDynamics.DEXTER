@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>netcoreapp2.1;net471</TargetFrameworks>
+    <TargetFrameworks>netcoreapp2.2;net472</TargetFrameworks>
     <RuntimeIdentifiers>win-x64;osx-x64;linux-x64</RuntimeIdentifiers>
     <ApplicationIcon>SearchContract.ico</ApplicationIcon>
     <SignAssembly>true</SignAssembly>
@@ -13,6 +13,9 @@
   <PropertyGroup>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AssemblyOriginatorKeyFile>AppDynamics DEXTER.pfx</AssemblyOriginatorKeyFile>
+    <PackageLicenseUrl>https://github.com/Appdynamics/AppDynamics.DEXTER/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl />
+    <RepositoryUrl>https://github.com/Appdynamics/AppDynamics.DEXTER</RepositoryUrl>
   </PropertyGroup>
   
   <ItemGroup>
@@ -43,12 +46,12 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="1.9.71" />
     <PackageReference Include="CsvHelper" Version="7.1.1" />
-    <PackageReference Include="EPPlus" Version="4.5.2.1" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="NLog" Version="4.5.6" />
-    <PackageReference Include="NLog.Config" Version="4.5.6" />
-    <PackageReference Include="NLog.Schema" Version="4.5.6" />
-    <PackageReference Include="System.Net.Http" Version="4.3.3" />
+    <PackageReference Include="EPPlus" Version="4.5.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="NLog" Version="4.5.11" />
+    <PackageReference Include="NLog.Config" Version="4.5.11" />
+    <PackageReference Include="NLog.Schema" Version="4.5.11" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -56,6 +59,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="global.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="DefaultJob.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -74,6 +80,9 @@
     <None Update="TemplateApplicationConfiguration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
   </ItemGroup>
   
 </Project>

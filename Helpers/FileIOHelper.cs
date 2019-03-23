@@ -149,8 +149,15 @@ namespace AppDynamics.Dexter
         {
             try
             {
-                logger.Trace("Reading file {0}", filePath);
-                return File.ReadAllText(filePath, Encoding.UTF8);
+                if (File.Exists(filePath) == false)
+                {
+                    logger.Warn("Unable to find file {0}", filePath);
+                }
+                else
+                {
+                    logger.Trace("Reading file {0}", filePath);
+                    return File.ReadAllText(filePath, Encoding.UTF8);
+                }
             }
             catch (Exception ex)
             {

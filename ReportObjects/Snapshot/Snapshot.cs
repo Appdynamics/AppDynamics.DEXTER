@@ -62,7 +62,6 @@ namespace AppDynamics.Dexter.ReportObjects
         public string CallChains { get; set; }
         public string ExitTypes { get; set; }
 
-        public string FlameGraphLink { get; set; }
         public string SnapshotLink { get; set; }
 
         public override String ToString()

@@ -1,8 +1,9 @@
-﻿using CsvHelper.Configuration;
+﻿using AppDynamics.Dexter.ReportObjects;
+using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.ReportObjects
+namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class BackendMetricReportMap : ClassMap<Backend>
+    public class BackendMetricReportMap : ClassMap<APMBackend>
     {
         public BackendMetricReportMap()
         {

@@ -1,8 +1,9 @@
-﻿using CsvHelper.Configuration;
+﻿using AppDynamics.Dexter.ReportObjects;
+using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.ReportObjects
+namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class ErrorMetricReportMap : ClassMap<Error>
+    public class ErrorMetricReportMap : ClassMap<APMError>
     {
         public ErrorMetricReportMap()
         {

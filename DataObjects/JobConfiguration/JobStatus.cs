@@ -2,42 +2,93 @@
 {
     public enum JobStatus
     {
-        ExtractControllerApplicationsAndEntities = 1,
-        ExtractControllerSIMApplicationsAndEntities = 2,
-        ExtractControllerDBApplicationsAndEntities = 3,
-        ExtractControllerAndApplicationConfiguration = 4,
-        ExtractUsersGroupsRolesAndPermissions = 5,
-        ExtractApplicationAndEntityMetrics = 6,
-        ExtractApplicationAndEntityFlowmaps = 7,
-        ExtractEventsAndHealthRuleViolations = 8,
-        ExtractSnapshots = 9,
+        // Extract steps
+        ExtractControllerVersionAndApplications = 1,
+        ExtractControllerConfiguration = 2,
+        ExtractControllerUsersGroupsRolesAndPermissions = 3,
+        ExtractDashboards = 4,
+        ExtractLicenses = 5,
 
-        IndexControllerApplicationsAndEntities = 11,
-        IndexControllerSIMApplicationsAndEntities = 12,
-        IndexControllerDBApplicationsAndEntities = 13,
-        IndexControllerAndApplicationConfiguration = 14,
-        IndexApplicationConfigurationComparison = 15,
-        IndexUsersGroupsRolesAndPermissions = 16,
-        IndexApplicationAndEntityMetrics = 17,
-        IndexApplicationAndEntityFlowmaps = 18,
-        IndexEventsAndHealthRuleViolations = 19,
-        IndexSnapshots = 20,
+        ExtractControllerAuditEventsAndNotifications = 6,
+        ExtractApplicationEventsAndHealthRuleViolations = 7,
 
-        ReportControlerApplicationsAndEntities = 21,
-        ReportControlerSIMApplicationsAndEntities = 22,
-        ReportControlerDBApplicationsAndEntities = 23,
-        ReportControllerAndApplicationConfiguration = 24,
-        ReportUsersGroupsRolesAndPermissions = 25,
-        ReportApplicationAndEntityMetrics = 26,
-        ReportApplicationAndEntityMetricGraphs = 27,
-        ReportEventsAndHealthRuleViolations = 28,
-        ReportSnapshots = 29,
-        ReportSnapshotsMethodCallLines = 30,
-        ReportIndividualApplicationAndEntityDetails = 31,
-        ReportFlameGraphs = 32,
+        ExtractApplicationHealthRulesAlertsPolicies = 10,
+        ExtractAPMConfiguration = 11,
+        ExtractDBConfiguration = 12,
+        ExtractWEBConfiguration = 13,
+        ExtractMOBILEConfiguration = 14,
+        ExtractBIQConfiguration = 15,
 
-        Done = 50,
+        ExtractAPMEntities = 20,
+        ExtractSIMEntities = 21,
+        ExtractDBEntities = 22,
+        ExtractWEBEntities = 23,
+        ExtractMOBILEEntities = 24,
+        ExtractBIQEntities = 25,
 
-        Error = 100
+        ExtractAPMMetrics = 30,
+        ExtractAPMFlowmaps = 31,
+        ExtractAPMSnapshots = 32,
+
+        // Index steps
+        IndexControllerVersionAndApplications = 50,
+        IndexControllerConfiguration = 51,
+        IndexControllerUsersGroupsRolesAndPermissions = 52,
+
+        IndexDashboards = 53,
+        IndexLicenses = 54,
+
+        IndexControllerAuditEventsAndNotifications = 55,
+        IndexApplicationEventsAndHealthRuleViolations = 56,
+
+        IndexAPMEntities = 60,
+        IndexSIMEntities = 61,
+        IndexDBEntities = 62,
+        IndexWEBEntities = 63,
+        IndexMOBILEEntities = 64,
+        IndexBIQEntities = 65,
+
+        IndexApplicationHealthRulesAlertsPolicies = 70,
+        IndexAPMConfiguration = 71,
+        IndexDBConfiguration = 72,
+        IndexWEBConfiguration = 73,
+        IndexMOBILEConfiguration = 74,
+        IndexBIQConfiguration = 75,
+
+        IndexApplicationConfigurationDifferences = 76,
+
+        IndexAPMMetrics = 80,
+        IndexAPMFlowmaps = 81,
+        IndexAPMSnapshots = 82,
+
+        // Report steps
+        ReportControllerAndApplicationConfiguration = 100,
+        ReportControllerUsersGroupsRolesAndPermissions = 101,
+
+        ReportDashboards = 102,
+        ReportLicenses = 103,
+
+        ReportApplicationEventsAndHealthRuleViolations = 104,
+
+        ReportAPMEntities = 110,
+        ReportSIMEntities = 111,
+        ReportDBEntities = 112,
+        ReportWEBEntities = 113,
+        ReportMOBILEEntities = 114,
+        ReportBIQEntities = 115,
+
+        ReportAPMMetrics = 120,
+        ReportAPMMetricGraphs = 121,
+
+        ReportAPMSnapshots = 130,
+        ReportAPMSnapshotsMethodCallLines = 131,
+        ReportAPMFlameGraphs = 132,
+
+        ReportAPMEntityDetails = 133,
+
+        // The rest
+        Done = 500,
+
+        Error = -1
     }
 }

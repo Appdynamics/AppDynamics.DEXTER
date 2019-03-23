@@ -38,14 +38,14 @@ The 3 part [Walkthrough](../../wiki/Home#walkthrough) gives an overview and scre
 
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
-## Detected Entities
-If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected Entities](../../wiki/Detected-Entities-Report) report.
+## Detected APM Entities
+If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected APM Entities](../../wiki/Detected-APM_Entities-Report) report.
 
-![Detected Entities](../master/docs/introduction/DetectedEntitiesOverview.png?raw=true)
+![Detected APM Entities](../master/docs/introduction/DetectedAPMEntitiesOverview.png?raw=true)
 
-As alternative to Excel, PowerBI visual analytics tool offers advanced exploration possibilities of the same data in [Detected Entities in PowerBI](../../wiki/Detected-Entities-Report-in-PowerBI) report.
+As alternative to Excel, PowerBI visual analytics tool offers advanced exploration possibilities of the same data in [Detected APM Entities in PowerBI](../../wiki/Detected-APM-Entities-Report-in-PowerBI) report.
 
-![Detected Entities in PowerBI](../master/docs/introduction/DetectedEntitiesPowerBIOverview.png?raw=true)
+![Detected APM Entities in PowerBI](../master/docs/introduction/DetectedAPMEntitiesPowerBIOverview.png?raw=true)
 
 ## Entity Metrics, Graphs and Flow Maps
 [Entity Metrics](../../wiki/Entity-Metrics-Report) report shows summary and graphs for all Metrics for each and every detected Application, Tier, Node, Business Transaction, Backend, Service Endpoint, Errors and Information Point. This makes it very valuable in times when you want to rapidly assess hundreds of Applications, Tiers and Business Transactions and see which ones need your attention.
@@ -73,7 +73,7 @@ How about the one that uses specific SQL query?
 
 And how about the one that has a real Call Graph? 
 
-Or maybe also a special Data Collectors? 
+Or maybe also pone with special Data Collector value? 
 
 Or how about finding out how many times that special Query was slow in a given time range?
 
@@ -114,65 +114,40 @@ Here is an example showing non-default Agent Properties set on multiple Applicat
 Here is an example showing differences
 ![Configuration Differences](../master/docs/introduction/ConfigurationComparison.png?raw=true)
 
-## Detected Entities for Server Infrastructure Monitoring and Database Monitoring
-Detected entities are not limited to APM Applications.
+## Detected Entities for Server Infrastructure Monitoring Report
+Server Infrastructure Monitoring inventory of Machines, CPUs, Disks and Processes is available in [Detected SIM Entities](../../wiki/Detected-SIM-Entities-Report) report.
 
-Server Infrastructure Monitoring inventory of Machines, CPUs, Disks and Processes is available in [Detected SIM Entities](../../wiki/Detected-SIM-Entities-Report) report
-
+## Detected Entities for Database Monitoring Report
 Database Monitoring Queries, Sessions, Blocked Sessions and other interesting database-related artifacts can be seen in [Detected DB Entities](../../wiki/Detected-DB-Entities-Report) report.
 
+## Detected Entities for Web End User Monitoring 
+Web End User Monitoring inventory of Pages and AJAX Requests, Page Resources, related Business Transactions and Geo Locations is available in [Detected WEB Entities](../../wiki/Detected-WEB-Entities-Report) report.
+
+## Detected Entities for Mobile End User Monitoring  Report
+Mobile End User Monitoring inventory of Network Requests is available in [Detected MOBILE Entities](../../wiki/Detected-MOBILE-Entities-Report) report.
+
+## Detected Entities for BusinessIQ Applications Report
+BusinessIQ inventory of Searches, Widgets, Saved Metrics, Business Journeys, Experience Levels, Schemas and Fields is available in [Detected BIQ Entities](../../wiki/Detected-BIQ-Entities-Report) report.
+
+## Users, Groups and Permissions Report
+Users, Groups, Roles and Permissions report shows information about each and every security entity (User, Group, Role and Permission) and their relationship in Controller is available in [Users and Permissions](../../wiki/Users-and-Permissions-Report) report.
+
+## Dashboards Report
+Dashboards report shows information about all Dashboards, Widgets and Time Series and their relationship to other Entities in Controller is available in [Dashboards](../../wiki/Dashboards-Report) report.
+
 # Get Started
-## Install Application
-Download latest release from [Releases](https://github.com/Appdynamics/AppDynamics.DEXTER/releases) section, (AppDynamics.DEXTER.#.#.#.#.zip)
-
-Unzip to some location, for example, `C:\AppDynamics\DEXTER` or `/home/yourusername/DEXTER`.
-
-## Job File
-Specify data to operate on with [Job File](../../wiki/Job-File). Review some of the [Job File Examples](../../wiki/Job-File-Examples).
-
-The template job file is called `DefaultJob.json`. Make a copy of it and modify according to your needs using your favorite text editor.
-
-Alternatively, create the Job File using [DEXTER-UI](https://appdynamics.github.io/dexter-ui) visual tool.
- 
-## Run Application
-DEXTER ships with .NET Full Framework 4.7.2 and .NET Core Framework 2.1 versions for full flexibility.
-
-When running on Windows, you can choose to run version built using .NET Full or .NET Core. If you choose .NET Core, you can run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
-
-When running on Mac or Linux, run portable (where you have to install .NET Core runtime on your OS) or self-contained (where .NET Core runtime is included with application) version of the application.
-
-### Windows
-
-Framework | Folder | Command
--- | -- | --
-.NET Full <br/>[Install](https://www.microsoft.com/net/download/Windows/run) | full-win | `full-win\AppDynamics.Dexter.exe --jobfile MyJob.json`
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/Windows/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/windows-prerequisites?tabs=netcore21) | core | `dotnet core\AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-win | `core-win\AppDynamics.Dexter --jobfile MyJob.json`
-
-### MAC OS
-
-Framework | Folder | Command
--- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/macos/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/macos-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-osx | `core-osx/AppDynamics.Dexter --jobfile MyJob.json`
-
-### Linux
-
-Framework | Folder | Command
--- | -- | --
-.NET Core <br/>[Install](https://www.microsoft.com/net/download/linux/run), [Prerequisites](https://docs.microsoft.com/en-us/dotnet/core/linux-prerequisites?tabs=netcore2x) | core | `dotnet core/AppDynamics.Dexter.dll -j MyJob.json`
-.NET Core self-contained | core-linux | `core-linux/AppDynamics.Dexter --jobfile MyJob.json`
-
-# Review Results
-You will see the results in the [Output](../../wiki/Home#output-folder-structure) folder.
-
-To understand what you are looking at, read [Description of Excel Reports](../../wiki/Home#excel-report-descriptions).
-
-# Useful Links
 ## Documentation 
 If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Home#walkthrough).
 
 Learn how the tool works by reading [Documentation](../../wiki) in the project wiki.
+
+## Install and Run Application
+[Install Application](../../wiki#install-application), create [Job File](../../wiki#job-file) to specify what to do, and [Run Application](../../wiki#run-application).
+
+## Review Results
+You will see the results in the [Output](../../wiki/Home#output-folder-structure) folder.
+
+To understand what you are looking at, read [Description of Excel Reports](../../wiki/Home#excel-report-descriptions).
 
 ## Support
 If you need help with issues and/or intepretation of results, read [Getting Support](../../wiki#getting-support).
@@ -187,4 +162,4 @@ AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https:
 * JSON Parsing - NewtonSoft JSON is awesome https://www.newtonsoft.com/json
 * Logging - NLog is also awesome http://nlog-project.org/ 
 * Excel Report Creation - Jan Kallman's excellent helper class is a lifesaver https://github.com/JanKallman/EPPlus 
-* Flame Graphs - Brendan Gregg’s Flame Graph generator https://github.com/brendangregg/FlameGraph was used to as reference to build code to generate Flame Graph reports
+* Flame Graphs - Brendan Gregg’s Flame Graph generator https://github.com/brendangregg/FlameGraph was used to both inspiration and as reference to build code to generate Flame Graph reports

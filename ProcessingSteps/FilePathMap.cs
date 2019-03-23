@@ -8,37 +8,70 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class FilePathMap
     {
+        #region Constants for the folder names
+
+        // Parent Folder names
+        private const string ENTITIES_FOLDER_NAME = "ENT";
+        private const string ENTITIES_APM_FOLDER_NAME = "ENTAPM";
+        private const string ENTITIES_SIM_FOLDER_NAME = "ENTSIM";
+        private const string ENTITIES_DB_FOLDER_NAME = "ENTDB";
+        private const string ENTITIES_WEB_FOLDER_NAME = "ENTWEB";
+        private const string ENTITIES_MOBILE_FOLDER_NAME = "ENTMOBILE";
+        private const string ENTITIES_BIQ_FOLDER_NAME = "ENTBIQ";
+
+        private const string CONFIGURATION_FOLDER_NAME = "CFG";
+        private const string CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME = "CFGAPP";
+        private const string CONFIGURATION_APM_FOLDER_NAME = "CFGAPM";
+        private const string CONFIGURATION_DB_FOLDER_NAME = "CFGDB";
+        private const string CONFIGURATION_WEB_FOLDER_NAME = "CFGWEB";
+        private const string CONFIGURATION_MOBILE_FOLDER_NAME = "CFGMOBILE";
+        private const string CONFIGURATION_ANALYTICS_FOLDER_NAME = "CFGBIQ";
+        private const string CONFIGURATION_COMPARISON_FOLDER_NAME = "CMPR";
+
+        private const string DASHBOARDS_FOLDER_NAME = "DASH";
+
+        private const string EVENTS_FOLDER_NAME = "EVT";
+        private const string EVENTS_APPS_FOLDER_NAME = "EVTAPP";
+        private const string EVENTS_CONTROLLER_FOLDER_NAME = "EVTCNTR";
+        private const string EVENTS_SA_FOLDER_NAME = "EVTSA";
+
+        private const string APM_ACTIVITYGRID_FOLDER_NAME = "FLOW";
+        private const string APM_METRICS_FOLDER_NAME = "METR";
+        private const string APM_SNAPSHOTS_FOLDER_NAME = "SNAP";
+
+        private const string SIM_PROCESSES_FOLDER_NAME = "PROC";
+
+        private const string DB_QUERIES_FOLDER_NAME = "QUERY";
+        private const string DB_DATA_FOLDER_NAME = "DBDATA";
+
+        private const string CONTROLLER_RBAC_FOLDER_NAME = "RBAC";
+
+        #endregion
 
         #region Constants for the folder and file names of data extract
 
         private const string DATA_FOLDER_NAME = "Data";
 
-        // Parent Folder names
-        private const string ENTITIES_FOLDER_NAME = "ENT";
-        private const string SIM_ENTITIES_FOLDER_NAME = "SIMENT";
-        private const string DB_APPLICATION_FOLDER_NAME = "DBMonAll.0";
-        private const string DB_ENTITIES_FOLDER_NAME = "DBENT";
-        private const string DB_DATA_FOLDER_NAME = "DBDATA";
-        private const string CONFIGURATION_FOLDER_NAME = "CFG";
-        private const string METRICS_FOLDER_NAME = "METR";
-        private const string SNAPSHOTS_FOLDER_NAME = "SNAP";
-        private const string EVENTS_FOLDER_NAME = "EVT";
-        private const string SA_EVENTS_FOLDER_NAME = "SAEVT";
-        private const string ACTIVITYGRID_FOLDER_NAME = "FLOW";
-        private const string CONFIGURATION_COMPARISON_FOLDER_NAME = "CMPR";
-        private const string PROCESSES_FOLDER_NAME = "PROC";
-        private const string QUERIES_FOLDER_NAME = "QUERY";
-        private const string RBAC_REPOSITORY_FOLDER_NAME = "RBAC.0";
-        private const string RBAC_FOLDER_NAME = "RBAC";
+        private const string DBMON_APPLICATION_NAME = "Database Monitoring";
 
-        // Metadata file names
+        // Controller wide settings file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
         private const string EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME = "seps.json";
-        private const string EXTRACT_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME = "devmode.json";
-        private const string EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME = "settings.json";
-        private const string EXTRACT_CONTROLLER_VERSION_FILE_NAME = "controllerversion.xml";
 
-        private const string EXTRACT_ENTITY_APPLICATIONS_FILE_NAME = "applications.json";
+        private const string EXTRACT_CONTROLLER_VERSION_FILE_NAME = "controllerversion.xml";
+        private const string EXTRACT_HTTP_TEMPLATES_FILE_NAME = "templateshttp.json";
+        private const string EXTRACT_EMAIL_TEMPLATES_FILE_NAME = "templatesemail.json";
+        private const string EXTRACT_HTTP_TEMPLATES_DETAIL_FILE_NAME = "templateshttpdetails.json";
+        private const string EXTRACT_EMAIL_TEMPLATES_DETAIL_FILE_NAME = "templatesemaildetails.json";
+
+        private const string EXTRACT_CONTROLLER_DASHBOARDS = "dashboards.json";
+        private const string EXTRACT_CONTROLLER_DASHBOARD = "{0}.json";
+
+        private const string EXTRACT_ENTITY_ALL_APPLICATIONS_FILE_NAME = "allapplications.json";
+        private const string EXTRACT_ENTITY_APM_APPLICATIONS_FILE_NAME = "applications.json";
+        private const string EXTRACT_ENTITY_MOBILE_APPLICATIONS_FILE_NAME = "mobileapplications.json";
+
+        // APM Metadata file names
         private const string EXTRACT_ENTITY_APPLICATION_FILE_NAME = "application.json";
         private const string EXTRACT_ENTITY_TIERS_FILE_NAME = "tiers.json";
         private const string EXTRACT_ENTITY_NODES_FILE_NAME = "nodes.json";
@@ -54,6 +87,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_ENTITY_NODE_METADATA_FILE_NAME = "nodemeta.{0}.json";
         private const string EXTRACT_ENTITY_BACKEND_TO_DBMON_MAPPING_FILE_NAME = "dbmonmap.{0}.json";
         private const string EXTRACT_ENTITY_BACKEND_TO_TIER_MAPPING_FILE_NAME = "backendmapping.json";
+
+        // Configuration file names
+        private const string EXTRACT_APPLICATION_HEALTH_RULES_FILE_NAME = "healthrules.xml";
+        private const string EXTRACT_APPLICATION_HEALTH_RULES_DETAILS_FILE_NAME = "healthrules.json";
+        private const string EXTRACT_APPLICATION_POLICIES_FILE_NAME = "policies.json";
+        private const string EXTRACT_APPLICATION_ACTIONS_FILE_NAME = "actions.json";
+        private const string EXTRACT_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME = "devmode.json";
+        private const string EXTRACT_CONTROLLER_SETTINGS_FILE_NAME = "settings.json";
 
         // SIM metadata file names
         private const string EXTRACT_ENTITY_GROUPS_FILE_NAME = "groups.json";
@@ -71,8 +112,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_COLLECTORS_CALLS_FILE_NAME = "collectors.calls.json";
         private const string EXTRACT_COLLECTORS_TIME_SPENT_FILE_NAME = "collectors.timespent.json";
         private const string EXTRACT_ALL_WAIT_STATES_FILE_NAME = "waitstatesall.json";
+        private const string EXTRACT_DB_CUSTOM_METRICS_FILE_NAME = "custommetrics.json";
 
-        // DB data file anmes
+        // DB data file names
         private const string EXTRACT_CURRENT_WAIT_STATES_FILE_NAME = "waitstates.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_QUERIES_FILE_NAME = "queries.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_CLIENTS_FILE_NAME = "clients.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -84,6 +126,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_MODULES_FILE_NAME = "modules.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_PROGRAMS_FILE_NAME = "programs.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+
+        // WEB data file names
+        private const string EXTRACT_WEB_APPLICATION_KEY = "applicationkeyweb.json";
+        private const string EXTRACT_WEB_APPLICATION_MONITORING_STATE = "monitoringstateweb.json";
+        private const string EXTRACT_WEB_APPLICATION_INSTRUMENTATION = "agentconfig.json";
+        private const string EXTRACT_WEB_PAGE_IFRAME_RULES = "rulespage.json";
+        private const string EXTRACT_WEB_AJAX_RULES = "rulesajax.json";
+        private const string EXTRACT_WEB_VIRTUAL_PAGE_RULES = "rulesvirtpage.json";
+        private const string EXTRACT_WEB_ERROR_RULES = "ruleserror.json";
+        private const string EXTRACT_WEB_PAGE_SETTINGS = "pagesettings.json";
+        private const string EXTRACT_WEB_PAGES = "webpages.json";
+        private const string EXTRACT_WEB_PAGE_PERFORMANCE_FILE_NAME = "page.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+        private const string EXTRACT_GEO_REGIONS_LIST = "georegions.{0}.json";
+        private const string EXTRACT_SYNTHETIC_JOBS = "syntheticjobs.json";
+
+        // MOBILE data file names
+        private const string EXTRACT_MOBILE_APPLICATION_KEY = "applicationkeymobile.json";
+        private const string EXTRACT_MOBILE_APPLICATION_MONITORING_STATE = "monitoringstatemobile.json";
+        private const string EXTRACT_MOBILE_NETWORK_REQUESTS_RULES = "rulesnetworkreq.json";
+        private const string EXTRACT_MOBILE_PAGE_SETTINGS = "pagesettings.json";
+        private const string EXTRACT_MOBILE_NETWORK_REQUESTS = "networkrequests.json";
+        private const string EXTRACT_MOBILE_NETWORK_REQUEST_PERFORMANCE_FILE_NAME = "nr.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+
+        // Analytics data file names
+        private const string EXTRACT_ANALYTICS_SEARCHES_FILE_NAME = "searches.json";
+        private const string EXTRACT_ANALYTICS_METRICS_FILE_NAME = "metrics.json";
+        private const string EXTRACT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME = "businessjourneys.json";
+        private const string EXTRACT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME = "experiencelevels.json";
+        private const string EXTRACT_ANALYTICS_CUSTOM_SCHEMAS_FILE_NAME = "customschemas.json";
+        private const string EXTRACT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME = "fields.{0}.json";
 
         // RBAC data file names
         private const string EXTRACT_USERS_FILE_NAME = "users.json";
@@ -101,13 +173,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_METRIC_HOUR_FILE_NAME = "hour.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
 
         // Events data file names
-        private const string HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
-        private const string EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
-        private const string AUDIT_EVENTS_FILE_NAME = "auditevents.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
-        private const string NOTIFICATIONS_FILE_NAME = "notifications.json";
+        private const string EXTRACT_HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+        private const string EXTRACT_EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+        private const string EXTRACT_AUDIT_EVENTS_FILE_NAME = "auditevents.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+        private const string EXTRACT_NOTIFICATIONS_FILE_NAME = "notifications.json";
 
         // SIM Service Availability events data file names
-        private const string SERVICE_AVAILABILITY_EVENTS_FILE_NAME = "saevents.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+        private const string EXTRACT_SERVICE_AVAILABILITY_EVENTS_FILE_NAME = "saevents.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
 
         // List of Snapshots file names
         private const string EXTRACT_SNAPSHOTS_FILE_NAME = "snapshots.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -124,24 +196,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string INDEX_FOLDER_NAME = "Index";
 
-        // Detected entity report conversion file names
-        private const string CONVERT_ENTITY_CONTROLLER_FILE_NAME = "controller.csv";
-        private const string CONVERT_ENTITY_CONTROLLERS_FILE_NAME = "controllers.csv";
-        private const string CONVERT_ENTITY_APPLICATIONS_FILE_NAME = "applications.csv";
-        private const string CONVERT_ENTITY_APPLICATION_FILE_NAME = "application.csv";
-        private const string CONVERT_ENTITY_TIERS_FILE_NAME = "tiers.csv";
-        private const string CONVERT_ENTITY_NODES_FILE_NAME = "nodes.csv";
-        private const string CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME = "nodestartupoptions.csv";
-        private const string CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME = "nodeproperties.csv";
-        private const string CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME = "nodeenvironmentvariables.csv";
-        private const string CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
-        private const string CONVERT_ENTITY_BACKENDS_FILE_NAME = "backends.csv";
-        private const string CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
-        private const string CONVERT_ENTITY_ERRORS_FILE_NAME = "errors.csv";
-        private const string CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME = "informationpoints.csv";
-        private const string CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME = "mappedbackends.csv";
+        // Detected Controller entity report conversion file names
+        private const string CONVERT_CONTROLLERS_SUMMARY_FILE_NAME = "controllers.csv";
+        private const string CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME = "applications.csv";
+
+        // Detected APM entity report conversion file names
+        private const string CONVERT_APM_APPLICATIONS_FILE_NAME = "applications.apm.csv";
+        private const string CONVERT_APM_TIERS_FILE_NAME = "tiers.csv";
+        private const string CONVERT_APM_NODES_FILE_NAME = "nodes.csv";
+        private const string CONVERT_APM_NODE_STARTUP_OPTIONS_FILE_NAME = "nodestartupoptions.csv";
+        private const string CONVERT_APM_NODE_PROPERTIES_FILE_NAME = "nodeproperties.csv";
+        private const string CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME = "nodeenvironmentvariables.csv";
+        private const string CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
+        private const string CONVERT_APM_BACKENDS_FILE_NAME = "backends.csv";
+        private const string CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
+        private const string CONVERT_APM_ERRORS_FILE_NAME = "errors.csv";
+        private const string CONVERT_APM_INFORMATION_POINTS_FILE_NAME = "informationpoints.csv";
+        private const string CONVERT_APM_MAPPED_BACKENDS_FILE_NAME = "mappedbackends.csv";
 
         // Detected SIM entity report conversion file names
+        private const string CONVERT_SIM_APPLICATIONS_FILE_NAME = "applications.sim.csv";
+        private const string CONVERT_SIM_TIERS_FILE_NAME = "simtiers.csv";
+        private const string CONVERT_SIM_NODES_FILE_NAME = "simnodes.csv";
         private const string CONVERT_SIM_MACHINES_FILE_NAME = "machines.csv";
         private const string CONVERT_SIM_MACHINE_PROPERTIES_FILE_NAME = "machineproperties.csv";
         private const string CONVERT_SIM_MACHINE_CPUS_FILE_NAME = "machinecpus.csv";
@@ -150,8 +226,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_SIM_MACHINE_CONTAINERS_FILE_NAME = "machinecontainers.csv";
         private const string CONVERT_SIM_MACHINE_PROCESSES_FILE_NAME = "machineprocesses.csv";
 
-        // DB entity report conversion file names
-        private const string CONVERT_DB_COLLECTOR_DEFINITIONS_FILE_NAME = "collectordefinitions.csv";
+        // Detected DB entity report conversion file names
+        private const string CONVERT_DB_APPLICATIONS_FILE_NAME = "applications.db.csv";
         private const string CONVERT_DB_COLLECTORS_FILE_NAME = "collectors.csv";
         private const string CONVERT_DB_WAIT_STATES_FILE_NAME = "waitstates.csv";
         private const string CONVERT_DB_QUERIES_FILE_NAME = "queries.csv";
@@ -164,41 +240,94 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_DB_PROGRAMS_FILE_NAME = "programs.csv";
         private const string CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
 
+        // Detected WEB entity report conversion file names
+        private const string CONVERT_WEB_APPLICATIONS_FILE_NAME = "applications.web.csv";
+        private const string CONVERT_WEB_PAGES_FILE_NAME = "webpages.csv";
+        private const string CONVERT_WEB_PAGE_BUSINESS_TRANSACTIONS_FILE_NAME = "webpages.bts.csv";
+        private const string CONVERT_WEB_PAGE_RESOURCES_FILE_NAME = "webpages.resources.csv";
+        private const string CONVERT_WEB_GEO_LOCATIONS_FILE_NAME = "geolocations.csv";
+
+        // Detected MOBILE entity report conversion file names
+        private const string CONVERT_MOBILE_APPLICATIONS_FILE_NAME = "applications.web.csv";
+        private const string CONVERT_NETWORK_REQUESTS_FILE_NAME = "networkrequests.csv";
+        private const string CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME = "networkrequests.bts.csv";
+
+        // Detected Analytics entity report conversion file names
+        private const string CONVERT_ANALYTICS_APPLICATIONS_FILE_NAME = "applications.biq.csv";
+        private const string CONVERT_ANALYTICS_SEARCHES_FILE_NAME = "biqsearches.csv";
+        private const string CONVERT_ANALYTICS_WIDGETS_FILE_NAME = "biqwidgets.csv";
+        private const string CONVERT_ANALYTICS_METRICS_FILE_NAME = "biqmetrics.csv";
+        private const string CONVERT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME = "businessjourneys.csv";
+        private const string CONVERT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME = "experiencelevels.csv";
+        private const string CONVERT_ANALYTICS_SCHEMAS_FILE_NAME = "biqschemas.csv";
+        private const string CONVERT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME = "biqfields.csv";
+
         // RBAC report conversion file names
         private const string CONVERT_USERS_FILE_NAME = "users.csv";
         private const string CONVERT_GROUPS_FILE_NAME = "groups.csv";
         private const string CONVERT_ROLES_FILE_NAME = "roles.csv";
         private const string CONVERT_PERMISSIONS_FILE_NAME = "permissions.csv";
-        private const string CONVERT_GROUP_MEMBERSHIPS_FILE_NAME = "groupmemberships.csv";
-        private const string CONVERT_ROLE_MEMBERSHIPS_FILE_NAME = "rolememberships.csv";
-        private const string CONVERT_USER_PERMISSIONS_FILE_NAME = "userpermissions.csv";
+        private const string CONVERT_GROUP_MEMBERSHIPS_FILE_NAME = "group.memberships.csv";
+        private const string CONVERT_ROLE_MEMBERSHIPS_FILE_NAME = "role.memberships.csv";
+        private const string CONVERT_USER_PERMISSIONS_FILE_NAME = "user.permissions.csv";
         private const string CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME = "controller.rbac.csv";
 
-        // Settings report list conversion file names
-        private const string CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
-        private const string APPLICATION_CONFIGURATION_FILE_NAME = "application.configuration.csv";
-        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME = "btdiscovery.rules.csv";
-        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME = "btdiscovery.rules.2.0.csv";
-        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME = "btentry.rules.csv";
-        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME = "btentry.rules.2.0.csv";
-        private const string APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME = "btentry.scopes.csv";
-        private const string APPLICATION_CONFIGURATION_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME = "sep.rules.csv";
-        private const string APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME = "backend.rules.csv";
-        private const string APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME = "customexit.rules.csv";
-        private const string APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME = "infopoints.csv";
-        private const string APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME = "agent.properties.csv";
-        private const string APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME = "datacollectors.midc.csv";
-        private const string APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME = "datacollectors.http.csv";
-        private const string APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME = "tiers.configuration.csv";
-        private const string APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.configuration.csv";
-        private const string APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
-        private const string APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME = "healthrules.csv";
-        private const string APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME = "devmodenodes.csv";
+        // Controller Settings
+        private const string CONVERT_CONTROLLER_SETTINGS_FILE_NAME = "controller.settings.csv";
+
+        // Settings report list conversion file names - APM
+        private const string CONVERT_CONFIG_APM_SUMMARY_FILE_NAME = "application.config.apm.csv";
+        private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME = "btdiscovery.rules.csv";
+        private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME = "btdiscovery.rules.2.0.csv";
+        private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME = "btentry.rules.csv";
+        private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME = "btentry.rules.2.0.csv";
+        private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME = "btentry.scopes.csv";
+        private const string CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME = "sep.rules.csv";
+        private const string CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME = "backend.rules.csv";
+        private const string CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME = "customexit.rules.csv";
+        private const string CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME = "infopoints.csv";
+        private const string CONVERT_CONFIG_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME = "agent.properties.csv";
+        private const string CONVERT_CONFIG_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME = "datacollectors.midc.csv";
+        private const string CONVERT_CONFIG_HTTP_DATA_COLLECTORS_FILE_NAME = "datacollectors.http.csv";
+        private const string CONVERT_CONFIG_ENTITY_TIERS_FILE_NAME = "tiers.configuration.csv";
+        private const string CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.configuration.csv";
+        private const string CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
+        private const string CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME = "devmode.nodes.csv";
+
+        // Settings report list conversion file names - WEB
+        private const string CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME = "application.config.web.csv";
+        private const string CONVERT_CONFIG_WEB_PAGE_RULES_FILE_NAME = "pagerules.csv";
+        private const string CONVERT_CONFIG_SYNTHETIC_JOB_DEFINITIONS_FILE_NAME = "syntheticjobs.csv";
+
+        // Settings report list conversion file names - MOBILE
+        private const string CONVERT_CONFIG_MOBILE_SUMMARY_FILE_NAME = "application.config.mobile.csv";
+        private const string CONVERT_CONFIG_MOBILE_NETWORK_REQUEST_RULES_FILE_NAME = "networkrules.csv";
+
+        // Settings report list conversion file names - DB
+        private const string CONVERT_CONFIG_DB_SUMMARY_FILE_NAME = "application.config.db.csv";
+        private const string CONVERT_CONFIG_DB_COLLECTOR_DEFINITIONS_FILE_NAME = "collectordefinitions.csv";
+        private const string CONVERT_CONFIG_DB_CUSTOM_METRICS_FILE_NAME = "custommetrics.csv";
+
+        // Health rules and policies and actions conversion file names
+        private const string CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME = "application.config.healthrules.csv";
+        private const string CONVERT_CONFIG_HEALTH_RULES_FILE_NAME = "healthrules.csv";
+        private const string CONVERT_CONFIG_POLICIES_FILE_NAME = "policies.csv";
+        private const string CONVERT_CONFIG_ACTIONS_FILE_NAME = "actions.csv";
+        private const string CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME = "policy.to.action.csv";
+
+        // Alert templates conversion file names
+        private const string CONVERT_HTTP_TEMPLATES_FILE_NAME = "templates.http.csv";
+        private const string CONVERT_EMAIL_TEMPLATES_FILE_NAME = "templates.email.csv";
+
+        // Dashboards conversion file names
+        private const string CONVERT_DASHBOARDS_FILE_NAME = "dashboards.csv";
+        private const string CONVERT_DASHBOARD_WIDGETS_FILE_NAME = "dashboard.widgets.csv";
+        private const string CONVERT_DASHBOARD_WIDGET_DATA_SERIES_FILE_NAME = "dashboard.dataseries.csv";
 
         // Configuration comparison report list conversion file names
         private const string CONFIGURATION_DIFFERENCES_FILE_NAME = "configuration.differences.csv";
 
-        // Metric report conversion file names
+        // Entity Metrics report conversion file names
         private const string CONVERT_ENTITIES_METRICS_SUMMARY_FULLRANGE_FILE_NAME = "entities.full.csv";
         private const string CONVERT_ENTITIES_METRICS_SUMMARY_HOURLY_FILE_NAME = "entities.hour.csv";
         private const string CONVERT_ENTITIES_ALL_METRICS_SUMMARY_FULLRANGE_FILE_NAME = "{0}.entities.full.csv";
@@ -208,13 +337,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ENTITIES_METRICS_LOCATIONS_FILE_NAME = "metriclocations.csv";
 
         // Events list conversion file names
-        private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "application.events.csv";
-        private const string CONVERT_EVENTS_FILE_NAME = "events.csv";
-        private const string CONVERT_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
-        private const string CONVERT_AUDIT_EVENTS_FILE_NAME = "auditevents.csv";
+        private const string CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME = "application.events.csv";
+        private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "events.csv";
+        private const string CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
+        private const string CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME = "auditevents.csv";
+        private const string CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME = "notifications.csv";
 
         // Snapshots files
-        private const string CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME = "application.snapshots.csv";
+        private const string CONVERT_APPLICATION_SNAPSHOTS_SUMMARY_FILE_NAME = "application.snapshots.csv";
         private const string CONVERT_SNAPSHOTS_FILE_NAME = "snapshots.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME = "snapshots.segments.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME = "snapshots.exits.csv";
@@ -269,15 +399,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FOLDER_NAME = "Report";
 
         // Report file names
-        private const string REPORT_DETECTED_ENTITIES_FILE_NAME = "DetectedEntities.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_SIM_ENTITIES_FILE_NAME = "DetectedEntities.SIM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_DB_ENTITIES_FILE_NAME = "DetectedEntities.DB.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_APM_ENTITIES_FILE_NAME = "Entities.APM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_SIM_ENTITIES_FILE_NAME = "Entities.SIM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_DB_ENTITIES_FILE_NAME = "Entities.DB.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_WEB_ENTITIES_FILE_NAME = "Entities.WEB.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_MOBILE_ENTITIES_FILE_NAME = "Entities.MOBILE.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_ANALYTICS_ENTITIES_FILE_NAME = "Entities.BIQ.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+
         private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "Snapshots.MethodCallLines.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -289,7 +424,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_GRAPH_TIER_FILE_NAME = "FlameGraph.Tier.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
         private const string REPORT_FLAME_GRAPH_NODE_FILE_NAME = "FlameGraph.Node.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
         private const string REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME = "FlameGraph.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_GRAPH_SNAPSHOT_FILE_NAME = "FlameGraph.Snapshot.{0}.{1:yyyyMMddHHmmss}.{2}.svg";
 
         // Per entity flame chart report name
         private const string REPORT_FLAME_CHART_APPLICATION_FILE_NAME = "FlameChart.Application.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.svg";
@@ -335,6 +469,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
+
         #region Constructor and properties
 
         public ProgramOptions ProgramOptions { get; set; }
@@ -360,37 +495,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region Entity Metadata Data
+        #region APM Entity Data
 
-        public string ControllerVersionDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                EXTRACT_CONTROLLER_VERSION_FILE_NAME);
-        }
-
-        public string ApplicationsDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                EXTRACT_ENTITY_APPLICATIONS_FILE_NAME);
-        }
-
-        public string ApplicationDataFilePath(JobTarget jobTarget)
+        public string APMApplicationDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_APPLICATION_FILE_NAME);
         }
 
-        public string TiersDataFilePath(JobTarget jobTarget)
+        public string APMTiersDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -401,7 +519,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
         }
 
-        public string NodesDataFilePath(JobTarget jobTarget)
+        public string APMNodesDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -412,7 +530,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_NODES_FILE_NAME);
         }
 
-        public string BackendsDataFilePath(JobTarget jobTarget)
+        public string APMBackendsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -423,7 +541,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_BACKENDS_FILE_NAME);
         }
 
-        public string BackendsDetailDataFilePath(JobTarget jobTarget)
+        public string APMBackendsDetailDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -434,7 +552,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
         }
 
-        public string BackendToTierMappingDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        public string APMBackendToTierMappingDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -446,7 +564,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_BACKEND_TO_TIER_MAPPING_FILE_NAME);
         }
 
-        public string BusinessTransactionsDataFilePath(JobTarget jobTarget)
+        public string APMBackendToDBMonMappingDataFilePath(JobTarget jobTarget, AppDRESTBackend backend)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ENTITY_BACKEND_TO_DBMON_MAPPING_FILE_NAME,
+                getShortenedEntityNameForFileSystem(backend.name, backend.id));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string APMBusinessTransactionsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -457,7 +590,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
-        public string ServiceEndpointsDataFilePath(JobTarget jobTarget)
+        public string APMServiceEndpointsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -468,7 +601,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
         }
 
-        public string ServiceEndpointsDetailDataFilePath(JobTarget jobTarget)
+        public string APMServiceEndpointsDetailDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -479,7 +612,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
         }
 
-        public string ErrorsDataFilePath(JobTarget jobTarget)
+        public string APMErrorsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -490,7 +623,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_ERRORS_FILE_NAME);
         }
 
-        public string InformationPointsDataFilePath(JobTarget jobTarget)
+        public string APMInformationPointsDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -501,7 +634,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
         }
 
-        public string InformationPointsDetailDataFilePath(JobTarget jobTarget)
+        public string APMInformationPointsDetailDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -512,7 +645,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
         }
 
-        public string NodeRuntimePropertiesDataFilePath(JobTarget jobTarget, AppDRESTNode node)
+        public string APMNodeRuntimePropertiesDataFilePath(JobTarget jobTarget, AppDRESTNode node)
         {
             string reportFileName = String.Format(
                 EXTRACT_ENTITY_NODE_RUNTIME_PROPERTIES_FILE_NAME,
@@ -528,7 +661,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-        public string NodeMetadataDataFilePath(JobTarget jobTarget, AppDRESTNode node)
+        public string APMNodeMetadataDataFilePath(JobTarget jobTarget, AppDRESTNode node)
         {
             string reportFileName = String.Format(
                 EXTRACT_ENTITY_NODE_METADATA_FILE_NAME,
@@ -544,177 +677,145 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-        public string BackendToDBMonMappingDataFilePath(JobTarget jobTarget, AppDRESTBackend backend)
-        {
-            string reportFileName = String.Format(
-                EXTRACT_ENTITY_BACKEND_TO_DBMON_MAPPING_FILE_NAME,
-                getShortenedEntityNameForFileSystem(backend.name, backend.id));
+        #endregion
 
+        #region APM Entity Index
+
+        public string APMApplicationsIndexFilePath(JobTarget jobTarget)
+        {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
+                INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
-                reportFileName);
+                CONVERT_APM_APPLICATIONS_FILE_NAME);
+        }
+
+        public string APMTiersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_TIERS_FILE_NAME);
+        }
+
+        public string APMNodesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_NODES_FILE_NAME);
+        }
+
+        public string APMNodeStartupOptionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_NODE_STARTUP_OPTIONS_FILE_NAME);
+        }
+
+        public string APMNodePropertiesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_NODE_PROPERTIES_FILE_NAME);
+        }
+
+        public string APMNodeEnvironmentVariablesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
+        }
+
+        public string APMBackendsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_BACKENDS_FILE_NAME);
+        }
+
+        public string APMMappedBackendsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_MAPPED_BACKENDS_FILE_NAME);
+        }
+
+        public string APMBusinessTransactionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        public string APMServiceEndpointsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME);
+        }
+
+        public string APMErrorsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_ERRORS_FILE_NAME);
+        }
+
+        public string APMInformationPointsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_INFORMATION_POINTS_FILE_NAME);
         }
 
         #endregion
 
-        #region Entity Metadata Index
-
-        public string ControllerIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                CONVERT_ENTITY_CONTROLLER_FILE_NAME);
-        }
-
-        public string ApplicationsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
-        }
-
-        public string ApplicationIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                CONVERT_ENTITY_APPLICATION_FILE_NAME);
-        }
-
-        public string TiersIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_TIERS_FILE_NAME);
-        }
-
-        public string NodesIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODES_FILE_NAME);
-        }
-
-        public string NodeStartupOptionsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME);
-        }
-
-        public string NodePropertiesIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME);
-        }
-
-        public string NodeEnvironmentVariablesIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
-        }
-
-        public string BackendsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_BACKENDS_FILE_NAME);
-        }
-
-        public string MappedBackendsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME);
-        }
-
-        public string BusinessTransactionsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
-        }
-
-        public string ServiceEndpointsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
-        }
-
-        public string ErrorsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_ERRORS_FILE_NAME);
-        }
-
-        public string InformationPointsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
-        }
-
-        #endregion
-
-        #region Entity Metadata Report
+        #region APM Entity Report
 
         public string ReportFolderPath()
         {
@@ -723,135 +824,126 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME);
         }
 
-        public string EntitiesReportFolderPath()
+        public string APMEntitiesReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME);
+                ENTITIES_APM_FOLDER_NAME);
         }
 
-        public string ControllersReportFilePath()
+        public string APMApplicationsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_CONTROLLERS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_APPLICATIONS_FILE_NAME);
         }
 
-        public string ApplicationsReportFilePath()
+        public string APMTiersReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_TIERS_FILE_NAME);
         }
 
-        public string TiersReportFilePath()
+        public string APMNodesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_TIERS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_NODES_FILE_NAME);
         }
 
-        public string NodesReportFilePath()
+        public string APMNodeStartupOptionsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODES_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_NODE_STARTUP_OPTIONS_FILE_NAME);
         }
 
-        public string NodeStartupOptionsReportFilePath()
+        public string APMNodePropertiesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_STARTUP_OPTIONS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_NODE_PROPERTIES_FILE_NAME);
         }
 
-        public string NodePropertiesReportFilePath()
+        public string APMNodeEnvironmentVariablesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_PROPERTIES_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
         }
 
-        public string NodeEnvironmentVariablesReportFilePath()
+        public string APMBackendsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_BACKENDS_FILE_NAME);
         }
 
-        public string BackendsReportFilePath()
+        public string APMMappedBackendsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_BACKENDS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_MAPPED_BACKENDS_FILE_NAME);
         }
 
-        public string MappedBackendsReportFilePath()
+        public string APMBusinessTransactionsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_MAPPED_BACKENDS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
-        public string BusinessTransactionsReportFilePath()
+        public string APMServiceEndpointsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME);
         }
 
-        public string ServiceEndpointsReportFilePath()
+        public string APMErrorsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_ERRORS_FILE_NAME);
         }
 
-        public string ErrorsReportFilePath()
+        public string APMInformationPointsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_ERRORS_FILE_NAME);
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_INFORMATION_POINTS_FILE_NAME);
         }
 
-        public string InformationPointsReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_INFORMATION_POINTS_FILE_NAME);
-        }
-
-        public string EntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
+        public string APMEntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
-                REPORT_DETECTED_ENTITIES_FILE_NAME,
+                REPORT_DETECTED_APM_ENTITIES_FILE_NAME,
                 this.ProgramOptions.JobName,
                 jobTimeRange.From,
                 jobTimeRange.To);
@@ -864,7 +956,591 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region SIM Entity Metadata Data
+        #region WEB Application Configuration Data
+
+        public string WEBApplicationKeyDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_APPLICATION_KEY);
+        }
+
+        public string WEBAgentConfigDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_APPLICATION_INSTRUMENTATION);
+        }
+
+        public string WEBApplicationMonitoringStateDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_APPLICATION_MONITORING_STATE);
+        }
+
+        public string WEBAgentPageRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_PAGE_IFRAME_RULES);
+        }
+
+        public string WEBAgentAjaxRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_AJAX_RULES);
+        }
+
+        public string WEBAgentVirtualPageRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_VIRTUAL_PAGE_RULES);
+        }
+
+        public string WEBAgentErrorRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_ERROR_RULES);
+        }
+
+        public string WEBAgentPageSettingsRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_WEB_PAGE_SETTINGS);
+        }
+
+        public string WEBSyntheticJobsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_SYNTHETIC_JOBS);
+        }
+
+        #endregion
+
+        #region WEB Application Configuration Index
+
+        public string WEBApplicationConfigurationIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
+        }
+
+        public string WEBAgentPageAjaxVirtualPageRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_WEB_PAGE_RULES_FILE_NAME);
+        }
+
+        public string WEBSyntheticJobsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_SYNTHETIC_JOB_DEFINITIONS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region WEB Application Configuration Report
+
+        public string WEBConfigurationReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_WEB_FOLDER_NAME);
+        }
+
+        public string WEBApplicationConfigurationReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_WEB_FOLDER_NAME,
+                CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
+        }
+
+        public string WEBAgentPageAjaxVirtualPageRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_WEB_FOLDER_NAME,
+                CONVERT_CONFIG_WEB_PAGE_RULES_FILE_NAME);
+        }
+
+        public string WEBSyntheticJobsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_WEB_FOLDER_NAME,
+                CONVERT_CONFIG_SYNTHETIC_JOB_DEFINITIONS_FILE_NAME);
+        }
+
+        #endregion
+
+
+        #region Web Application Entity Data
+
+        public string WEBPagesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_WEB_PAGES);
+        }
+
+        public string WEBPagePerformanceDataFilePath(JobTarget jobTarget, string pageType, string pageName, long pageID, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_WEB_PAGE_PERFORMANCE_FILE_NAME,
+                getShortenedEntityNameForFileSystem(pageName, pageID),
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                pageType,
+                reportFileName);
+        }
+
+        public string WEBGeoLocationsDataFilePath(JobTarget jobTarget, string country)
+        {
+            string reportFileName = String.Format(EXTRACT_GEO_REGIONS_LIST,
+                getFileSystemSafeString(country));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region Web Application Entity Index
+
+        public string WEBApplicationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_WEB_APPLICATIONS_FILE_NAME);
+        }
+
+        public string WEBPagesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_WEB_PAGES_FILE_NAME);
+        }
+
+        public string WEBPageBusinessTransactionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_WEB_PAGE_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        public string WEBPageResourcesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_WEB_PAGE_RESOURCES_FILE_NAME);
+        }
+
+        public string WEBGeoLocationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_WEB_GEO_LOCATIONS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Web Application Entity Report
+
+        public string WEBEntitiesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME);
+        }
+
+        public string WEBApplicationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME,
+                CONVERT_WEB_APPLICATIONS_FILE_NAME);
+        }
+
+        public string WEBPagesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME,
+                CONVERT_WEB_PAGES_FILE_NAME);
+        }
+
+        public string WEBPageBusinessTransactionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME,
+                CONVERT_WEB_PAGE_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        public string WEBPageResourcesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME,
+                CONVERT_WEB_PAGE_RESOURCES_FILE_NAME);
+        }
+
+        public string WEBGeoLocationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_WEB_FOLDER_NAME,
+                CONVERT_WEB_GEO_LOCATIONS_FILE_NAME);
+        }
+
+        public string WEBEntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_DETECTED_WEB_ENTITIES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
+        #region MOBILE Application Configuration Data
+
+        public string MOBILEApplicationKeyDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_MOBILE_APPLICATION_KEY);
+        }
+
+        public string MOBILEApplicationMonitoringStateDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_MOBILE_APPLICATION_MONITORING_STATE);
+        }
+
+        public string MOBILEAgentNetworkRequestsRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_MOBILE_NETWORK_REQUESTS_RULES);
+        }
+
+        public string MOBILEAgentPageSettingsRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_MOBILE_PAGE_SETTINGS);
+        }
+
+        #endregion
+
+        #region MOBILE Application Configuration Index
+
+        public string MOBILEApplicationConfigurationIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_MOBILE_SUMMARY_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_MOBILE_NETWORK_REQUEST_RULES_FILE_NAME);
+        }
+
+        #endregion
+
+        #region MOBILE Application Configuration Report
+
+        public string MOBILEConfigurationReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_MOBILE_FOLDER_NAME);
+        }
+
+        public string MOBILEApplicationConfigurationReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_MOBILE_FOLDER_NAME,
+                CONVERT_CONFIG_MOBILE_SUMMARY_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_MOBILE_FOLDER_NAME,
+                CONVERT_CONFIG_MOBILE_NETWORK_REQUEST_RULES_FILE_NAME);
+        }
+
+        #endregion
+
+
+        #region MOBILE Application Entity Data
+
+        public string MOBILENetworkRequestsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_MOBILE_NETWORK_REQUESTS);
+        }
+
+        public string MOBILENetworkRequestPerformanceDataFilePath(JobTarget jobTarget, string networkRequestName, long networkRequestID, JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_MOBILE_NETWORK_REQUEST_PERFORMANCE_FILE_NAME,
+                getShortenedEntityNameForFileSystem(networkRequestName, networkRequestID),
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region MOBILE Application Entity Index
+
+        public string MOBILEApplicationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_MOBILE_APPLICATIONS_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_NETWORK_REQUESTS_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestsBusinessTransactionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region MOBILE Application Entity Report
+
+        public string MOBILEEntitiesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_MOBILE_FOLDER_NAME);
+        }
+
+        public string MOBILEApplicationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_MOBILE_FOLDER_NAME,
+                CONVERT_MOBILE_APPLICATIONS_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_MOBILE_FOLDER_NAME,
+                CONVERT_NETWORK_REQUESTS_FILE_NAME);
+        }
+
+        public string MOBILENetworkRequestsBusinessTransactionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_MOBILE_FOLDER_NAME,
+                CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        public string MOBILEEntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_DETECTED_MOBILE_ENTITIES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
+        #region SIM Entity Data
 
         public string SIMTiersDataFilePath(JobTarget jobTarget)
         {
@@ -873,7 +1549,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
         }
 
@@ -884,7 +1560,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_NODES_FILE_NAME);
         }
 
@@ -895,7 +1571,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_GROUPS_FILE_NAME);
         }
 
@@ -906,7 +1582,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_MACHINES_FILE_NAME);
         }
 
@@ -921,7 +1597,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -936,7 +1612,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -947,7 +1623,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_SERVICE_AVAILABILITIES_FILE_NAME);
         }
 
@@ -962,7 +1638,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -979,14 +1655,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                PROCESSES_FOLDER_NAME,
+                SIM_PROCESSES_FOLDER_NAME,
                 reportFileName);
         }
 
         public string SIMServiceAvailabilityEventsDataFilePath(JobTarget jobTarget, string saName, long saID, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
-                SERVICE_AVAILABILITY_EVENTS_FILE_NAME,
+                EXTRACT_SERVICE_AVAILABILITY_EVENTS_FILE_NAME,
                 getShortenedEntityNameForFileSystem(saName, saID),
                 jobTimeRange.From,
                 jobTimeRange.To);
@@ -996,23 +1672,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SA_EVENTS_FOLDER_NAME,
+                EVENTS_SA_FOLDER_NAME,
                 reportFileName);
         }
 
         #endregion
 
-        #region SIM Entity Metadata Index
+        #region SIM Entity Index
 
-        public string SIMApplicationIndexFilePath(JobTarget jobTarget)
+        public string SIMApplicationsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                ENTITIES_FOLDER_NAME,
+                CONVERT_SIM_APPLICATIONS_FILE_NAME);
         }
 
         public string SIMTiersIndexFilePath(JobTarget jobTarget)
@@ -1022,8 +1698,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_TIERS_FILE_NAME);
+                ENTITIES_FOLDER_NAME,
+                CONVERT_SIM_TIERS_FILE_NAME);
         }
 
         public string SIMNodesIndexFilePath(JobTarget jobTarget)
@@ -1033,8 +1709,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODES_FILE_NAME);
+                ENTITIES_FOLDER_NAME,
+                CONVERT_SIM_NODES_FILE_NAME);
         }
 
         public string SIMMachinesIndexFilePath(JobTarget jobTarget)
@@ -1044,7 +1720,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINES_FILE_NAME);
         }
 
@@ -1055,7 +1731,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROPERTIES_FILE_NAME);
         }
 
@@ -1066,7 +1742,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CPUS_FILE_NAME);
         }
 
@@ -1077,7 +1753,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_VOLUMES_FILE_NAME);
         }
 
@@ -1088,7 +1764,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_NETWORKS_FILE_NAME);
         }
 
@@ -1099,7 +1775,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CONTAINERS_FILE_NAME);
         }
 
@@ -1110,20 +1786,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                PROCESSES_FOLDER_NAME,
+                SIM_PROCESSES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROCESSES_FILE_NAME);
         }
 
         #endregion
 
-        #region SIM Entity Metadata Report
+        #region SIM Entity Report
 
         public string SIMEntitiesReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME);
+                ENTITIES_SIM_FOLDER_NAME);
         }
 
         public string SIMApplicationsReportFilePath()
@@ -1131,8 +1807,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                ENTITIES_SIM_FOLDER_NAME,
+                CONVERT_SIM_APPLICATIONS_FILE_NAME);
         }
 
         public string SIMTiersReportFilePath()
@@ -1140,8 +1816,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_TIERS_FILE_NAME);
+                ENTITIES_SIM_FOLDER_NAME,
+                CONVERT_SIM_TIERS_FILE_NAME);
         }
 
         public string SIMNodesReportFilePath()
@@ -1149,8 +1825,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_NODES_FILE_NAME);
+                ENTITIES_SIM_FOLDER_NAME,
+                CONVERT_SIM_NODES_FILE_NAME);
         }
 
         public string SIMMachinesReportFilePath()
@@ -1158,7 +1834,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINES_FILE_NAME);
         }
 
@@ -1167,7 +1843,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROPERTIES_FILE_NAME);
         }
 
@@ -1176,7 +1852,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CPUS_FILE_NAME);
         }
 
@@ -1185,7 +1861,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_VOLUMES_FILE_NAME);
         }
 
@@ -1194,7 +1870,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_NETWORKS_FILE_NAME);
         }
 
@@ -1203,7 +1879,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CONTAINERS_FILE_NAME);
         }
 
@@ -1212,7 +1888,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SIM_ENTITIES_FOLDER_NAME,
+                ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROCESSES_FILE_NAME);
         }
 
@@ -1232,7 +1908,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region DB Entity Metadata and Data
+        #region DB Application Configuration Data
 
         public string DBCollectorDefinitionsDataFilePath(JobTarget jobTarget)
         {
@@ -1240,8 +1916,111 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_COLLECTOR_DEFINITIONS_FILE_NAME);
+        }
+
+        public string DBCustomMetricsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_DB_CUSTOM_METRICS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region DB Application Configuration Index
+
+        public string DBApplicationConfigurationIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_DB_SUMMARY_FILE_NAME);
+        }
+
+        public string DBCollectorDefinitionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
+        }
+
+        public string DBCustomMetricsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_DB_CUSTOM_METRICS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region DB Application Configuration Report
+
+        public string DBConfigurationReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_DB_FOLDER_NAME);
+        }
+
+        public string DBApplicationConfigurationReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_DB_FOLDER_NAME,
+                CONVERT_CONFIG_DB_SUMMARY_FILE_NAME);
+        }
+
+        public string DBCollectorDefinitionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_DB_FOLDER_NAME,
+                CONVERT_CONFIG_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
+        }
+
+        public string DBCustomMetricsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_DB_FOLDER_NAME,
+                CONVERT_CONFIG_DB_CUSTOM_METRICS_FILE_NAME);
+        }
+
+        #endregion
+
+
+        #region DB Entity Data
+
+        public string DBCollectorDefinitionsForEntitiesFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTOR_DEFINITIONS_FILE_NAME);
         }
 
@@ -1251,8 +2030,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTORS_CALLS_FILE_NAME);
         }
 
@@ -1262,8 +2041,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTORS_TIME_SPENT_FILE_NAME);
         }
 
@@ -1273,8 +2052,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_DATA_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 EXTRACT_ALL_WAIT_STATES_FILE_NAME);
         }
 
@@ -1289,7 +2068,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1305,7 +2084,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1321,7 +2100,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1337,7 +2116,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1353,7 +2132,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1370,7 +2149,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1386,7 +2165,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1402,7 +2181,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1418,7 +2197,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1434,7 +2213,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
@@ -1450,25 +2229,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
         }
 
         #endregion
 
-        #region DB Entity Metadata Index
-
-        public string DBCollectorDefinitionsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
-                CONVERT_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
-        }
+        #region DB Entity Index
 
         public string DBCollectorsIndexFilePath(JobTarget jobTarget)
         {
@@ -1476,20 +2244,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_COLLECTORS_FILE_NAME);
         }
 
-        public string DBApplicationIndexFilePath(JobTarget jobTarget)
+        public string DBApplicationsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                DB_APPLICATION_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_APPLICATION_FILE_NAME);
+                getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_DB_APPLICATIONS_FILE_NAME);
         }
 
         public string DBWaitStatesIndexFilePath(JobTarget jobTarget)
@@ -1498,8 +2266,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_WAIT_STATES_FILE_NAME);
         }
 
@@ -1509,8 +2277,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_QUERIES_FILE_NAME);
         }
 
@@ -1520,8 +2288,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_CLIENTS_FILE_NAME);
         }
 
@@ -1531,8 +2299,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_SESSIONS_FILE_NAME);
         }
 
@@ -1542,8 +2310,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_BLOCKING_SESSIONS_FILE_NAME);
         }
 
@@ -1553,8 +2321,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_DATABASES_FILE_NAME);
         }
 
@@ -1564,8 +2332,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_USERS_FILE_NAME);
         }
 
@@ -1575,8 +2343,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_MODULES_FILE_NAME);
         }
 
@@ -1586,8 +2354,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_PROGRAMS_FILE_NAME);
         }
 
@@ -1597,30 +2365,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                DB_ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                ENTITIES_FOLDER_NAME,
                 CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
         
         #endregion
 
-        #region DB Entity Metadata Report
+        #region DB Entity Report
 
         public string DBEntitiesReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME);
-        }
-
-        public string DBCollectorDefinitionsReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
-                CONVERT_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
+                ENTITIES_DB_FOLDER_NAME);
         }
 
         public string DBCollectorsReportFilePath()
@@ -1628,7 +2387,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_COLLECTORS_FILE_NAME);
         }
 
@@ -1637,8 +2396,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
-                CONVERT_ENTITY_APPLICATIONS_FILE_NAME);
+                ENTITIES_DB_FOLDER_NAME,
+                CONVERT_DB_APPLICATIONS_FILE_NAME);
         }
 
         public string DBWaitStatesReportFilePath()
@@ -1646,7 +2405,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_WAIT_STATES_FILE_NAME);
         }
 
@@ -1655,7 +2414,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_QUERIES_FILE_NAME);
         }
 
@@ -1664,7 +2423,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_CLIENTS_FILE_NAME);
         }
 
@@ -1673,7 +2432,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_SESSIONS_FILE_NAME);
         }
 
@@ -1682,7 +2441,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_BLOCKING_SESSIONS_FILE_NAME);
         }
 
@@ -1691,7 +2450,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_DATABASES_FILE_NAME);
         }
 
@@ -1700,7 +2459,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_USERS_FILE_NAME);
         }
 
@@ -1709,7 +2468,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_MODULES_FILE_NAME);
         }
 
@@ -1718,7 +2477,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_PROGRAMS_FILE_NAME);
         }
 
@@ -1727,7 +2486,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                DB_ENTITIES_FOLDER_NAME,
+                ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
@@ -1747,7 +2506,281 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region Configuration Data
+        #region Analytics Entity Data
+
+        public string BIQSearchesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ANALYTICS_SEARCHES_FILE_NAME);
+        }
+
+        public string BIQMetricsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ANALYTICS_METRICS_FILE_NAME);
+        }
+
+        public string BIQBusinessJourneysDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
+        }
+
+        public string BIQExperienceLevelsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
+        }
+
+        public string BIQCustomSchemasDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ANALYTICS_CUSTOM_SCHEMAS_FILE_NAME);
+        }
+
+        public string BIQSchemaFieldsDataFilePath(JobTarget jobTarget, string schemaName)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME,
+                schemaName);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region Analytics Entity Index
+
+        public string BIQApplicationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_APPLICATIONS_FILE_NAME);
+        }
+
+        public string BIQSearchesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_SEARCHES_FILE_NAME);
+        }
+
+        public string BIQWidgetsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_WIDGETS_FILE_NAME);
+        }
+
+        public string BIQMetricsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_METRICS_FILE_NAME);
+        }
+
+        public string BIQBusinessJourneysIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
+        }
+
+        public string BIQExperienceLevelsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
+        }
+
+        public string BIQSchemasIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_SCHEMAS_FILE_NAME);
+        }
+
+        public string BIQSchemaFieldsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Analytics Entity Report
+
+        public string BIQEntitiesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME);
+        }
+
+        public string BIQApplicationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_APPLICATIONS_FILE_NAME);
+        }
+
+        public string BIQSearchesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_SEARCHES_FILE_NAME);
+        }
+
+        public string BIQWidgetsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_WIDGETS_FILE_NAME);
+        }
+
+        public string BIQMetricsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_METRICS_FILE_NAME);
+        }
+
+        public string BIQBusinessJourneysReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
+        }
+
+        public string BIQExperienceLevelsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
+        }
+
+        public string BIQSchemasReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_SCHEMAS_FILE_NAME);
+        }
+
+        public string BIQSchemaFieldsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_BIQ_FOLDER_NAME,
+                CONVERT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME);
+        }
+
+        public string BIQEntitiesExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_DETECTED_ANALYTICS_ENTITIES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
+        #region Controller Wide Data
+
+        public string ControllerVersionDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_CONTROLLER_VERSION_FILE_NAME);
+        }
 
         public string ControllerSettingsDataFilePath(JobTarget jobTarget)
         {
@@ -1755,10 +2788,588 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                EXTRACT_CONFIGURATION_CONTROLLER_FILE_NAME);
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_CONTROLLER_SETTINGS_FILE_NAME);
         }
 
-        public string ApplicationConfigurationDataFilePath(JobTarget jobTarget)
+        public string AllApplicationsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_ALL_APPLICATIONS_FILE_NAME);
+        }
+
+        public string MOBILEApplicationsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_MOBILE_APPLICATIONS_FILE_NAME);
+        }
+
+        public string APMApplicationsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                ENTITIES_FOLDER_NAME,
+                EXTRACT_ENTITY_APM_APPLICATIONS_FILE_NAME);
+        }
+
+        public string HTTPTemplatesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_HTTP_TEMPLATES_FILE_NAME);
+        }
+
+        public string HTTPTemplatesDetailDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_HTTP_TEMPLATES_DETAIL_FILE_NAME);
+        }
+
+        public string EmailTemplatesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_EMAIL_TEMPLATES_FILE_NAME);
+        }
+
+        public string EmailTemplatesDetailDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_EMAIL_TEMPLATES_DETAIL_FILE_NAME);
+        }
+
+        public string ControllerDashboards(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                DASHBOARDS_FOLDER_NAME,
+                EXTRACT_CONTROLLER_DASHBOARDS);
+        }
+
+        public string ControllerDashboard(JobTarget jobTarget, string dashboardName, long dashboardID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_CONTROLLER_DASHBOARD,
+                getShortenedEntityNameForFileSystem(dashboardName, dashboardID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                DASHBOARDS_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region Controller Wide Index
+
+        public string ControllerSummaryIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_CONTROLLERS_SUMMARY_FILE_NAME);
+        }
+
+        public string ControllerApplicationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME);
+        }
+
+        public string ControllerSettingsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONTROLLER_SETTINGS_FILE_NAME);
+        }
+
+        public string HTTPTemplatesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_HTTP_TEMPLATES_FILE_NAME);
+        }
+
+        public string EmailTemplatesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_EMAIL_TEMPLATES_FILE_NAME);
+        }
+
+        public string DashboardsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARDS_FILE_NAME);
+        }
+
+        public string DashboardWidgetsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARD_WIDGETS_FILE_NAME);
+        }
+
+        public string DashboardMetricSeriesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARD_WIDGET_DATA_SERIES_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Controller Wide Report
+
+        public string ControllerEntitiesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME);
+        }
+
+        public string ControllerSettingsReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_FOLDER_NAME);
+        }
+
+        public string ControllerDashboardsReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                DASHBOARDS_FOLDER_NAME);
+        }
+
+        public string ControllerSummaryReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_CONTROLLERS_SUMMARY_FILE_NAME);
+        }
+
+        public string ControllerApplicationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_FOLDER_NAME,
+                CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME);
+        }
+
+        public string ControllerSettingsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONTROLLER_SETTINGS_FILE_NAME);
+        }
+
+        public string HTTPTemplatesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_HTTP_TEMPLATES_FILE_NAME);
+        }
+
+        public string EmailTemplatesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_EMAIL_TEMPLATES_FILE_NAME);
+        }
+
+        public string DashboardsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARDS_FILE_NAME);
+        }
+
+        public string DashboardWidgetsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARD_WIDGETS_FILE_NAME);
+        }
+
+        public string DashboardMetricSeriesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                DASHBOARDS_FOLDER_NAME,
+                CONVERT_DASHBOARD_WIDGET_DATA_SERIES_FILE_NAME);
+        }
+
+        public string DashboardsExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_DASHBOARDS_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
+        #region All Application Configuration Data
+
+        public string ApplicationHealthRulesDataFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_HEALTH_RULES_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_HEALTH_RULES_FILE_NAME);
+            }
+        }
+
+        public string ApplicationHealthRulesDetailsDataFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_HEALTH_RULES_DETAILS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_HEALTH_RULES_DETAILS_FILE_NAME);
+            }
+        }
+
+        public string ApplicationPoliciesDataFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_POLICIES_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_POLICIES_FILE_NAME);
+            }
+        }
+
+        public string ApplicationActionsDataFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_ACTIONS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    EXTRACT_APPLICATION_ACTIONS_FILE_NAME);
+            }
+        }
+
+        #endregion
+
+        #region All Application Configuration Index
+
+        public string ApplicationConfigurationHealthRulesIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
+            }
+        }
+
+        public string ApplicationHealthRulesIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
+            }
+        }
+
+        public string ApplicationPoliciesIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_POLICIES_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_POLICIES_FILE_NAME);
+            }
+        }
+
+        public string ApplicationActionsIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_ACTIONS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_ACTIONS_FILE_NAME);
+            }
+        }
+
+        public string ApplicationPolicyActionMappingsIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_FOLDER_NAME,
+                    CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
+            }
+        }
+
+        #endregion
+
+        #region All Application Configuration Report
+
+        public string ApplicationConfigurationReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME);
+        }
+
+        public string ApplicationConfigurationHealthRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
+                CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
+        }
+
+        public string ApplicationHealthRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
+                CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
+        }
+
+        public string ApplicationPoliciesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
+                CONVERT_CONFIG_POLICIES_FILE_NAME);
+        }
+
+        public string ApplicationActionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
+                CONVERT_CONFIG_ACTIONS_FILE_NAME);
+        }
+
+        public string ApplicationPolicyActionMappingsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
+                CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
+        }
+        #endregion
+
+
+        #region APM Application Configuration Data 
+
+        public string APMApplicationConfigurationDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1769,7 +3380,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
         }
 
-        public string ApplicationConfigurationSEPDataFilePath(JobTarget jobTarget)
+        public string APMApplicationConfigurationSEPDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1780,7 +3391,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME);
         }
 
-        public string DeveloperModeNodesDataFilePath(JobTarget jobTarget)
+        public string APMApplicationDeveloperModeNodesDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1793,18 +3404,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
-        #region Configuration Index
+        #region APM Application Configuration Index
 
-        public string ControllerSettingsIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                CONTROLLER_SETTINGS_FILE_NAME);
-        }
-
-        public string ApplicationConfigurationIndexFilePath(JobTarget jobTarget)
+        public string APMApplicationConfigurationIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1812,10 +3414,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_FILE_NAME);
+                CONVERT_CONFIG_APM_SUMMARY_FILE_NAME);
         }
 
-        public string BusinessTransactionDiscoveryRulesIndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionDiscoveryRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1823,10 +3425,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryRulesIndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionEntryRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1834,10 +3436,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
         }
 
-        public string ServiceEndpointEntryRulesIndexFilePath(JobTarget jobTarget)
+        public string APMServiceEndpointEntryRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1845,10 +3447,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
+                CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryScopesIndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionEntryScopesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1856,10 +3458,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryRules20IndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionEntryRules20IndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1867,10 +3469,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
         }
 
-        public string BusinessTransactionDiscoveryRules20IndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionDiscoveryRules20IndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1878,10 +3480,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
         }
 
-        public string BackendDiscoveryRulesIndexFilePath(JobTarget jobTarget)
+        public string APMBackendDiscoveryRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1889,10 +3491,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME);
         }
 
-        public string CustomExitRulesIndexFilePath(JobTarget jobTarget)
+        public string APMCustomExitRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1900,10 +3502,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME);
         }
 
-        public string AgentConfigurationPropertiesIndexFilePath(JobTarget jobTarget)
+        public string APMAgentConfigurationPropertiesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1911,10 +3513,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                CONVERT_CONFIG_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
         }
 
-        public string InformationPointRulesIndexFilePath(JobTarget jobTarget)
+        public string APMInformationPointRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1922,10 +3524,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME);
         }
 
-        public string EntityBusinessTransactionConfigurationsIndexFilePath(JobTarget jobTarget)
+        public string APMBusinessTransactionConfigurationsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1933,10 +3535,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
-        public string EntityTierConfigurationsIndexFilePath(JobTarget jobTarget)
+        public string APMTierConfigurationsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1944,10 +3546,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                CONVERT_CONFIG_ENTITY_TIERS_FILE_NAME);
         }
 
-        public string MethodInvocationDataCollectorsIndexFilePath(JobTarget jobTarget)
+        public string APMMethodInvocationDataCollectorsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1955,10 +3557,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                CONVERT_CONFIG_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
         }
 
-        public string HttpDataCollectorsIndexFilePath(JobTarget jobTarget)
+        public string APMHttpDataCollectorsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1966,10 +3568,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                CONVERT_CONFIG_HTTP_DATA_COLLECTORS_FILE_NAME);
         }
 
-        public string AgentCallGraphSettingsIndexFilePath(JobTarget jobTarget)
+        public string APMAgentCallGraphSettingsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1977,10 +3579,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
+                CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
         }
 
-        public string HealthRulesIndexFilePath(JobTarget jobTarget)
+        public string APMDeveloperModeNodesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1988,201 +3590,172 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
-        }
-
-        public string DeveloperModeNodesIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
+                CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
         }
 
         #endregion
 
-        #region Configuration Report
+        #region APM Application Configuration Report
 
-        public string ConfigurationReportFolderPath()
+        public string APMConfigurationReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME);
+                CONFIGURATION_APM_FOLDER_NAME);
         }
 
-        public string ControllerSettingsReportFilePath()
+        public string APMApplicationConfigurationReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                CONTROLLER_SETTINGS_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_APM_SUMMARY_FILE_NAME);
         }
 
-        public string ApplicationConfigurationReportFilePath()
+        public string APMBusinessTransactionDiscoveryRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
         }
 
-        public string BusinessTransactionDiscoveryRulesReportFilePath()
+        public string APMBusinessTransactionEntryRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryRulesReportFilePath()
+        public string APMServiceEndpointEntryRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
         }
 
-        public string ServiceEndpointEntryRulesReportFilePath()
+        public string APMBusinessTransactionEntryScopesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryScopesReportFilePath()
+        public string APMBusinessTransactionEntryRules20ReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
         }
 
-        public string BusinessTransactionEntryRules20ReportFilePath()
+        public string APMBusinessTransactionDiscoveryRules20ReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
         }
 
-        public string BusinessTransactionDiscoveryRules20ReportFilePath()
+        public string APMBackendDiscoveryRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME);
         }
 
-        public string BackendDiscoveryRulesReportFilePath()
+        public string APMCustomExitRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_BACKEND_DISCOVERY_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME);
         }
 
-        public string CustomExitRulesReportFilePath()
+        public string APMAgentConfigurationPropertiesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_CUSTOM_EXIT_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
         }
 
-        public string AgentConfigurationPropertiesReportFilePath()
+        public string APMInformationPointRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME);
         }
 
-        public string InformationPointRulesReportFilePath()
+        public string APMBusinessTransactionConfigurationsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_INFORMATION_POINT_RULES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
-        public string EntityBusinessTransactionConfigurationsReportFilePath()
+        public string APMTierConfigurationsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ENTITY_TIERS_FILE_NAME);
         }
 
-        public string EntityTierConfigurationsReportFilePath()
+        public string APMMethodInvocationDataCollectorsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_ENTITY_TIERS_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
         }
 
-        public string MethodInvocationDataCollectorsReportFilePath()
+        public string APMHttpDataCollectorsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_HTTP_DATA_COLLECTORS_FILE_NAME);
         }
 
-        public string HttpDataCollectorsReportFilePath()
+        public string APMAgentCallGraphSettingsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_HTTP_DATA_COLLECTORS_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
         }
 
-        public string AgentCallGraphSettingsReportFilePath()
+        public string APMDeveloperModeNodesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
-        }
-
-        public string HealthRulesReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_HEALTH_RULES_FILE_NAME);
-        }
-
-        public string DeveloperModeNodesReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                CONFIGURATION_FOLDER_NAME,
-                APPLICATION_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
         }
 
         public string ConfigurationExcelReportFilePath(JobTimeRange jobTimeRange)
@@ -2257,8 +3830,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_USERS_FILE_NAME);
         }
 
@@ -2268,8 +3840,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_GROUPS_FILE_NAME);
         }
 
@@ -2279,8 +3850,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_ROLES_FILE_NAME);
         }
 
@@ -2294,8 +3864,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2309,8 +3878,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2324,11 +3892,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
-
 
         public string RoleDataFilePath(JobTarget jobTarget, string roleName, long roleID)
         {
@@ -2340,8 +3906,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2351,8 +3916,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_SECURITY_PROVIDER_FILE_NAME);
         }
 
@@ -2362,8 +3926,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                RBAC_REPOSITORY_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_STRONG_PASSWORDS_FILE_NAME);
         }
 
@@ -2377,6 +3940,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USERS_FILE_NAME);
         }
 
@@ -2386,6 +3950,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUPS_FILE_NAME);
         }
 
@@ -2395,6 +3960,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLES_FILE_NAME);
         }
 
@@ -2404,6 +3970,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_PERMISSIONS_FILE_NAME);
         }        
 
@@ -2413,6 +3980,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
         }
 
@@ -2422,6 +3990,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
         }
 
@@ -2431,6 +4000,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USER_PERMISSIONS_FILE_NAME);
         }        
 
@@ -2440,6 +4010,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
         }
 
@@ -2452,7 +4023,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME);
+                CONTROLLER_RBAC_FOLDER_NAME);
         }
 
         public string UsersGroupsRolesPermissionsExcelReportFilePath(JobTimeRange jobTimeRange)
@@ -2473,7 +4044,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USERS_FILE_NAME);
         }
 
@@ -2482,7 +4053,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUPS_FILE_NAME);
         }
 
@@ -2491,7 +4062,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLES_FILE_NAME);
         }
 
@@ -2500,7 +4071,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_PERMISSIONS_FILE_NAME);
         }
 
@@ -2509,7 +4080,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
         }
 
@@ -2518,7 +4089,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
         }
 
@@ -2527,7 +4098,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USER_PERMISSIONS_FILE_NAME);
         }
 
@@ -2536,7 +4107,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                RBAC_FOLDER_NAME,
+                CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
         }
 
@@ -2577,7 +4148,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 metricEntitySubFolderName,
                 reportFileName);
@@ -2595,7 +4166,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 metricEntitySubFolderName,
                 reportFileName);
@@ -2612,7 +4183,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_SUMMARY_FULLRANGE_FILE_NAME);
         }
@@ -2624,7 +4195,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_SUMMARY_HOURLY_FILE_NAME);
         }
@@ -2640,7 +4211,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 reportFileName);
         }
@@ -2652,7 +4223,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_LOCATIONS_FILE_NAME);
         }
@@ -2666,7 +4237,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                METRICS_FOLDER_NAME);
+                APM_METRICS_FOLDER_NAME);
         }
 
         public string EntitiesFullReportFilePath(string entityFolderName)
@@ -2678,7 +4249,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,                
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2691,7 +4262,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2705,7 +4276,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -2721,7 +4292,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                METRICS_FOLDER_NAME,
+                APM_METRICS_FOLDER_NAME,
                 reportFileName);
 
         }
@@ -2794,7 +4365,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
                 reportFileName);
         }
@@ -2811,7 +4382,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(tier.name, tier.id),
                 reportFileName);
@@ -2829,7 +4400,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                 reportFileName);
@@ -2847,7 +4418,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
                 getShortenedEntityNameForFileSystem(node.name, node.id),
@@ -2866,7 +4437,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                 getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
@@ -2885,13 +4456,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                Backend.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBackend.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(backend.name, backend.id),
                 reportFileName);
         }
 
-        public string BackendFlowmapDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, Backend backend)
+        public string BackendFlowmapDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, APMBackend backend)
         {
             string reportFileName = String.Format(
                 EXTRACT_ENTITY_FLOWMAP_FILE_NAME,
@@ -2903,8 +4474,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                Backend.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBackend.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(backend.BackendName, backend.BackendID),
                 reportFileName);
         }
@@ -2921,14 +4492,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                BusinessTransaction.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBusinessTransaction.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(businessTransaction.tierName, businessTransaction.tierId),
                 getShortenedEntityNameForFileSystem(businessTransaction.name, businessTransaction.id),
                 reportFileName);
         }
 
-        public string BusinessTransactionFlowmapDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, BusinessTransaction businessTransaction)
+        public string BusinessTransactionFlowmapDataFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, APMBusinessTransaction businessTransaction)
         {
             string reportFileName = String.Format(
                 EXTRACT_ENTITY_FLOWMAP_FILE_NAME,
@@ -2940,8 +4511,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                BusinessTransaction.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBusinessTransaction.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
@@ -2958,7 +4529,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
@@ -2970,7 +4541,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME);
         }
@@ -2982,7 +4553,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
@@ -2994,7 +4565,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
@@ -3006,8 +4577,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                Backend.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBackend.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
 
@@ -3018,8 +4589,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                ACTIVITYGRID_FOLDER_NAME,
-                BusinessTransaction.ENTITY_FOLDER,
+                APM_ACTIVITYGRID_FOLDER_NAME,
+                APMBusinessTransaction.ENTITY_FOLDER,
                 CONVERT_ACTIVITY_GRIDS_FILE_NAME);
         }
 
@@ -3032,7 +4603,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME);
+                APM_ACTIVITYGRID_FOLDER_NAME);
         }
 
         public string ApplicationsFlowmapReportFilePath()
@@ -3044,7 +4615,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3057,7 +4628,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3070,7 +4641,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3083,7 +4654,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3091,12 +4662,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             string reportFileName = String.Format(
                 CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME,
-                Backend.ENTITY_FOLDER);
+                APMBackend.ENTITY_FOLDER);
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3104,12 +4675,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             string reportFileName = String.Format(
                 CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME,
-                BusinessTransaction.ENTITY_FOLDER);
+                APMBusinessTransaction.ENTITY_FOLDER);
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                ACTIVITYGRID_FOLDER_NAME,
+                APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3118,43 +4689,69 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Events Data
 
-        public string HealthRuleViolationsDataFilePath(JobTarget jobTarget)
+        public string ApplicationHealthRuleViolationsDataFilePath(JobTarget jobTarget)
         {
             string reportFileName = String.Format(
-                HEALTH_RULE_VIOLATIONS_FILE_NAME,
+                EXTRACT_HEALTH_RULE_VIOLATIONS_FILE_NAME,
                 this.JobConfiguration.Input.TimeRange.From,
                 this.JobConfiguration.Input.TimeRange.To);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                EVENTS_FOLDER_NAME,
-                reportFileName);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
         }
 
-        public string EventsDataFilePath(JobTarget jobTarget, string eventType)
+        public string ApplicationEventsDataFilePath(JobTarget jobTarget, string eventType)
         {
             string reportFileName = String.Format(
-                EVENTS_FILE_NAME,
+                EXTRACT_EVENTS_FILE_NAME,
                 eventType,
                 this.JobConfiguration.Input.TimeRange.From,
                 this.JobConfiguration.Input.TimeRange.To);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                EVENTS_FOLDER_NAME,
-                reportFileName);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
         }
 
         public string AuditEventsDataFilePath(JobTarget jobTarget)
         {
             string reportFileName = String.Format(
-                AUDIT_EVENTS_FILE_NAME,
+                EXTRACT_AUDIT_EVENTS_FILE_NAME,
                 this.JobConfiguration.Input.TimeRange.From,
                 this.JobConfiguration.Input.TimeRange.To);
             
@@ -3162,6 +4759,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                EVENTS_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3171,45 +4769,85 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                NOTIFICATIONS_FILE_NAME);
+                EVENTS_FOLDER_NAME,
+                EXTRACT_NOTIFICATIONS_FILE_NAME);
         }
-        
+
 
         #endregion
 
         #region Events Index
 
-        public string HealthRuleViolationsIndexFilePath(JobTarget jobTarget)
+        public string ApplicationEventsSummaryIndexFilePath(JobTarget jobTarget)
         {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                EVENTS_FOLDER_NAME,
-                CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
+            }
         }
 
-        public string EventsIndexFilePath(JobTarget jobTarget)
+        public string ApplicationHealthRuleViolationsIndexFilePath(JobTarget jobTarget)
         {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                EVENTS_FOLDER_NAME,
-                CONVERT_EVENTS_FILE_NAME);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
+            }
         }
 
         public string ApplicationEventsIndexFilePath(JobTarget jobTarget)
         {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                EVENTS_FOLDER_NAME,
-                CONVERT_APPLICATION_EVENTS_FILE_NAME);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_FILE_NAME);
+            }
         }
 
         public string AuditEventsIndexFilePath(JobTarget jobTarget)
@@ -3218,46 +4856,47 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                CONVERT_AUDIT_EVENTS_FILE_NAME);
+                EVENTS_FOLDER_NAME,
+                CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME);
+        }
+
+        public string NotificationsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                EVENTS_FOLDER_NAME,
+                CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME);
         }
 
         #endregion
 
         #region Events Report
 
-        public string EventsReportFolderPath()
+        public string ApplicationEventsReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                EVENTS_FOLDER_NAME);
+                EVENTS_APPS_FOLDER_NAME);
         }
 
-        public string HealthRuleViolationsReportFilePath()
+        public string ControllerEventsReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                EVENTS_FOLDER_NAME,
-                CONVERT_HEALTH_RULE_EVENTS_FILE_NAME);
+                EVENTS_CONTROLLER_FOLDER_NAME);
         }
 
-        public string EventsReportFilePath()
+        public string ApplicationHealthRuleViolationsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                EVENTS_FOLDER_NAME,
-                CONVERT_EVENTS_FILE_NAME);
-        }
-
-        public string AuditEventsReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                EVENTS_FOLDER_NAME,
-                CONVERT_AUDIT_EVENTS_FILE_NAME);
+                EVENTS_APPS_FOLDER_NAME,
+                CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
         }
 
         public string ApplicationEventsReportFilePath()
@@ -3265,8 +4904,35 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                EVENTS_FOLDER_NAME,
+                EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_EVENTS_FILE_NAME);
+        }
+
+        public string AuditEventsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                EVENTS_CONTROLLER_FOLDER_NAME,
+                CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME);
+        }
+
+        public string NotificationsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                EVENTS_CONTROLLER_FOLDER_NAME,
+                CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME);
+        }
+
+        public string ApplicationEventsSummaryReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                EVENTS_APPS_FOLDER_NAME,
+                CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
         }
 
         public string EventsAndHealthRuleViolationsExcelReportFilePath(JobTimeRange jobTimeRange)
@@ -3299,7 +4965,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 reportFileName);
         }
 
@@ -3316,7 +4982,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tierName, tierID),
                 getShortenedEntityNameForFileSystem(businessTransactionName, businessTransactionID),
                 String.Format(EXTRACT_SNAPSHOT_FILE_NAME, USEREXPERIENCE_FOLDER_MAPPING[userExperience], requestID, snapshotTime));
@@ -3335,7 +5001,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Snapshots Business Transaction for Time Range
 
-        public string SnapshotsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_TIMERANGE_FILE_NAME,
@@ -3347,13 +5013,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_TIMERANGE_FILE_NAME,
@@ -3365,13 +5031,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_TIMERANGE_FILE_NAME,
@@ -3383,13 +5049,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_TIMERANGE_FILE_NAME,
@@ -3401,13 +5067,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_TIMERANGE_FILE_NAME,
@@ -3419,13 +5085,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_TIMERANGE_FILE_NAME,
@@ -3437,13 +5103,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_TIMERANGE_NAME,
@@ -3455,13 +5121,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_TIMERANGE_FILE_NAME,
@@ -3473,7 +5139,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
@@ -3483,105 +5149,105 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Snapshots Business Transaction
 
-        public string SnapshotsIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_FILE_NAME);
         }
 
-        public string SnapshotsSegmentsIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsSegmentsIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
 
-        public string SnapshotsExitCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsExitCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
 
-        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsServiceEndpointCallsIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
 
-        public string SnapshotsDetectedErrorsIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsDetectedErrorsIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
 
-        public string SnapshotsBusinessDataIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsBusinessDataIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
 
-        public string SnapshotsMethodCallLinesIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsMethodCallLinesIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
 
-        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
@@ -3598,7 +5264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_FILE_NAME);
         }
 
@@ -3609,7 +5275,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
         }
 
@@ -3620,7 +5286,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
 
@@ -3631,7 +5297,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
 
@@ -3642,7 +5308,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
 
@@ -3653,7 +5319,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
 
@@ -3664,7 +5330,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
 
@@ -3675,7 +5341,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
@@ -3683,7 +5349,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Snapshots Folded Call Stacks All
 
-        public string SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME,
@@ -3695,13 +5361,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, APMNode node, JobTimeRange jobTimeRange)
+        public string SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, APMNode node, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME,
@@ -3713,7 +5379,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 APMNode.ENTITY_FOLDER,
@@ -3721,7 +5387,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
+        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME,
@@ -3733,13 +5399,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 reportFileName);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction, APMNode node, JobTimeRange jobTimeRange)
+        public string SnapshotsFoldedCallStacksWithTimeIndexBusinessTransactionNodeHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, APMNode node, JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME,
@@ -3751,7 +5417,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 APMNode.ENTITY_FOLDER,
@@ -3766,7 +5432,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
@@ -3777,7 +5443,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
@@ -3789,21 +5455,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                 getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksIndexEntityFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsFoldedCallStacksIndexEntityFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
@@ -3816,7 +5482,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
 
@@ -3827,7 +5493,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
@@ -3839,21 +5505,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
                 getShortenedEntityNameForFileSystem(node.TierName, node.TierID),
                 getShortenedEntityNameForFileSystem(node.NodeName, node.NodeID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
         }
 
-        public string SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(JobTarget jobTarget, BusinessTransaction businessTransaction)
+        public string SnapshotsFoldedCallStacksWithTimeIndexEntityFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
                 getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
@@ -3868,8 +5534,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                SNAPSHOTS_FOLDER_NAME,
-                CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
+                APM_SNAPSHOTS_FOLDER_NAME,
+                CONVERT_APPLICATION_SNAPSHOTS_SUMMARY_FILE_NAME);
         }
 
         #endregion
@@ -3881,7 +5547,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME);
+                APM_SNAPSHOTS_FOLDER_NAME);
         }
 
         public string SnapshotsReportFilePath()
@@ -3889,7 +5555,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_FILE_NAME);
         }
 
@@ -3898,7 +5564,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
 
@@ -3907,7 +5573,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
 
@@ -3916,7 +5582,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
 
@@ -3925,7 +5591,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
 
@@ -3934,7 +5600,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
 
@@ -3943,7 +5609,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
 
@@ -3952,7 +5618,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
+                APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
@@ -3961,8 +5627,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                SNAPSHOTS_FOLDER_NAME,
-                CONVERT_APPLICATION_SNAPSHOTS_FILE_NAME);
+                APM_SNAPSHOTS_FOLDER_NAME,
+                CONVERT_APPLICATION_SNAPSHOTS_SUMMARY_FILE_NAME);
         }
 
         public string SnapshotsExcelReportFilePath(JobTimeRange jobTimeRange)
@@ -4037,7 +5703,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is BusinessTransaction)
+            else if (entity is APMBusinessTransaction)
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME,
@@ -4107,7 +5773,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is BusinessTransaction)
+            else if (entity is APMBusinessTransaction)
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME,
@@ -4138,42 +5804,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         entity.FolderName,
                         reportFileName);
                 }
-            }
-
-            return reportFilePath;
-        }
-
-        public string FlameGraphReportFilePath(Snapshot snapshot, JobTarget jobTarget, bool absolutePath)
-        {
-            string reportFileName = String.Format(
-                REPORT_FLAME_GRAPH_SNAPSHOT_FILE_NAME,
-                snapshot.UserExperience,
-                snapshot.OccurredUtc,
-                snapshot.RequestID);
-
-            string reportFilePath = String.Empty;
-
-            if (absolutePath == true)
-            {
-                reportFilePath = Path.Combine(
-                    this.ProgramOptions.OutputJobFolderPath,
-                    REPORT_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
-                    SNAPSHOTS_FOLDER_NAME,
-                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
-                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
-                    reportFileName);
-            }
-            else
-            {
-                reportFilePath = Path.Combine(
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
-                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
-                    SNAPSHOTS_FOLDER_NAME,
-                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
-                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
-                    reportFileName);
             }
 
             return reportFilePath;
@@ -4218,7 +5848,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is Backend)
+            else if (entity is APMBackend)
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
@@ -4228,7 +5858,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is BusinessTransaction)
+            else if (entity is APMBusinessTransaction)
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
@@ -4238,7 +5868,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is ServiceEndpoint)
+            else if (entity is APMServiceEndpoint)
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
@@ -4248,7 +5878,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     jobTimeRange.From,
                     jobTimeRange.To);
             }
-            else if (entity is Error)
+            else if (entity is APMError)
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
@@ -4310,6 +5940,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
             if (entityName.Length > 12) entityName = entityName.Substring(0, 12);
 
             return String.Format("{0}.{1}", entityName, entityID);
+        }
+
+        public static string getShortenedEntityNameForFileSystem(string entityName)
+        {
+            string originalEntityName = entityName;
+
+            // First, strip out unsafe characters
+            entityName = getFileSystemSafeString(entityName);
+
+            // Second, shorten the string 
+            if (entityName.Length > 12) entityName = entityName.Substring(0, 12);
+
+            return entityName;
         }
 
         #endregion

@@ -1,123 +1,152 @@
 ﻿{
-  "Target": [
-    {
-      "Controller": "https://your.controller.here",
-      "UserName": "username@customer1",
-      "UserPassword": "your password or leave blank to be prompted",
-      "Application": ".*",
-      "NameRegex": true,
-      "Type": "APM"
+    "Target": [
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": ".*",
+            "NameRegex": true,
+            "Type": "APM"
+        },
+        {
+            "Controller": "https://your.other.controller.here",
+            "UserName": "username@customer2",
+            "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
+            "Application": ".*",
+            "NameRegex": true,
+            "Type": "APM"
+        },
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": ".*",
+            "NameRegex": true,
+            "Type": "WEB"
+        },
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": ".*",
+            "NameRegex": true,
+            "Type": "MOBILE"
+        },
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": "The name of BIQ Application does not matter - there is only one in every Controller",
+            "NameRegex": false,
+            "Type": "BIQ"
+        },
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": "The name of SIM Application does not matter - there is only one in every Controller",
+            "NameRegex": false,
+            "Type": "SIM"
+        },
+        {
+            "Controller": "https://your.controller.here",
+            "UserName": "username@customer1",
+            "UserPassword": "Enter your password or leave blank to be prompted",
+            "Application": ".*",
+            "NameRegex": true,
+            "Type": "DB"
+        }
+    ],
+    "Input": {
+        "TimeRange": {
+            "From": "2019-03-22T12:00:00",
+            "To": "2019-03-22T13:00:00"
+        },
+        "UsersGroupsRolesPermissions": true,
+        "Dashboards": true,
+        "Licenses": false,
+        "Events": true,
+        "Configuration": true,
+        "ConfigurationComparisonReferenceCriteria": {
+            "Controller": "https://reference.controller",
+            "Application": "ReferenceApp"
+        },
+        "DetectedEntities": true,
+        "Metrics": true,
+        "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
+        "Flowmaps": true,
+        "Snapshots": true,
+        "SnapshotSelectionCriteria": {
+            "Tiers": [],
+            "TierType": {
+                "All": true,
+                "APP_AGENT": false,
+                "DOT_NET_APP_AGENT": false,
+                "NATIVE_APP_AGENT": false,
+                "NATIVE_DYNAMIC": false,
+                "NATIVE_SDK": false,
+                "NATIVE_WEB_SERVER": false,
+                "NODEJS_APP_AGENT": false,
+                "PHP_APP_AGENT": false,
+                "PYTHON_APP_AGENT": false,
+                "RUBY_APP_AGENT": false
+            },
+            "BusinessTransactions": [],
+            "BusinessTransactionType": {
+                "All": true,
+                "SERVLET": false,
+                "HTTP": false,
+                "WEB_SERVICE": false,
+                "POJO": false,
+                "JMS": false,
+                "EJB": false,
+                "SPRING_BEAN": false,
+                "STRUTS_ACTION": false,
+                "ASP_DOTNET": false,
+                "ASP_DOTNET_WEB_SERVICE": false,
+                "DOTNET_REMOTING": false,
+                "WCF": false,
+                "DOTNET_JMS": false,
+                "POCO": false,
+                "PHP_WEB": false,
+                "PHP_MVC": false,
+                "PHP_DRUPAL": false,
+                "PHP_WORDPRESS": false,
+                "PHP_CLI": false,
+                "PHP_WEB_SERVICE": false,
+                "NODEJS_WEB": false,
+                "NATIVE": false,
+                "WEB": false,
+                "PYTHON_WEB": false,
+                "RUBY_WEB": false,
+                "RUBY_RAILS": false,
+                "BINARY_REMOTING": false
+            },
+            "UserExperience": {
+                "Normal": true,
+                "Slow": true,
+                "VerySlow": true,
+                "Stall": true,
+                "Error": true
+            },
+            "SnapshotType": {
+                "Full": true,
+                "Partial": true,
+                "None": true
+            }
+        }
     },
-    {
-      "Controller": "https://your.other.controller.here",
-      "UserName": "username@customer2",
-      "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
-      "Application": ".*",
-      "NameRegex": true,
-      "Type": "APM"
-    },
-    {
-      "Controller": "https://your.controller.here",
-      "UserName": "username@customer1",
-      "UserPassword": "your password or leave blank to be prompted",
-      "Application": "The name of SIM Application does not matter - there is only one in every Controller",
-      "NameRegex": false,
-      "Type": "SIM"
-    },
-    {
-      "Controller": "https://your.controller.here",
-      "UserName": "username@customer1",
-      "UserPassword": "your password or leave blank to be prompted",
-      "Application": ".*",
-      "NameRegex": true,
-      "Type": "DB"
+    "Output": {
+        "UsersGroupsRolesPermissions": true,
+        "Dashboards": true,
+        "Licenses": false,
+        "Events": true,
+        "Configuration": true,
+        "DetectedEntities": true,
+        "EntityMetrics": true,
+        "EntityMetricGraphs": true,
+        "EntityDetails": true,
+        "Snapshots": true,
+        "FlameGraphs": true
     }
-  ],
-  "Input": {
-    "TimeRange": {
-      "From": "2018-10-17T09:00:00",
-      "To": "2018-10-17T10:00:00"
-    },
-    "Metrics": true,
-    "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
-    "Flowmaps": true,
-    "Configuration": true,
-    "ConfigurationComparisonReferenceCriteria": {
-      "Controller": "https://reference.controller",
-      "Application": "ReferenceApp"
-    },
-    "Events": true,
-    "Snapshots": true,
-    "SnapshotSelectionCriteria": {
-      "Tiers": [],
-      "TierType": {
-        "All": true,
-        "APP_AGENT": false,
-        "DOT_NET_APP_AGENT": false,
-        "NATIVE_APP_AGENT": false,
-        "NATIVE_DYNAMIC": false,
-        "NATIVE_SDK": false,
-        "NATIVE_WEB_SERVER": false,
-        "NODEJS_APP_AGENT": false,
-        "PHP_APP_AGENT": false,
-        "PYTHON_APP_AGENT": false,
-        "RUBY_APP_AGENT": false
-      },
-      "BusinessTransactions": [],
-      "BusinessTransactionType": {
-        "All": true,
-        "SERVLET": false,
-        "HTTP": false,
-        "WEB_SERVICE": false,
-        "POJO": false,
-        "JMS": false,
-        "EJB": false,
-        "SPRING_BEAN": false,
-        "STRUTS_ACTION": false,
-        "ASP_DOTNET": false,
-        "ASP_DOTNET_WEB_SERVICE": false,
-        "DOTNET_REMOTING": false,
-        "WCF": false,
-        "DOTNET_JMS": false,
-        "POCO": false,
-        "PHP_WEB": false,
-        "PHP_MVC": false,
-        "PHP_DRUPAL": false,
-        "PHP_WORDPRESS": false,
-        "PHP_CLI": false,
-        "PHP_WEB_SERVICE": false,
-        "NODEJS_WEB": false,
-        "NATIVE": false,
-        "WEB": false,
-        "PYTHON_WEB": false,
-        "RUBY_WEB": false,
-        "RUBY_RAILS": false,
-        "BINARY_REMOTING": false
-      },
-      "UserExperience": {
-        "Normal": true,
-        "Slow": true,
-        "VerySlow": true,
-        "Stall": true,
-        "Error": true
-      },
-      "SnapshotType": {
-        "Full": true,
-        "Partial": true,
-        "None": true
-      }
-    },
-    "UsersGroupsRolesPermissions": true
-  },
-  "Output": {
-    "DetectedEntities": true,
-    "EntityMetrics": true,
-    "EntityMetricGraphs": true,
-    "EntityDetails": true,
-    "Events": true,
-    "Configuration": true,
-    "Snapshots": true,
-    "FlameGraphs": true,
-    "UsersGroupsRolesPermissions": true
-  }
 }

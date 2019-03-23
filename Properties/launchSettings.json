@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "--jobfile \"D:\\AppD.Dexter.Out\\AllScripts\\allscripts.crash.pe1.json\" -o D:\\AppD.Dexter.Out\\AllScripts"
+      "commandLineArgs": "--jobfile \"F:\\AppD.Dexter.Out\\cisco\\cisco.bearer.json\" --outputfolder F:\\AppD.Dexter.Out\\cisco"
     }
   }
 }
