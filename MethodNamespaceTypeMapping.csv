@@ -35,14 +35,19 @@ com.fasterxml.jackson.annotation,Jackson Annotation,C2961D,E3B022
 com.fasterxml.jackson.core,Jackson Core,C2961D,E3B022
 com.fasterxml.jackson.databind,Jackson DataBind,C2961D,E3B022
 com.google,Google Core,FBBC05,FEEDBE
+com.guidewire,Guidewire,4382B0,4A93C7
 com.ibm,IBM Core,00BFA9,00E5DB
+com.ibatis,Ibatis ORM,00BFA9,00E5DB
+com.inet.ora,Inet Oracle JDBC Driver,,
 com.informix,Informix,00BFA9,00E5DB
+com.farmers,Farmers Insurance,624BD1,7056F0
 com.matrixone,3DS MatrixOne,,
 com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling,,
 com.microsoft,Microsoft,00A1F1,A7D5EC
 com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,A7D5EC
 com.mongodb,Mongo DB,,
 com.mysql,MySQL Driver,,
+com.newrelic,NewRelic,7668CF,C4BEE9
 com.nimbusds,NimbusDS,,
 com.opensymphony,OpenSymphony J2EE,,
 com.oracle,Oracle Core,,
@@ -61,12 +66,17 @@ com.teradata,Teradata Database,,
 com.terracotta,Terracota DB,,
 com.terracottatech,Terracota DB,,
 com.thoughtworks,ThoughWorks,,
+com.cisco.webex,Cisco Webex,418521,4B9E24
+com.webex,Cisco Webex,418521,4B9E24
 com.weblogic,WebLogic Core,,
 com.webmethods,Software AG webMethods,,
 Corillian,Corillian/Voyager Banking,,
 Dapper,Dapper,,
+edge.,Guidewire,4382B0,4A93C7
+entity.,Guidewire,4382B0,4A93C7
 Fiserv,FiServ Financial,,
 Glass.Mapper,Sitecore CMS,00BFA9,00E5DB
+gw.,Guidewire,4382B0,4A93C7
 freemarker,Apache FreeMarker,FD6DEE,F5CCE7
 Ionic.Crc,Ionic,,
 Ionic.Zlib,Ionic,,

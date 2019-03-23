@@ -1,8 +1,10 @@
 ﻿using AppDynamics.Dexter.ReportObjects;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -12,7 +14,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // APM links
         internal const string DEEPLINK_CONTROLLER = @"{0}/controller/#/location=AD_HOME_OVERVIEW&timeRange={1}";
-        internal const string DEEPLINK_APPLICATION = @"{0}/controller/#/location=APP_DASHBOARD&timeRange={2}&application={1}&dashboardMode=force";
+        internal const string DEEPLINK_APM_APPLICATION = @"{0}/controller/#/location=APP_DASHBOARD&timeRange={2}&application={1}&dashboardMode=force";
         internal const string DEEPLINK_TIER = @"{0}/controller/#/location=APP_COMPONENT_MANAGER&timeRange={3}&application={1}&component={2}&dashboardMode=force";
         internal const string DEEPLINK_NODE = @"{0}/controller/#/location=APP_NODE_MANAGER&timeRange={3}&application={1}&node={2}&dashboardMode=force";
         internal const string DEEPLINK_BACKEND = @"{0}/controller/#/location=APP_BACKEND_DASHBOARD&timeRange={3}&application={1}&backendDashboard={2}&dashboardMode=force";
@@ -21,14 +23,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string DEEPLINK_ERROR = @"{0}/controller/#/location=APP_ERROR_DASHBOARD&timeRange={3}&application={1}&error={2}";
         internal const string DEEPLINK_INFORMATION_POINT = @"{0}/controller/#/location=APP_INFOPOINT_DASHBOARD&timeRange={3}&application={1}&infoPoint={2}";
         internal const string DEEPLINK_APPLICATION_MOBILE = @"{0}/controller/#/location=EUM_MOBILE_MAIN_DASHBOARD&timeRange={3}&application={1}&mobileApp={2}";
-        internal const string DEEPLINK_HEALTH_RULE = @"{0}/controller/#/location=ALERT_RESPOND_HEALTH_RULES&timeRange={3}&application={1}";
         internal const string DEEPLINK_INCIDENT = @"{0}/controller/#/location=APP_INCIDENT_DETAIL_MODAL&timeRange={4}&application={1}&incident={2}&incidentTime={3}";
         internal const string DEEPLINK_SNAPSHOT_OVERVIEW = @"{0}/controller/#/location=APP_SNAPSHOT_VIEWER&rsdTime={3}&application={1}&requestGUID={2}&tab=overview&dashboardMode=force";
         internal const string DEEPLINK_SNAPSHOT_SEGMENT = @"{0}/controller/#/location=APP_SNAPSHOT_VIEWER&rsdTime={4}&application={1}&requestGUID={2}&tab={3}&dashboardMode=force";
 
         // SIM links
-        internal const string DEEPLINK_SIMAPPLICATION = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_LIST&timeRange={1}";
-        internal const string DEEPLINK_SIMMACHINE = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_OVERVIEW&timeRange={2}&machineId={1}";
+        internal const string DEEPLINK_SIM_APPLICATION = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_LIST&timeRange={1}";
+        internal const string DEEPLINK_SIM_MACHINE = @"{0}/controller/#/location=SERVER_MONITORING_MACHINE_OVERVIEW&timeRange={2}&machineId={1}";
 
         internal const string DEEPLINK_METRIC = @"{0}/controller/#/location=METRIC_BROWSER&timeRange={3}&application={1}&metrics={2}";
         internal const string DEEPLINK_TIMERANGE_LAST_15_MINUTES = "last_15_minutes.BEFORE_NOW.-1.-1.15";
@@ -38,9 +39,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string DEEPLINK_METRIC_NODE_TARGET_METRIC_ID = "APPLICATION_COMPONENT_NODE.{0}.{1}";
 
         // DB Links
-        internal const string DEEPLINK_DBAPPLICATION = @"{0}/controller/#/location=DB_MONITORING_SERVER_LIST&timeRange={1}";
-        internal const string DEEPLINK_DBCOLLECTOR = @"{0}/controller/#/location=DB_MONITORING_SERVER_DASHBOARD&timeRange={2}&databaseId={1}";
-        internal const string DEEPLINK_DBQUERY = @"{0}/controller/#/location=DB_MONITORING_QUERY_DETAILS&timeRange={3}&databaseId={1}&&queryHashCode={2}";
+        internal const string DEEPLINK_DB_APPLICATION = @"{0}/controller/#/location=DB_MONITORING_SERVER_LIST&timeRange={1}";
+        internal const string DEEPLINK_DB_COLLECTOR = @"{0}/controller/#/location=DB_MONITORING_SERVER_DASHBOARD&timeRange={2}&databaseId={1}";
+        internal const string DEEPLINK_DB_QUERY = @"{0}/controller/#/location=DB_MONITORING_QUERY_DETAILS&timeRange={3}&databaseId={1}&&queryHashCode={2}";
+
+        // WEB Links
+        internal const string DEEPLINK_WEB_APPLICATION = @"{0}/controller/#/location=EUM_WEB_MAIN_DASHBOARD&timeRange={2}&application={1}";
+        internal const string DEEPLINK_WEB_PAGE = @"{0}/controller/#/location=EUM_PAGE_DASHBOARD&timeRange={3}&application={1}&addId={2}";
+
+        // MOBILE Links
+        internal const string DEEPLINK_MOBILE_APPLICATION = @"{0}/controller/#/location=EUM_MOBILE_MAIN_DASHBOARD&timeRange={3}&application={1}&mobileApp={2}";
+        internal const string DEEPLINK_NETWORK_REQUEST = @"{0}/controller/#/location=EUM_REQUEST_DASHBOARD&timeRange={4}&application={1}&mobileApp={2}&addId={3}";
+
+        // BIQ Links
+        internal const string DEEPLINK_BIQ_APPLICATION = @"{0}/controller/#/location=ANALYTICS_SEARCH_LIST&timeRange={1}";
+        internal const string DEEPLINK_BIQ_SEARCH = @"{0}/controller/#/location=ANALYTICS_ADQL_SEARCH&timeRange={2}&searchId={1}";
+
+        // Health Rule links
+        internal const string DEEPLINK_HEALTH_RULE = @"{0}/controller/#/location=ALERT_RESPOND_HEALTH_RULES&timeRange={3}&application={1}";
+        internal const string DEEPLINK_HEALTH_RULES = @"{0}/controller/#/location=ALERT_RESPOND_HEALTH_RULES&timeRange={2}&application={1}";
+        internal const string DEEPLINK_POLICIES_RULES = @"{0}/controller/#/location=ALERT_RESPOND_POLICIES&timeRange={2}&application={1}";
+        internal const string DEEPLINK_ACTIONS_RULES = @"{0}/controller/#/location=ALERT_RESPOND_ACTIONS&timeRange={2}&application={1}";
+
+        // Dashboard links
+        internal const string DEEPLINK_DASHBOARD = @"{0}/controller/#/location=CDASHBOARD_DETAIL&mode=MODE_DASHBOARD&dashboard={1}&timeRange={2}";
 
         #endregion
 
@@ -63,8 +85,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {ENTITY_TYPE_FLOWMAP_TIER, APMTier.ENTITY_TYPE},
             {ENTITY_TYPE_FLOWMAP_NODE, APMNode.ENTITY_TYPE},
             {ENTITY_TYPE_FLOWMAP_MACHINE, "Machine"},
-            {ENTITY_TYPE_FLOWMAP_BUSINESS_TRANSACTION, BusinessTransaction.ENTITY_TYPE},
-            {ENTITY_TYPE_FLOWMAP_BACKEND, Backend.ENTITY_TYPE },
+            {ENTITY_TYPE_FLOWMAP_BUSINESS_TRANSACTION, APMBusinessTransaction.ENTITY_TYPE},
+            {ENTITY_TYPE_FLOWMAP_BACKEND, APMBackend.ENTITY_TYPE },
             {ENTITY_TYPE_FLOWMAP_HEALTH_RULE, "Health Rule"}
         };
 
@@ -93,13 +115,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
             if (entityRow is APMApplication)
             {
                 entityRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
-                entityRow.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entityRow.Controller, entityRow.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entityRow.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entityRow.Controller, entityRow.ApplicationID, DEEPLINK_THIS_TIMERANGE);
             }
             else if (entityRow is APMTier)
             {
                 APMTier entity = (APMTier)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.TierID;
@@ -108,57 +130,57 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMNode entity = (APMNode)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.NodeLink = String.Format(DEEPLINK_NODE, entity.Controller, entity.ApplicationID, entity.NodeID, DEEPLINK_THIS_TIMERANGE);
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_NODE_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.NodeID;
             }
-            else if (entityRow is Backend)
+            else if (entityRow is APMBackend)
             {
-                Backend entity = (Backend)entityRow;
+                APMBackend entity = (APMBackend)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.BackendLink = String.Format(DEEPLINK_BACKEND, entity.Controller, entity.ApplicationID, entity.BackendID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is BusinessTransaction)
+            else if (entityRow is APMBusinessTransaction)
             {
-                BusinessTransaction entity = (BusinessTransaction)entityRow;
+                APMBusinessTransaction entity = (APMBusinessTransaction)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.BTLink = String.Format(DEEPLINK_BUSINESS_TRANSACTION, entity.Controller, entity.ApplicationID, entity.BTID, DEEPLINK_THIS_TIMERANGE);
                 deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                 entityIdForMetricBrowser = entity.TierID;
             }
-            else if (entityRow is ServiceEndpoint)
+            else if (entityRow is APMServiceEndpoint)
             {
-                ServiceEndpoint entity = (ServiceEndpoint)entityRow;
+                APMServiceEndpoint entity = (APMServiceEndpoint)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.SEPLink = String.Format(DEEPLINK_SERVICE_ENDPOINT, entity.Controller, entity.ApplicationID, entity.TierID, entity.SEPID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is Error)
+            else if (entityRow is APMError)
             {
-                Error entity = (Error)entityRow;
+                APMError entity = (APMError)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.TierLink = String.Format(DEEPLINK_TIER, entity.Controller, entity.ApplicationID, entity.TierID, DEEPLINK_THIS_TIMERANGE);
                 entity.ErrorLink = String.Format(DEEPLINK_ERROR, entity.Controller, entity.ApplicationID, entity.ErrorID, DEEPLINK_THIS_TIMERANGE);
             }
-            else if (entityRow is InformationPoint)
+            else if (entityRow is APMInformationPoint)
             {
-                InformationPoint entity = (InformationPoint)entityRow;
+                APMInformationPoint entity = (APMInformationPoint)entityRow;
                 entity.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entity.Controller, DEEPLINK_THIS_TIMERANGE);
-                entity.ApplicationLink = String.Format(DEEPLINK_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
+                entity.ApplicationLink = String.Format(DEEPLINK_APM_APPLICATION, entity.Controller, entity.ApplicationID, DEEPLINK_THIS_TIMERANGE);
                 entity.IPLink = String.Format(DEEPLINK_INFORMATION_POINT, entity.Controller, entity.ApplicationID, entity.IPID, DEEPLINK_THIS_TIMERANGE);
             }
 
             if (entityRow.MetricsIDs != null && entityRow.MetricsIDs.Count > 0)
             {
-                StringBuilder sb = new StringBuilder(128);
-                foreach (int metricID in entityRow.MetricsIDs)
+                StringBuilder sb = new StringBuilder(256);
+                foreach (long metricID in entityRow.MetricsIDs)
                 {
                     sb.Append(String.Format(deepLinkMetricTemplateInMetricBrowser, entityIdForMetricBrowser, metricID));
                     sb.Append(",");
@@ -355,5 +377,186 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
+        internal static int getIntegerValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null)
+            {
+                return 0;
+            }
+            else if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return 0;
+            }
+            else
+            {
+                int value;
+                if (Int32.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    double value1;
+                    if (Double.TryParse(xmlNode.InnerText, out value1) == true)
+                    {
+                        return Convert.ToInt32(Math.Floor(value1));
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        internal static long getLongValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null)
+            {
+                return 0;
+            }
+            else if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return 0;
+            }
+            else
+            {
+                long value;
+                if (Int64.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    double value1;
+                    if (Double.TryParse(xmlNode.InnerText, out value1) == true)
+                    {
+                        return Convert.ToInt64(Math.Floor(value1));
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+            }
+        }
+
+        internal static bool getBoolValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null)
+            {
+                return false;
+            }
+            else if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return false;
+            }
+            else
+            {
+                bool value;
+                if (Boolean.TryParse(xmlNode.InnerText, out value) == true)
+                {
+                    return value;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal static string getStringValueFromXmlNode(XmlNode xmlNode)
+        {
+            if (xmlNode == null)
+            {
+                return String.Empty;
+            }
+            else if (((XmlElement)xmlNode).IsEmpty == true)
+            {
+                return String.Empty;
+            }
+            else
+            {
+                return xmlNode.InnerText;
+            }
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/1123718/format-xml-string-to-print-friendly-xml-string
+        /// </summary>
+        /// <param name="XML"></param>
+        /// <returns></returns>
+        internal static string makeXMLFormattedAndIndented(string XML)
+        {
+            string Result = "";
+
+            MemoryStream MS = new MemoryStream();
+            XmlTextWriter W = new XmlTextWriter(MS, Encoding.Unicode);
+            XmlDocument D = new XmlDocument();
+
+            try
+            {
+                // Load the XmlDocument with the XML.
+                D.LoadXml(XML);
+
+                W.Formatting = System.Xml.Formatting.Indented;
+
+                // Write the XML into a formatting XmlTextWriter
+                D.WriteContentTo(W);
+                W.Flush();
+                MS.Flush();
+
+                // Have to rewind the MemoryStream in order to read
+                // its contents.
+                MS.Position = 0;
+
+                // Read MemoryStream contents into a StreamReader.
+                StreamReader SR = new StreamReader(MS);
+
+                // Extract the text from the StreamReader.
+                String FormattedXML = SR.ReadToEnd();
+
+                Result = FormattedXML;
+            }
+            catch (XmlException)
+            {
+            }
+
+            MS.Close();
+            W.Close();
+
+            return Result;
+        }
+
+        internal static string makeXMLFormattedAndIndented(XmlNode xmlNode)
+        {
+            if (xmlNode != null)
+            {
+                return makeXMLFormattedAndIndented(xmlNode.OuterXml);
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
+
+        internal static string makeXMLFormattedAndIndented(XmlNodeList xmlNodeList)
+        {
+            if (xmlNodeList.Count > 0)
+            {
+                StringBuilder sb = new StringBuilder(128 * xmlNodeList.Count);
+                foreach (XmlNode xmlNode in xmlNodeList)
+                {
+                    sb.Append(makeXMLFormattedAndIndented(xmlNode));
+                    sb.AppendLine();
+                }
+                sb.Remove(sb.Length - 1, 1);
+                return sb.ToString();
+            }
+            else
+            {
+                return String.Empty;
+            }
+        }
     }
 }

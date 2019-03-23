@@ -1,9 +1,9 @@
-﻿using NLog;
+﻿using AppDynamics.Dexter.ProcessingSteps;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using AppDynamics.Dexter.ProcessingSteps;
 
 namespace AppDynamics.Dexter
 {
@@ -14,42 +14,90 @@ namespace AppDynamics.Dexter
 
         private static List<JobStatus> jobSteps = new List<JobStatus>
             {
-                // Get data
-                JobStatus.ExtractControllerApplicationsAndEntities,
-                JobStatus.ExtractControllerSIMApplicationsAndEntities,
-                JobStatus.ExtractControllerDBApplicationsAndEntities,
-                JobStatus.ExtractControllerAndApplicationConfiguration,
-                JobStatus.ExtractUsersGroupsRolesAndPermissions,
-                JobStatus.ExtractApplicationAndEntityMetrics,
-                JobStatus.ExtractApplicationAndEntityFlowmaps,
-                JobStatus.ExtractEventsAndHealthRuleViolations,
-                JobStatus.ExtractSnapshots,
+                // Extract data
+                JobStatus.ExtractControllerVersionAndApplications,
+                JobStatus.ExtractControllerConfiguration,
+                JobStatus.ExtractControllerUsersGroupsRolesAndPermissions,
+
+                JobStatus.ExtractDashboards,
+                //JobStatus.ExtractLicenses,
+
+                JobStatus.ExtractControllerAuditEventsAndNotifications,
+                JobStatus.ExtractApplicationEventsAndHealthRuleViolations,
+
+                JobStatus.ExtractApplicationHealthRulesAlertsPolicies,
+                JobStatus.ExtractAPMConfiguration,
+                JobStatus.ExtractDBConfiguration,
+                JobStatus.ExtractWEBConfiguration,
+                JobStatus.ExtractMOBILEConfiguration,
+                //JobStatus.ExtractBIQConfiguration,
+
+                JobStatus.ExtractAPMEntities,
+                JobStatus.ExtractSIMEntities,
+                JobStatus.ExtractDBEntities,
+                JobStatus.ExtractWEBEntities,
+                JobStatus.ExtractMOBILEEntities,
+                JobStatus.ExtractBIQEntities,
+
+                JobStatus.ExtractAPMMetrics,
+                JobStatus.ExtractAPMFlowmaps,
+                JobStatus.ExtractAPMSnapshots,
 
                 // Index data
-                JobStatus.IndexControllerApplicationsAndEntities,
-                JobStatus.IndexControllerSIMApplicationsAndEntities,
-                JobStatus.IndexControllerDBApplicationsAndEntities,
-                JobStatus.IndexControllerAndApplicationConfiguration,
-                JobStatus.IndexApplicationConfigurationComparison,
-                JobStatus.IndexUsersGroupsRolesAndPermissions,
-                JobStatus.IndexApplicationAndEntityMetrics,
-                JobStatus.IndexApplicationAndEntityFlowmaps,
-                JobStatus.IndexEventsAndHealthRuleViolations,
-                JobStatus.IndexSnapshots,
+                JobStatus.IndexControllerVersionAndApplications,
+                JobStatus.IndexControllerConfiguration,
+                JobStatus.IndexControllerUsersGroupsRolesAndPermissions,
+
+                JobStatus.IndexDashboards,
+                //JobStatus.IndexLicenses,
+
+                JobStatus.IndexControllerAuditEventsAndNotifications,
+                JobStatus.IndexApplicationEventsAndHealthRuleViolations,
+
+                JobStatus.IndexAPMEntities,
+                JobStatus.IndexSIMEntities,
+                JobStatus.IndexDBEntities,
+                JobStatus.IndexWEBEntities ,
+                JobStatus.IndexMOBILEEntities,
+                JobStatus.IndexBIQEntities,
+
+                JobStatus.IndexApplicationHealthRulesAlertsPolicies,
+                JobStatus.IndexAPMConfiguration,
+                JobStatus.IndexDBConfiguration,
+                JobStatus.IndexWEBConfiguration,
+                JobStatus.IndexMOBILEConfiguration,
+                //JobStatus.IndexBIQConfiguration,
+
+                JobStatus.IndexApplicationConfigurationDifferences,
+
+                JobStatus.IndexAPMMetrics,
+                JobStatus.IndexAPMFlowmaps,
+                JobStatus.IndexAPMSnapshots,
 
                 // Report data
-                JobStatus.ReportControlerApplicationsAndEntities,
-                JobStatus.ReportControlerSIMApplicationsAndEntities,
-                JobStatus.ReportControlerDBApplicationsAndEntities,
                 JobStatus.ReportControllerAndApplicationConfiguration,
-                JobStatus.ReportUsersGroupsRolesAndPermissions,
-                JobStatus.ReportApplicationAndEntityMetrics,
-                JobStatus.ReportApplicationAndEntityMetricGraphs,
-                JobStatus.ReportEventsAndHealthRuleViolations,
-                JobStatus.ReportSnapshots,
-                JobStatus.ReportSnapshotsMethodCallLines,
-                JobStatus.ReportIndividualApplicationAndEntityDetails,
-                JobStatus.ReportFlameGraphs,
+                JobStatus.ReportControllerUsersGroupsRolesAndPermissions,
+
+                JobStatus.ReportDashboards,
+                //JobStatus.ReportLicenses,
+
+                JobStatus.ReportApplicationEventsAndHealthRuleViolations,
+
+                JobStatus.ReportAPMEntities,
+                JobStatus.ReportSIMEntities,
+                JobStatus.ReportDBEntities,
+                JobStatus.ReportWEBEntities,
+                JobStatus.ReportMOBILEEntities,
+                JobStatus.ReportBIQEntities,
+
+                JobStatus.ReportAPMMetrics,
+                JobStatus.ReportAPMMetricGraphs,
+
+                JobStatus.ReportAPMSnapshots,
+                JobStatus.ReportAPMSnapshotsMethodCallLines,
+                JobStatus.ReportAPMFlameGraphs,
+
+                JobStatus.ReportAPMEntityDetails,
 
                 // Done 
                 JobStatus.Done,
@@ -136,6 +184,8 @@ namespace AppDynamics.Dexter
                 {
                     if (jobStep.Execute(programOptions, jobConfiguration) == false)
                     {
+                        loggerConsole.Warn("If you need support, please check how to get it at https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support");
+
                         jobConfiguration.Status = JobStatus.Error;
                     }
                 }
@@ -151,6 +201,11 @@ namespace AppDynamics.Dexter
 
                     return;
                 }
+
+                // Do a forced GC Collection after all the work in a step. 
+                // Probably unnecessary, but to counteract the ulimit handle consumption on non-Windows machines
+                GC.Collect();
+
             }
         }
 
@@ -158,100 +213,155 @@ namespace AppDynamics.Dexter
         {
             switch (jobStatus)
             {
-                case JobStatus.ExtractControllerApplicationsAndEntities:
-                    return new ExtractControllerApplicationsAndEntities();
+                // Extract Data
+                case JobStatus.ExtractControllerVersionAndApplications:
+                    return new ExtractControllerVersionAndApplications();
+                case JobStatus.ExtractControllerConfiguration:
+                    return new ExtractControllerConfiguration();
+                case JobStatus.ExtractControllerUsersGroupsRolesAndPermissions:
+                    return new ExtractControllerUsersGroupsRolesAndPermissions();
 
-                case JobStatus.ExtractControllerSIMApplicationsAndEntities:
-                    return new ExtractControllerSIMApplicationsAndEntities();
+                case JobStatus.ExtractDashboards:
+                    return new ExtractDashboards();
+                case JobStatus.ExtractLicenses:
+                    return new ExtractLicenses();
 
-                case JobStatus.ExtractControllerDBApplicationsAndEntities:
-                    return new ExtractControllerDBApplicationsAndEntities();
+                case JobStatus.ExtractControllerAuditEventsAndNotifications:
+                    return new ExtractControllerAuditEventsAndNotifications();
+                case JobStatus.ExtractApplicationEventsAndHealthRuleViolations:
+                    return new ExtractApplicationEventsAndHealthRuleViolations();
 
-                case JobStatus.ExtractControllerAndApplicationConfiguration:
-                    return new ExtractControllerAndApplicationConfiguration();
+                case JobStatus.ExtractApplicationHealthRulesAlertsPolicies:
+                    return new ExtractApplicationHealthRulesAlertsPolicies();
+                case JobStatus.ExtractAPMConfiguration:
+                    return new ExtractAPMConfiguration();
+                case JobStatus.ExtractDBConfiguration:
+                    return new ExtractDBConfiguration();
+                case JobStatus.ExtractWEBConfiguration:
+                    return new ExtractWEBConfiguration();
+                case JobStatus.ExtractMOBILEConfiguration:
+                    return new ExtractMOBILEConfiguration();
+                case JobStatus.ExtractBIQConfiguration:
+                    return new ExtractBIQConfiguration();
 
-                case JobStatus.ExtractUsersGroupsRolesAndPermissions:
-                    return new ExtractUsersGroupsRolesAndPermissions();
+                case JobStatus.ExtractAPMEntities:
+                    return new ExtractAPMEntities();
+                case JobStatus.ExtractSIMEntities:
+                    return new ExtractSIMEntities();
+                case JobStatus.ExtractDBEntities:
+                    return new ExtractDBEntities();
+                case JobStatus.ExtractWEBEntities:
+                    return new ExtractWEBEntities();
+                case JobStatus.ExtractMOBILEEntities:
+                    return new ExtractMOBILEEntities();
+                case JobStatus.ExtractBIQEntities:
+                    return new ExtractBIQEntities();
 
-                case JobStatus.ExtractApplicationAndEntityMetrics:
-                    return new ExtractApplicationAndEntityMetrics();
-
-                case JobStatus.ExtractApplicationAndEntityFlowmaps:
-                    return new ExtractApplicationAndEntityFlowmaps();
-
-                case JobStatus.ExtractSnapshots:
-                    return new ExtractSnapshots();
-
-                case JobStatus.ExtractEventsAndHealthRuleViolations:
-                    return new ExtractEventsAndHealthRuleViolations();
-
-
-                case JobStatus.IndexControllerApplicationsAndEntities:
-                    return new IndexControllerApplicationsAndEntities();
-
-                case JobStatus.IndexControllerSIMApplicationsAndEntities:
-                    return new IndexControllerSIMApplicationsAndEntities();
-
-                case JobStatus.IndexControllerDBApplicationsAndEntities:
-                    return new IndexControllerDBApplicationsAndEntities();
-
-                case JobStatus.IndexControllerAndApplicationConfiguration:
-                    return new IndexControllerAndApplicationConfiguration();
-
-                case JobStatus.IndexApplicationConfigurationComparison:
-                    return new IndexApplicationConfigurationComparison();
-
-                case JobStatus.IndexUsersGroupsRolesAndPermissions:
-                    return new IndexUsersGroupsRolesAndPermissions();
-
-                case JobStatus.IndexApplicationAndEntityMetrics:
-                    return new IndexApplicationAndEntityMetrics();
-
-                case JobStatus.IndexApplicationAndEntityFlowmaps:
-                    return new IndexApplicationAndEntityFlowmaps();
-
-                case JobStatus.IndexEventsAndHealthRuleViolations:
-                    return new IndexEventsAndHealthRuleViolations();
-
-                case JobStatus.IndexSnapshots:
-                    return new IndexSnapshots();
+                case JobStatus.ExtractAPMMetrics:
+                    return new ExtractAPMMetrics();
+                case JobStatus.ExtractAPMFlowmaps:
+                    return new ExtractAPMFlowmaps();
+                case JobStatus.ExtractAPMSnapshots:
+                    return new ExtractAPMSnapshots();
 
 
-                case JobStatus.ReportControlerApplicationsAndEntities:
-                    return new ReportControlerApplicationsAndEntities();
+                // Index data
+                case JobStatus.IndexControllerVersionAndApplications:
+                    return new IndexControllerVersionAndApplications();
+                case JobStatus.IndexControllerConfiguration:
+                    return new IndexControllerConfiguration();
+                case JobStatus.IndexControllerUsersGroupsRolesAndPermissions:
+                    return new IndexControllerUsersGroupsRolesAndPermissions();
 
-                case JobStatus.ReportControlerSIMApplicationsAndEntities:
-                    return new ReportControlerSIMApplicationsAndEntities();
+                case JobStatus.IndexDashboards:
+                    return new IndexDashboards();
+                case JobStatus.IndexLicenses:
+                    return new IndexLicenses();
 
-                case JobStatus.ReportControlerDBApplicationsAndEntities:
-                    return new ReportControlerDBApplicationsAndEntities();
+                case JobStatus.IndexControllerAuditEventsAndNotifications:
+                    return new IndexControllerAuditEventsAndNotifications();
+                case JobStatus.IndexApplicationEventsAndHealthRuleViolations:
+                    return new IndexApplicationEventsAndHealthRuleViolations();
 
+                case JobStatus.IndexAPMEntities:
+                    return new IndexAPMEntities();
+                case JobStatus.IndexSIMEntities:
+                    return new IndexSIMEntities();
+                case JobStatus.IndexDBEntities:
+                    return new IndexDBEntities();
+                case JobStatus.IndexWEBEntities:
+                    return new IndexWEBEntities();
+                case JobStatus.IndexMOBILEEntities:
+                    return new IndexMOBILEEntities();
+                case JobStatus.IndexBIQEntities:
+                    return new IndexBIQEntities();
+
+                case JobStatus.IndexApplicationHealthRulesAlertsPolicies:
+                    return new IndexApplicationHealthRulesAlertsPolicies();
+                case JobStatus.IndexAPMConfiguration:
+                    return new IndexAPMConfiguration();
+                case JobStatus.IndexDBConfiguration:
+                    return new IndexDBConfiguration();
+                case JobStatus.IndexWEBConfiguration:
+                    return new IndexWEBConfiguration();
+                case JobStatus.IndexMOBILEConfiguration:
+                    return new IndexMOBILEConfiguration();
+                case JobStatus.IndexBIQConfiguration:
+                    return new IndexBIQConfiguration();
+
+                case JobStatus.IndexApplicationConfigurationDifferences:
+                    return new IndexApplicationConfigurationDifferences();
+
+                case JobStatus.IndexAPMMetrics:
+                    return new IndexAPMMetrics();
+                case JobStatus.IndexAPMFlowmaps:
+                    return new IndexAPMFlowmaps();
+                case JobStatus.IndexAPMSnapshots:
+                    return new IndexAPMSnapshots();
+
+
+                // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:
                     return new ReportControllerAndApplicationConfiguration();
+                case JobStatus.ReportControllerUsersGroupsRolesAndPermissions:
+                    return new ReportControllerUsersGroupsRolesAndPermissions();
 
-                case JobStatus.ReportUsersGroupsRolesAndPermissions:
-                    return new ReportUsersGroupsRolesAndPermissions();
+                case JobStatus.ReportDashboards:
+                    return new ReportDashboards();
+                case JobStatus.ReportLicenses:
+                    return new ReportLicenses();
 
-                case JobStatus.ReportEventsAndHealthRuleViolations:
-                    return new ReportEventsAndHealthRuleViolations();
+                case JobStatus.ReportApplicationEventsAndHealthRuleViolations:
+                    return new ReportApplicationEventsAndHealthRuleViolations();
 
-                case JobStatus.ReportApplicationAndEntityMetrics:
-                    return new ReportApplicationAndEntityMetrics();
+                case JobStatus.ReportAPMEntities:
+                    return new ReportAPMEntities();
+                case JobStatus.ReportSIMEntities:
+                    return new ReportSIMEntities();
+                case JobStatus.ReportDBEntities:
+                    return new ReportDBEntities();
+                case JobStatus.ReportWEBEntities:
+                    return new ReportWEBEntities();
+                case JobStatus.ReportMOBILEEntities:
+                    return new ReportMOBILEEntities();
+                case JobStatus.ReportBIQEntities:
+                    return new ReportBIQEntities();
 
-                case JobStatus.ReportApplicationAndEntityMetricGraphs:
-                    return new ReportApplicationAndEntityMetricGraphs();
+                case JobStatus.ReportAPMMetrics:
+                    return new ReportAPMMetrics();
+                case JobStatus.ReportAPMMetricGraphs:
+                    return new ReportAPMMetricGraphs();
 
-                case JobStatus.ReportSnapshots:
-                    return new ReportSnapshots();
+                case JobStatus.ReportAPMSnapshots:
+                    return new ReportAPMSnapshots();
+                case JobStatus.ReportAPMSnapshotsMethodCallLines:
+                    return new ReportAPMSnapshotsMethodCallLines();
+                case JobStatus.ReportAPMFlameGraphs:
+                    return new ReportAPMFlameGraphs();
 
-                case JobStatus.ReportSnapshotsMethodCallLines:
-                    return new ReportSnapshotsMethodCallLines();
+                case JobStatus.ReportAPMEntityDetails:
+                    return new ReportAPMEntityDetails();
 
-                case JobStatus.ReportIndividualApplicationAndEntityDetails:
-                    return new ReportIndividualApplicationAndEntityDetails();
-
-                case JobStatus.ReportFlameGraphs:
-                    return new ReportFlameGraphs();
 
                 default:
                     break;

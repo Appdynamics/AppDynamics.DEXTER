@@ -13,10 +13,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for Common Reports sheets
 
-        internal const string REPORT_SHEET_PARAMETERS = "1.Parameters";
-        internal const string REPORT_SHEET_TOC = "2.Contents";
+        internal const string SHEET_PARAMETERS = "1.Parameters";
+        internal const string SHEET_TOC = "2.Contents";
 
-        internal const string REPORT_TABLE_PARAMETERS_TARGETS = "t_InputTargets";
+        internal const string TABLE_PARAMETERS_TARGETS = "t_InputTargets";
+        internal const string TABLE_TOC = "t_TOC";
 
         #endregion
 
@@ -149,14 +150,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
-        #region Helper function to render Parameters sheet
+        #region Helper function to render sheets
 
         internal static void fillReportParametersSheet(ExcelWorksheet sheet, JobConfiguration jobConfiguration, string reportName)
         {
 
             int l = 1;
             sheet.Cells[l, 1].Value = "Table of Contents";
-            sheet.Cells[l, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", REPORT_SHEET_TOC);
+            sheet.Cells[l, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
             sheet.Cells[l, 2].StyleName = "HyperLinkStyle";
             l++; l++;
             sheet.Cells[l, 1].Value = reportName;
@@ -170,6 +171,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[l, 1].Value = "Local";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.From.ToLocalTime().ToString("G");
             sheet.Cells[l, 3].Value = jobConfiguration.Input.TimeRange.To.ToLocalTime().ToString("G");
+            sheet.Cells[l, 4].Value = TimeZoneInfo.Local.DisplayName;
             l++;
             sheet.Cells[l, 1].Value = "UTC";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.From.ToString("G");
@@ -177,6 +179,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
             l++;
             sheet.Cells[l, 1].Value = "Number of Hours Intervals";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.HourlyTimeRanges.Count;
+            l++;
+            sheet.Cells[l, 1].Value = "Export Entities";
+            sheet.Cells[l, 2].Value = jobConfiguration.Input.DetectedEntities;
             l++;
             sheet.Cells[l, 1].Value = "Export Metrics";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.Metrics;
@@ -193,6 +198,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[l, 1].Value = "Export Events";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.Events;
             l++;
+            sheet.Cells[l, 1].Value = "Export RBAC";
+            sheet.Cells[l, 2].Value = jobConfiguration.Input.UsersGroupsRolesPermissions;
+            l++;
+            sheet.Cells[l, 1].Value = "Export Dashboards";
+            sheet.Cells[l, 2].Value = jobConfiguration.Input.Dashboards;
+            l++; l++;
             sheet.Cells[l, 1].Value = "Targets:";
             l++; l++;
             ExcelRangeBase range = sheet.Cells[l, 1].LoadFromCollection(from jobTarget in jobConfiguration.Target
@@ -204,7 +215,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                                             ApplicationID = jobTarget.ApplicationID,
                                                                             ApplicationType = jobTarget.Type
                                                                         }, true);
-            ExcelTable table = sheet.Tables.Add(range, REPORT_TABLE_PARAMETERS_TARGETS);
+            ExcelTable table = sheet.Tables.Add(range, TABLE_PARAMETERS_TARGETS);
             table.ShowHeader = true;
             table.TableStyle = TableStyles.Medium2;
             table.ShowFilter = true;
@@ -213,6 +224,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Column(1).Width = 25;
             sheet.Column(2).Width = 25;
             sheet.Column(3).Width = 25;
+
+            return;
+        }
+
+        internal static void fillTableOfContentsSheet(ExcelWorksheet sheet, ExcelPackage excelReport)
+        {
+            sheet.Cells[1, 1].Value = "Sheet Name";
+            sheet.Cells[1, 2].Value = "# Entities";
+            sheet.Cells[1, 3].Value = "Link";
+            int rowNum = 1;
+            foreach (ExcelWorksheet s in excelReport.Workbook.Worksheets)
+            {
+                rowNum++;
+                sheet.Cells[rowNum, 1].Value = s.Name;
+                sheet.Cells[rowNum, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", s.Name);
+                sheet.Cells[rowNum, 3].StyleName = "HyperLinkStyle";
+                if (s.Tables.Count > 0)
+                {
+                    sheet.Cells[rowNum, 2].Value = s.Tables[0].Address.Rows - 1;
+                }
+            }
+            ExcelRangeBase range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+            ExcelTable table = sheet.Tables.Add(range, TABLE_TOC);
+            table.ShowHeader = true;
+            table.TableStyle = TableStyles.Medium2;
+            table.ShowFilter = true;
+            table.ShowTotal = false;
+
+            sheet.Column(table.Columns["Sheet Name"].Position + 1).Width = 25;
+            sheet.Column(table.Columns["# Entities"].Position + 1).Width = 25;
 
             return;
         }
@@ -341,7 +382,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == Backend.ENTITY_TYPE)
+            else if (entityType == APMBackend.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -352,7 +393,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == BusinessTransaction.ENTITY_TYPE)
+            else if (entityType == APMBusinessTransaction.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -364,7 +405,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == ServiceEndpoint.ENTITY_TYPE)
+            else if (entityType == APMServiceEndpoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -376,7 +417,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == Error.ENTITY_TYPE)
+            else if (entityType == APMError.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -387,7 +428,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["FromUtc"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ToUtc"].Position + 1).Width = 20;
             }
-            else if (entityType == InformationPoint.ENTITY_TYPE)
+            else if (entityType == APMInformationPoint.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
@@ -424,11 +465,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
             }
-            else if (entityType == Backend.ENTITY_TYPE)
+            else if (entityType == APMBackend.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["BackendName"].Position + 1).Width = 20;
             }
-            else if (entityType == BusinessTransaction.ENTITY_TYPE)
+            else if (entityType == APMBusinessTransaction.ENTITY_TYPE)
             {
                 sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;

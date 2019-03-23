@@ -1,5 +1,8 @@
-﻿using AppDynamics.Dexter.ReportObjects;
+﻿using AppDynamics.Dexter.ReportObjectMaps;
+using AppDynamics.Dexter.ReportObjects;
+using Newtonsoft.Json.Linq;
 using NLog;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -156,7 +159,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "AGENT_EVENT" },
             { "APPDYNAMICS_DATA" },
             { "APPDYNAMICS_INTERNAL_DIAGNOSTICS" },
-            { "WARROOM_NOTE" }
+            { "WARROOM_NOTE" },
+            { "SYSTEM_EVENT" }
         };
 
         #endregion
@@ -181,6 +185,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string APPLICATION_TYPE_WEB = "WEB";
         internal const string APPLICATION_TYPE_MOBILE = "MOBILE";
         internal const string APPLICATION_TYPE_DB = "DB";
+        internal const string APPLICATION_TYPE_BIQ = "BIQ";
+        internal const string APPLICATION_TYPE_IOT = "IOT";
+
+        #endregion
+
+        #region BIQ/Analytics Schema Types
+
+        // Well known Analytics/BIQ Schemas
+        internal static List<string> BIQ_SCHEMA_TYPES = new List<string>
+        {
+            { "BIZ_TXN" },                      // Transaction Analytics
+            { "LOG" },                          // Log Analytics
+            { "BROWSER_RECORD" },               // Browser Analytics
+            { "MOBILE_SNAPSHOT" },              // Mobile Analytics
+            { "MOBILE_CRASH_REPORT" },          // Mobile Crashes
+            { "WEB_SESSION_RECORD" },           // Browser Sessions
+            { "MOBILE_SESSION_RECORD" },        // Mobile Sessions
+            { "SYNTH_SESSION_RECORD" },         // Synthetic Sessions
+            { "IOT_RECORD" },                   // IoT Analytics
+            { "MOBILE_NON_FATAL_ISSUE_RECORD" } // Don't know what this is
+        };
 
         #endregion
 
@@ -282,6 +307,232 @@ namespace AppDynamics.Dexter.ProcessingSteps
             methodCallLineClassToFrameworkTypeMappingDictionary.Add("z", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "z").ToList());
 
             return methodCallLineClassToFrameworkTypeMappingDictionary;
+        }
+
+        internal static bool isTokenNull(JToken jToken)
+        {
+            if (jToken == null)
+            {
+                return true;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal static bool isTokenPropertyNull(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return true;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return true;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return true;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        internal static string getStringValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return String.Empty;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return String.Empty;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return String.Empty;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return String.Empty;
+            }
+            else
+            {
+                string value = jToken[propertyName].Value<string>();
+                if (value == null)
+                {
+                    return String.Empty;
+                }
+                else
+                {
+                    return value;
+                }
+            }
+        }
+
+        internal static string getStringValueOfObjectFromJToken(JToken jToken, string propertyName)
+        {
+            return getStringValueOfObjectFromJToken(jToken, propertyName, false);
+        }
+
+        internal static string getStringValueOfObjectFromJToken(JToken jToken, string propertyName, bool singleLine)
+        {
+            if (jToken == null)
+            {
+                return String.Empty;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return String.Empty;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return String.Empty;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return String.Empty;
+            }
+            else
+            {
+                try
+                {
+                    if (singleLine == true)
+                    {
+                        return jToken[propertyName].ToString(Newtonsoft.Json.Formatting.None);
+                    }
+                    else
+                    {
+                        {
+                            return jToken[propertyName].ToString(Newtonsoft.Json.Formatting.Indented);
+                        }
+                    }
+                }
+                catch
+                {
+                    return String.Empty;
+                }
+            }
+        }
+
+        internal static bool getBoolValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return false;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return false;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return false;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return false;
+            }
+            else
+            {
+                return jToken[propertyName].Value<bool>();
+            }
+        }
+
+        internal static long getLongValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return 0;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else
+            {
+                return jToken[propertyName].Value<long>();
+            }
+        }
+
+        internal static int getIntValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return 0;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else
+            {
+                return jToken[propertyName].Value<int>();
+            }
+        }
+
+        internal static double getDoubleValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return 0;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return 0;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return 0;
+            }
+            else
+            {
+                return jToken[propertyName].Value<double>();
+            }
+        }
+
+        internal static long sumLongValuesInArray(JArray valuesArray)
+        {
+            long result = 0;
+            foreach (JToken arrayToken in valuesArray)
+            {
+                if (isTokenNull(arrayToken) == false)
+                {
+                    result = result + (long)arrayToken;
+                }
+            }
+            return result;
         }
     }
 }

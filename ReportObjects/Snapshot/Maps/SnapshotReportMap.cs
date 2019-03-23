@@ -1,6 +1,7 @@
-﻿using CsvHelper.Configuration;
+﻿using AppDynamics.Dexter.ReportObjects;
+using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.ReportObjects
+namespace AppDynamics.Dexter.ReportObjectMaps
 {
     public class SnapshotReportMap: ClassMap<Snapshot>
     {
@@ -60,7 +61,6 @@ namespace AppDynamics.Dexter.ReportObjects
             Map(m => m.NodeID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
 
-            Map(m => m.FlameGraphLink).Index(i); i++;
             Map(m => m.SnapshotLink).Index(i); i++;
         }
     }

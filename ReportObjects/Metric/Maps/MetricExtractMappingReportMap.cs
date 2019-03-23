@@ -1,6 +1,7 @@
-﻿using CsvHelper.Configuration;
+﻿using AppDynamics.Dexter.ReportObjects;
+using CsvHelper.Configuration;
 
-namespace AppDynamics.Dexter.ReportObjects
+namespace AppDynamics.Dexter.ReportObjectMaps
 {
     public class MetricExtractMappingReportMap : ClassMap<MetricExtractMapping>
     {
