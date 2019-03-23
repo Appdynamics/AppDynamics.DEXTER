@@ -39,7 +39,7 @@ The 3 part [Walkthrough](../../wiki/Home#walkthrough) gives an overview and scre
 ![Entity Details](../master/docs/introduction/EntityDetailsOverview.png?raw=true)
 
 ## Detected APM Entities
-If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected APM Entities](../../wiki/Detected-APM_Entities-Report) report.
+If you ever were presented with a large Controller (or several) full of unknown number of Applications, Tiers and Nodes, you will like the detail provided by [Detected APM Entities](../../wiki/Detected-APM-Entities-Report) report.
 
 ![Detected APM Entities](../master/docs/introduction/DetectedAPMEntitiesOverview.png?raw=true)
 
