@@ -248,7 +248,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_WEB_GEO_LOCATIONS_FILE_NAME = "geolocations.csv";
 
         // Detected MOBILE entity report conversion file names
-        private const string CONVERT_MOBILE_APPLICATIONS_FILE_NAME = "applications.web.csv";
+        private const string CONVERT_MOBILE_APPLICATIONS_FILE_NAME = "applications.mobile.csv";
         private const string CONVERT_NETWORK_REQUESTS_FILE_NAME = "networkrequests.csv";
         private const string CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME = "networkrequests.bts.csv";
 
