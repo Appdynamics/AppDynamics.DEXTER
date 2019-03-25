@@ -264,7 +264,17 @@ namespace AppDynamics.Dexter
                     }
                     else
                     {
-                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller.TrimEnd('/');
+                        if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == null ||
+                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == null)
+                        {
+                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria = new JobTarget();
+                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application = JobStepBase.BLANK_APPLICATION_APPLICATION;
+                        }
+                        else
+                        {
+                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller.TrimEnd('/');
+                        }
                     }
 
                     #endregion
