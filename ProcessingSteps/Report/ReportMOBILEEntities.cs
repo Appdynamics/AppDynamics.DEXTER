@@ -23,8 +23,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APPLICATIONS_MOBILE_LIST = "5.Applications.MOBILE";
         private const string SHEET_NETWORK_REQUESTS_LIST = "6.Network Requests";
         private const string SHEET_NETWORK_REQUESTS_TYPE_PIVOT = "6.Network Requests.Type";
-        private const string SHEET_NETWORK_REQUESTS_BUSINESS_TRANSACTIONS_LIST = "8.NR BTs";
-        private const string SHEET_NETWORK_REQUESTS_BUSINESS_TRANSACTIONS_TYPE_PIVOT = "8.NR BTs.Type";
+        private const string SHEET_NETWORK_REQUESTS_BUSINESS_TRANSACTIONS_LIST = "7.NR BTs";
+        private const string SHEET_NETWORK_REQUESTS_BUSINESS_TRANSACTIONS_TYPE_PIVOT = "7.NR BTs.Type";
 
         private const string TABLE_CONTROLLERS = "t_Controllers";
         private const string TABLE_APPLICATIONS_ALL = "t_Applications_All";
