@@ -24,9 +24,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_DASHBOARDS_TYPE_PIVOT = "5.Dashboards.Type";
         private const string SHEET_WIDGETS_LIST = "6.Widgets";
         private const string SHEET_WIDGETS_TYPE_PIVOT = "6.Widgets.Type";
-        private const string SHEET_DATA_SERIES_LIST = "8.Data Series";
-        private const string SHEET_DATA_SERIES_TYPE_PIVOT = "8.Data Series.Type";
-        private const string SHEET_DATA_SERIES_LOCATION_PIVOT = "8.Data Series.Location";
+        private const string SHEET_DATA_SERIES_LIST = "7.Data Series";
+        private const string SHEET_DATA_SERIES_TYPE_PIVOT = "7.Data Series.Type";
+        private const string SHEET_DATA_SERIES_LOCATION_PIVOT = "7.Data Series.Location";
 
         private const string TABLE_CONTROLLERS = "t_Controllers";
         private const string TABLE_APPLICATIONS_ALL = "t_Applications_All";
