@@ -199,7 +199,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_AUDIT_EVENTS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 4, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(AUDIT_SHEET_EVENTS_TIMELINE_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -208,7 +208,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_AUDIT_EVENTS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 4, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NOTIFICATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
