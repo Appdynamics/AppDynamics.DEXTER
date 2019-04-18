@@ -446,6 +446,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     dashboard.NumPieWidgets = dashboardWidgetsList.Count(d => d.WidgetType == "PieWidget");
                                     dashboard.NumTextWidgets = dashboardWidgetsList.Count(d => d.WidgetType == "TextWidget");
                                 }
+                                else
+                                {
+                                    if (isTokenPropertyNull(dashboardDetailObject, "success") == false && 
+                                        getBoolValueFromJToken(dashboardDetailObject, "success") == false)
+                                    {
+                                        dashboard.NumWidgets = -1;
+                                    }
+                                }
 
                                 dashboardsList.Add(dashboard);
 

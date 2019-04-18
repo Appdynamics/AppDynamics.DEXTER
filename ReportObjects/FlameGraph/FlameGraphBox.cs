@@ -9,6 +9,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public int Start { get; set; }
         public int Samples { get; set; }
         public long Duration { get; set; }
+        public string Exits { get; set; }
         public int End
         {
             get

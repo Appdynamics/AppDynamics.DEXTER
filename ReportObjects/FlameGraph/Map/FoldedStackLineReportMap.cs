@@ -11,6 +11,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.FoldedStack).Index(i); i++;
             Map(m => m.NumSamples).Index(i); i++;
             Map(m => m.StackTiming).Index(i); i++;
+            Map(m => m.ExitCalls).Index(i); i++;
         }
     }
 }

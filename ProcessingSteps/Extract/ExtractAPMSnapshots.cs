@@ -594,164 +594,173 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Get List of Segments
-
-                        // Get list of segments
-                        string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshotToken["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
-
-                        #endregion
-
-                        #region Get Details for Each Segment                        
-
                         Dictionary<long, string> snapshotSegmentDetailsJsonList = new Dictionary<long, string>(5);
-                        Dictionary<long, string> snapshotSegmentCallgraphsJsonList = new Dictionary<long, string>(5);
-                        Dictionary<long, string> snapshotSegmentErrorsJsonList = new Dictionary<long, string>(5);
-                        if (snapshotSegmentsJson != String.Empty)
+
+                        try
                         {
-                            JArray snapshotSegmentsList = JArray.Parse(snapshotSegmentsJson);
-                            if (snapshotSegmentsList != null)
+                            using (TextWriter tw = FileIOHelper.SaveFileToPathWithWriter(snapshotDataFilePath))
                             {
-                                // Get details for segment
-                                foreach (JToken snapshotSegment in snapshotSegmentsList)
+                                // Start root object
+                                tw.WriteLine("{");
+
+                                // Snapshot object
+                                tw.Write("\"snapshot\" : {0},", snapshotToken.ToString(Newtonsoft.Json.Formatting.Indented));
+                                tw.WriteLine();
+
+                                #region Get List of Segments
+
+                                // Get list of segments
+                                string snapshotSegmentsJson = controllerApi.GetSnapshotSegments(snapshotToken["requestGUID"].ToString(), snapshotTimeFrom, snapshotTimeTo, differenceInMinutes);
+
+                                // Segments object
+                                if (snapshotSegmentsJson.Length > 0)
                                 {
-                                    string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (snapshotSegmentJson != String.Empty)
-                                    {
-                                        snapshotSegmentDetailsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
-                                    }
+                                    tw.WriteLine("\"segments\" :");
+                                    tw.Write(snapshotSegmentsJson);
+                                    tw.WriteLine(",");
+                                }
+                                else
+                                {
+                                    tw.WriteLine("\"segments\" : [],");
                                 }
 
-                                // Get errors for segment
-                                foreach (JToken snapshotSegment in snapshotSegmentsList)
+                                #endregion
+
+                                #region Get Details for Each Segment                        
+
+                                if (snapshotSegmentsJson != String.Empty)
                                 {
-                                    if ((bool)snapshotSegment["errorOccurred"] == true)
+                                    JArray snapshotSegmentsList = JArray.Parse(snapshotSegmentsJson);
+                                    if (snapshotSegmentsList != null)
                                     {
-                                        string snapshotSegmentErrorJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                        if (snapshotSegmentErrorJson != String.Empty)
+                                        int numSegments = snapshotSegmentsList.Count;
+
+                                        // Get details for segment
+                                        tw.WriteLine("\"segmentDetails\" :");
+                                        tw.WriteLine("{");
+                                        bool someObjectWrittenAlready = false;
+                                        foreach (JToken snapshotSegment in snapshotSegmentsList)
                                         {
-                                            // "[ ]" == empty data. Don't create the file
-                                            if (snapshotSegmentErrorJson.Length > 3)
+                                            string snapshotSegmentJson = controllerApi.GetSnapshotSegmentDetails((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (snapshotSegmentJson != String.Empty)
                                             {
-                                                snapshotSegmentErrorsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentErrorJson);
+                                                snapshotSegmentDetailsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
+
+                                                if (someObjectWrittenAlready == true)
+                                                {
+                                                    tw.WriteLine(",");
+                                                }
+                                                tw.Write("\"{0}\" : {1}", (long)snapshotSegment["id"], snapshotSegmentJson);
+                                                someObjectWrittenAlready = true;
                                             }
                                         }
-                                    }
-                                }
+                                        tw.WriteLine("},");
 
-                                // Get call graphs for segment
-                                foreach (JToken snapshotSegment in snapshotSegmentsList)
-                                {
-                                    if (((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true))
-                                    {
-                                        // If the tier is Node.JS, the call graphs come from Process Snapshot
-                                        bool getProcessCallGraph = false;
-                                        string processRequestGUID = String.Empty;
-                                        if (tiersNodeJSList != null && tiersNodeJSList.Count > 0)
+                                        // Get errors for segment
+                                        tw.WriteLine("\"errors\" :");
+                                        tw.WriteLine("{");
+                                        someObjectWrittenAlready = false;
+                                        foreach(JToken snapshotSegment in snapshotSegmentsList)
                                         {
-                                            // Is this a Node.JS tier?
-                                            if (tiersNodeJSList.Count(t => t.id == (long)snapshotSegment["applicationComponentId"]) > 0)
+                                            if ((bool)snapshotSegment["errorOccurred"] == true)
                                             {
-                                                // Yes, it is
-
-                                                // Is there a process snapshot? Check Transaction Properties for its value
-                                                string snapshotSegmentDetailJson = snapshotSegmentDetailsJsonList[(long)snapshotSegment["id"]];
-                                                JObject snapshotSegmentDetail = JObject.Parse(snapshotSegmentDetailJson);
-                                                if (snapshotSegmentDetail != null)
+                                                string snapshotSegmentErrorJson = controllerApi.GetSnapshotSegmentErrors((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                                if (snapshotSegmentErrorJson != String.Empty)
                                                 {
-                                                    if (snapshotSegmentDetail["transactionProperties"].HasValues == true)
+                                                    // "[ ]" == empty data. Don't create the file
+                                                    if (snapshotSegmentErrorJson.Length > 3)
                                                     {
-                                                        foreach (JToken transactionPropertyToken in snapshotSegmentDetail["transactionProperties"])
+                                                        if (someObjectWrittenAlready == true)
                                                         {
-                                                            if (transactionPropertyToken["name"].ToString() == "Process Snapshot GUIDs")
-                                                            {
-                                                                getProcessCallGraph = true;
-                                                                processRequestGUID = transactionPropertyToken["value"].ToString();
-                                                                break;
-                                                            }
+                                                            tw.WriteLine(",");
                                                         }
+                                                        tw.Write("\"{0}\" : {1}", (long)snapshotSegment["id"], snapshotSegmentErrorJson);
+                                                        someObjectWrittenAlready = true;
                                                     }
                                                 }
                                             }
                                         }
+                                        tw.WriteLine("},");
 
-                                        // Ok, now either get call graph the usual way or process snapshot call graph
-                                        if (getProcessCallGraph == true && processRequestGUID.Length > 0)
+                                        // Get call graphs for segment
+                                        tw.WriteLine("\"callgraphs\" :");
+                                        tw.WriteLine("{");
+                                        someObjectWrittenAlready = false;
+                                        foreach (JToken snapshotSegment in snapshotSegmentsList)
                                         {
-                                            string snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                            if (snapshotSegmentJson != String.Empty)
+                                            if (((bool)snapshotSegment["fullCallgraph"] == true || (bool)snapshotSegment["delayedCallGraph"] == true))
                                             {
-                                                snapshotSegmentCallgraphsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
+                                                // If the tier is Node.JS, the call graphs come from Process Snapshot
+                                                bool getProcessCallGraph = false;
+                                                string processRequestGUID = String.Empty;
+                                                if (tiersNodeJSList != null && tiersNodeJSList.Count > 0)
+                                                {
+                                                    // Is this a Node.JS tier?
+                                                    if (tiersNodeJSList.Count(t => t.id == (long)snapshotSegment["applicationComponentId"]) > 0)
+                                                    {
+                                                        // Yes, it is
+
+                                                        // Is there a process snapshot? Check Transaction Properties for its value
+                                                        string snapshotSegmentDetailJson = snapshotSegmentDetailsJsonList[(long)snapshotSegment["id"]];
+                                                        JObject snapshotSegmentDetail = JObject.Parse(snapshotSegmentDetailJson);
+                                                        if (snapshotSegmentDetail != null)
+                                                        {
+                                                            if (snapshotSegmentDetail["transactionProperties"].HasValues == true)
+                                                            {
+                                                                foreach (JToken transactionPropertyToken in snapshotSegmentDetail["transactionProperties"])
+                                                                {
+                                                                    if (transactionPropertyToken["name"].ToString() == "Process Snapshot GUIDs")
+                                                                    {
+                                                                        getProcessCallGraph = true;
+                                                                        processRequestGUID = transactionPropertyToken["value"].ToString();
+                                                                        break;
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+
+                                                // Ok, now either get call graph the usual way or process snapshot call graph
+                                                string snapshotSegmentJson = String.Empty;
+                                                if (getProcessCallGraph == true && processRequestGUID.Length > 0)
+                                                {
+                                                    snapshotSegmentJson = controllerApi.GetProcessSnapshotCallGraph(processRequestGUID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                                }
+                                                else
+                                                {
+                                                    snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                                }
+                                                if (snapshotSegmentJson != String.Empty)
+                                                {
+                                                    if (someObjectWrittenAlready == true)
+                                                    {
+                                                        tw.WriteLine(",");
+                                                    }
+                                                    tw.Write("\"{0}\" : {1}", (long)snapshotSegment["id"], snapshotSegmentJson);
+                                                    someObjectWrittenAlready = true;
+                                                }
                                             }
                                         }
-                                        else
-                                        {
-                                            string snapshotSegmentJson = controllerApi.GetSnapshotSegmentCallGraph((long)snapshotSegment["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                            if (snapshotSegmentJson != String.Empty)
-                                            {
-                                                snapshotSegmentCallgraphsJsonList.Add((long)snapshotSegment["id"], snapshotSegmentJson);
-                                            }
-                                        }
+                                        tw.WriteLine("}");
                                     }
                                 }
+
+                                #endregion
+
+                                // End root object
+                                tw.WriteLine("}");
+
+                                logger.Trace("Wrote string length {0} to file {1}", ((System.IO.FileStream)((System.IO.StreamWriter)tw).BaseStream).Position, snapshotDataFilePath);
                             }
                         }
-
-                        #endregion
-
-                        #region Save results
-
-                        // Build a single JSON file for all the snapshot data
-                        StringBuilder sb = new StringBuilder(10240);
-
-                        // Start root object
-                        sb.AppendLine("{");
-
-                        // Snapshot object
-                        sb.AppendFormat("\"snapshot\" : {0},", snapshotToken.ToString(Newtonsoft.Json.Formatting.Indented));
-                        sb.AppendLine();
-
-                        // Segments object
-                        if (snapshotSegmentsJson.Length > 0)
+                        catch (Exception ex)
                         {
-                            sb.AppendLine("\"segments\" :");
-                            sb.Append(snapshotSegmentsJson);
-                            sb.AppendLine(",");
-                        }
-                        else
-                        {
-                            sb.AppendLine("\"segments\" : [],");
+                            logger.Warn("Unable to write to {0}", snapshotDataFilePath);
+                            logger.Warn(ex);
+                            loggerConsole.Warn(ex);
                         }
 
-                        // Segment Details objects
-                        sb.AppendLine("\"segmentDetails\" : {");
-                        if (snapshotSegmentDetailsJsonList.Count > 0)
-                        {
-                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentDetailsJsonList);
-                        }
-                        sb.AppendLine("},");
-
-                        // Errors objects
-                        sb.AppendLine("\"errors\" : {");
-                        if (snapshotSegmentErrorsJsonList.Count > 0)
-                        {
-                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentErrorsJsonList);
-                        }
-                        sb.AppendLine("},");
-
-                        // Call graphs objects
-                        sb.AppendLine("\"callgraphs\" : {");
-                        if (snapshotSegmentCallgraphsJsonList.Count > 0)
-                        {
-                            addListOfObjectsAsIndividualObjectsToJSONString(sb, snapshotSegmentCallgraphsJsonList);
-                        }
-                        sb.AppendLine("}");
-
-                        // End root object
-                        sb.AppendLine("}");
-
-                        FileIOHelper.SaveFileToPath(sb.ToString(), snapshotDataFilePath);
-
-                        #endregion
                     }
                 }
 
@@ -763,6 +772,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         Console.Write("[{0}].", j);
                     }
                 }
+
             }
 
             return snapshotTokenList.Count;

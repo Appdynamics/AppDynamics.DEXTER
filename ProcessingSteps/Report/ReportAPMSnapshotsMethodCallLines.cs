@@ -418,7 +418,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "Framework", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "Exec", DataFieldFunctions.Average);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_METHOD_CALL_LINESTIMELINE_EXEC_AVERAGE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_METHOD_CALL_LINESTIMELINE_EXEC_AVERAGE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 

@@ -205,7 +205,6 @@ namespace AppDynamics.Dexter
                 // Do a forced GC Collection after all the work in a step. 
                 // Probably unnecessary, but to counteract the ulimit handle consumption on non-Windows machines
                 GC.Collect();
-
             }
         }
 

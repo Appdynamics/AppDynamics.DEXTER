@@ -3,13 +3,14 @@
 <svg version="1.1" width="1600" height="1200" onload="init(evt)" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg" >
   <defs>
     <linearGradient id="background" y1="0" y2="1" x1="0" x2="0" >
-      <stop stop-color="#ECFFEC" offset="5%" />
-      <stop stop-color="#F2FFF2" offset="95%" />
+      <stop stop-color="#fdfdfd" offset="5%" />
+      <stop stop-color="#f0f0f0" offset="95%" />
     </linearGradient>
   </defs>
   <style type="text/css" >
-    rect[rx]:hover { stroke:white; stroke-width:2; }
-    text:hover { stroke:black; stroke-width:1; stroke-opacity:0.35; }
+      g:hover { font-weight:bold; stroke:#7f17ff; stroke-width:1.2;}
+      xrect[rx]:hover { stroke:#7f17ff; stroke-width:4; }
+      xtext:hover { font-weight:bold; }
   </style>
 
   <script type="text/ecmascript">
@@ -346,4 +347,6 @@
   <text text-anchor="left" x="5" y="1200" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" id="details">Mouse over stack frames to see details</text>
   <!-- Flame Graph Boxes go here -->
   <g id="contentPlaceholder"></g>
+  <!-- Legend Boxes go here -->  
+  <g id="legendPlaceholder"></g>
 </svg>

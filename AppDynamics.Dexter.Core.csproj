@@ -41,6 +41,8 @@
     <None Remove=".gitignore" />
     <None Remove="packages.config" />
     <None Remove="README.md" />
+    <None Remove="~%24MethodNamespaceTypeMapping.xlsm" />
+    <None Remove="~%24MethodNamespaceTypeMapping.xlsx" />
   </ItemGroup>
 
   <ItemGroup>

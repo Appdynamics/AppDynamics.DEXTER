@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "--jobfile \"F:\\AppD.Dexter.Out\\cisco\\cisco.bearer.json\" --outputfolder F:\\AppD.Dexter.Out\\cisco"
+      "commandLineArgs": "--jobfile \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\demo1demo2.All.Compare.json\" --outputfolder C:\\AppD.Dexter.Out"
     }
   }
 }

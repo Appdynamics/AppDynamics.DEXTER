@@ -518,7 +518,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Combine folded Flame Graphs and Flame Charts stacks from individual Snapshots
+                        #region Build Flame Graphs and Flame Charts stacks from individual Snapshots
 
                         if (tiersList != null && nodesList != null && businessTransactionsList != null)
                         {
@@ -1477,13 +1477,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         if (exitCall.Detail != null && exitCall.Detail.Length > 0)
                                         {
                                             Uri uri = null;
-                                            try
+                                            if (exitCall.Detail.Contains(":") == true)
                                             {
-                                                uri = new Uri(exitCall.Detail);
-                                            }
-                                            catch
-                                            {
-                                                // Not a URI, ignore it
+                                                try
+                                                {
+                                                    uri = new Uri(exitCall.Detail);
+                                                }
+                                                catch
+                                                {
+                                                    // Not a URI, ignore it
+                                                }
                                             }
 
                                             if (uri != null)
@@ -2776,7 +2779,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
                         else
                         {
-                            exitCallsReferenceList.Add(String.Format("{0} {1}", callChain, exitCallForThisExit.Detail));
+                            exitCallsReferenceList.Add(String.Format("{0}->{1}", callChain, exitCallForThisExit.Detail));
                         }
                     }
                     else
@@ -3145,7 +3148,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                             else
                             {
-                                exitCallsReferenceList.Add(String.Format("{0} {1}", callChain, exitCallForThisExit.Detail));
+                                exitCallsReferenceList.Add(String.Format("{0}->{1}", callChain, exitCallForThisExit.Detail));
                             }
                         }
                         else
@@ -3230,7 +3233,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 // org.bread.with.butter -> org.bread
                 if (frameworkName.Length == 0)
                 {
-                    string[] classNameTokens = classOrFunctionName.Split('.');
+                    string[] classNameTokens = classOrFunctionName.Split('.', ':');
                     if (classNameTokens.Length == 0 || classNameTokens.Length == 1)
                     {
                         // No periods
