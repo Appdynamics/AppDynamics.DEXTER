@@ -12,6 +12,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.FrameworkType).Index(i); i++;
             Map(m => m.FlameGraphColorStart).Index(i); i++;
             Map(m => m.FlameGraphColorEnd).Index(i); i++;
+            Map(m => m.TextColor).Index(i); i++;
         }
     }
 }

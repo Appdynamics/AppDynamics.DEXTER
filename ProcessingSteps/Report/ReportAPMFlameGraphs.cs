@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -166,7 +167,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                                List <APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Nodes ({0} entities)", nodesList.Count);
@@ -343,6 +344,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             logger.Trace("Rendering flame graph {0} from {1}", flameGraphFilePath, foldedStackFilePath);
 
+            // This stores the unknown code mappings
+            Dictionary<string, MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeCustomMappingsDictionary = new Dictionary<string, MethodCallLineClassTypeMapping>(20);
+
+            // This prepares the list of 20 custom mappings
+            List<MethodCallLineClassTypeMapping> listOfCustomMethodCallMappings = new List<MethodCallLineClassTypeMapping>(20);
+            if (methodCallLineClassToFrameworkTypeMappingDictionary.ContainsKey("c") == true)
+            {
+                List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary["c"];
+                if (methodCallLineClassToFrameworkTypeMappingList != null)
+                {
+                   listOfCustomMethodCallMappings = methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.StartsWith("custom") == true).ToList();
+                }
+            }
+
+            // This stores all mappings actually used by this flame graph
+            SortedDictionary<string, MethodCallLineClassTypeMapping> usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary = new SortedDictionary<string, MethodCallLineClassTypeMapping>();
+
             #region Brendan Gregg's Perl version
 
             //if (false)
@@ -473,6 +491,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     if (i > 0 && i <= foldedStackLine.StackTimingArray.Length)
                     {
                         flameGraphBox.Duration = flameGraphBox.Duration + foldedStackLine.StackTimingArray[i - 1];
+                    }
+
+                    if (i > 0 && i <= foldedStackLine.ExitCallsArray.Length)
+                    {
+                        if (foldedStackLine.ExitCallsArray[i - 1].Length > 0)
+                        {
+                            flameGraphBox.Exits = Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLine.ExitCallsArray[i - 1]));
+                        }
                     }
 
                     flameGraphBox.Depth = i;
@@ -675,7 +701,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     // Output container with mouseover and mouseout
                                     xmlWriter.WriteStartElement("g");
                                     xmlWriter.WriteAttributeString("class", "func_g");
-                                    xmlWriter.WriteAttributeString("id", String.Format("flameGraphBox_{0}", i));
+                                    xmlWriter.WriteAttributeString("id", String.Format("fgb_{0}", i));
                                     xmlWriter.WriteAttributeString("onmouseover", "s(this)");
                                     xmlWriter.WriteAttributeString("onmouseout", "c()");
                                     xmlWriter.WriteAttributeString("onclick", "zoom(this)");
@@ -684,29 +710,85 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     xmlWriter.WriteStartElement("title");
                                     long averageDuration = (long)Math.Round(flameGraphBox.Duration / (decimal)flameGraphBox.Samples, 0);
                                     xmlWriter.WriteString(String.Format("{0} (Duration Total {1}, Average {2}, {3} samples, {4:P})", flameGraphBox.FullName, flameGraphBox.Duration, averageDuration, flameGraphBox.Samples, flameGraphBox.Samples / (decimal)maxSampleWidth));
+                                    if (flameGraphBox.Exits != null && flameGraphBox.Exits.Length > 0)
+                                    {
+                                        xmlWriter.WriteString("\n");
+                                        xmlWriter.WriteString(flameGraphBox.Exits);
+                                    }
                                     xmlWriter.WriteEndElement();
 
                                     // Determine the color for the box, using the framework lookup
                                     MethodCallLineClassTypeMapping methodCallLineClassTypeMapping = getMethodCallLineClassTypeMappingFromClassOrFunctionName(flameGraphBox.FullName, methodCallLineClassToFrameworkTypeMappingDictionary);
                                     Color colorStart = colorFlameGraphStackStart;
                                     Color colorEnd = colorFlameGraphStackEnd;
-
+                                    String colorText = String.Empty;
                                     // No mapping
-                                    if (methodCallLineClassTypeMapping == null)
+                                    if (methodCallLineClassTypeMapping != null)
+                                    {
+                                        // Add to list of used frameworks
+                                        if (usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.ContainsKey(methodCallLineClassTypeMapping.ClassPrefix) == false)
+                                        {
+                                            usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(methodCallLineClassTypeMapping.ClassPrefix, methodCallLineClassTypeMapping);
+                                        }
+                                    }
+                                    else
                                     {
                                         // Could this be Node.JS?
                                         // it has :: and .js in it
                                         if (flameGraphBox.FullName.Contains("::") == true &&
                                             flameGraphBox.FullName.Contains(".js") == true)
                                         {
+                                            // Yes, this is Node.JS
                                             colorStart = colorFlameGraphStackNodeJSStart;
                                             colorEnd = colorFlameGraphStackNodeJSEnd;
                                         }
+                                        else
+                                        {
+                                            int firstNumber = 0;
+                                            bool isFrameNumeric = Int32.TryParse(flameGraphBox.FullName.Substring(0, 1), out firstNumber);
+                                            if (flameGraphBox.FullName != "all" && isFrameNumeric == false)
+                                            {
+                                                // Unknown name mapping. 
+                                                // Lets use one of the 20 custom1-custom20 mappings for coloring
+                                                string unknownFrameworkName = getFrameworkFromUnknownClassOrFunctionName(flameGraphBox.FullName);
+
+                                                // Get it from the frequently used dictionary
+                                                if (methodCallLineClassToFrameworkTypeCustomMappingsDictionary.ContainsKey(unknownFrameworkName) == true)
+                                                {
+                                                    methodCallLineClassTypeMapping = methodCallLineClassToFrameworkTypeCustomMappingsDictionary[unknownFrameworkName];
+                                                }
+                                                else
+                                                {
+                                                    // Take one of the custom# elements until there are no more
+                                                    if (listOfCustomMethodCallMappings.Count > 0)
+                                                    {
+                                                        methodCallLineClassTypeMapping = listOfCustomMethodCallMappings[0];
+                                                        listOfCustomMethodCallMappings.RemoveAt(0);
+                                                        methodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(unknownFrameworkName, methodCallLineClassTypeMapping);
+
+                                                        // Add to list of used frameworks
+                                                        usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(unknownFrameworkName, methodCallLineClassTypeMapping);
+                                                    }
+                                                }
+                                            }
+                                        }
                                     }
-                                    else if (methodCallLineClassTypeMapping.FlameGraphColorStart.Length != 0 || methodCallLineClassTypeMapping.FlameGraphColorEnd.Length != 0)
+
+                                    // Reaching this line, we have a mapping of known or custom# map, unless we ran out of those 20
+                                    if (methodCallLineClassTypeMapping != null)
                                     {
-                                        colorStart = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorStart);
-                                        colorEnd = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorEnd);
+                                        if (methodCallLineClassTypeMapping.FlameGraphColorStart.Length != 0)
+                                        {
+                                            colorStart = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorStart);
+                                        }
+                                        if (methodCallLineClassTypeMapping.FlameGraphColorEnd.Length != 0)
+                                        {
+                                            colorEnd = getColorFromHexString(methodCallLineClassTypeMapping.FlameGraphColorEnd);
+                                        }
+                                        if (methodCallLineClassTypeMapping.TextColor.Length != 0)
+                                        {
+                                            colorText = methodCallLineClassTypeMapping.TextColor;
+                                        }
                                     }
 
                                     // Output the rectangle with pretty colors
@@ -718,7 +800,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(flameGraphBox.Depth, maxFrameDepth, colorStart, colorEnd));
                                     xmlWriter.WriteAttributeString("rx", "2");
                                     xmlWriter.WriteAttributeString("ry", "2");
-
                                     if (flameGraphBox.Duration > 0 && averageDuration > 100)
                                     {
                                         xmlWriter.WriteAttributeString("stroke", "#BF0000");
@@ -746,8 +827,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             xmlWriter.WriteAttributeString("stroke-width", "6");
                                         }
-                                    }
 
+                                        // If there are exits, show that
+                                        if (flameGraphBox.Exits != null && flameGraphBox.Exits.Length > 0)
+                                        {
+                                            xmlWriter.WriteAttributeString("stroke-dasharray", "10,3");
+                                        }
+                                    }
+                                    else if (flameGraphBox.Exits != null && flameGraphBox.Exits.Length > 0)
+                                    {
+                                        xmlWriter.WriteAttributeString("stroke", "#00FFFF");
+                                        xmlWriter.WriteAttributeString("stroke-width", "3");
+                                        xmlWriter.WriteAttributeString("stroke-dasharray", "10,3");
+                                    }
                                     xmlWriter.WriteEndElement();
 
                                     // Output text label that is visible and positioned right over the rectanlge
@@ -757,6 +849,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     xmlWriter.WriteAttributeString("y", (y1 + 11).ToString());
                                     xmlWriter.WriteAttributeString("font-size", "11");
                                     xmlWriter.WriteAttributeString("font-family", "monospace");
+                                    if (colorText.Length > 0 && String.Compare(colorText, "000000") != 0)
+                                    {
+                                        xmlWriter.WriteAttributeString("fill", String.Format("#{0}FF", methodCallLineClassTypeMapping.TextColor));
+                                    }
                                     // Is the box big enough for the text?
                                     if (boxWidth > 25)
                                     {
@@ -794,6 +890,137 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     Console.WriteLine();
                                 }
+
+                                // Move off the content placeholder
+                                xmlReader.Read();
+                                xmlReader.Read();
+                            }
+                            // Found legend placeholder, let's output all the used frameworks
+                            else if (xmlReader.IsStartElement("g") == true && xmlReader.GetAttribute("id") == "legendPlaceholder")
+                            {
+                                int legendIndex = 0;
+                                foreach (string classPrefix in usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Keys)
+                                {
+                                    decimal x1 = 1400;
+                                    decimal y1 = 25 + legendIndex * frameHeight + 1;
+                                    decimal x2 = 1600;
+                                    decimal y2 = 25 + (legendIndex + 1) * frameHeight + 1;
+
+                                    MethodCallLineClassTypeMapping methodCallLineClassTypeMapping = usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary[classPrefix];
+
+                                    xmlWriter.WriteStartElement("rect");
+                                    xmlWriter.WriteAttributeString("x", x1.ToString());
+                                    xmlWriter.WriteAttributeString("y", y1.ToString());
+                                    xmlWriter.WriteAttributeString("width", (x2 - x1).ToString());
+                                    xmlWriter.WriteAttributeString("height", (y2 - y1).ToString());
+                                    xmlWriter.WriteAttributeString("fill", String.Format("#{0}B8", methodCallLineClassTypeMapping.FlameGraphColorStart));
+                                    xmlWriter.WriteAttributeString("rx", "2");
+                                    xmlWriter.WriteAttributeString("ry", "2");
+                                    xmlWriter.WriteEndElement();
+
+                                    xmlWriter.WriteStartElement("text");
+                                    xmlWriter.WriteAttributeString("text-anchor", "left");
+                                    xmlWriter.WriteAttributeString("x", (x1 + 2).ToString());
+                                    xmlWriter.WriteAttributeString("y", (y1 + 11).ToString());
+                                    xmlWriter.WriteAttributeString("font-size", "9");
+                                    xmlWriter.WriteAttributeString("font-family", "monospace");
+                                    if (methodCallLineClassTypeMapping.TextColor.Length > 0 && String.Compare(methodCallLineClassTypeMapping.TextColor, "000000") != 0)
+                                    {
+                                        xmlWriter.WriteAttributeString("fill", String.Format("#{0}FF", methodCallLineClassTypeMapping.TextColor));
+                                    }
+                                    if (methodCallLineClassTypeMapping.FrameworkType.StartsWith("Custom Mapping for") == true)
+                                    {
+                                        xmlWriter.WriteString(classPrefix);
+                                    }
+                                    else
+                                    {
+                                        xmlWriter.WriteString(String.Format("{0} {1}", methodCallLineClassTypeMapping.FrameworkType, methodCallLineClassTypeMapping.ClassPrefix));
+                                    }
+                                    xmlWriter.WriteEndElement();
+
+                                    legendIndex++;
+                                }
+
+                                // Now add legends for the exits and durations
+
+                                // Exits
+                                decimal xx1 = 1400;
+                                decimal yy1 = 25 + legendIndex * frameHeight + 1;
+                                decimal xx2 = 1450;
+                                decimal yy2 = 25 + (legendIndex + 1) * frameHeight + 1;
+
+                                xmlWriter.WriteStartElement("rect");
+                                xmlWriter.WriteAttributeString("x", xx1.ToString());
+                                xmlWriter.WriteAttributeString("y", yy1.ToString());
+                                xmlWriter.WriteAttributeString("width", (xx2 - xx1).ToString());
+                                xmlWriter.WriteAttributeString("height", (yy2 - yy1).ToString());
+                                xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(1, maxFrameDepth, colorFlameGraphStackStart, colorFlameGraphStackEnd));
+                                xmlWriter.WriteAttributeString("rx", "2");
+                                xmlWriter.WriteAttributeString("ry", "2");
+                                xmlWriter.WriteAttributeString("stroke", "#00FFFF");
+                                xmlWriter.WriteAttributeString("stroke-width", "3");
+                                xmlWriter.WriteAttributeString("stroke-dasharray", "10,3");
+                                xmlWriter.WriteEndElement();
+
+                                xmlWriter.WriteStartElement("text");
+                                xmlWriter.WriteAttributeString("text-anchor", "left");
+                                xmlWriter.WriteAttributeString("x", (xx1 + 2).ToString());
+                                xmlWriter.WriteAttributeString("y", (yy1 + 11).ToString());
+                                xmlWriter.WriteAttributeString("font-size", "9");
+                                xmlWriter.WriteAttributeString("font-family", "monospace");
+                                xmlWriter.WriteString("Exits");
+                                xmlWriter.WriteEndElement();
+
+                                // Slow methods with Exits
+                                xx1 = 1450;
+                                xx2 = 1550;
+
+                                xmlWriter.WriteStartElement("rect");
+                                xmlWriter.WriteAttributeString("x", xx1.ToString());
+                                xmlWriter.WriteAttributeString("y", yy1.ToString());
+                                xmlWriter.WriteAttributeString("width", (xx2 - xx1).ToString());
+                                xmlWriter.WriteAttributeString("height", (yy2 - yy1).ToString());
+                                xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(1, maxFrameDepth, colorFlameGraphStackStart, colorFlameGraphStackEnd));
+                                xmlWriter.WriteAttributeString("rx", "2");
+                                xmlWriter.WriteAttributeString("ry", "2");
+                                xmlWriter.WriteAttributeString("stroke", "#BF0000");
+                                xmlWriter.WriteAttributeString("stroke-width", "3");
+                                xmlWriter.WriteAttributeString("stroke-dasharray", "10,3");
+                                xmlWriter.WriteEndElement();
+
+                                xmlWriter.WriteStartElement("text");
+                                xmlWriter.WriteAttributeString("text-anchor", "left");
+                                xmlWriter.WriteAttributeString("x", (xx1 + 2).ToString());
+                                xmlWriter.WriteAttributeString("y", (yy1 + 11).ToString());
+                                xmlWriter.WriteAttributeString("font-size", "9");
+                                xmlWriter.WriteAttributeString("font-family", "monospace");
+                                xmlWriter.WriteString("Exits + Slow");
+                                xmlWriter.WriteEndElement();
+
+                                // Slow methods with Exits
+                                xx1 = 1550;
+                                xx2 = 1600;
+
+                                xmlWriter.WriteStartElement("rect");
+                                xmlWriter.WriteAttributeString("x", xx1.ToString());
+                                xmlWriter.WriteAttributeString("y", yy1.ToString());
+                                xmlWriter.WriteAttributeString("width", (xx2 - xx1).ToString());
+                                xmlWriter.WriteAttributeString("height", (yy2 - yy1).ToString());
+                                xmlWriter.WriteAttributeString("fill", getFlameGraphBoxColorAsRGBString(1, maxFrameDepth, colorFlameGraphStackStart, colorFlameGraphStackEnd));
+                                xmlWriter.WriteAttributeString("rx", "2");
+                                xmlWriter.WriteAttributeString("ry", "2");
+                                xmlWriter.WriteAttributeString("stroke", "#BF0000");
+                                xmlWriter.WriteAttributeString("stroke-width", "3");
+                                xmlWriter.WriteEndElement();
+
+                                xmlWriter.WriteStartElement("text");
+                                xmlWriter.WriteAttributeString("text-anchor", "left");
+                                xmlWriter.WriteAttributeString("x", (xx1 + 2).ToString());
+                                xmlWriter.WriteAttributeString("y", (yy1 + 11).ToString());
+                                xmlWriter.WriteAttributeString("font-size", "9");
+                                xmlWriter.WriteAttributeString("font-family", "monospace");
+                                xmlWriter.WriteString("Slow");
+                                xmlWriter.WriteEndElement();
 
                                 // Move off the content placeholder
                                 xmlReader.Read();
@@ -911,5 +1138,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return null;
         }
 
+        private string getFrameworkFromUnknownClassOrFunctionName(string classOrFunctionName)
+        {
+            // Grab first two elements instead of the entire class name
+            // AutoFac.Control.Execution -> Autofac.Funky
+            // com.tms.whatever -> com.tms
+            // com.matrixone.jdl.rmi.bosMQLCommandImpl > com.matrixone
+            // org.bread.with.butter -> org.bread
+            string frameworkName = String.Empty;
+
+            string[] classNameTokens = classOrFunctionName.Split('.', ':');
+            if (classNameTokens.Length == 0 || classNameTokens.Length == 1)
+            {
+                // No periods
+                frameworkName = classOrFunctionName;
+            }
+            else if (classNameTokens.Length >= 2)
+            {
+                frameworkName = String.Format("{0}.{1}", classNameTokens[0], classNameTokens[1]);
+            }
+
+            return frameworkName;
+        }
     }
 }

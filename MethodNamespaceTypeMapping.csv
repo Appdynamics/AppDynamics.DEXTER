@@ -1,177 +1,207 @@
-ClassPrefix,FrameworkType,FlameGraphColorStart,FlameGraphColorEnd
-ActivityFeeds,Microsoft Dynamics CRM,EA3E23,E8998D
-Amazon.Runtime,Amazon Core,FF9900,FBBB5B
-antrl,ANTLR Parser,,
-ASP,.NET ASP.NET,6197FF,00D1C8
-Aspose.Pdf,Aspose Components,,
-Asynchronous,.NET ASP.NET,6197FF,00D1C8
-Autofac,Autofac IoC,,
-AutoMapper,AutoMapper,,
-Castle,Castle Project,,
-ch.qos.logback,Logback,,
-com.amazonaws,Amazon Core,FF9900,FBBB5B
-com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client,FF9900,FBBB5B
-com.amazonaws.auth,Amazon Auth,FF9900,FBBB5B
-com.amazonaws.http,Amazon Http,FF9900,FBBB5B
-com.amazonaws.services.sns,Amazon SNS,FF9900,FBBB5B
-com.amazonaws.services.sqs,Amazon SQS,FF9900,FBBB5B
-com.appdynamics,AppDynamics,7668CF,C4BEE9
-com.appdynamicspilot,AppDynamics,7668CF,C4BEE9
-com.arjuna.ats,JBoss Arjuna,FF0A0A,FFB3B3
-com.aspose,Aspose Components,,
-com.atomikos,Atomicos Transactions,,
-com.autofact,Autofac IoC,,
-com.bea,BEA Core,,
-com.blazesoft,FICO BlazeAdvisor,,
-com.blazesoft.engines,FICO BlazeAdvisor Rules Engine,,
-com.crossview.commerce,IBM WebSphere Commerce,,
-com.ctc.wstx,Sun Woodstox,,
-com.cybersource,CyberSource ECommerce,,
-com.dassault_systemes,3DS,,
-com.entrust,Entrust ECommerce,,
-com.exalead,3DS EXALEAD,,
-com.fasterxml.jackson,Jackson Core,C2961D,E3B022
-com.fasterxml.jackson.annotation,Jackson Annotation,C2961D,E3B022
-com.fasterxml.jackson.core,Jackson Core,C2961D,E3B022
-com.fasterxml.jackson.databind,Jackson DataBind,C2961D,E3B022
-com.google,Google Core,FBBC05,FEEDBE
-com.guidewire,Guidewire,4382B0,4A93C7
-com.ibm,IBM Core,00BFA9,00E5DB
-com.ibatis,Ibatis ORM,00BFA9,00E5DB
-com.inet.ora,Inet Oracle JDBC Driver,,
-com.informix,Informix,00BFA9,00E5DB
-com.farmers,Farmers Insurance,624BD1,7056F0
-com.matrixone,3DS MatrixOne,,
-com.mchange.v2.c3p0,c3p0 JDBC Connection Pooling,,
-com.microsoft,Microsoft,00A1F1,A7D5EC
-com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,A7D5EC
-com.mongodb,Mongo DB,,
-com.mysql,MySQL Driver,,
-com.newrelic,NewRelic,7668CF,C4BEE9
-com.nimbusds,NimbusDS,,
-com.opensymphony,OpenSymphony J2EE,,
-com.oracle,Oracle Core,,
-com.paypal,PayPal,,
-com.pointbase,Pointbase Driver,,
-com.rsa,RSA Security,,
-com.singularity,AppDynamics,7668CF,C4BEE9
-com.softwareag,Software AG,,
-com.sun,JDK Core,75E500,BBFA38
-com.sun.jersey,Jersey REST Framework,75E500,BBFA38
-com.sun.xml.ws,Sun Web Services,75E500,BBFA38
-com.sybase.jdbc2,Sybase JDBC2,,
-com.sybase.jdbc3,Sybase JDBC3,,
-com.sybase.jdbc4,Sybase JDBC3,,
-com.teradata,Teradata Database,,
-com.terracotta,Terracota DB,,
-com.terracottatech,Terracota DB,,
-com.thoughtworks,ThoughWorks,,
-com.cisco.webex,Cisco Webex,418521,4B9E24
-com.webex,Cisco Webex,418521,4B9E24
-com.weblogic,WebLogic Core,,
-com.webmethods,Software AG webMethods,,
-Corillian,Corillian/Voyager Banking,,
-Dapper,Dapper,,
-edge.,Guidewire,4382B0,4A93C7
-entity.,Guidewire,4382B0,4A93C7
-Fiserv,FiServ Financial,,
-Glass.Mapper,Sitecore CMS,00BFA9,00E5DB
-gw.,Guidewire,4382B0,4A93C7
-freemarker,Apache FreeMarker,FD6DEE,F5CCE7
-Ionic.Crc,Ionic,,
-Ionic.Zlib,Ionic,,
-io.undertow,JBoss Undertow,FF0A0A,FFB3B3
-java,Java Core,75E500,BBFA38
-java.io,Java IO,75E500,BBFA38
-java.lang.reflect,Java Reflection,75E500,BBFA38
-javax,Java Extension,75E500,BBFA38
-jdk.internal.dynalink,Oracle Nashorn,,
-jdk.nashorn,Oracle Nashorn,,
-jdk.xml,Java XML,75E500,BBFA38
-jersey,Jersey REST Framework,75E500,BBFA38
-jrockit,JRockit JVM,75E500,BBFA38
-Kendo,Kendo UI,,
-log4net,Log4Net Logging,,
-Microsoft,Microsoft,00A1F1,A7D5EC
-Microsoft.Azure,Microsoft Azure,00A1F1,A7D5EC
-Microsoft.Azure.KeyVault,Microsoft Azure KeyVault,00A1F1,A7D5EC
-Microsoft.Crm,Microsoft Dynamics CRM,EA3E23,E8998D
-Microsoft.FSharp,.NET F#,6197FF,00D1C8
-Microsoft.CSharp,.NET C#,6197FF,00D1C8
-Microsoft.Dynamics,Microsoft Dynamics CRM,EA3E23,E8998D
-Microsoft.OData,Microsoft OData,00A1F1,A7D5EC
-Microsoft.Owin,Microsoft Owin,00A1F1,A7D5EC
-Microsoft.Practices,Microsoft Patterns and Practices,00A1F1,A7D5EC
-Microsoft.Reporting,Microsoft Reporting Services,00A1F1,A7D5EC
-Microsoft.ReportingServices,Microsoft Reporting Services,00A1F1,A7D5EC
-Microsoft.ServiceBus,Microsoft Service Bus,00A1F1,A7D5EC
-Microsoft.ServiceFabric,Microsoft Service Fabric,00A1F1,A7D5EC
-Microsoft.SharePoint,Microsoft SharePoint,00A1F1,A7D5EC
-Microsoft.SqlServer,Microsoft SQL Server,00A1F1,A7D5EC
-Microsoft.VisualBasic,.NET VB.NET,6197FF,00D1C8
-Microsoft.WindowsAzure.Storage,Microsoft Azure Storage,00A1F1,A7D5EC
-Microsoft.Xrm,Microsoft Dynamics CRM,EA3E23,E8998D
-MobileMoney.Voyager,Corillian/Voyager Banking,,
-MS.Internal.Xaml,.NET XAML,6197FF,00D1C8
-MS.Internal.Xml,.NET XML,6197FF,00D1C8
-MySQL,MySQL Driver,,
-net.sf,SourceForge,,
-netscape,Netscape,,
-NHibernate,NHibernate ORM,6DB33F,9ACE78
-Newtonsoft.Json,Newtonsoft JSON,6197FF,00D1C8
-Novell,Novell,,
-NLog,NLog Framework,,
-ognl,Apache OGNL,FD6DEE,F5CCE7
-oracle,Oracle Core,,
-org.acegisecurity,Acegi Security,,
-org.apache,Apache,FD6DEE,F5CCE7
-org.apache.camel.components.seda,Apache Camel Seda,FD6DEE,F5CCE7
-org.apache.camel.example,Apache Camel Example,FD6DEE,F5CCE7
-org.apache.cassandra,Apache Cassandra,FD6DEE,F5CCE7
-org.apache.kafka,Apache Kafka,FD6DEE,F5CCE7
-org.apache.openejb,Apache OpenEJB,FD6DEE,F5CCE7
-org.apache.ws,Apache Web Services,FD6DEE,F5CCE7
-org.apache.xmlbeans,Apache XML Beans,FD6DEE,F5CCE7
-org.BouncyCastle,Bouncy Castle Encryption,,
-org.eclipse.jetty,Eclipse Jetty,,
-org.glassfish,GlassFish,,
-org.jboss,JBoss,FF0A0A,FFB3B3
-org.jboss.soa.esb.client,JBoss ESB,FF0A0A,FFB3B3
-org.mule.processor,Mule ESB,,
-org.springframework,Spring,6DB33F,9ACE78
-org.springframework.integration,Spring Integration,6DB33F,9ACE78
-org.springframework.jms,Spring JMS,6DB33F,9ACE78
-persistence.antlr,TopLink JPA,,
-RazorEngine,Antaris RazorEngine,,
-redis,Redis Cache,,
-redis.clients,Redis Cache Client,,
-ReportExprHostImpl,Microsoft Reporting Services,00A1F1,A7D5EC
-RestSharp,RestSharp HTTP Client,,
-Sitecore,Sitecore CMS,00BFA9,00E5DB
-SNINativeMethodWrapper,.NET ADO.NET,6197FF,00D1C8
-StackExchange.Redis,Redis StackExchange,,
-StructureMap,StructureMap IoC/DI,,
-sun,JDK Core,,
-sun.reflect,Java Reflection,75E500,BBFA38
-System,.NET System,6197FF,00D1C8
-System.Activities,.NET WF,6197FF,00D1C8
-System.Collections,.NET Collections,6197FF,00D1C8
-System.Data,.NET Data,6197FF,00D1C8
-System.Data.Linq,.NET Data Linq,6197FF,00D1C8
-System.Data.Entity,.NET Entity Framework,6197FF,00D1C8
-System.Diagnostics,.NET Diagnostics,6197FF,00D1C8
-System.IO,.NET IO,6197FF,00D1C8
-System.Linq,.NET Linq,6197FF,00D1C8
-System.Net,.NET Network,6197FF,00D1C8
-System.Reflection,.NET Reflection,6197FF,00D1C8
-System.Runtime,.NET Runtime,6197FF,00D1C8
-System.Security,.NET Security,6197FF,00D1C8
-System.ServiceModel,.NET WCF,6197FF,00D1C8
-System.Text,.NET Text,6197FF,00D1C8
-System.Threading,.NET Threading,6197FF,00D1C8
-System.Web,.NET ASP.NET,6197FF,00D1C8
-System.Web.Mvc,.NET ASP.NET MVC,6197FF,00D1C8
-System.Xaml,.NET XAML,6197FF,00D1C8
-System.Xml,.NET XML,6197FF,00D1C8
-Telerik,Teleric Web Controls,,
-weblogic,WebLogic Core,,
+ClassPrefix,FrameworkType,FlameGraphColorStart,FlameGraphColorEnd,TextColor
+ActivityFeeds,Microsoft Dynamics CRM,ED5139,E8998D,000000
+Amazon.Runtime,Amazon Core,FF9900,FBBB5B,000000
+antrl,ANTLR Parser,a265b8,b47bc9,000000
+ASP,.NET ASP.NET,6197FF,94C9FF,000000
+Aspose.Pdf,Aspose Components,a16f6f,b87b7b,FFFFFF
+Asynchronous,.NET ASP.NET,6197FF,94C9FF,000000
+Autofac,Autofac IoC,140fb8,1c15d6,FFFFFF
+AutoMapper,AutoMapper,bba6bf,d7c3db,000000
+Castle,Castle Project,e09b9b,fab9b9,000000
+ch.qos.logback,Logback,ff875e,ff9a78,000000
+com.amazonaws,Amazon Core,FF9900,FBBB5B,000000
+com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client,FF9900,FBBB5B,000000
+com.amazonaws.auth,Amazon Auth,FF9900,FBBB5B,000000
+com.amazonaws.http,Amazon Http,FF9900,FBBB5B,000000
+com.amazonaws.services.sns,Amazon SNS,FF9900,FBBB5B,000000
+com.amazonaws.services.sqs,Amazon SQS,FF9900,FBBB5B,000000
+com.appdynamics,AppDynamics,7668CF,978FCF,FFFFFF
+com.appdynamicspilot,AppDynamics,7668CF,978FCF,FFFFFF
+com.arjuna.ats,JBoss Arjuna,99a30d,acb52a,000000
+com.aspose,Aspose Components,99a30d,acb52a,000000
+com.atomikos,Atomicos Transactions,f2a427,f7b243,000000
+com.autofact,Autofac IoC,194970,1e5785,FFFFFF
+com.bea,BEA Core,bcccc6,d5e3de,000000
+com.blazesoft,FICO BlazeAdvisor,a9b85e,c4d667,000000
+com.blazesoft.engines,FICO BlazeAdvisor Rules Engine,a9b85e,c4d667,000000
+com.cisco.webex,Cisco Webex,418521,4B9E24,FFFFFF
+com.crossview.commerce,IBM WebSphere Commerce,00BFA9,35CCBA,000000
+com.ctc.wstx,Sun Woodstox,fcf644,fcf760,000000
+com.couchbase,Couchbase DB,a9b85e,c4d667,000000
+com.cybersource,CyberSource ECommerce,140fb8,1c15d6,FFFFFF
+com.dassault_systemes,3DS,ff1919,ff5959,FFFFFF
+com.dynatrace,Dynatrace,7668CF,978FCF,FFFFFF
+com.entrust,Entrust ECommerce,bcccc6,d5e3de,000000
+com.exalead,3DS EXALEAD,ff1919,ff5959,FFFFFF
+com.farmers,Farmers Insurance,624BD1,7056F0,FFFFFF
+com.fasterxml.jackson,Jackson Core,C2961D,E3B022,000000
+com.fasterxml.jackson.annotation,Jackson Annotation,C2961D,E3B022,000000
+com.fasterxml.jackson.core,Jackson Core,C2961D,E3B022,000000
+com.fasterxml.jackson.databind,Jackson DataBind,C2961D,E3B022,000000
+com.filenet,FileNet,98b023,b3cc33,000000
+com.google,Google Core,FBBC05,FCD049,000000
+com.guidewire,Guidewire,BA90FC,C5A7FC,000000
+com.ibatis,Ibatis ORM,60bfb4,79e0d4,000000
+com.ibm,IBM Core,00BFA9,35CCBA,000000
+com.inet.ora,Inet Oracle JDBC Driver,36ffc3,9ffce0,000000
+com.informatica,Informatica,62a9e3,6db9f7,000000
+com.informix,Informix,6ae6b6,7ff5c8,000000
+com.matrixone,3DS MatrixOne,ff1919,ff5959,FFFFFF
+com.mchange.v2.c3p0,c3p0 JDBC Driver,36ffc3,9ffce0,000000
+com.mchange.v2.resourcepool,c3p0 JDBC Driver Pooling,36ffc3,9ffce0,000000
+com.microsoft,Microsoft,00A1F1,4FBAF0,000000
+com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,4FBAF0,000000
+com.mongodb,Mongo DB,633838,854949,FFFFFF
+com.mule,Mule ESB,e3b2ed,f4cafc,000000
+com.mysql,MySQL Driver,36ffc3,9ffce0,000000
+com.newrelic,NewRelic,7668CF,978FCF,FFFFFF
+com.nimbusds,NimbusDS,fcf644,fcf760,000000
+com.opensymphony,OpenSymphony J2EE,558c07,6aa813,FFFFFF
+com.oracle,Oracle Core,f80000,fa3434,FFFFFF
+com.paypal,PayPal,70dbb9,88ebcb,000000
+com.pega,Pega,b2b6db,c2c7f0,000000
+com.pegarules,Pega,b2b6db,c2c7f0,000000
+com.pointbase,Pointbase Driver,828156,94936d,FFFFFF
+com.rsa,RSA Security,8bc4af,9ad9c2,000000
+com.singularity,AppDynamics,7668CF,978FCF,FFFFFF
+com.softwareag,Software AG,bcccc6,d5e3de,000000
+com.sun,JDK Core,75E500,BBFA38,000000
+com.sun.jersey,Jersey REST Framework,75E500,BBFA38,000000
+com.sun.xml.ws,Sun Web Services,75E500,BBFA38,000000
+com.sybase.jdbc2,Sybase JDBC2,36ffc3,9ffce0,000000
+com.sybase.jdbc3,Sybase JDBC3,36ffc3,9ffce0,000000
+com.sybase.jdbc4,Sybase JDBC3,36ffc3,9ffce0,000000
+com.teradata,Teradata Database,12588b,226494,FFFFFF
+com.terracotta,Terracotta DB,12588b,226494,FFFFFF
+com.terracottatech,Terracotta DB,12588b,226494,FFFFFF
+com.thoughtworks,ThoughtWorks,e874d9,ff82ee,000000
+com.webex,Cisco Webex,418521,4B9E24,FFFFFF
+com.weblogic,WebLogic Core,05f0e0,37ede1,000000
+com.webmethods,Software AG webMethods,40ff96,6effaf,000000
+Corillian,Corillian/Voyager Banking,fcf644,fcf760,000000
+custom01,Custom Mapping for Flame Graphs,fcf644,fcf760,000000
+custom02,Custom Mapping for Flame Graphs,c4d14d,e1f059,000000
+custom03,Custom Mapping for Flame Graphs,fcd121,fcd94c,000000
+custom04,Custom Mapping for Flame Graphs,fc911e,ffa647,000000
+custom05,Custom Mapping for Flame Graphs,ff7a0d,fc9744,000000
+custom06,Custom Mapping for Flame Graphs,ff6219,ff9361,000000
+custom07,Custom Mapping for Flame Graphs,ff4314,fc7d5d,000000
+custom08,Custom Mapping for Flame Graphs,f0757e,f29ba1,000000
+custom09,Custom Mapping for Flame Graphs,f5254e,f5627f,000000
+custom10,Custom Mapping for Flame Graphs,FE5810,FF8754,000000
+custom11,Custom Mapping for Flame Graphs,ad5fc9,c169e0,000000
+custom12,Custom Mapping for Flame Graphs,bb9bc7,d8b3e6,000000
+custom13,Custom Mapping for Flame Graphs,f20ab0,f549c4,000000
+custom14,Custom Mapping for Flame Graphs,e3396f,f25587,000000
+custom15,Custom Mapping for Flame Graphs,f7abc3,ffd1e0,000000
+custom16,Custom Mapping for Flame Graphs,e31414,e34b4b,FFFFFF
+custom17,Custom Mapping for Flame Graphs,940303,b02727,FFFFFF
+custom18,Custom Mapping for Flame Graphs,c4d14d,e1f059,000000
+custom19,Custom Mapping for Flame Graphs,e4ff36,ecff73,000000
+custom20,Custom Mapping for Flame Graphs,d17c15,f09322,000000
+Dapper,Dapper,f7ef08,faf337,000000
+edge.,Guidewire,BA90FC,C5A7FC,000000
+entity.,Guidewire,BA90FC,C5A7FC,000000
+Fiserv,FiServ Financial,993006,b5471b,FFFFFF
+freemarker,Apache FreeMarker,FD6DEE,F5CCE7,000000
+Glass.Mapper,Sitecore CMS,8abfb9,a7d6d1,000000
+gw.,Guidewire,BA90FC,C5A7FC,000000
+io.undertow,JBoss Undertow,99a30d,acb52a,000000
+Ionic.Crc,Ionic,c5d186,e1f099,000000
+Ionic.Zlib,Ionic,c5d186,e1f099,000000
+java,Java Core,75E500,BBFA38,000000
+java.io,Java IO,75E500,BBFA38,000000
+java.lang.reflect,Java Reflection,75E500,BBFA38,000000
+javax,Java Extension,75E500,BBFA38,000000
+jdk.internal.dynalink,Oracle Nashorn,f80000,fa3434,FFFFFF
+jdk.nashorn,Oracle Nashorn,f80000,fa3434,FFFFFF
+jdk.xml,Java XML,75E500,BBFA38,000000
+jersey,Jersey REST Framework,75E500,BBFA38,000000
+jrockit,JRockit JVM,75E500,BBFA38,000000
+Kendo,Kendo UI,5eb0db,73cbfa,000000
+log4net,Log4Net Logging,1759d4,1f68f0,FFFFFF
+Microsoft,Microsoft,00A1F1,4FBAF0,000000
+Microsoft.Azure,Microsoft Azure,00A1F1,4FBAF0,000000
+Microsoft.Azure.KeyVault,Microsoft Azure KeyVault,00A1F1,4FBAF0,000000
+Microsoft.Crm,Microsoft Dynamics CRM,ED5139,E8998D,000000
+Microsoft.CSharp,.NET C#,6197FF,94C9FF,000000
+Microsoft.Dynamics,Microsoft Dynamics CRM,ED5139,E8998D,000000
+Microsoft.FSharp,.NET F#,6197FF,94C9FF,000000
+Microsoft.OData,Microsoft OData,00A1F1,4FBAF0,000000
+Microsoft.Owin,Microsoft Owin,00A1F1,4FBAF0,000000
+Microsoft.Practices,Microsoft Patterns and Practices,00A1F1,4FBAF0,000000
+Microsoft.Reporting,Microsoft Reporting Services,eeff00,f5ff70,000000
+Microsoft.ReportingServices,Microsoft Reporting Services,eeff00,f5ff70,000000
+Microsoft.ServiceBus,Microsoft Service Bus,00A1F1,4FBAF0,000000
+Microsoft.ServiceFabric,Microsoft Service Fabric,00A1F1,4FBAF0,000000
+Microsoft.SharePoint,Microsoft SharePoint,eeff00,f5ff70,000000
+Microsoft.SqlServer,Microsoft SQL Server,00A1F1,4FBAF0,000000
+Microsoft.VisualBasic,.NET VB.NET,6197FF,94C9FF,000000
+Microsoft.WindowsAzure.Storage,Microsoft Azure Storage,00A1F1,4FBAF0,000000
+Microsoft.Xrm,Microsoft Dynamics CRM,ED5139,E8998D,000000
+MobileMoney.Voyager,Corillian/Voyager Banking,140fb8,1c15d6,FFFFFF
+MS.Internal.Xaml,.NET XAML,6197FF,94C9FF,000000
+MS.Internal.Xml,.NET XML,6197FF,94C9FF,000000
+MySQL,MySQL Driver,36ffc3,9ffce0,000000
+net.sf,SourceForge,FE5810,FF8754,000000
+netscape,Netscape,558c07,6aa813,FFFFFF
+Newtonsoft.Json,Newtonsoft JSON,6197FF,94C9FF,000000
+NHibernate,NHibernate ORM,a3f57f,bffca4,000000
+NLog,NLog Framework,a2d9f2,bfebff,000000
+Novell,Novell,ad5fc9,c169e0,000000
+OfficeOpenXml,Office XML,085375,11658c,FFFFFF
+ognl,Apache OGNL,FD6DEE,F5CCE7,000000
+oracle,Oracle Core,f80000,fa3434,FFFFFF
+Oracle.DataAccess,Oracle Database,36ffc3,9ffce0,000000
+org.acegisecurity,Acegi Security,8bc4af,9ad9c2,000000
+org.apache,Apache,FD6DEE,F5CCE7,000000
+org.apache.camel.components.seda,Apache Camel Seda,FD6DEE,F5CCE7,000000
+org.apache.camel.example,Apache Camel Example,FD6DEE,F5CCE7,000000
+org.apache.cassandra,Apache Cassandra,FD6DEE,F5CCE7,000000
+org.apache.kafka,Apache Kafka,FD6DEE,F5CCE7,000000
+org.apache.openejb,Apache OpenEJB,FD6DEE,F5CCE7,000000
+org.apache.ws,Apache Web Services,FD6DEE,F5CCE7,000000
+org.apache.xmlbeans,Apache XML Beans,FD6DEE,F5CCE7,000000
+org.BouncyCastle,Bouncy Castle Encryption,f7abc3,ffd1e0,000000
+org.eclipse.jetty,Eclipse Jetty,e3396f,f25587,000000
+org.glassfish,GlassFish,bb9bc7,d8b3e6,000000
+org.jboss,JBoss,99a30d,acb52a,FFFFFF
+org.jboss.soa.esb.client,JBoss ESB,99a30d,acb52a,FFFFFF
+org.mule.processor,Mule ESB,FE5810,FF8754,000000
+org.springframework,Spring,6DB33F,9ACE78,000000
+org.springframework.integration,Spring Integration,6DB33F,9ACE78,000000
+org.springframework.jms,Spring JMS,6DB33F,9ACE78,000000
+persistence.antlr,TopLink JPA,f20ab0,f549c4,000000
+RazorEngine,Antaris RazorEngine,ad5fc9,c169e0,000000
+redis,Redis Cache,ff4d4d,ff9696,FFFFFF
+redis.clients,Redis Cache Client,ff4d4d,ff9696,FFFFFF
+ReportExprHostImpl,Microsoft Reporting Services,00A1F1,4FBAF0,000000
+RestSharp,RestSharp HTTP Client,ff4d4d,ff9696,FFFFFF
+Sitecore,Sitecore CMS,8abfb9,a7d6d1,000000
+SNINativeMethodWrapper,.NET ADO.NET,6197FF,94C9FF,000000
+StackExchange.Redis,Redis StackExchange,ff4d4d,ff9696,FFFFFF
+StructureMap,StructureMap IoC/DI,05f0e0,37ede1,000000
+sun,JDK Core,75E500,BBFA38,000000
+sun.reflect,Java Reflection,75E500,BBFA38,000000
+System,.NET System,6197FF,94C9FF,000000
+System.Activities,.NET WF,6197FF,94C9FF,000000
+System.Collections,.NET Collections,6197FF,94C9FF,000000
+System.Data,.NET Data,6197FF,94C9FF,000000
+System.Data.Entity,.NET Entity Framework,6197FF,94C9FF,000000
+System.Data.Linq,.NET Data Linq,6197FF,94C9FF,000000
+System.Diagnostics,.NET Diagnostics,6197FF,94C9FF,000000
+System.IO,.NET IO,6197FF,94C9FF,000000
+System.Linq,.NET Linq,6197FF,94C9FF,000000
+System.Net,.NET Network,6197FF,94C9FF,000000
+System.Reflection,.NET Reflection,6197FF,94C9FF,000000
+System.Runtime,.NET Runtime,6197FF,94C9FF,000000
+System.Security,.NET Security,6197FF,94C9FF,000000
+System.ServiceModel,.NET WCF,6197FF,94C9FF,000000
+System.Text,.NET Text,6197FF,94C9FF,000000
+System.Threading,.NET Threading,6197FF,94C9FF,000000
+System.Web,.NET ASP.NET,6197FF,94C9FF,000000
+System.Web.Mvc,.NET ASP.NET MVC,6197FF,94C9FF,000000
+System.Xaml,.NET XAML,6197FF,94C9FF,000000
+System.Xml,.NET XML,6197FF,94C9FF,000000
+Telerik,Teleric Web Controls,e31414,e34b4b,FFFFFF
+weblogic,WebLogic Core,FE5810,FF8754,000000

@@ -416,7 +416,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "SubType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "EventID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_EVENTS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_EVENTS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -535,7 +535,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "EntityName", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "EntityID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_AUDIT_EVENTS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_AUDIT_EVENTS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 

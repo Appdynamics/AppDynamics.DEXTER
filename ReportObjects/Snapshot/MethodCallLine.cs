@@ -79,10 +79,11 @@ namespace AppDynamics.Dexter.ReportObjects
         public override String ToString()
         {
             return String.Format(
-                "MethodCallLine: {0}, {1} ms, {2} deep, #{3}",
+                "MethodCallLine: {0}, {1} ms, {2} deep, {3} exits, #{4}",
                 this.FullName,
                 this.Exec,
                 this.Depth,
+                this.NumExits,
                 this.SequenceNumber);
         }
     }

@@ -623,7 +623,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "UserExperience", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_SNAPSHOTS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_SNAPSHOTS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -755,7 +755,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "UserExperience", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_SEGMENTS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_SEGMENTS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -862,7 +862,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "ExitType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_EXIT_CALLS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_EXIT_CALLS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -978,7 +978,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "SEPType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "SegmentID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_SERVICE_ENDPOINT_CALLS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_SERVICE_ENDPOINT_CALLS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -1070,7 +1070,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "ErrorType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "SegmentID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_DETECTED_ERRORS_TIMELINE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_DETECTED_ERRORS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -1160,7 +1160,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "DataType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "SegmentID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_BUSINESS_DATA_TYPE, eChartType.ColumnClustered, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_BUSINESS_DATA_TYPE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 

@@ -145,6 +145,29 @@ namespace AppDynamics.Dexter
             return false;
         }
 
+        public static TextWriter SaveFileToPathWithWriter(string filePath)
+        {
+            string folderPath = Path.GetDirectoryName(filePath);
+
+            if (CreateFolder(folderPath) == true)
+            {
+                try
+                {
+                    logger.Trace("Opening TextWriter to file {0}", filePath);
+
+                    return File.CreateText(filePath);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Unable to write to file {0}", filePath);
+                    logger.Error(ex);
+
+                    return null;
+                }
+            }
+            return null;
+        }
+
         public static string ReadFileFromPath(string filePath)
         {
             try

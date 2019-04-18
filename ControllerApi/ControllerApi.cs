@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.Security;
 using System.Reflection;
+using System.Text;
 
 namespace AppDynamics.Dexter
 {
@@ -18,7 +20,8 @@ namespace AppDynamics.Dexter
         private HttpClientHandler _httpClientHandler;
         private CookieContainer _cookieContainer;
 
-        private System.Net.Security.RemoteCertificateValidationCallback ignoreBadCertificates = new System.Net.Security.RemoteCertificateValidationCallback(delegate { return true; });
+        // Always return true for the certificates, even if they are busted
+        private RemoteCertificateValidationCallback ignoreBadCertificates = new RemoteCertificateValidationCallback(delegate { return true; });
 
         #endregion
 
@@ -46,15 +49,15 @@ namespace AppDynamics.Dexter
             this._httpClientHandler.CookieContainer = this._cookieContainer;
 
             HttpClient httpClient = new HttpClient(this._httpClientHandler);
-            httpClient.Timeout = new TimeSpan(0, 3, 0);
+            httpClient.Timeout = new TimeSpan(0, 1, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
-            if (this.UserName == "BEARER")
+            if (this.UserName.ToUpper() == "BEARER")
             {
                 httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", this.Password);
             }
             else
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(System.Text.ASCIIEncoding.ASCII.GetBytes(String.Format("{0}:{1}", this.UserName, this.Password))));
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes(String.Format("{0}:{1}", this.UserName, this.Password))));
             }
             httpClient.DefaultRequestHeaders.Add("User-Agent", String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version));
 

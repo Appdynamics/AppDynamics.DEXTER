@@ -8,6 +8,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string FrameworkType { get; set; }
         public string FlameGraphColorStart { get; set; }
         public string FlameGraphColorEnd { get; set; }
+        public string TextColor { get; set; }
 
         public override String ToString()
         {
