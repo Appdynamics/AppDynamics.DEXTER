@@ -33,6 +33,10 @@ namespace AppDynamics.Dexter.ReportObjects
         public long HttpErrors { get; set; }
         public long HTTPEPM { get; set; }
         public double ErrorsPercentage { get; set; }
+
+        public double AvailAgent { get; set; }
+        public double AvailMachine { get; set; }
+
         public bool HasActivity { get; set; }
 
         public string DetailLink { get; set; }

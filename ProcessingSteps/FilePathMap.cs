@@ -30,6 +30,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string DASHBOARDS_FOLDER_NAME = "DASH";
 
+        private const string LICENSE_FOLDER_NAME = "LIC";
+
         private const string EVENTS_FOLDER_NAME = "EVT";
         private const string EVENTS_APPS_FOLDER_NAME = "EVTAPP";
         private const string EVENTS_CONTROLLER_FOLDER_NAME = "EVTCNTR";
@@ -70,6 +72,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_ENTITY_ALL_APPLICATIONS_FILE_NAME = "allapplications.json";
         private const string EXTRACT_ENTITY_APM_APPLICATIONS_FILE_NAME = "applications.json";
         private const string EXTRACT_ENTITY_MOBILE_APPLICATIONS_FILE_NAME = "mobileapplications.json";
+
+        // License information
+        private const string EXTRACT_LICENSE_ALL_APPLICATIONS_FILE_NAME = "allapplications.lic.json";
+        private const string EXTRACT_LICENSE_SIM_MACHINES_FILE_NAME = "sim.machines.json";
+        private const string EXTRACT_LICENSE_ACCOUNT_FILE_NAME = "account.json";
+        private const string EXTRACT_LICENSE_FILE_NAME = "license.json";
+        private const string EXTRACT_LICENSE_USAGE_SUMMARY_FILE_NAME = "licenseusage.summary.all.json";
+        private const string EXTRACT_LICENSE_EUM_USAGE_SUMMARY_FILE_NAME = "licenseusage.summary.eum.json";
+        private const string EXTRACT_LICENSE_USAGE_APM_DETAIL_FILE_NAME = "licenseusage.apm.json";
+        private const string EXTRACT_LICENSE_USAGE_DB_DETAIL_FILE_NAME = "licenseusage.db.json";
+        private const string EXTRACT_LICENSE_USAGE_MA_DETAIL_FILE_NAME = "licenseusage.ma.json";
+        private const string EXTRACT_LICENSE_USAGE_SIM_DETAIL_FILE_NAME = "licenseusage.sim.json";
+        private const string EXTRACT_LICENSE_USAGE_SA_DETAIL_FILE_NAME = "licenseusage.sa.json";
+        private const string EXTRACT_LICENSE_USAGE_NETVIZ_DETAIL_FILE_NAME = "licenseusage.netviz.json";
+        private const string EXTRACT_LICENSE_USAGE_TX_ANALYTICS_DETAIL_FILE_NAME = "licenseusage.txbiq.json";
+        private const string EXTRACT_LICENSE_USAGE_LOG_ANALYTICS_DETAIL_FILE_NAME = "licenseusage.logbiq.json";
+        private const string EXTRACT_LICENSE_RULES_FILE_NAME = "licenserules.json";
+        private const string EXTRACT_LICENSE_RULE_USAGE_DETAIL_FILE_NAME = "licenserule.usage.{0}.json";
+        private const string EXTRACT_LICENSE_RULE_CONFIGURATION_DETAIL_FILE_NAME = "licenserule.config.{0}.json";
 
         // APM Metadata file names
         private const string EXTRACT_ENTITY_APPLICATION_FILE_NAME = "application.json";
@@ -199,6 +220,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Detected Controller entity report conversion file names
         private const string CONVERT_CONTROLLERS_SUMMARY_FILE_NAME = "controllers.csv";
         private const string CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME = "applications.csv";
+
+        // License information
+        private const string CONVERT_LICENSE_ACCOUNT_FILE_NAME = "account.csv";
+        private const string CONVERT_LICENSES_FILE_NAME = "licenses.csv";
+        private const string CONVERT_LICENSE_USAGE_ACCOUNT_FILE_NAME = "licenseusage.account.csv";
+        private const string CONVERT_LICENSE_RULES_FILE_NAME = "licenserules.csv";
+        private const string CONVERT_LICENSE_RULE_SCOPES_FILE_NAME = "licenserulescopes.csv";
+        private const string CONVERT_LICENSE_USAGE_RULES_FILE_NAME = "licenseusage.rules.csv";
 
         // Detected APM entity report conversion file names
         private const string CONVERT_APM_APPLICATIONS_FILE_NAME = "applications.apm.csv";
@@ -413,6 +442,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -502,7 +532,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_APPLICATION_FILE_NAME);
@@ -513,7 +543,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
@@ -524,7 +554,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_NODES_FILE_NAME);
@@ -535,7 +565,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_BACKENDS_FILE_NAME);
@@ -546,7 +576,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_BACKENDS_DETAIL_FILE_NAME);
@@ -557,7 +587,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tier.name, tier.id),
@@ -573,7 +603,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -584,7 +614,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -595,7 +625,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_SERVICE_ENDPOINTS_FILE_NAME);
@@ -606,7 +636,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_SERVICE_ENDPOINTS_DETAIL_FILE_NAME);
@@ -617,7 +647,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_ERRORS_FILE_NAME);
@@ -628,7 +658,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_INFORMATION_POINTS_FILE_NAME);
@@ -639,7 +669,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_INFORMATION_POINTS_DETAIL_FILE_NAME);
@@ -654,7 +684,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
@@ -670,7 +700,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(node.tierName, node.tierId),
@@ -686,7 +716,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_APPLICATIONS_FILE_NAME);
@@ -697,7 +727,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_TIERS_FILE_NAME);
@@ -708,7 +738,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_NODES_FILE_NAME);
@@ -719,7 +749,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_NODE_STARTUP_OPTIONS_FILE_NAME);
@@ -730,7 +760,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_NODE_PROPERTIES_FILE_NAME);
@@ -741,7 +771,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
@@ -752,7 +782,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_BACKENDS_FILE_NAME);
@@ -763,7 +793,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_MAPPED_BACKENDS_FILE_NAME);
@@ -774,7 +804,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -785,7 +815,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME);
@@ -796,7 +826,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_ERRORS_FILE_NAME);
@@ -807,7 +837,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_APM_INFORMATION_POINTS_FILE_NAME);
@@ -963,7 +993,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_APPLICATION_KEY);
@@ -974,7 +1004,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_APPLICATION_INSTRUMENTATION);
@@ -985,7 +1015,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_APPLICATION_MONITORING_STATE);
@@ -996,7 +1026,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_PAGE_IFRAME_RULES);
@@ -1007,7 +1037,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_AJAX_RULES);
@@ -1018,7 +1048,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_VIRTUAL_PAGE_RULES);
@@ -1029,7 +1059,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_ERROR_RULES);
@@ -1040,7 +1070,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_WEB_PAGE_SETTINGS);
@@ -1051,7 +1081,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_SYNTHETIC_JOBS);
@@ -1066,7 +1096,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
@@ -1077,7 +1107,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_WEB_PAGE_RULES_FILE_NAME);
@@ -1088,7 +1118,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_SYNTHETIC_JOB_DEFINITIONS_FILE_NAME);
@@ -1143,7 +1173,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_WEB_PAGES);
@@ -1160,7 +1190,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 pageType,
@@ -1175,7 +1205,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -1190,7 +1220,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_WEB_APPLICATIONS_FILE_NAME);
@@ -1201,7 +1231,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_WEB_PAGES_FILE_NAME);
@@ -1212,7 +1242,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_WEB_PAGE_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -1223,7 +1253,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_WEB_PAGE_RESOURCES_FILE_NAME);
@@ -1234,7 +1264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_WEB_GEO_LOCATIONS_FILE_NAME);
@@ -1320,7 +1350,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_MOBILE_APPLICATION_KEY);
@@ -1331,7 +1361,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_MOBILE_APPLICATION_MONITORING_STATE);
@@ -1342,7 +1372,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_MOBILE_NETWORK_REQUESTS_RULES);
@@ -1353,7 +1383,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_MOBILE_PAGE_SETTINGS);
@@ -1368,7 +1398,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_MOBILE_SUMMARY_FILE_NAME);
@@ -1379,7 +1409,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_MOBILE_NETWORK_REQUEST_RULES_FILE_NAME);
@@ -1425,7 +1455,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_MOBILE_NETWORK_REQUESTS);
@@ -1442,7 +1472,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -1457,7 +1487,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_MOBILE_APPLICATIONS_FILE_NAME);
@@ -1468,7 +1498,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_NETWORK_REQUESTS_FILE_NAME);
@@ -1479,7 +1509,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -1547,7 +1577,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
@@ -1558,7 +1588,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_NODES_FILE_NAME);
@@ -1569,7 +1599,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_GROUPS_FILE_NAME);
@@ -1580,7 +1610,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_MACHINES_FILE_NAME);
@@ -1595,7 +1625,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -1610,7 +1640,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -1621,7 +1651,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_SERVICE_AVAILABILITIES_FILE_NAME);
@@ -1636,7 +1666,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -1653,7 +1683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 SIM_PROCESSES_FOLDER_NAME,
                 reportFileName);
@@ -1670,7 +1700,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 EVENTS_SA_FOLDER_NAME,
                 reportFileName);
@@ -1685,7 +1715,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_APPLICATIONS_FILE_NAME);
@@ -1696,7 +1726,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_TIERS_FILE_NAME);
@@ -1707,7 +1737,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_NODES_FILE_NAME);
@@ -1718,7 +1748,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINES_FILE_NAME);
@@ -1729,7 +1759,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROPERTIES_FILE_NAME);
@@ -1740,7 +1770,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CPUS_FILE_NAME);
@@ -1751,7 +1781,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_VOLUMES_FILE_NAME);
@@ -1762,7 +1792,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_NETWORKS_FILE_NAME);
@@ -1773,7 +1803,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CONTAINERS_FILE_NAME);
@@ -1784,7 +1814,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 SIM_PROCESSES_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROCESSES_FILE_NAME);
@@ -1915,7 +1945,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_COLLECTOR_DEFINITIONS_FILE_NAME);
@@ -1926,7 +1956,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_DB_CUSTOM_METRICS_FILE_NAME);
@@ -1941,7 +1971,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_DB_SUMMARY_FILE_NAME);
@@ -1952,7 +1982,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
@@ -1963,7 +1993,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_DB_CUSTOM_METRICS_FILE_NAME);
@@ -2018,7 +2048,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTOR_DEFINITIONS_FILE_NAME);
@@ -2029,7 +2059,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTORS_CALLS_FILE_NAME);
@@ -2040,7 +2070,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_COLLECTORS_TIME_SPENT_FILE_NAME);
@@ -2051,7 +2081,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ALL_WAIT_STATES_FILE_NAME);
@@ -2067,7 +2097,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2083,7 +2113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2099,7 +2129,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2115,7 +2145,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2131,7 +2161,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2148,7 +2178,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2164,7 +2194,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2180,7 +2210,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2196,7 +2226,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2212,7 +2242,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2228,7 +2258,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 DB_DATA_FOLDER_NAME,
                 reportFileName);
@@ -2243,7 +2273,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_COLLECTORS_FILE_NAME);
@@ -2254,7 +2284,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_APPLICATIONS_FILE_NAME);
@@ -2265,7 +2295,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_WAIT_STATES_FILE_NAME);
@@ -2276,7 +2306,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_QUERIES_FILE_NAME);
@@ -2287,7 +2317,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_CLIENTS_FILE_NAME);
@@ -2298,7 +2328,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_SESSIONS_FILE_NAME);
@@ -2309,7 +2339,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_BLOCKING_SESSIONS_FILE_NAME);
@@ -2320,7 +2350,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_DATABASES_FILE_NAME);
@@ -2331,7 +2361,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_USERS_FILE_NAME);
@@ -2342,7 +2372,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_MODULES_FILE_NAME);
@@ -2353,7 +2383,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_PROGRAMS_FILE_NAME);
@@ -2364,7 +2394,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -2513,7 +2543,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ANALYTICS_SEARCHES_FILE_NAME);
@@ -2524,7 +2554,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ANALYTICS_METRICS_FILE_NAME);
@@ -2535,7 +2565,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
@@ -2546,7 +2576,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
@@ -2557,7 +2587,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ANALYTICS_CUSTOM_SCHEMAS_FILE_NAME);
@@ -2572,7 +2602,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 reportFileName);
@@ -2587,7 +2617,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_APPLICATIONS_FILE_NAME);
@@ -2598,7 +2628,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_SEARCHES_FILE_NAME);
@@ -2609,7 +2639,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_WIDGETS_FILE_NAME);
@@ -2620,7 +2650,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_METRICS_FILE_NAME);
@@ -2631,7 +2661,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
@@ -2642,7 +2672,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
@@ -2653,7 +2683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_SCHEMAS_FILE_NAME);
@@ -2664,7 +2694,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME);
@@ -2770,14 +2800,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region Controller Wide Data
+        #region Controller Wide Applications, Templates and Dashboards Data
 
         public string ControllerVersionDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONTROLLER_VERSION_FILE_NAME);
         }
@@ -2787,7 +2817,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONTROLLER_SETTINGS_FILE_NAME);
         }
@@ -2797,7 +2827,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_ALL_APPLICATIONS_FILE_NAME);
         }
@@ -2807,7 +2837,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_MOBILE_APPLICATIONS_FILE_NAME);
         }
@@ -2817,7 +2847,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 ENTITIES_FOLDER_NAME,
                 EXTRACT_ENTITY_APM_APPLICATIONS_FILE_NAME);
         }
@@ -2827,7 +2857,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_HTTP_TEMPLATES_FILE_NAME);
         }
@@ -2837,7 +2867,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_HTTP_TEMPLATES_DETAIL_FILE_NAME);
         }
@@ -2847,7 +2877,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_EMAIL_TEMPLATES_FILE_NAME);
         }
@@ -2857,7 +2887,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_EMAIL_TEMPLATES_DETAIL_FILE_NAME);
         }
@@ -2867,7 +2897,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 DASHBOARDS_FOLDER_NAME,
                 EXTRACT_CONTROLLER_DASHBOARDS);
         }
@@ -2881,21 +2911,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 DASHBOARDS_FOLDER_NAME,
                 reportFileName);
         }
 
         #endregion
 
-        #region Controller Wide Index
+        #region Controller Wide Applications, Templates and Dashboards  Index
 
         public string ControllerSummaryIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_CONTROLLERS_SUMMARY_FILE_NAME);
         }
@@ -2905,7 +2935,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 ENTITIES_FOLDER_NAME,
                 CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME);
         }
@@ -2915,7 +2945,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONTROLLER_SETTINGS_FILE_NAME);
         }
@@ -2925,7 +2955,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_HTTP_TEMPLATES_FILE_NAME);
         }
@@ -2935,7 +2965,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_EMAIL_TEMPLATES_FILE_NAME);
         }
@@ -2945,7 +2975,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARDS_FILE_NAME);
         }
@@ -2955,7 +2985,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARD_WIDGETS_FILE_NAME);
         }
@@ -2965,14 +2995,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARD_WIDGET_DATA_SERIES_FILE_NAME);
         }
 
         #endregion
 
-        #region Controller Wide Report
+        #region Controller Wide Applications, Templates and Dashboards  Report
 
         public string ControllerEntitiesReportFolderPath()
         {
@@ -3086,6 +3116,332 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
+        #region License Information Data
+
+        public string LicenseApplicationsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_ALL_APPLICATIONS_FILE_NAME);
+        }
+
+        public string LicenseSIMMachinesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_SIM_MACHINES_FILE_NAME);
+        }
+
+        public string LicenseAccountDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_ACCOUNT_FILE_NAME);
+        }
+
+        public string LicenseDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_FILE_NAME);
+        }
+
+        public string LicenseUsageSummaryAllExceptEUMDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_SUMMARY_FILE_NAME);
+        }
+
+        public string LicenseUsageSummaryEUMDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_EUM_USAGE_SUMMARY_FILE_NAME);
+        }
+
+        public string LicenseUsageAPMDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_APM_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageDatabaseVisibilityDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_DB_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageMachineAgentDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_MA_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageSIMDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_SIM_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageServiceAvailabilityDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_SA_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageNetworkVisibilityDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_NETVIZ_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageTransactionAnalyticsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_TX_ANALYTICS_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseUsageLogAnalyticsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_USAGE_LOG_ANALYTICS_DETAIL_FILE_NAME);
+        }
+
+        public string LicenseRulesDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                EXTRACT_LICENSE_RULES_FILE_NAME);
+        }
+
+        public string LicenseRuleUsageDataFilePath(JobTarget jobTarget, string ruleName, string ruleID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_LICENSE_RULE_USAGE_DETAIL_FILE_NAME,
+                getShortenedEntityNameForFileSystem(ruleName, ruleID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string LicenseRuleConfigurationDataFilePath(JobTarget jobTarget, string ruleName, string ruleID)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_LICENSE_RULE_CONFIGURATION_DETAIL_FILE_NAME,
+                getShortenedEntityNameForFileSystem(ruleName, ruleID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region License Information Index
+
+        public string LicenseAccountIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_ACCOUNT_FILE_NAME);
+        }
+
+        public string LicensesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSES_FILE_NAME);
+        }
+
+        public string LicenseRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_RULES_FILE_NAME);
+        }
+
+        public string LicenseRuleScopesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_RULE_SCOPES_FILE_NAME);
+        }
+
+        public string LicenseUsageAccountIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_USAGE_ACCOUNT_FILE_NAME);
+        }
+
+        public string LicenseUsageRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_USAGE_RULES_FILE_NAME);
+        }
+
+        #endregion
+
+        #region License Information Report
+
+        public string ControllerLicensesReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME);
+        }
+
+        public string LicenseAccountReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_ACCOUNT_FILE_NAME);
+        }
+
+        public string LicensesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSES_FILE_NAME);
+        }
+
+        public string LicenseRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_RULES_FILE_NAME);
+        }
+
+        public string LicenseRuleScopesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_RULE_SCOPES_FILE_NAME);
+        }
+
+        public string LicenseUsageAccountReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_USAGE_ACCOUNT_FILE_NAME);
+        }
+
+        public string LicenseUsageRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                LICENSE_FOLDER_NAME,
+                CONVERT_LICENSE_USAGE_RULES_FILE_NAME);
+        }
+
+        public string LicensesExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_LICENSES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+
         #region All Application Configuration Data
 
         public string ApplicationHealthRulesDataFilePath(JobTarget jobTarget)
@@ -3095,7 +3451,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_HEALTH_RULES_FILE_NAME);
@@ -3105,7 +3461,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_HEALTH_RULES_FILE_NAME);
@@ -3119,7 +3475,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_HEALTH_RULES_DETAILS_FILE_NAME);
@@ -3129,7 +3485,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_HEALTH_RULES_DETAILS_FILE_NAME);
@@ -3143,7 +3499,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_POLICIES_FILE_NAME);
@@ -3153,7 +3509,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_POLICIES_FILE_NAME);
@@ -3167,7 +3523,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_ACTIONS_FILE_NAME);
@@ -3177,7 +3533,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     EXTRACT_APPLICATION_ACTIONS_FILE_NAME);
@@ -3195,7 +3551,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
@@ -3205,7 +3561,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
@@ -3219,7 +3575,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
@@ -3229,7 +3585,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
@@ -3243,7 +3599,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_POLICIES_FILE_NAME);
@@ -3253,7 +3609,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_POLICIES_FILE_NAME);
@@ -3267,7 +3623,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_ACTIONS_FILE_NAME);
@@ -3277,7 +3633,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_ACTIONS_FILE_NAME);
@@ -3291,7 +3647,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
@@ -3301,7 +3657,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     CONFIGURATION_FOLDER_NAME,
                     CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
@@ -3374,7 +3730,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
@@ -3385,7 +3741,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME);
@@ -3396,7 +3752,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONFIGURATION_DEVELOPER_MODE_NODES_FILE_NAME);
@@ -3411,7 +3767,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_APM_SUMMARY_FILE_NAME);
@@ -3422,7 +3778,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
@@ -3433,7 +3789,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
@@ -3444,7 +3800,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
@@ -3455,7 +3811,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
@@ -3466,7 +3822,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
@@ -3477,7 +3833,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
@@ -3488,7 +3844,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME);
@@ -3499,7 +3855,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME);
@@ -3510,7 +3866,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
@@ -3521,7 +3877,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME);
@@ -3532,7 +3888,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
@@ -3543,7 +3899,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_ENTITY_TIERS_FILE_NAME);
@@ -3554,7 +3910,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
@@ -3565,7 +3921,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_HTTP_DATA_COLLECTORS_FILE_NAME);
@@ -3576,7 +3932,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
@@ -3587,7 +3943,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
@@ -3792,7 +4148,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_COMPARISON_FOLDER_NAME,
                 CONFIGURATION_DIFFERENCES_FILE_NAME);
@@ -3829,7 +4185,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_USERS_FILE_NAME);
         }
@@ -3839,7 +4195,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_GROUPS_FILE_NAME);
         }
@@ -3849,7 +4205,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_ROLES_FILE_NAME);
         }
@@ -3863,7 +4219,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
@@ -3877,7 +4233,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
@@ -3891,7 +4247,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
@@ -3905,7 +4261,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 reportFileName);
         }
@@ -3915,7 +4271,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_SECURITY_PROVIDER_FILE_NAME);
         }
@@ -3925,7 +4281,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 EXTRACT_STRONG_PASSWORDS_FILE_NAME);
         }
@@ -3939,7 +4295,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USERS_FILE_NAME);
         }
@@ -3949,7 +4305,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUPS_FILE_NAME);
         }
@@ -3959,7 +4315,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLES_FILE_NAME);
         }
@@ -3969,7 +4325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_PERMISSIONS_FILE_NAME);
         }        
@@ -3979,7 +4335,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
         }
@@ -3989,7 +4345,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
         }
@@ -3999,7 +4355,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USER_PERMISSIONS_FILE_NAME);
         }        
@@ -4009,7 +4365,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
         }
@@ -4146,7 +4502,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4164,7 +4520,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4181,7 +4537,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4193,7 +4549,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4209,7 +4565,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4221,7 +4577,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 entityFolderName,
@@ -4290,7 +4646,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
                 reportFileName);
@@ -4319,7 +4675,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             string reportFileName = String.Format(
                 REPORT_METRICS_GRAPHS_FILE_NAME,
                 entity.FolderName,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                 jobTimeRange.From,
                 jobTimeRange.To);
@@ -4331,7 +4687,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFilePath = Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     REPORT_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     entity.FolderName,
                     reportFileName);
@@ -4339,7 +4695,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             else
             {
                 reportFilePath = Path.Combine(
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     entity.FolderName,
                     reportFileName);
@@ -4363,7 +4719,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
@@ -4380,7 +4736,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
@@ -4398,7 +4754,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
@@ -4416,7 +4772,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
@@ -4435,7 +4791,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
@@ -4454,7 +4810,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBackend.ENTITY_FOLDER,
@@ -4472,7 +4828,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBackend.ENTITY_FOLDER,
@@ -4490,7 +4846,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBusinessTransaction.ENTITY_FOLDER,
@@ -4509,7 +4865,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBusinessTransaction.ENTITY_FOLDER,
@@ -4527,7 +4883,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
@@ -4539,7 +4895,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMApplication.ENTITY_FOLDER,
@@ -4551,7 +4907,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMTier.ENTITY_FOLDER,
@@ -4563,7 +4919,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
@@ -4575,7 +4931,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBackend.ENTITY_FOLDER,
@@ -4587,7 +4943,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 APMBusinessTransaction.ENTITY_FOLDER,
@@ -4701,7 +5057,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     reportFileName);
@@ -4711,7 +5067,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     reportFileName);
@@ -4731,7 +5087,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     reportFileName);
@@ -4741,7 +5097,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     DATA_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     reportFileName);
@@ -4758,7 +5114,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 EVENTS_FOLDER_NAME,
                 reportFileName);
         }
@@ -4768,7 +5124,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 EVENTS_FOLDER_NAME,
                 EXTRACT_NOTIFICATIONS_FILE_NAME);
         }
@@ -4785,7 +5141,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
@@ -4795,7 +5151,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
@@ -4809,7 +5165,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
@@ -4819,7 +5175,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
@@ -4833,7 +5189,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_EVENTS_FILE_NAME);
@@ -4843,7 +5199,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
                     INDEX_FOLDER_NAME,
-                    getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                     EVENTS_FOLDER_NAME,
                     CONVERT_APPLICATION_EVENTS_FILE_NAME);
@@ -4855,7 +5211,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 EVENTS_FOLDER_NAME,
                 CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME);
         }
@@ -4865,7 +5221,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 EVENTS_FOLDER_NAME,
                 CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME);
         }
@@ -4963,7 +5319,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 reportFileName);
@@ -4980,7 +5336,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tierName, tierID),
@@ -5011,7 +5367,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5029,7 +5385,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5047,7 +5403,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5065,7 +5421,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5083,7 +5439,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5101,7 +5457,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5119,7 +5475,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5137,7 +5493,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5154,7 +5510,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5167,7 +5523,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5180,7 +5536,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5193,7 +5549,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5206,7 +5562,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5219,7 +5575,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5232,7 +5588,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5245,7 +5601,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5262,7 +5618,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_FILE_NAME);
@@ -5273,7 +5629,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
@@ -5284,7 +5640,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
@@ -5295,7 +5651,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
@@ -5306,7 +5662,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
@@ -5317,7 +5673,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
@@ -5328,7 +5684,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
@@ -5339,7 +5695,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
@@ -5359,7 +5715,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5377,7 +5733,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5397,7 +5753,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5415,7 +5771,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5430,7 +5786,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME);
@@ -5441,7 +5797,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
@@ -5453,7 +5809,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
@@ -5467,7 +5823,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5480,7 +5836,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME);
@@ -5491,7 +5847,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID),
@@ -5503,7 +5859,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 APMNode.ENTITY_FOLDER,
@@ -5517,7 +5873,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
@@ -5532,7 +5888,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
-                getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_APPLICATION_SNAPSHOTS_SUMMARY_FILE_NAME);
@@ -5678,7 +6034,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_GRAPH_APPLICATION_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     jobTimeRange.From,
                     jobTimeRange.To);
@@ -5687,7 +6043,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_GRAPH_TIER_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5697,7 +6053,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_GRAPH_NODE_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5707,7 +6063,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5721,7 +6077,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
                         REPORT_FOLDER_NAME,
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5729,7 +6085,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 else
                 {
                     reportFilePath = Path.Combine(
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5748,7 +6104,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_CHART_APPLICATION_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     jobTimeRange.From,
                     jobTimeRange.To);
@@ -5757,7 +6113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_CHART_TIER_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5767,7 +6123,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_CHART_NODE_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5777,7 +6133,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5791,7 +6147,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
                         REPORT_FOLDER_NAME,
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5799,7 +6155,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 else
                 {
                     reportFilePath = Path.Combine(
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5823,7 +6179,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     jobTimeRange.From,
                     jobTimeRange.To);
@@ -5832,7 +6188,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5842,7 +6198,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5852,7 +6208,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5862,7 +6218,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5872,7 +6228,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5882,7 +6238,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFileName = String.Format(
                     REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME,
-                    getFileSystemSafeString(new Uri(entity.Controller).Host),
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
                     jobTimeRange.From,
@@ -5896,7 +6252,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
                         REPORT_FOLDER_NAME,
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5904,7 +6260,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 else
                 {
                     reportFilePath = Path.Combine(
-                        getFileSystemSafeString(new Uri(jobTarget.Controller).Host),
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
                         reportFileName);
@@ -5931,6 +6287,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public static string getShortenedEntityNameForFileSystem(string entityName, long entityID)
         {
+            return getShortenedEntityNameForFileSystem(entityName, entityID.ToString());
+        }
+
+        public static string getShortenedEntityNameForFileSystem(string entityName, string entityID)
+        {
             string originalEntityName = entityName;
 
             // First, strip out unsafe characters
@@ -5953,6 +6314,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
             if (entityName.Length > 12) entityName = entityName.Substring(0, 12);
 
             return entityName;
+        }
+
+        public static string getControllerNameForFileSystem(string controllerURL)
+        {
+            Uri controllerUri = new Uri(controllerURL);
+            string controllerHost = controllerUri.Host.Replace("saas.appdynamics.com", "saas");
+            return controllerHost;
         }
 
         #endregion

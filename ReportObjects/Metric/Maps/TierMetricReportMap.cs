@@ -25,6 +25,9 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.HttpErrors).Index(i); i++;
             Map(m => m.HTTPEPM).Index(i); i++;
             Map(m => m.ErrorsPercentage).Index(i); i++;
+            Map(m => m.NumNodes).Index(i); i++;
+            Map(m => m.AvailAgent).Index(i); i++;
+            Map(m => m.AvailMachine).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
             Map(m => m.From).Index(i); i++;
             Map(m => m.To).Index(i); i++;

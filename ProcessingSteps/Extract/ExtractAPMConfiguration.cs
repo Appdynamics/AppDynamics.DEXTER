@@ -73,7 +73,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             if (File.Exists(FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget)) == false)
                             {
-
+                                controllerApi.Timeout = 3;
                                 string applicationConfigXml = controllerApi.GetAPMConfiguration(jobTarget.ApplicationID);
                                 if (applicationConfigXml != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget));
                             }

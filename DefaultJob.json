@@ -9,14 +9,6 @@
             "Type": "APM"
         },
         {
-            "Controller": "https://your.other.controller.here",
-            "UserName": "username@customer2",
-            "UserPassword": "your password or leave blank to be prompted. Or remove this element if you just want to query one controller",
-            "Application": ".*",
-            "NameRegex": true,
-            "Type": "APM"
-        },
-        {
             "Controller": "https://your.controller.here",
             "UserName": "username@customer1",
             "UserPassword": "Enter your password or leave blank to be prompted",
@@ -59,12 +51,12 @@
     ],
     "Input": {
         "TimeRange": {
-            "From": "2019-03-22T12:00:00",
-            "To": "2019-03-22T13:00:00"
+            "From": "2019-05-10T12:00:00",
+            "To": "2019-05-10T13:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": false,
+        "Licenses": true,
         "Events": true,
         "Configuration": true,
         "ConfigurationComparisonReferenceCriteria": {
@@ -73,7 +65,7 @@
         },
         "DetectedEntities": true,
         "Metrics": true,
-        "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "JVMStats", "BusinessTransactionPercentiles" ],
+        "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "BusinessTransactionPercentiles" ],
         "Flowmaps": true,
         "Snapshots": true,
         "SnapshotSelectionCriteria": {
@@ -139,7 +131,7 @@
     "Output": {
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": false,
+        "Licenses": true,
         "Events": true,
         "Configuration": true,
         "DetectedEntities": true,

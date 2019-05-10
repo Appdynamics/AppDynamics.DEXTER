@@ -18,6 +18,9 @@ namespace AppDynamics.Dexter
         [Option('s', "sequential", Required = false, DefaultValue = false, HelpText = "If true, process items during extraction and conversion sequentially.")]
         public bool ProcessSequentially { get; set; }
 
+        [Option('v', "noversioncheck", Required = false, DefaultValue = false, HelpText = "If true, skips the version check against GitHub repository.")]
+        public bool SkipVersionCheck { get; set; }
+
         public string OutputJobFolderPath { get; set;}
 
         public string OutputJobFilePath { get; set; }

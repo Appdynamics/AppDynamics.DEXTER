@@ -74,7 +74,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Set up controller access
                         using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                         {
-
                             #region Prepare time range
 
                             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.From);

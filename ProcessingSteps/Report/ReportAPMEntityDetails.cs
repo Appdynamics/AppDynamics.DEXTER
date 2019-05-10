@@ -586,6 +586,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
             loggerConsole.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             logger.Trace("Output.EntityDetails={0}", jobConfiguration.Output.EntityDetails);
             loggerConsole.Trace("Output.EntityDetails={0}", jobConfiguration.Output.EntityDetails);
+            if (jobConfiguration.Input.HourlyTimeRanges.Count > 240)
+            {
+                logger.Trace("Number of hourly time ranges={0}", jobConfiguration.Input.HourlyTimeRanges.Count);
+                loggerConsole.Trace("Too many time ranges in the selection criteria, skipping report of per-entity details because they will not all fit");
+                return false;
+            }
             if ((jobConfiguration.Input.Metrics == false && jobConfiguration.Input.Events == false && jobConfiguration.Input.Flowmaps == false && jobConfiguration.Input.Snapshots == false) || jobConfiguration.Output.EntityDetails == false)
             {
                 loggerConsole.Trace("Skipping report of per-entity details");

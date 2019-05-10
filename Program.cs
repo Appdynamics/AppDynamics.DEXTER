@@ -69,6 +69,70 @@ namespace AppDynamics.Dexter
 
                 #endregion
 
+                #region Check version and prompt someone 
+
+                if (programOptions.SkipVersionCheck == false)
+                {
+                    using (GithubApi githubApi = new GithubApi("https://api.github.com"))
+                    {
+                        loggerConsole.Info("Version check against Github releases");
+
+                        string listOfReleasesJSON = githubApi.GetReleases();
+                        if (listOfReleasesJSON.Length > 0)
+                        {
+                            JArray releasesListArray = JArray.Parse(listOfReleasesJSON);
+                            if (releasesListArray != null)
+                            {
+                                if (releasesListArray.Count > 0)
+                                {
+                                    JObject releaseObject = (JObject)releasesListArray[0];
+
+                                    string latestReleaseVersionString = releaseObject["tag_name"].ToString();
+
+                                    if (latestReleaseVersionString != null && latestReleaseVersionString.Length > 0)
+                                    {
+                                        try
+                                        {
+                                            Version latestReleaseVersion = new Version(latestReleaseVersionString);
+
+                                            int versionCheckResult = latestReleaseVersion.CompareTo(Assembly.GetEntryAssembly().GetName().Version);
+
+                                            if (versionCheckResult == 0)
+                                            {
+                                                // Same version, do nothing
+                                            }
+                                            else if (versionCheckResult < 0)
+                                            {
+                                                // This version is newer than what is listed on Github
+                                            }
+                                            else if (versionCheckResult > 0)
+                                            {
+                                                // This version is older than what is listed on Github
+                                                loggerConsole.Warn("Latest released version is {0}, and yours is {1}. Would you like to upgrade (y/n)?", latestReleaseVersion, Assembly.GetEntryAssembly().GetName().Version);
+
+                                                ConsoleKeyInfo cki = Console.ReadKey();
+                                                Console.WriteLine();
+                                                if (cki.Key.ToString().ToLower() == "y")
+                                                {
+                                                    loggerConsole.Info("Go to AppDynamics Extensions or to {0} to download new release", releaseObject["html_url"]);
+                                                    return;
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            logger.Error(ex);
+                                            loggerConsole.Error(ex);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                #endregion
+
                 #region Create output folder
 
                 // If output folder isn't specified, assume output folder to be:
@@ -346,39 +410,75 @@ namespace AppDynamics.Dexter
                     for (int i = 0; i < jobConfiguration.Target.Count; i++)
                     {
                         JobTarget jobTarget = jobConfiguration.Target[i];
+                        loggerConsole.Info("Target {0} {1} as {2}", i + 1, jobTarget.Controller, jobTarget.UserName);
 
                         jobTarget.ApplicationID = -1;
 
                         #region Validate target Controller properties against being empty
 
-                        bool isTargetValid = true;
                         if (jobTarget.Controller == null || jobTarget.Controller == string.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "Controller");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Controller");
 
-                            isTargetValid = false;
+                            continue;
                         }
                         if (jobTarget.UserName == null || jobTarget.UserName == string.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "UserName");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserName");
 
-                            isTargetValid = false;
+                            continue;
                         }
                         if (jobTarget.Application == null || jobTarget.Application == string.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "Application");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Application");
 
-                            isTargetValid = false;
+                            continue;
                         }
-
-                        if (isTargetValid == false) continue;
 
                         #endregion
 
                         #region Get credential or prompt for it
+
+                        // Check for the @accountname to see if it is a valid account, unless it is using Token
+                        if (jobTarget.UserName.ToUpper() != "BEARER")
+                        {
+                            if (jobTarget.UserName.Contains('@') == false)
+                            {
+                                logger.Warn("Target {0} property {1} does not supply account name (after @ sign).", i + 1, "UserName");
+                                loggerConsole.Warn("Target {0} property {1} does not supply account name (after @ sign).", i + 1, "UserName");
+
+                                string accountName = "customer1";
+                                try
+                                {
+                                    Uri controllerUri = new Uri(jobTarget.Controller);
+
+                                    if (controllerUri.Host.Contains("saas.appdynamics.com") == true)
+                                    {
+                                        accountName = controllerUri.Host.Split('.')[0];
+                                    }
+                                }
+                                catch { }
+
+                                loggerConsole.Warn("Your account name is most likely '{0}'", accountName);
+                                loggerConsole.Warn("Your full username is most likely '{0}@{1}'", jobTarget.UserName, accountName);
+
+                                loggerConsole.Warn("Would you like to try that instead of what you supplied (y/n)?");
+
+                                ConsoleKeyInfo cki = Console.ReadKey();
+                                Console.WriteLine();
+                                if (cki.Key.ToString().ToLower() == "y")
+                                {
+                                    jobTarget.UserName = String.Format("{0}@{1}", jobTarget.UserName, accountName);
+                                }
+                                else
+                                {
+                                    continue;
+                                }
+                            }
+                        }
 
                         if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
                         {
@@ -412,7 +512,6 @@ namespace AppDynamics.Dexter
 
                         using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                         {
-
                             #region Validate target Controller is accessible
 
                             // If reached here, we have all the properties to go query for list of Applications
