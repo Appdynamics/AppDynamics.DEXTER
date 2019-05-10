@@ -1682,6 +1682,54 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     entity.HttpErrors = metricValues.Sum(mv => mv.Sum);
                     break;
 
+                case METRIC_APM_AGENT_AVAILABILITY_FULLNAME:
+                    double intermediateAPMAgentAvail = -1;
+                    if (entity is APMTier)
+                    {
+                        intermediateAPMAgentAvail = Math.Round((double)metricValues.Sum(mv => mv.Sum) / timerangeDuration, 1);
+                    }
+                    else if (entity is APMNode)
+                    {
+                        intermediateAPMAgentAvail = Math.Round((double)metricValues.Sum(mv => mv.Sum) / timerangeDuration * 100, 1);
+                    }
+                    if (Double.IsNaN(intermediateAPMAgentAvail) == true)
+                    {
+                        entity.AvailAgent = 0;
+                    }
+                    else
+                    {
+                        entity.AvailAgent = intermediateAPMAgentAvail;
+                    }
+                    if (entity is APMNode)
+                    {
+                        ((APMNode)entity).IsLicenseAgentUsed = entity.AvailAgent > 0;
+                    }
+                    break;
+
+                case METRIC_MACHINE_AGENT_AVAILABILITY_FULLNAME:
+                    double intermediateMachineAgentAvail = -1;
+                    if (entity is APMTier)
+                    {
+                        intermediateMachineAgentAvail = Math.Round((double)metricValues.Sum(mv => mv.Sum) / timerangeDuration, 1);
+                    }
+                    else if (entity is APMNode)
+                    {
+                        intermediateMachineAgentAvail = Math.Round((double)metricValues.Sum(mv => mv.Sum) / timerangeDuration * 100, 1);
+                    }
+                    if (Double.IsNaN(intermediateMachineAgentAvail) == true)
+                    {
+                        entity.AvailMachine = 0;
+                    }
+                    else
+                    {
+                        entity.AvailMachine = intermediateMachineAgentAvail;
+                    }
+                    if (entity is APMNode)
+                    {
+                        ((APMNode)entity).IsLicenseMachineUsed = entity.AvailMachine > 0;
+                    }
+                    break;
+
                 default:
                     break;
             }

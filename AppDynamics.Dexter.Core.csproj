@@ -83,8 +83,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
-  <ItemGroup>
-  </ItemGroup>
   
 </Project>

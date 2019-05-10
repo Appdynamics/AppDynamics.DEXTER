@@ -32,6 +32,18 @@ namespace AppDynamics.Dexter
         public string UserName { get; set; }
         public string Password { get; set; }
 
+        public int Timeout
+        {
+            get
+            {
+                return this._httpClient.Timeout.Minutes;
+            }
+            set
+            {
+                this._httpClient.Timeout = new TimeSpan(0, value, 0);
+            }
+        }
+
         #endregion
 
         #region Constructor, Destructor and overrides
@@ -49,6 +61,7 @@ namespace AppDynamics.Dexter
             this._httpClientHandler.CookieContainer = this._cookieContainer;
 
             HttpClient httpClient = new HttpClient(this._httpClientHandler);
+            // Default to 1 minute timeout. Can be adjusted as needed
             httpClient.Timeout = new TimeSpan(0, 1, 0);
             httpClient.BaseAddress = new Uri(this.ControllerUrl);
             if (this.UserName.ToUpper() == "BEARER")
@@ -359,7 +372,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Flowmap retrieval
+        #region APM Flowmap
 
         public string GetFlowmapApplication(long applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
@@ -438,7 +451,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Snapshot retrieval
+        #region APM Snapshots
 
         public string GetListOfSnapshotsFirstPage(long applicationID, DateTime startTime, DateTime endTime, int durationBetweenTimes, int maxRows)
         {
@@ -676,7 +689,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Metric retrieval
+        #region APM Metrics
 
         public string GetMetricData(string applicationNameOrID, string metricPath, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, bool rollup)
         {
@@ -698,7 +711,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Event retrieval
+        #region Events and Health Rule Violations
 
         public string GetApplicationHealthRuleViolations(long applicationID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
@@ -785,7 +798,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region SIM Data
+        #region SIM data
 
         public string GetSIMMachineProcesses(long machineID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
@@ -883,7 +896,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region WEB Configuration
+        #region WEB configuration
 
         public string GetEUMorMOBILEApplicationKey(long applicationID)
         {
@@ -941,7 +954,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region MOBILE Metadata
+        #region MOBILE metadata
 
         public string GetMOBILENetworkRequests(long applicationID, long mobileApplicationId, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
@@ -987,7 +1000,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region MOBILE Configuration
+        #region MOBILE configuration
 
         public string GetMOBILEApplicationInstrumentationOption(long applicationID)
         {
@@ -1006,7 +1019,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region Analytics Metadata
+        #region Analytics metadata
 
         public string GetBIQSearches()
         {
@@ -1466,7 +1479,7 @@ namespace AppDynamics.Dexter
 
         #endregion
 
-        #region RBAC 
+        #region RBAC configuration
 
         public string GetUsers()
         {
@@ -1543,6 +1556,193 @@ namespace AppDynamics.Dexter
         public string GetRequireStrongPasswords()
         {
             return this.apiGET("controller/restui/accountAdmin/getRequireStrongPasswords", "application/json", true);
+        }
+
+        #endregion
+
+        #region License configuration
+
+        public string GetAccount()
+        {
+            return this.apiGET("controller/restui/user/account", "application/json", true);
+        }
+
+        public string GetLicense(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/licenseRule/getAllLicenseModuleProperties", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseUsageAllExceptEUMSummary(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/licenseRule/getAccountUsageSummary", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseUsageEUMSummary(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/licenseRule/getEumLicenseUsage", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseUsageAPM(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/licenseRule/getUnifiedAccountUsageViewData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseUsageDatabase(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("DATABASE", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageMachineAgent(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("MACHINE_AGENT", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageSIM(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("SIM_MACHINE_AGENT", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageServiceAvailability(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("SERVICE_AVAIL_MON", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageNetworkVisibility(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("NETVIZ", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageNetworkTransactionAnalytics(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("TRANSACTION_ANALYTICS", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageNetworkLogAnalytics(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return GetLicenseUsageOtherAgent("LOG_ANALYTICS", startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, durationBetweenTimes);
+        }
+
+        public string GetLicenseUsageOtherAgent(string licenseType, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2},
+    ""timeRange"": null,
+    ""timeRangeAdjusted"":false
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST(String.Format("controller/restui/licenseRule/getAccountUsageGraphData/{0}", licenseType), "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseRules(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/licenseRule/getAllRulesSummary", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseRuleUsage(string ruleID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""type"": ""BETWEEN_TIMES"",
+	""startTime"": {0},
+	""endTime"": {1},
+	""durationInMinutes"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST(String.Format("controller/restui/licenseRule/getApmLicenseRuleDetailViewData/{0}", ruleID), "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetLicenseRuleConfiguration(string ruleID)
+        {
+            return this.apiGET(String.Format("controller/restui/licenseRule/getRuleById/{0}", ruleID), "application/json", true);
+        }
+
+        public string GetControllerApplicationsForLicenseRule()
+        {
+            return this.apiGET("controller/restui/licenseRule/getAllApplications", "application/json", true);
+        }
+
+        public string GetControllerSIMMachinesForLicenseRule()
+        {
+            return this.apiGET("controller/restui/licenseRule/getAllMachines", "application/json", true);
         }
 
         #endregion

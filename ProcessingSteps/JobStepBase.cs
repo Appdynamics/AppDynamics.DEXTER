@@ -19,6 +19,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal const string METRIC_EPM_FULLNAME = "Errors per Minute";
         internal const string METRIC_EXCPM_FULLNAME = "Exceptions per Minute";
         internal const string METRIC_HTTPEPM_FULLNAME = "HTTP Error Codes per Minute";
+        internal const string METRIC_APM_AGENT_AVAILABILITY_FULLNAME = "Agent|App|Availability";
+        internal const string METRIC_MACHINE_AGENT_AVAILABILITY_FULLNAME = "Agent|Machine|Availability";
 
         #endregion
 
@@ -378,6 +380,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     return value;
                 }
+            }
+        }
+
+        internal static JToken getJTokenValueFromJToken(JToken jToken, string propertyName)
+        {
+            if (jToken == null)
+            {
+                return null;
+            }
+            else if (jToken.Type == JTokenType.Null)
+            {
+                return null;
+            }
+            else if (jToken[propertyName] == null)
+            {
+                return null;
+            }
+            else if (jToken[propertyName].Type == JTokenType.Null)
+            {
+                return jToken[propertyName];
+            }
+            else
+            {
+                return jToken[propertyName];
             }
         }
 

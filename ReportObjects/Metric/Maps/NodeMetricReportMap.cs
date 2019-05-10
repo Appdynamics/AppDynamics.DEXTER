@@ -25,7 +25,11 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.HttpErrors).Index(i); i++;
             Map(m => m.HTTPEPM).Index(i); i++;
             Map(m => m.ErrorsPercentage).Index(i); i++;
+            Map(m => m.AvailAgent).Index(i); i++;
+            Map(m => m.AvailMachine).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
+            Map(m => m.IsLicenseAgentUsed).Index(i); i++;
+            Map(m => m.IsLicenseMachineUsed).Index(i); i++;
             Map(m => m.From).Index(i); i++;
             Map(m => m.To).Index(i); i++;
             Map(m => m.FromUtc).Index(i); i++;

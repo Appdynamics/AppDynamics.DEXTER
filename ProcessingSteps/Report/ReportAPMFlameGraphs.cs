@@ -713,7 +713,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (flameGraphBox.Exits != null && flameGraphBox.Exits.Length > 0)
                                     {
                                         xmlWriter.WriteString("\n");
-                                        xmlWriter.WriteString(flameGraphBox.Exits);
+                                        if (flameGraphBox.Exits.Length > 384)
+                                        {
+                                            xmlWriter.WriteString(flameGraphBox.Exits.Substring(0, 383));
+                                            xmlWriter.WriteString("...");
+                                        }
+                                        else
+                                        {
+                                            xmlWriter.WriteString(flameGraphBox.Exits);
+                                        }
                                     }
                                     xmlWriter.WriteEndElement();
 
@@ -837,7 +845,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     else if (flameGraphBox.Exits != null && flameGraphBox.Exits.Length > 0)
                                     {
                                         xmlWriter.WriteAttributeString("stroke", "#00FFFF");
-                                        xmlWriter.WriteAttributeString("stroke-width", "3");
+                                        xmlWriter.WriteAttributeString("stroke-width", "1");
                                         xmlWriter.WriteAttributeString("stroke-dasharray", "10,3");
                                     }
                                     xmlWriter.WriteEndElement();
@@ -898,6 +906,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Found legend placeholder, let's output all the used frameworks
                             else if (xmlReader.IsStartElement("g") == true && xmlReader.GetAttribute("id") == "legendPlaceholder")
                             {
+                                xmlWriter.WriteStartElement("g");
+                                xmlWriter.WriteAttributeString("id", "legendGroup");
+
                                 int legendIndex = 0;
                                 foreach (string classPrefix in usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Keys)
                                 {
@@ -934,7 +945,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                     else
                                     {
-                                        xmlWriter.WriteString(String.Format("{0} {1}", methodCallLineClassTypeMapping.FrameworkType, methodCallLineClassTypeMapping.ClassPrefix));
+                                        xmlWriter.WriteString(String.Format("{0}-{1}", methodCallLineClassTypeMapping.FrameworkType, methodCallLineClassTypeMapping.ClassPrefix));
                                     }
                                     xmlWriter.WriteEndElement();
 
@@ -997,7 +1008,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 xmlWriter.WriteString("Exits + Slow");
                                 xmlWriter.WriteEndElement();
 
-                                // Slow methods with Exits
+                                // Slow methods without Exits
                                 xx1 = 1550;
                                 xx2 = 1600;
 
@@ -1020,6 +1031,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 xmlWriter.WriteAttributeString("font-size", "9");
                                 xmlWriter.WriteAttributeString("font-family", "monospace");
                                 xmlWriter.WriteString("Slow");
+                                xmlWriter.WriteEndElement();
+
                                 xmlWriter.WriteEndElement();
 
                                 // Move off the content placeholder

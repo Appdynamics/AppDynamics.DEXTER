@@ -31,6 +31,19 @@ Tier,Application Infrastructure Performance|*|CLR|Garbage Collection|GC Time Spe
 Tier,Application Infrastructure Performance|*|CLR|Garbage Collection|Number of Induced GCs,CLR|Garbage Collection|Number of Induced GCs,CLRGCINDUCED,SUM,CLRGC,SECONDARY,0000FF,CLRStats
 Tier,Application Infrastructure Performance|*|IIS|CPU%,IIS|CPU%,IISCPU,AVERAGE,IIS,PRIMARY,108000,IISStats
 Tier,Application Infrastructure Performance|*|IIS|Working Set,IIS|Working Set,IISWORKSET,AVERAGE,IIS,SECONDARY,0000FF,IISStats
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Failed,ASP.NET Applications|Requests Failed,IISREQFAIL,SUM,IISReqCount,PRIMARY,FF9500,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Not Found,ASP.NET Applications|Requests Not Found,IISREQNOTFOUND,SUM,IISReqCount,PRIMARY,DA85FF,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Timed Out,ASP.NET Applications|Requests Timed Out,IISREQTIMEOUT,SUM,IISReqCount,PRIMARY,21C8FD,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Total,ASP.NET Applications|Requests Total,IISREQTOTAL,SUM,IISReqCount,SECONDARY,108000,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Not Authorized,ASP.NET Applications|Requests Not Authorized,IISREQNOAUTH,SUM,IISReqCount,PRIMARY,D121FC,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Errors Unhandled During Execution,ASP.NET Applications|Errors Unhandled During Execution,IISREQERR,SUM,IISReqCount,PRIMARY,FF0000,IISReqCounts
+Tier,Application Infrastructure Performance|*|ASP.NET|Request Wait Time,ASP.NET|Request Wait Time,IISREQWAIT,AVERAGE,IISReqPerf,SECONDARY,108000,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests Executing,ASP.NET Applications|Requests Executing,IISREQEXECRATE,SUM,IISReqPerf,PRIMARY,0000FF,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Requests/sec,ASP.NET Applications|Requests/sec,IISREQRATE,SUM,IISReqPerf,PRIMARY,9ADAC8,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Anonymous Requests/sec,ASP.NET Applications|Anonymous Requests/sec,IISREQANONRATE,SUM,IISReqPerf,PRIMARY,A821FC,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Errors Total/sec,ASP.NET Applications|Errors Total/sec,IISREQERRRATE,SUM,IISReqPerf,PRIMARY,FF0000,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET Applications|Pipeline Instance Count,ASP.NET Applications|Pipeline Instance Count,IISREQPIPELINE,SUM,IISReqPerf,PRIMARY,DA85FF,IISReqPerf
+Tier,Application Infrastructure Performance|*|ASP.NET|Requests Queued,ASP.NET|Requests Queued,IISREQQ,SUM,IISReqPerf,PRIMARY,FFB66B,IISReqPerf
 Tier,Application Infrastructure Performance|*|JVM|Process CPU Usage %,JVM|Process CPU Usage %,JVMCPU,AVERAGE,JVMProcess,SECONDARY,108000,JVMStats
 Tier,Application Infrastructure Performance|*|JVM|Memory|Heap|Current Usage (MB),JVM|Memory|Heap|Current Usage (MB),JVMHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,0000FF,JVMStats
 Tier,Application Infrastructure Performance|*|JVM|Memory|Non-Heap|Current Usage (MB),JVM|Memory|Non-Heap|Current Usage (MB),JVMNONHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,DA85FF,JVMStats
@@ -75,6 +88,19 @@ Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Garbage Col
 Node,Application Infrastructure Performance|*|Individual Nodes|*|CLR|Garbage Collection|Number of Induced GCs,CLR|Garbage Collection|Number of Induced GCs,CLRGCINDUCED,SUM,CLRGC,SECONDARY,0000FF,CLRStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|IIS|CPU%,IIS|CPU%,IISCPU,AVERAGE,IIS,PRIMARY,108000,IISStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|IIS|Working Set,IIS|Working Set,IISWORKSET,AVERAGE,IIS,SECONDARY,0000FF,IISStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Failed,ASP.NET Applications|Requests Failed,IISREQFAIL,SUM,IISReqCount,PRIMARY,FF9500,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Not Found,ASP.NET Applications|Requests Not Found,IISREQNOTFOUND,SUM,IISReqCount,PRIMARY,DA85FF,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Timed Out,ASP.NET Applications|Requests Timed Out,IISREQTIMEOUT,SUM,IISReqCount,PRIMARY,21C8FD,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Total,ASP.NET Applications|Requests Total,IISREQTOTAL,SUM,IISReqCount,SECONDARY,108000,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Not Authorized,ASP.NET Applications|Requests Not Authorized,IISREQNOAUTH,SUM,IISReqCount,PRIMARY,D121FC,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Errors Unhandled During Execution,ASP.NET Applications|Errors Unhandled During Execution,IISREQERR,SUM,IISReqCount,PRIMARY,FF0000,IISReqCounts
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET|Request Wait Time,ASP.NET|Request Wait Time,IISREQWAIT,AVERAGE,IISReqPerf,SECONDARY,108000,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests Executing,ASP.NET Applications|Requests Executing,IISREQEXECRATE,SUM,IISReqPerf,PRIMARY,0000FF,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Requests/sec,ASP.NET Applications|Requests/sec,IISREQRATE,SUM,IISReqPerf,PRIMARY,9ADAC8,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Anonymous Requests/sec,ASP.NET Applications|Anonymous Requests/sec,IISREQANONRATE,SUM,IISReqPerf,PRIMARY,A821FC,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Errors Total/sec,ASP.NET Applications|Errors Total/sec,IISREQERRRATE,SUM,IISReqPerf,PRIMARY,FF0000,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET Applications|Pipeline Instance Count,ASP.NET Applications|Pipeline Instance Count,IISREQPIPELINE,SUM,IISReqPerf,PRIMARY,DA85FF,IISReqPerf
+Node,Application Infrastructure Performance|*|Individual Nodes|*|ASP.NET|Requests Queued,ASP.NET|Requests Queued,IISREQQ,SUM,IISReqPerf,PRIMARY,FFB66B,IISReqPerf
 Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Process CPU Usage %,JVM|Process CPU Usage %,JVMCPU,AVERAGE,JVMProcess,SECONDARY,108000,JVMStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Memory|Heap|Current Usage (MB),JVM|Memory|Heap|Current Usage (MB),JVMHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,0000FF,JVMStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|JVM|Memory|Non-Heap|Current Usage (MB),JVM|Memory|Non-Heap|Current Usage (MB),JVMNONHEAPUSAGE,AVERAGE,JVMProcess,PRIMARY,DA85FF,JVMStats

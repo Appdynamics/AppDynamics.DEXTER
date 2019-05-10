@@ -64,6 +64,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Dashboard links
         internal const string DEEPLINK_DASHBOARD = @"{0}/controller/#/location=CDASHBOARD_DETAIL&mode=MODE_DASHBOARD&dashboard={1}&timeRange={2}";
 
+        // License links
+        internal const string DEEPLINK_LICENSE = @"{0}/controller/#/location=LICENSE_MANAGEMENT_PEAK_USAGE&timeRange={1}";
+
         #endregion
 
         #region Constants for various strings mapping to Entity types in Flowmaps and Events

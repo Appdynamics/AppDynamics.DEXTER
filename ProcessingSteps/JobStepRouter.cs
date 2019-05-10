@@ -20,7 +20,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ExtractControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.ExtractDashboards,
-                //JobStatus.ExtractLicenses,
+                JobStatus.ExtractLicenses,
 
                 JobStatus.ExtractControllerAuditEventsAndNotifications,
                 JobStatus.ExtractApplicationEventsAndHealthRuleViolations,
@@ -49,7 +49,7 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.IndexDashboards,
-                //JobStatus.IndexLicenses,
+                JobStatus.IndexLicenses,
 
                 JobStatus.IndexControllerAuditEventsAndNotifications,
                 JobStatus.IndexApplicationEventsAndHealthRuleViolations,
@@ -79,7 +79,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.ReportDashboards,
-                //JobStatus.ReportLicenses,
+                JobStatus.ReportLicenses,
 
                 JobStatus.ReportApplicationEventsAndHealthRuleViolations,
 
