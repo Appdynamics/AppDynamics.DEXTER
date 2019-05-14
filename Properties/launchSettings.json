@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "--jobfile \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\licensetest.json\" --outputfolder C:\\AppD.Dexter.Out\\"
+      "commandLineArgs": "--jobfile \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\licensetest.json\" --outputfolder C:\\AppD.Dexter.Out1\\"
     }
   }
 }
