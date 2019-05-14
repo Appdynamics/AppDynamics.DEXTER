@@ -20,9 +20,6 @@ namespace AppDynamics.Dexter
         private HttpClientHandler _httpClientHandler;
         private CookieContainer _cookieContainer;
 
-        // Always return true for the certificates, even if they are busted
-        private RemoteCertificateValidationCallback ignoreBadCertificates = new RemoteCertificateValidationCallback(delegate { return true; });
-
         #endregion
 
         #region Public properties
@@ -76,7 +73,11 @@ namespace AppDynamics.Dexter
 
             // If customer controller certificates are not in trusted store, let's not fail
             // Yes, that's not particularly secure, but it makes the tool work on the machines where the certificates in the controller are not trusted by the retrieving client
-            ServicePointManager.ServerCertificateValidationCallback += ignoreBadCertificates;
+            this._httpClientHandler.ServerCertificateCustomValidationCallback =
+            (httpRequestMessage, cert, cetChain, policyErrors) =>
+            {
+                return true;
+            };
 
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
 #if (NETCOREAPP2_2)
