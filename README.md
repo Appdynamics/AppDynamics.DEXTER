@@ -5,6 +5,8 @@ AppDynamics APM provides a rich toolkit for turning the vast corpus of data capt
 
 AppDynamics DEXTER (Data Extraction and Enhanced Reporting) can make this process even faster and simpler. DEXTER provides new ways to unlock the data stored in the AppDynamics platform. You can analyze this information in a number of data warehousing and visualization applications, and combine it with your own data to generate customized reports.
 
+You can see the reports from our demo environments for yourself from [here](https://appdynamics.egnyte.com/fl/ZggXNULEz7).
+
 # Turn Data Store into Data Warehouse
 If you’re familiar with data warehousing terminology, think of DEXTER as an extract/transform/load (ETL) utility for AppDynamics data. It extracts information from the AppDynamics platform, transforms it into an enriched, query-able form for faster access, and loads it into variety of reports for:
 * Application logical model (applications, tiers, nodes, backends, business transactions)
