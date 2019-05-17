@@ -609,7 +609,8 @@ namespace AppDynamics.Dexter
 
         private static void copyStream(Stream input, Stream output)
         {
-            byte[] buffer = new byte[1024 * 128];
+            // 1048576 = 1024*1024 = 2^20 = 1MB
+            byte[] buffer = new byte[1048576];
             int bytesRead;
             while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
             {

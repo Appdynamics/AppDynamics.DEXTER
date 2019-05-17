@@ -401,20 +401,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME = "snapshots.foldedcallstacks.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_TIMERANGE_FILE_NAME = "snapshots.foldedcallstackswithtime.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
 
-        // Snapshot files
-        private const string CONVERT_SNAPSHOT_FILE_NAME = "snapshot.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME = "snapshot.segments.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_EXIT_CALLS_FILE_NAME = "snapshot.exits.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME = "snapshot.serviceendpoints.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshot.errors.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshot.businessdata.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshot.methodcalllines.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshot.methodcalllinesoccurrences.csv";
-
-        // Folded call stacks for snapshot
-        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshot.foldedcallstacks.csv";
-        private const string CONVERT_SNAPSHOT_SEGMENTS_FOLDED_CALL_STACKS_WITH_TIME_FILE_NAME = "snapshot.foldedcallstacks.withtime.csv";
-
         // Flow map to flow grid conversion file names
         private const string CONVERT_ACTIVITY_GRIDS_FILE_NAME = "activitygrids.full.csv";
         private const string CONVERT_ALL_ACTIVITY_GRIDS_FILE_NAME = "{0}.activitygrids.full.csv";
@@ -5632,7 +5618,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
-                CONVERT_SNAPSHOT_SEGMENTS_FILE_NAME);
+                CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
 
         public string SnapshotsExitCallsIndexFilePath(JobTarget jobTarget)

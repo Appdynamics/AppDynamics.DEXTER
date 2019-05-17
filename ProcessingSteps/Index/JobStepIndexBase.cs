@@ -72,6 +72,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Constants for various strings mapping to Entity types in Flowmaps and Events
 
         internal const string ENTITY_TYPE_FLOWMAP_APPLICATION = "APPLICATION";
+        internal const string ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION = "FEDERATED_APPLICATION";
         internal const string ENTITY_TYPE_FLOWMAP_APPLICATION_MOBILE = "MOBILE_APPLICATION";
         internal const string ENTITY_TYPE_FLOWMAP_TIER = "APPLICATION_COMPONENT";
         internal const string ENTITY_TYPE_FLOWMAP_NODE = "APPLICATION_COMPONENT_NODE";
