@@ -68,6 +68,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         int numEntitiesTotal = 0;
 
+                        // Preload list of Tiers from APM metadata
+                        List<APMTier> tiersAllIndexedItemsList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
+                        Dictionary<string, APMTier> tiersAllIndexedItemsDictionary = null;
+                        if (tiersAllIndexedItemsList != null)
+                        {
+                            tiersAllIndexedItemsDictionary = tiersAllIndexedItemsList.ToDictionary(e => string.Format("{0}/{1}", e.ApplicationID, e.EntityID), e => e.Clone());
+                        }
+                        else
+                        {
+                            tiersAllIndexedItemsDictionary = new Dictionary<string, APMTier>();
+                        }
+
                         Parallel.Invoke(
                             () =>
                             {
@@ -80,7 +92,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     FileIOHelper.DeleteFile(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget));
 
-                                    List<ActivityFlow> activityFlowsList = convertFlowmapApplication(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange);
+                                    List<ActivityFlow> activityFlowsList = convertFlowmapApplication(applicationList[0], tiersAllIndexedItemsDictionary, jobTarget, jobConfiguration.Input.TimeRange);
 
                                     if (activityFlowsList != null)
                                     {
@@ -101,7 +113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             thisMinuteJobTimeRange.From = jobConfiguration.Input.TimeRange.From.AddMinutes(minute);
                                             thisMinuteJobTimeRange.To = jobConfiguration.Input.TimeRange.From.AddMinutes(minute + 1);
 
-                                            activityFlowsList = convertFlowmapApplication(applicationList[0], jobTarget, thisMinuteJobTimeRange);
+                                            activityFlowsList = convertFlowmapApplication(applicationList[0], tiersAllIndexedItemsDictionary, jobTarget, thisMinuteJobTimeRange);
 
                                             if (activityFlowsList != null)
                                             {
@@ -132,7 +144,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (APMTier tier in tiersList)
                                     {
-                                        List<ActivityFlow> activityFlowsList = convertFlowmapTier(tier, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapTier(tier, tiersAllIndexedItemsDictionary, jobTarget, jobConfiguration.Input.TimeRange);
 
                                         if (activityFlowsList != null)
                                         {
@@ -160,7 +172,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (APMNode node in nodesList)
                                     {
-                                        List<ActivityFlow> activityFlowsList = convertFlowmapNode(node, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapNode(node, tiersAllIndexedItemsDictionary, jobTarget, jobConfiguration.Input.TimeRange);
 
                                         if (activityFlowsList != null)
                                         {
@@ -216,7 +228,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     foreach (APMBusinessTransaction businessTransaction in businessTransactionsList)
                                     {
-                                        List<ActivityFlow> activityFlowsList = convertFlowmapsBusinessTransaction(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange);
+                                        List<ActivityFlow> activityFlowsList = convertFlowmapsBusinessTransaction(businessTransaction, tiersAllIndexedItemsDictionary, jobTarget, jobConfiguration.Input.TimeRange);
 
                                         FileIOHelper.WriteListToCSVFile(activityFlowsList, new BusinessTransactionActivityFlowReportMap(), FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), true);
 
@@ -314,7 +326,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return (jobConfiguration.Input.Flowmaps == true);
         }
 
-        private List<ActivityFlow> convertFlowmapApplication(APMApplication application, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapApplication(APMApplication application, Dictionary<string, APMTier> tiersDictionary, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, jobTimeRange));
             if (flowmapData == null)
@@ -480,6 +492,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.FromType = "Federated Application";
+                            break;
+
                         default:
                             activityFlowTemplate.FromName = getStringValueFromJToken(entityConnection, "sourceNode");
                             activityFlowTemplate.FromType = getStringValueFromJToken(entityConnection["sourceNodeDefinition"], "entityType");
@@ -505,8 +521,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
+                            // Let's build a pretty call chain that can be matched on the downstream application flowmap
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            break;
+
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.ToType = "Federated Application";
                             break;
 
                         default:
@@ -518,66 +540,80 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     // Process each of the stats nodes, duplicating things as we need them
                     foreach (JToken entityConnectionStat in entityConnection["stats"])
                     {
-                        ActivityFlow activityFlowRow = activityFlowTemplate.Clone();
+                        ActivityFlow activityFlow = activityFlowTemplate.Clone();
 
-                        activityFlowRow.CallType = getStringValueFromJToken(entityConnectionStat["exitPointCall"], "exitPointType");
-                        if (activityFlowRow.CallType.Length == 0)
+                        // Inbound call is from Application, let's come up with the call chain that would match the outbound call from an application
+                        // Here we have to look up Tier name from APM Entities index because flowmap only includes its ID
+                        if (activityFlowTemplate.FromType == APMApplication.ENTITY_TYPE)
                         {
-                            activityFlowRow.CallType = getStringValueFromJToken(entity, "backendType");
-                            if (activityFlowRow.CallType.Length == 0)
+                            if (isTokenPropertyNull(entityConnectionStat, "upstreamCrossAppCallingEntity") == false)
+                            {
+                                APMTier tierLookup = null;
+                                if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
+                                {
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                }
+                            }
+                        }
+
+                        activityFlow.CallType = getStringValueFromJToken(entityConnectionStat["exitPointCall"], "exitPointType");
+                        if (activityFlow.CallType.Length == 0)
+                        {
+                            activityFlow.CallType = getStringValueFromJToken(entity, "backendType");
+                            if (activityFlow.CallType.Length == 0)
                             {
                                 if (getBoolValueFromJToken(entityConnectionStat["exitPointCall"], "customExitPoint") == true)
                                 {
-                                    activityFlowRow.CallType = "Custom";
+                                    activityFlow.CallType = "Custom";
                                 }
                             }
                         }
                         if ((getBoolValueFromJToken(entityConnectionStat, "async")) == true)
                         {
-                            activityFlowRow.CallType = String.Format("{0} async", activityFlowRow.CallType);
+                            activityFlow.CallType = String.Format("{0} async", activityFlow.CallType);
                         }
 
                         if (isTokenPropertyNull(entityConnectionStat, "averageResponseTime") == false)
                         {
-                            activityFlowRow.ART = getLongValueFromJToken(entityConnectionStat["averageResponseTime"], "metricValue");
-                            activityFlowRow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["averageResponseTime"], "metricId"));
+                            activityFlow.ART = getLongValueFromJToken(entityConnectionStat["averageResponseTime"], "metricValue");
+                            activityFlow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["averageResponseTime"], "metricId"));
                         }
                         if (isTokenPropertyNull(entityConnectionStat, "callsPerMinute") == false)
                         {
-                            activityFlowRow.CPM = getLongValueFromJToken(entityConnectionStat["callsPerMinute"], "metricValue");
-                            activityFlowRow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["callsPerMinute"], "metricId"));
+                            activityFlow.CPM = getLongValueFromJToken(entityConnectionStat["callsPerMinute"], "metricValue");
+                            activityFlow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["callsPerMinute"], "metricId"));
                         }
                         if (isTokenPropertyNull(entityConnectionStat, "errorsPerMinute") == false)
                         {
-                            activityFlowRow.EPM = getLongValueFromJToken(entityConnectionStat["errorsPerMinute"], "metricValue");
-                            activityFlowRow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["errorsPerMinute"], "metricId"));
+                            activityFlow.EPM = getLongValueFromJToken(entityConnectionStat["errorsPerMinute"], "metricValue");
+                            activityFlow.MetricsIDs.Add(getLongValueFromJToken(entityConnectionStat["errorsPerMinute"], "metricId"));
                         }
-                        if (isTokenPropertyNull(entityConnectionStat, "numberOfCalls") == false) { activityFlowRow.Calls = getLongValueFromJToken(entityConnectionStat["numberOfCalls"], "metricValue"); }
-                        if (isTokenPropertyNull(entityConnectionStat, "numberOfErrors") == false) { activityFlowRow.Errors = getLongValueFromJToken(entityConnectionStat["numberOfErrors"], "metricValue"); }
+                        if (isTokenPropertyNull(entityConnectionStat, "numberOfCalls") == false) { activityFlow.Calls = getLongValueFromJToken(entityConnectionStat["numberOfCalls"], "metricValue"); }
+                        if (isTokenPropertyNull(entityConnectionStat, "numberOfErrors") == false) { activityFlow.Errors = getLongValueFromJToken(entityConnectionStat["numberOfErrors"], "metricValue"); }
 
-                        if (activityFlowRow.ART < 0) { activityFlowRow.ART = 0; }
-                        if (activityFlowRow.CPM < 0) { activityFlowRow.ART = 0; }
-                        if (activityFlowRow.EPM < 0) { activityFlowRow.EPM = 0; }
-                        if (activityFlowRow.Calls < 0) { activityFlowRow.Calls = 0; }
-                        if (activityFlowRow.Errors < 0) { activityFlowRow.Errors = 0; }
+                        if (activityFlow.ART < 0) { activityFlow.ART = 0; }
+                        if (activityFlow.CPM < 0) { activityFlow.ART = 0; }
+                        if (activityFlow.EPM < 0) { activityFlow.EPM = 0; }
+                        if (activityFlow.Calls < 0) { activityFlow.Calls = 0; }
+                        if (activityFlow.Errors < 0) { activityFlow.Errors = 0; }
 
-                        activityFlowRow.ErrorsPercentage = Math.Round((double)(double)activityFlowRow.Errors / (double)activityFlowRow.Calls * 100, 2);
-                        if (Double.IsNaN(activityFlowRow.ErrorsPercentage) == true) activityFlowRow.ErrorsPercentage = 0;
+                        activityFlow.ErrorsPercentage = Math.Round((double)(double)activityFlow.Errors / (double)activityFlow.Calls * 100, 2);
+                        if (Double.IsNaN(activityFlow.ErrorsPercentage) == true) activityFlow.ErrorsPercentage = 0;
 
-                        activityFlowRow.MetricsIDs.RemoveAll(m => m == -1);
+                        activityFlow.MetricsIDs.RemoveAll(m => m == -1);
 
-                        if (activityFlowRow.MetricsIDs != null && activityFlowRow.MetricsIDs.Count > 0)
+                        if (activityFlow.MetricsIDs != null && activityFlow.MetricsIDs.Count > 0)
                         {
                             StringBuilder sb = new StringBuilder(256);
-                            foreach (int metricID in activityFlowRow.MetricsIDs)
+                            foreach (int metricID in activityFlow.MetricsIDs)
                             {
                                 sb.Append(String.Format(deepLinkMetricTemplateInMetricBrowser, entityIdForMetricBrowser, metricID));
                                 sb.Append(",");
                             }
                             sb.Remove(sb.Length - 1, 1);
-                            activityFlowRow.MetricLink = String.Format(DEEPLINK_METRIC, activityFlowRow.Controller, activityFlowRow.ApplicationID, sb.ToString(), DEEPLINK_THIS_TIMERANGE);
+                            activityFlow.MetricLink = String.Format(DEEPLINK_METRIC, activityFlow.Controller, activityFlow.ApplicationID, sb.ToString(), DEEPLINK_THIS_TIMERANGE);
                         }
-                        activityFlowsList.Add(activityFlowRow);
+                        activityFlowsList.Add(activityFlow);
                     }
                 }
             }
@@ -588,7 +624,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapTier(APMTier tier, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapTier(APMTier tier, Dictionary<string, APMTier> tiersDictionary, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.TierFlowmapDataFilePath(jobTarget, jobTimeRange, tier));
             if (flowmapData == null)
@@ -662,6 +698,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.FromType = "Federated Application";
+                            break;
+
                         default:
                             activityFlowTemplate.FromName = getStringValueFromJToken(entityConnection, "sourceNode");
                             activityFlowTemplate.FromType = getStringValueFromJToken(entityConnection["sourceNodeDefinition"], "entityType");
@@ -687,8 +727,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
+                            // Let's build a pretty call chain that can be matched on the downstream application flowmap
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            break;
+
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.ToType = "Federated Application";
                             break;
 
                         default:
@@ -710,6 +756,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     foreach (JToken entityConnectionStat in entityConnection["stats"])
                     {
                         ActivityFlow activityFlow = activityFlowTemplate.Clone();
+
+                        // Inbound call is from Application, let's come up with the call chain that would match the outbound call from an application
+                        // Here we have to look up Tier name from APM Entities index because flowmap only includes its ID
+                        if (activityFlowTemplate.FromType == APMApplication.ENTITY_TYPE)
+                        {
+                            if (isTokenPropertyNull(entityConnectionStat, "upstreamCrossAppCallingEntity") == false)
+                            {
+                                APMTier tierLookup = null;
+                                if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
+                                {
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                }
+                            }
+                        }
 
                         activityFlow.CallType = getStringValueFromJToken(entityConnectionStat["exitPointCall"], "exitPointType");
                         if (activityFlow.CallType.Length == 0)
@@ -779,7 +839,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapNode(APMNode node, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapNode(APMNode node, Dictionary<string, APMTier> tiersDictionary, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.NodeFlowmapDataFilePath(jobTarget, jobTimeRange, node));
             if (flowmapData == null)
@@ -863,6 +923,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.FromType = "Federated Application";
+                            break;
+
                         default:
                             activityFlowTemplate.FromName = getStringValueFromJToken(entityConnection, "sourceNode");
                             activityFlowTemplate.FromType = getStringValueFromJToken(entityConnection["sourceNodeDefinition"], "entityType");
@@ -893,8 +957,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
+                            // Let's build a pretty call chain that can be matched on the downstream application flowmap
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.TierName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            break;
+
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.ToType = "Federated Application";
                             break;
 
                         default:
@@ -917,6 +987,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     foreach (JToken entityConnectionStat in entityConnection["stats"])
                     {
                         ActivityFlow activityFlow = activityFlowTemplate.Clone();
+
+                        // Inbound call is from Application, let's come up with the call chain that would match the outbound call from an application
+                        // Here we have to look up Tier name from APM Entities index because flowmap only includes its ID
+                        if (activityFlowTemplate.FromType == APMApplication.ENTITY_TYPE)
+                        {
+                            if (isTokenPropertyNull(entityConnectionStat, "upstreamCrossAppCallingEntity") == false)
+                            {
+                                APMTier tierLookup = null;
+                                if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
+                                {
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                }
+                            }
+                        }
 
                         activityFlow.CallType = getStringValueFromJToken(entityConnectionStat["exitPointCall"], "exitPointType");
                         if (activityFlow.CallType.Length == 0)
@@ -1178,7 +1262,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return activityFlowsList;
         }
 
-        private List<ActivityFlow> convertFlowmapsBusinessTransaction(APMBusinessTransaction businessTransaction, JobTarget jobTarget, JobTimeRange jobTimeRange)
+        private List<ActivityFlow> convertFlowmapsBusinessTransaction(APMBusinessTransaction businessTransaction, Dictionary<string, APMTier> tiersDictionary, JobTarget jobTarget, JobTimeRange jobTimeRange)
         {
             JObject flowmapData = FileIOHelper.LoadJObjectFromFile(FilePathMap.BusinessTransactionFlowmapDataFilePath(jobTarget, jobTimeRange, businessTransaction));
             if (flowmapData == null)
@@ -1260,6 +1344,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
                             break;
 
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.FromType = "Federated Application";
+                            break;
+
                         default:
                             activityFlowTemplate.FromName = getStringValueFromJToken(entityConnection, "sourceNode");
                             activityFlowTemplate.FromType = getStringValueFromJToken(entityConnection["sourceNodeDefinition"], "entityType");
@@ -1285,8 +1373,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
+                            // Let's build a pretty call chain that can be matched on the downstream application flowmap
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            break;
+
+                        case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
+                            activityFlowTemplate.ToType = "Federated Application";
                             break;
 
                         default:
@@ -1312,6 +1406,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     foreach (JToken entityConnectionStat in entityConnection["stats"])
                     {
                         ActivityFlow activityFlow = activityFlowTemplate.Clone();
+
+                        if (activityFlowTemplate.FromType == APMApplication.ENTITY_TYPE)
+                        {
+                            if (isTokenPropertyNull(entityConnectionStat, "upstreamCrossAppCallingEntity") == false)
+                            {
+                                APMTier tierLookup = null;
+                                if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
+                                {
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                }
+                            }
+                        }
 
                         activityFlow.CallType = getStringValueFromJToken(entityConnectionStat["exitPointCall"], "exitPointType");
                         if (activityFlow.CallType.Length == 0)

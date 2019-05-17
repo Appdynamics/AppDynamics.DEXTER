@@ -536,8 +536,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Fold Stacks for Nodes and Business Transactions");
 
+                            int j = 1;
                             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                             {
+                                Console.WriteLine("Processing range {0}/{1} for hour starting {2:o}", j, jobConfiguration.Input.HourlyTimeRanges.Count, jobTimeRange.From);
+
                                 // Go through BTs
                                 foreach (APMBusinessTransaction businessTransaction in businessTransactionsList)
                                 {
@@ -584,6 +587,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         }
                                     }
                                 }
+
+                                j++;
                             }
 
                             #endregion
@@ -2736,10 +2741,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             exitCallForThisExit.ToEntityName = getStringValueFromJToken(goingToProperty, "value");
                         }
                         goingToProperty = exitCallToken["properties"].Where(p => getStringValueFromJToken(p, "name") == "from").FirstOrDefault();
-                        string callChainForThisSegment = "(Generated From Call Graph:Unknown)";
+                        string callChainForThisSegment = "(CallGraph:Unknown)";
                         if (goingToProperty != null)
                         {
-                            callChainForThisSegment = String.Format("(Generated From Call Graph:{0})", getStringValueFromJToken(goingToProperty, "value"));
+                            callChainForThisSegment = String.Format("(CallGraph:{0})", getStringValueFromJToken(goingToProperty, "value"));
                         }
                         if (exitCallForThisExit.IsAsync == false)
                         {
@@ -3105,10 +3110,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 exitCallForThisExit.ToEntityName = getStringValueFromJToken(goingToProperty, "value");
                             }
                             goingToProperty = exitCallToken["properties"].Where(p => getStringValueFromJToken(p, "name") == "from").FirstOrDefault();
-                            string callChainForThisSegment = "(Generated From Call Graph:Unknown)";
+                            string callChainForThisSegment = "(CallGraph:Unknown)";
                             if (goingToProperty != null)
                             {
-                                callChainForThisSegment = String.Format("(Generated From Call Graph:{0})", getStringValueFromJToken(goingToProperty, "value"));
+                                callChainForThisSegment = String.Format("(CallGraph:{0})", getStringValueFromJToken(goingToProperty, "value"));
                             }
                             if (exitCallForThisExit.IsAsync == false)
                             {

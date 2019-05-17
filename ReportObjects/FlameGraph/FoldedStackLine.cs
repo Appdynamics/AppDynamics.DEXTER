@@ -147,15 +147,20 @@ namespace AppDynamics.Dexter.ReportObjects
                     {
                         // Append two exit calls by decoding them, squishing them together, and then reencoding them
                         string exitsInThisFoldedStack = Encoding.UTF8.GetString(Convert.FromBase64String(this.ExitCallsArray[i]));
-                        string exitsInIncomingFoldedStack = Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLineToAdd.ExitCallsArray[i]));
 
-                        List<string> allExits = new List<string>();
-                        allExits.AddRange(exitsInThisFoldedStack.Split('\n').ToList());
-                        allExits.AddRange(exitsInIncomingFoldedStack.Split('\n').ToList());
+                        // Only append if the exit size hasn't grown larger then what we want to see
+                        if (exitsInThisFoldedStack.Length < 400)
+                        {
+                            string exitsInIncomingFoldedStack = Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLineToAdd.ExitCallsArray[i]));
 
-                        // Only append unique values
-                        List<string> uniqueExits = allExits.Distinct().ToList();
-                        this.ExitCallsArray[i] = Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(String.Join("\n", uniqueExits)));
+                            List<string> allExits = new List<string>();
+                            allExits.AddRange(exitsInThisFoldedStack.Split('\n').ToList());
+                            allExits.AddRange(exitsInIncomingFoldedStack.Split('\n').ToList());
+
+                            // Only append unique values
+                            List<string> uniqueExits = allExits.Distinct().ToList();
+                            this.ExitCallsArray[i] = Convert.ToBase64String(UTF8Encoding.UTF8.GetBytes(String.Join("\n", uniqueExits)));
+                        }
                     }
                     else if (
                         this.ExitCallsArray[i] != null &&
@@ -177,8 +182,7 @@ namespace AppDynamics.Dexter.ReportObjects
                         (foldedStackLineToAdd.ExitCallsArray[i] == null || foldedStackLineToAdd.ExitCallsArray[i].Length == 0))
                     {
                         // Do nothing, nothing to join
-                    }
-                    
+                    }                    
                 }
             }
         }
