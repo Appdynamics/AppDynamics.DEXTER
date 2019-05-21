@@ -444,12 +444,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Business Transactions
 
                         List<AppDRESTBusinessTransaction> businessTransactionsRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTBusinessTransaction>(FilePathMap.APMBusinessTransactionsDataFilePath(jobTarget));
-                        List<APMBusinessTransaction> businessTransactionList = null;
+                        List<APMBusinessTransaction> businessTransactionsList = null;
                         if (businessTransactionsRESTList != null)
                         {
                             loggerConsole.Info("Index List of Business Transactions ({0} entities)", businessTransactionsRESTList.Count);
 
-                            businessTransactionList = new List<APMBusinessTransaction>(businessTransactionsRESTList.Count);
+                            businessTransactionsList = new List<APMBusinessTransaction>(businessTransactionsRESTList.Count);
 
                             foreach (AppDRESTBusinessTransaction businessTransactionREST in businessTransactionsRESTList)
                             {
@@ -475,15 +475,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithDeeplinks(businessTransaction);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange);
 
-                                businessTransactionList.Add(businessTransaction);
+                                businessTransactionsList.Add(businessTransaction);
                             }
 
                             // Sort them
-                            businessTransactionList = businessTransactionList.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ToList();
+                            businessTransactionsList = businessTransactionsList.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ToList();
 
-                            FileIOHelper.WriteListToCSVFile(businessTransactionList, new APMBusinessTransactionReportMap(), FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(businessTransactionsList, new APMBusinessTransactionReportMap(), FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget));
 
-                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionList.Count;
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionsList.Count;
                         }
 
                         #endregion
@@ -906,7 +906,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             if (tiersList != null) application.NumTiers = tiersList.Count;
                             if (nodesList != null) application.NumNodes = nodesList.Count;
                             if (backendsList != null) application.NumBackends = backendsList.Count;
-                            if (businessTransactionList != null) application.NumBTs = businessTransactionList.Count;
+                            if (businessTransactionsList != null) application.NumBTs = businessTransactionsList.Count;
                             if (serviceEndpointsList != null) application.NumSEPs = serviceEndpointsList.Count;
                             if (errorList != null) application.NumErrors = errorList.Count;
                             if (informationPointsList != null) application.NumIPs = informationPointsList.Count;

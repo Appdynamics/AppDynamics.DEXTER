@@ -13,6 +13,9 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string BackendType { get; set; }
 
+        public bool IsExplicitRule { get; set; }
+        public string RuleName { get; set; }
+
         public int? NumProps { get; set; }
         public string Prop1Name { get; set; }
         public string Prop1Value { get; set; }

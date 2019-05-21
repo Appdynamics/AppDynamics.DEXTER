@@ -1046,6 +1046,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_LOCATION_PIVOT];
                     pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_BACKENDS_LOCATION);
                     setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "IsExplicitRule");
                     addRowFieldToPivot(pivot, "BackendType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "BackendName");
                     addRowFieldToPivot(pivot, "Controller");
@@ -1103,6 +1104,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_BUSINESS_TRANSACTIONS_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsRenamed");
+                    addFilterFieldToPivot(pivot, "IsExplicitRule");
                     addRowFieldToPivot(pivot, "BTType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "BTName");
                     addRowFieldToPivot(pivot, "Controller");
@@ -1424,6 +1426,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["BackendName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BackendType"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["Prop1Name"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["Prop2Name"].Position + 1).Width = 25;
                 sheet.Column(table.Columns["Prop3Name"].Position + 1).Width = 25;
@@ -1443,6 +1446,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTNameOriginal"].Position + 1).Width = 20;
                 sheet.Column(table.Columns["BTType"].Position + 1).Width = 10;
+                sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
             }
             else if (entityType == APMServiceEndpoint.ENTITY_TYPE)
             {

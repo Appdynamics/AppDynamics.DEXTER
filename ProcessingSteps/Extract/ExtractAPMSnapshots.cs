@@ -19,8 +19,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class ExtractAPMSnapshots : JobStepReportBase
     {
-        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 50;
-        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS = 8;
+        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD = 128;
+        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_ONPREM = 8;
+        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_SAAS = 16;
         private const int SNAPSHOTS_QUERY_PAGE_SIZE = 600;
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
@@ -438,11 +439,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 if (programOptions.ProcessSequentially == false)
                                 {
-                                    var listOfSnapshotsInHourChunks = listOfSnapshotsInHourFiltered.BreakListIntoChunks(SNAPSHOTS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
+                                    var listOfSnapshotsInHourChunks = listOfSnapshotsInHourFiltered.BreakListIntoChunks(SNAPSHOTS_EXTRACT_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD);
+
+                                    int numThreadsToUseForExtraction = SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_ONPREM;
+                                    if (jobTarget.Controller.ToLower().Contains("saas.appdynamics.com") == true)
+                                    {
+                                        numThreadsToUseForExtraction = SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_SAAS;
+                                    }
 
                                     Parallel.ForEach<List<JToken>, int>(
                                         listOfSnapshotsInHourChunks,
-                                        new ParallelOptions { MaxDegreeOfParallelism = SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS },
+                                        new ParallelOptions { MaxDegreeOfParallelism = numThreadsToUseForExtraction },
                                         () => 0,
                                         (listOfSnapshotsInHourChunk, loop, subtotal) =>
                                         {
