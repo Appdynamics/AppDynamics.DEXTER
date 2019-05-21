@@ -18,7 +18,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class IndexAPMSnapshots : JobStepIndexBase
     {
-        private const int SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD = 100;
+        private const int SNAPSHOTS_INDEX_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD = 50;
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -180,10 +180,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             IndexedSnapshotsResults indexedSnapshotsResults = null;
 
-                                            if (programOptions.ProcessSequentially == false && listOfBTSnapshotsInHour.Count >= SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD)
+                                            if (programOptions.ProcessSequentially == false && listOfBTSnapshotsInHour.Count >= SNAPSHOTS_INDEX_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD)
                                             {
                                                 // Partition list of BTs into chunks
-                                                int chunkSize = SNAPSHOTS_INDEX_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD;
+                                                int chunkSize = SNAPSHOTS_INDEX_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD;
                                                 var listOfSnapshotsInHourChunks = listOfBTSnapshotsInHour.BreakListIntoChunks(chunkSize);
 
                                                 // Prepare thread safe storage to dump all those chunks

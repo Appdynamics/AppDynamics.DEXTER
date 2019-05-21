@@ -56,7 +56,6 @@
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": true,
         "Events": true,
         "Configuration": true,
         "ConfigurationComparisonReferenceCriteria": {
@@ -131,7 +130,6 @@
     "Output": {
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": true,
         "Events": true,
         "Configuration": true,
         "DetectedEntities": true,

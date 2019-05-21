@@ -19,6 +19,9 @@ namespace AppDynamics.Dexter.ReportObjects
         public string BTNameOriginal { get; set; }
         public bool IsRenamed { get; set; }
 
+        public bool IsExplicitRule { get; set; }
+        public string RuleName { get; set; }
+
         public override long EntityID
         {
             get

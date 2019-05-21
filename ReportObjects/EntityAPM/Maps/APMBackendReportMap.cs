@@ -13,6 +13,9 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.BackendName).Index(i); i++;
             Map(m => m.BackendType).Index(i); i++;
 
+            Map(m => m.IsExplicitRule).Index(i); i++;
+            Map(m => m.RuleName).Index(i); i++;
+
             Map(m => m.NumProps).Index(i); i++;
             Map(m => m.Prop1Name).Index(i); i++;
             Map(m => m.Prop1Value).Index(i); i++;

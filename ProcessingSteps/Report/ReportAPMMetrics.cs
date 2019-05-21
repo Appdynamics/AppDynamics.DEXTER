@@ -30,7 +30,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_TIERS_PERF_PIVOT = "5.Tiers.Perf";
         private const string SHEET_NODES_FULL = "6.Nodes";
         private const string SHEET_NODES_HOURLY = "6.Nodes.Hourly";
-        private const string SHEET_NODES_LICENSE_PIVOT = "6.Nodes.License";
+        private const string SHEET_NODES_LICENSE_PIVOT = "6.Nodes.Availability";
         private const string SHEET_NODES_PERF_PIVOT = "6.Nodes.Perf";
         private const string SHEET_BACKENDS_FULL = "7.Backends";
         private const string SHEET_BACKENDS_HOURLY = "7.Backends.Hourly";
