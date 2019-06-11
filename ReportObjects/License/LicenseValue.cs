@@ -16,16 +16,21 @@ namespace AppDynamics.Dexter.ReportObjects
         public DateTime LicenseEventTime { get; set; }
         public DateTime LicenseEventTimeUtc { get; set; }
 
-        public long Value { get; set; }
+        public long Min { get; set; }
+        public long Max { get; set; }
+        public long Average { get; set; }
+        public long Total { get; set; }
+        public long Samples { get; set; }
 
         public override String ToString()
         {
             return String.Format(
-                "MetricValue: {0}/{1} {2:o} {3}",
+                "LicenseValue: {0}/{1} {2} {3:o}={4}",
                 this.Controller,
                 this.AccountName,
+                this.AgentType,
                 this.LicenseEventTime,
-                this.Value);
+                this.Average);
         }
     }
 }

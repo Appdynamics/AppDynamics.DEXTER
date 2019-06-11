@@ -41,6 +41,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                #region Template comparisons 
+
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == BLANK_APPLICATION_WEB)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_WEB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application = BLANK_APPLICATION_WEB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = APPLICATION_TYPE_WEB;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                    }
+                }
+
+                #endregion
+
                 bool reportFolderCleaned = false;
 
                 // Process each target
@@ -164,8 +194,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #endregion
 
                         #region Rules of all kinds
-
-                        loggerConsole.Info("Rules");
+                         
+                        loggerConsole.Info("Page and AJAX Request Rules");
 
                         #region Page Rules
 
@@ -323,7 +353,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         // Sort them
                         pageDetectionRulesList = pageDetectionRulesList.OrderBy(o => o.EntityCategory).ThenBy(o => o.DetectionType).ThenBy(o => o.Priority).ToList();
-                        FileIOHelper.WriteListToCSVFile(pageDetectionRulesList, new WEBPageDetectionRuleReportMap(), FilePathMap.WEBAgentPageAjaxVirtualPageRulesIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(pageDetectionRulesList, new WEBPageDetectionRuleReportMap(), FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget));
 
                         loggerConsole.Info("Completed {0} Rules", pageDetectionRulesList.Count);
 
@@ -455,9 +485,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.WEBApplicationConfigurationReportFilePath(), FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget));
                         }
-                        if (File.Exists(FilePathMap.WEBAgentPageAjaxVirtualPageRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.WEBAgentPageAjaxVirtualPageRulesIndexFilePath(jobTarget)).Length > 0)
+                        if (File.Exists(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget)).Length > 0)
                         {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.WEBAgentPageAjaxVirtualPageRulesReportFilePath(), FilePathMap.WEBAgentPageAjaxVirtualPageRulesIndexFilePath(jobTarget));
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.WEBPageAjaxVirtualPageRulesReportFilePath(), FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.WEBSyntheticJobsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.WEBSyntheticJobsIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -488,6 +518,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
                 }
+
+                // Remove all templates from the list
+                jobConfiguration.Target.RemoveAll(t => t.Controller == BLANK_APPLICATION_CONTROLLER);
 
                 return true;
             }

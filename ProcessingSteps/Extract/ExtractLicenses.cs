@@ -73,94 +73,55 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             // Increase timeout of the extraction requests to quite a bit more for wider time ranges
                             controllerApi.Timeout = 3;
-                            controllerApi.PrivateApiLogin();
 
-                            #region Summary information for licenses
+                            #region License assignments and consumption
 
-                            loggerConsole.Info("List of Applications");
+                            loggerConsole.Info("Account ID");
 
-                            string applicationsListJSON = controllerApi.GetControllerApplicationsForLicenseRule();
-                            if (applicationsListJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationsListJSON, FilePathMap.LicenseApplicationsDataFilePath(jobTarget));
+                            long accountID = -1;
+                            string myAccountJSON = controllerApi.GetAccountsMyAccount();
+                            if (myAccountJSON != String.Empty)
+                            {
+                                JObject myAccount = JObject.Parse(myAccountJSON);
+                                if (myAccount != null)
+                                {
+                                    accountID = getLongValueFromJToken(myAccount, "id");
+                                }
+                            }
 
-                            loggerConsole.Info("List of Machines");
+                            loggerConsole.Info("License Modules");
 
-                            string machinesListJSON = controllerApi.GetControllerSIMMachinesForLicenseRule();
-                            if (machinesListJSON != String.Empty) FileIOHelper.SaveFileToPath(machinesListJSON, FilePathMap.LicenseSIMMachinesDataFilePath(jobTarget));
+                            string licenseModulesJSON = controllerApi.GetLicenseModules(accountID);
+                            if (licenseModulesJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseModulesJSON, FilePathMap.LicenseModulesDataFilePath(jobTarget));
 
-                            loggerConsole.Info("Account Summary");
+                            if (licenseModulesJSON != String.Empty)
+                            {
+                                JObject licenseModulesContainer = JObject.Parse(licenseModulesJSON);
+                                if (licenseModulesContainer != null && 
+                                    isTokenPropertyNull(licenseModulesContainer, "modules") == false)
+                                {
+                                    JArray licenseModulesArray = (JArray)licenseModulesContainer["modules"];
+                                    foreach (JObject licenseModuleObject in licenseModulesArray)
+                                    {
+                                        string licenseModuleName = getStringValueFromJToken(licenseModuleObject, "name");
+                                        loggerConsole.Info("License Module - {0}", licenseModuleName);
 
-                            string accountJSON = controllerApi.GetAccount();
-                            if (accountJSON != String.Empty) FileIOHelper.SaveFileToPath(accountJSON, FilePathMap.LicenseAccountDataFilePath(jobTarget));
+                                        string licenseModulePropertiesJSON = controllerApi.GetLicenseModuleProperties(accountID, licenseModuleName);
+                                        if (licenseModulePropertiesJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseModulePropertiesJSON, FilePathMap.LicenseModulePropertiesDataFilePath(jobTarget, licenseModuleName));
 
-                            loggerConsole.Info("License");
+                                        string licenseModuleUsagesJSON = controllerApi.GetLicenseModuleUsages(accountID, licenseModuleName, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                                        if (licenseModuleUsagesJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseModuleUsagesJSON, FilePathMap.LicenseModuleUsagesDataFilePath(jobTarget, licenseModuleName));
+                                    }
+                                }
+                            }
 
-                            string licenseJSON = controllerApi.GetLicense(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (licenseJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseJSON, FilePathMap.LicenseDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Summary - All Except EUM");
-
-                            string accountUsageSummaryJSON = controllerApi.GetLicenseUsageAllExceptEUMSummary(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (accountUsageSummaryJSON != String.Empty) FileIOHelper.SaveFileToPath(accountUsageSummaryJSON, FilePathMap.LicenseUsageSummaryAllExceptEUMDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Summary - EUM");
-
-                            string accountUsageSummaryEUMJSON = controllerApi.GetLicenseUsageEUMSummary(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (accountUsageSummaryEUMJSON != String.Empty) FileIOHelper.SaveFileToPath(accountUsageSummaryEUMJSON, FilePathMap.LicenseUsageSummaryEUMDataFilePath(jobTarget));
-
-                            #endregion
-
-                            #region Global license usage details time series
-
-                            loggerConsole.Info("Usage Details - APM (combined)");
-
-                            string usageDetailsJSON = controllerApi.GetLicenseUsageAPM(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageAPMDataFilePath(jobTarget));
-
-                            // Databases 
-                            loggerConsole.Info("Usage Details - Database");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageDatabase(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageDatabaseVisibilityDataFilePath(jobTarget));
-
-                            // Infrastructure Visibility
-                            loggerConsole.Info("Usage Details - Machine Agent");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageMachineAgent(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageMachineAgentDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Details - Server Visibility");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageSIM(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageSIMDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Details - Service Availability");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageServiceAvailability(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageServiceAvailabilityDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Details - Network Visibility");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageNetworkVisibility(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageNetworkVisibilityDataFilePath(jobTarget));
-
-                            // Analytics
-                            loggerConsole.Info("Usage Details - Transaction Analytics");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageNetworkTransactionAnalytics(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageTransactionAnalyticsDataFilePath(jobTarget));
-
-                            loggerConsole.Info("Usage Details - Log Analytics");
-
-                            usageDetailsJSON = controllerApi.GetLicenseUsageNetworkLogAnalytics(fromTimeUnix, toTimeUnix, differenceInMinutes);
-                            if (usageDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(usageDetailsJSON, FilePathMap.LicenseUsageLogAnalyticsDataFilePath(jobTarget));
-                            
                             #endregion
 
                             #region License Rules
 
                             loggerConsole.Info("License Rules");
 
-                            string licenseRulesJSON = controllerApi.GetLicenseRules(fromTimeUnix, toTimeUnix, differenceInMinutes);
+                            string licenseRulesJSON = controllerApi.GetLicenseRules();
                             if (licenseRulesJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRulesJSON, FilePathMap.LicenseRulesDataFilePath(jobTarget));
 
                             if (licenseRulesJSON != String.Empty)
@@ -177,6 +138,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         string licenseRuleDetailsJSON = controllerApi.GetLicenseRuleConfiguration(ruleID);
                                         if (licenseRuleDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRuleDetailsJSON, FilePathMap.LicenseRuleConfigurationDataFilePath(jobTarget, ruleName, ruleID));
+                                    }
+
+                                    controllerApi.PrivateApiLogin();
+
+                                    foreach (JObject licenseRuleObject in licenseRulesArray)
+                                    {
+                                        string ruleID = getStringValueFromJToken(licenseRuleObject, "id");
+                                        string ruleName = getStringValueFromJToken(licenseRuleObject, "name");
 
                                         loggerConsole.Info("License Rule Usage - {0}", ruleName);
 
@@ -186,6 +155,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                             }
 
+                            loggerConsole.Info("List of Applications Referenced by License Rules");
+
+                            string applicationsListJSON = controllerApi.GetControllerApplicationsForLicenseRule();
+                            if (applicationsListJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationsListJSON, FilePathMap.LicenseApplicationsDataFilePath(jobTarget));
+
+                            loggerConsole.Info("List of Machines Referenced by License Rules");
+
+                            string machinesListJSON = controllerApi.GetControllerSIMMachinesForLicenseRule();
+                            if (machinesListJSON != String.Empty) FileIOHelper.SaveFileToPath(machinesListJSON, FilePathMap.LicenseSIMMachinesDataFilePath(jobTarget));
+
+                            #endregion
+
+                            #region Account Summary
+
+                            loggerConsole.Info("Account Summary");
+
+                            string accountJSON = controllerApi.GetAccount();
+                            if (accountJSON != String.Empty) FileIOHelper.SaveFileToPath(accountJSON, FilePathMap.LicenseAccountDataFilePath(jobTarget));
+                            
                             #endregion
                         }
                     }

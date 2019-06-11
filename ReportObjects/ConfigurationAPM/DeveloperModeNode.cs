@@ -30,7 +30,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "DeveloperModeSetting";
+                return "APMDeveloperModeSetting";
             }
         }
 

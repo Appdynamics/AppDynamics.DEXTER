@@ -889,7 +889,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of WEB Pages and AJAX Request Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WEB_PAGE_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBAgentPageAjaxVirtualPageRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageAjaxVirtualPageRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1474,7 +1474,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ScopeType"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["IncludedTiers"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["IncludedRules"].Position + 1).Width = 20;
@@ -1502,7 +1502,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["AgentType"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
-                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["NamingConfigType"].Position + 1).Width = 15;
                 }
 
@@ -1527,7 +1527,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["AgentType"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
-                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 20;
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE];
@@ -2149,6 +2149,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet = excelReport.Workbook.Worksheets[SHEET_CONFIGURATION_DIFFERENCES_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_CONFIGURATION_DIFFERENCES);
                     setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "ReferenceApp");
                     addRowFieldToPivot(pivot, "RuleType");
                     addRowFieldToPivot(pivot, "RuleSubType");
                     addRowFieldToPivot(pivot, "TierName");

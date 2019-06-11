@@ -220,7 +220,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     indexedSnapshotsResults.DetectedErrors.AddRange(indexedSnapshotsResultsChunk.DetectedErrors);
                                                     indexedSnapshotsResults.BusinessData.AddRange(indexedSnapshotsResultsChunk.BusinessData);
                                                     indexedSnapshotsResults.MethodCallLines.AddRange(indexedSnapshotsResultsChunk.MethodCallLines);
-                                                    indexedSnapshotsResults.MethodCallLineOccurrences.AddRange(indexedSnapshotsResultsChunk.MethodCallLineOccurrences);
 
                                                     // Fold the folded call stacks from chunks into the results
                                                     if (indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming.ContainsKey(businessTransaction.BTID) == false)
@@ -276,7 +275,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.DetectedErrors, new DetectedErrorReportMap(), FilePathMap.SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                 FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.BusinessData, new BusinessDataReportMap(), FilePathMap.SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                 FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.MethodCallLines, new MethodCallLineReportMap(), FilePathMap.SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.MethodCallLineOccurrences, new MethodCallLineOccurrenceReportMap(), FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
 
                                                 // Save Snapshot call stacks for flame graphs for this hour
                                                 FileIOHelper.WriteListToCSVFile(indexedSnapshotsResults.FoldedCallStacksBusinessTransactionsNoTiming[businessTransaction.BTID].Values.ToList<FoldedStackLine>(), new FoldedStackLineReportMap(), FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
@@ -328,8 +326,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget));
-                        FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
-                        FileIOHelper.DeleteFile(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
                         FileIOHelper.DeleteFile(FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget));
 
                         List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
@@ -414,23 +410,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                             {
                                                                 using (FileStream methodCallLinesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget), FileMode.Append))
                                                                 {
-                                                                    using (FileStream methodCallLinesOccurrencesIndexFileStream = File.Open(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget), FileMode.Append))
+                                                                    foreach (APMBusinessTransaction businessTransaction in businessTransactionsList)
                                                                     {
-                                                                        foreach (APMBusinessTransaction businessTransaction in businessTransactionsList)
+                                                                        if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
                                                                         {
-                                                                            if (File.Exists(FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange)) == true)
-                                                                            {
-                                                                                Console.Write("{0}({1})+", businessTransaction.BTName, businessTransaction.BTID);
+                                                                            Console.Write("{0}({1})+", businessTransaction.BTName, businessTransaction.BTID);
 
-                                                                                FileIOHelper.AppendTwoCSVFiles(snapshotsIndexFileStream, FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(segmentsIndexFileStream, FilePathMap.SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(callExitsIndexFileStream, FilePathMap.SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(serviceEndpointCallsIndexFileStream, FilePathMap.SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(detectedErrorsIndexFileStream, FilePathMap.SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(businessDataIndexFileStream, FilePathMap.SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(methodCallLinesIndexFileStream, FilePathMap.SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                                FileIOHelper.AppendTwoCSVFiles(methodCallLinesOccurrencesIndexFileStream, FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
-                                                                            }
+                                                                            FileIOHelper.AppendTwoCSVFiles(snapshotsIndexFileStream, FilePathMap.SnapshotsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(segmentsIndexFileStream, FilePathMap.SnapshotsSegmentsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(callExitsIndexFileStream, FilePathMap.SnapshotsExitCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(serviceEndpointCallsIndexFileStream, FilePathMap.SnapshotsServiceEndpointCallsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(detectedErrorsIndexFileStream, FilePathMap.SnapshotsDetectedErrorsIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(businessDataIndexFileStream, FilePathMap.SnapshotsBusinessDataIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
+                                                                            FileIOHelper.AppendTwoCSVFiles(methodCallLinesIndexFileStream, FilePathMap.SnapshotsMethodCallLinesIndexBusinessTransactionHourRangeFilePath(jobTarget, businessTransaction, jobTimeRange));
                                                                         }
                                                                     }
                                                                 }
@@ -506,10 +498,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.SnapshotsMethodCallLinesReportFilePath(), FilePathMap.SnapshotsMethodCallLinesIndexFilePath(jobTarget));
-                        }
-                        if (File.Exists(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget)).Length > 0)
-                        {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.SnapshotsMethodCallLinesOccurrencesReportFilePath(), FilePathMap.SnapshotsMethodCallLinesOccurrencesIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ApplicationSnapshotsIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -2098,46 +2086,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
-                                // Process all method call lines to generate Occurrences list, finding and counting all the unique values
-                                Dictionary<string, MethodCallLine> methodCallLinesOccurrencesInSegmentDictionary = new Dictionary<string, MethodCallLine>(methodCallLinesInSegmentList.Count);
-                                foreach (MethodCallLine methodCallLine in methodCallLinesInSegmentList)
-                                {
-                                    if (methodCallLinesOccurrencesInSegmentDictionary.ContainsKey(methodCallLine.FullName) == false)
-                                    {
-                                        // Add new
-                                        MethodCallLine methodCallLineOccurrence = methodCallLine.Clone();
-                                        methodCallLineOccurrence.NumCalls = 1;
-                                        // Correct the time from the offset originally associated with this method call back to the segment's time
-                                        methodCallLineOccurrence.OccurredUtc = segment.OccurredUtc;
-                                        methodCallLineOccurrence.Occurred = segment.Occurred;
-                                        methodCallLinesOccurrencesInSegmentDictionary.Add(methodCallLine.FullName, methodCallLineOccurrence);
-                                    }
-                                    else
-                                    {
-                                        // Adjust existing
-                                        MethodCallLine methodCallLineOccurrence = methodCallLinesOccurrencesInSegmentDictionary[methodCallLine.FullName];
-
-                                        methodCallLineOccurrence.NumCalls++;
-
-                                        methodCallLineOccurrence.Exec = methodCallLineOccurrence.Exec + methodCallLine.Exec;
-                                        methodCallLineOccurrence.Wait = methodCallLineOccurrence.Wait + methodCallLine.Wait;
-                                        methodCallLineOccurrence.Block = methodCallLineOccurrence.Block + methodCallLine.Block;
-                                        methodCallLineOccurrence.CPU = methodCallLineOccurrence.CPU + methodCallLine.CPU;
-
-                                        methodCallLineOccurrence.NumExits = methodCallLineOccurrence.NumExits + methodCallLine.NumExits;
-                                        methodCallLineOccurrence.NumSEPs = methodCallLineOccurrence.NumSEPs + methodCallLine.NumSEPs;
-                                        methodCallLineOccurrence.NumMIDCs = methodCallLineOccurrence.NumMIDCs + methodCallLine.NumMIDCs;
-                                        methodCallLineOccurrence.NumChildren = methodCallLineOccurrence.NumChildren + methodCallLine.NumChildren;
-                                    }
-                                }
-                                List<MethodCallLine> methodCallLinesOccurrencesInSegmentList = new List<MethodCallLine>(methodCallLinesOccurrencesInSegmentDictionary.Count);
-                                methodCallLinesOccurrencesInSegmentList = methodCallLinesOccurrencesInSegmentDictionary.Values.ToList();
-                                methodCallLinesOccurrencesInSegmentList = methodCallLinesOccurrencesInSegmentList.OrderBy(m => m.FullName).ToList();
-                                foreach (MethodCallLine methodCallLine in methodCallLinesOccurrencesInSegmentList)
-                                {
-                                    methodCallLine.ExecRange = getDurationRangeAsString(methodCallLine.Exec);
-                                }
-
                                 // Process all method call lines into folded call stacks for flame graphs
                                 List<MethodCallLine> methodCallLinesLeaves = null;
                                 if (methodCallLinesInSegmentList.Count > 0)
@@ -2230,7 +2178,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 indexedSnapshotResults.DetectedErrors.AddRange(detectedErrorsListInThisSegment);
                                 indexedSnapshotResults.BusinessData.AddRange(businessDataListInThisSegment);
                                 indexedSnapshotResults.MethodCallLines.AddRange(methodCallLinesInSegmentList);
-                                indexedSnapshotResults.MethodCallLineOccurrences.AddRange(methodCallLinesOccurrencesInSegmentList);
                             }
                         }
 
@@ -2380,8 +2327,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
 
                             // Represent the exits from MethodCallLines with caret ^ characters
-                            List<MethodCallLine> methodCallLinesOccurrencesExits = indexedSnapshotResults.MethodCallLines.Where(m => m.SegmentID == segment.SegmentID && m.NumExits > 0).ToList();
-                            foreach (MethodCallLine methodCallLineExit in methodCallLinesOccurrencesExits)
+                            List<MethodCallLine> methodCallLinesExits = indexedSnapshotResults.MethodCallLines.Where(m => m.SegmentID == segment.SegmentID && m.NumExits > 0).ToList();
+                            foreach (MethodCallLine methodCallLineExit in methodCallLinesExits)
                             {
                                 int numIntervalsOffsetFromSegmentStartToExit = (int)Math.Round((double)(methodCallLineExit.ExecToHere / timelineResolutionInMS), 0);
                                 if (numIntervalsOffsetFromSegmentStartToExit > sbTimeline.Length - 1)
@@ -2493,7 +2440,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     indexedSnapshotsResults.DetectedErrors.AddRange(indexedSnapshotResults.DetectedErrors);
                     indexedSnapshotsResults.BusinessData.AddRange(indexedSnapshotResults.BusinessData);
                     indexedSnapshotsResults.MethodCallLines.AddRange(indexedSnapshotResults.MethodCallLines);
-                    indexedSnapshotsResults.MethodCallLineOccurrences.AddRange(indexedSnapshotResults.MethodCallLineOccurrences);
 
                     // Save the folded call stacks into the results
                     if (indexedSnapshotsResults.FoldedCallStacksNodesNoTiming.ContainsKey(snapshot.NodeID) == false)

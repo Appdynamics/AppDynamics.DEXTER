@@ -1,0 +1,195 @@
+﻿[ {
+  "id" : 11848,
+  "version" : 0,
+  "name" : "Network-Host : Packet drops too high",
+  "nameUnique" : true,
+  "applicationId" : 1755,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435048,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31234,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : null
+    }
+  },
+  "type" : "NETVIZ",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31865,
+    "version" : 0,
+    "condition" : {
+      "id" : 69393,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "BOOLEAN_METRIC_EXPRESSION",
+        "expression1" : {
+          "type" : "BOOLEAN_METRIC_EXPRESSION",
+          "expression1" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Dropped Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Dropped Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "expression2" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Received Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Received Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : {
+            "type" : "DIVIDE"
+          }
+        },
+        "expression2" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : true,
+          "literalValue" : 100,
+          "metricDefinition" : null,
+          "functionType" : null,
+          "displayName" : null,
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 100
+        },
+        "operator" : {
+          "type" : "MULTIPLY"
+        }
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 5.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : "({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100",
+      "conditionDisplayName" : "Packet Drop Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "ANY",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31866,
+    "version" : 0,
+    "condition" : {
+      "id" : 69394,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "BOOLEAN_METRIC_EXPRESSION",
+        "expression1" : {
+          "type" : "BOOLEAN_METRIC_EXPRESSION",
+          "expression1" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Dropped Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Dropped Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "expression2" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Received Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Received Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : {
+            "type" : "DIVIDE"
+          }
+        },
+        "expression2" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : true,
+          "literalValue" : 100,
+          "metricDefinition" : null,
+          "functionType" : null,
+          "displayName" : null,
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 100
+        },
+        "operator" : {
+          "type" : "MULTIPLY"
+        }
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 3.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : "({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100",
+      "conditionDisplayName" : "Packet Drop Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "ANY",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+} ]

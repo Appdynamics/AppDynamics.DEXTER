@@ -7,26 +7,43 @@ namespace AppDynamics.Dexter.ReportObjects
         public string JobName { get; set; }
         public string JobType { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsUserEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsSystemEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool FailOnError { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsPrivateAgent { get; set; }
 
-        public string RateUnit { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Rate { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public string RateUnit { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Timeout { get; set; }
 
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Days { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Browsers { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Locations { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumLocations { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string ScheduleMode { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string URL { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string Script { get; set; }
 
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Network { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Config { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string PerfCriteria { get; set; }
 
         public DateTime CreatedOn { get; set; }
@@ -40,7 +57,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return this.ApplicationName;
+                return this.JobName;
             }
         }
 
@@ -48,7 +65,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return this.ApplicationName;
+                return this.JobName;
             }
         }
 
@@ -64,7 +81,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return String.Empty;
+                return this.JobType;
             }
         }
 

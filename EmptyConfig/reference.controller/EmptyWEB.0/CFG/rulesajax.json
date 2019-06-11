@@ -1,0 +1,33 @@
+﻿{
+  "customNamingIncludeRules" : [ {
+    "name" : null,
+    "matchOnMobileApplicationName" : null,
+    "enabled" : true,
+    "priority" : 2147483647,
+    "matchOnURL" : null,
+    "isDefault" : true,
+    "pageNamingConfig" : {
+      "classType" : "ajaxIncludeNamingRuleCriteria",
+      "useProtocol" : false,
+      "useDomainName" : true,
+      "useURL" : true,
+      "useRegex" : false,
+      "type" : "FIRST_N_SEGMENTS",
+      "anchorType" : null,
+      "urlMatchSegments" : {
+        "firstNSegments" : 2,
+        "lastNSegments" : 0,
+        "segmentNumbers" : null
+      },
+      "anchorMatchSegments" : null,
+      "regexGroupConfig" : null,
+      "domainNameType" : "SHOW_FULL_DOMAIN",
+      "queryStringMatch" : null,
+      "useHttpMethod" : false,
+      "postParamsMatch" : null
+    }
+  } ],
+  "customNamingExcludeRules" : [ ],
+  "eventServiceIncludeRules" : [ ],
+  "eventServiceExcludeRules" : [ ]
+}

@@ -55,7 +55,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "BTConfiguration";
+                return "APMBTConfiguration";
             }
         }
 

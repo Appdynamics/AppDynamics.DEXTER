@@ -48,7 +48,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "BTDiscoveryRule20";
+                return "APMBTDiscoveryRule20";
             }
         }
 

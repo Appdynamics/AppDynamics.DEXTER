@@ -28,8 +28,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.AvailAgent).Index(i); i++;
             Map(m => m.AvailMachine).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
-            Map(m => m.IsLicenseAgentUsed).Index(i); i++;
-            Map(m => m.IsLicenseMachineUsed).Index(i); i++;
+            Map(m => m.IsAPMAgentUsed).Index(i); i++;
+            Map(m => m.IsMachineAgentUsed).Index(i); i++;
             Map(m => m.From).Index(i); i++;
             Map(m => m.To).Index(i); i++;
             Map(m => m.FromUtc).Index(i); i++;

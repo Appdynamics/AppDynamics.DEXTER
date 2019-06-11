@@ -43,7 +43,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "CallGraphSetting";
+                return "APMCallGraphSetting";
             }
         }
 

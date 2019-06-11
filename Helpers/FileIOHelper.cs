@@ -109,6 +109,37 @@ namespace AppDynamics.Dexter
             return true;
         }
 
+        public static bool CopyFolder(string folderPathSource, string folderPathTarget)
+        {
+            CreateFolder(folderPathTarget);
+
+            foreach (string file in Directory.GetFiles(folderPathSource))
+            {
+                string dest = Path.Combine(folderPathTarget, Path.GetFileName(file));
+                try
+                {
+                    logger.Trace("Copying file {0} to {1}", file, dest);
+
+                    File.Copy(file, dest, true);
+                }
+                catch (Exception ex)
+                {
+                    logger.Error("Unable to copy file {0} to {1}", file, dest);
+                    logger.Error(ex);
+
+                    return false;
+                }
+            }
+
+            foreach (string folder in Directory.GetDirectories(folderPathSource))
+            {
+                string dest = Path.Combine(folderPathTarget, Path.GetFileName(folder));
+                CopyFolder(folder, dest);
+            }
+
+            return true;
+        }
+
         public static bool SaveFileToPath(string fileContents, string filePath)
         {
             return SaveFileToPath(fileContents, filePath, true);

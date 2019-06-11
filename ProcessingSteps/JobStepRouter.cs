@@ -159,10 +159,10 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial,
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None);
             }
-            if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria != null)
-            {
-                logger.Info("Job input: ConfigurationComparisonReferenceCriteria.Controller='{0}', ConfigurationComparisonReferenceCriteria.Application='{1}'", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application);
-            }
+            logger.Info("Job input: ConfigurationComparisonReferenceAPM='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+            logger.Info("Job input: ConfigurationComparisonReferenceWEB='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+            logger.Info("Job input: ConfigurationComparisonReferenceMOBILE='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+            logger.Info("Job input: ConfigurationComparisonReferenceDB='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
 
             logger.Info("Job output: DetectedEntities='{0}', EntityMetrics='{1}', EntityDetails='{2}', Snapshots='{3}', Configuration='{4}', Events='{5}'", jobConfiguration.Output.DetectedEntities, jobConfiguration.Output.EntityMetrics, jobConfiguration.Output.EntityDetails, jobConfiguration.Output.Snapshots, jobConfiguration.Output.Configuration, jobConfiguration.Output.Events);
 

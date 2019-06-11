@@ -170,7 +170,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Configuration comparison variables
 
         public const string BLANK_APPLICATION_CONTROLLER = "https://reference.controller";
-        public const string BLANK_APPLICATION_APPLICATION = "ReferenceApp";
+        public const string BLANK_APPLICATION_APM = "EmptyAPM";
+        public const string BLANK_APPLICATION_WEB = "EmptyWEB";
+        public const string BLANK_APPLICATION_MOBILE = "EmptyMOBILE";
+        public const string BLANK_APPLICATION_DB = "EmptyDB";
 
         public const string PROPERTY_ENTIRE_OBJECT = "EntireObject";
         public const string DIFFERENCE_IDENTICAL = "IDENTICAL";

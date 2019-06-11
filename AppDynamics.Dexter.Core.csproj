@@ -61,6 +61,342 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="ConfigCompare\reference.controller\CFG\controllerversion.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\CFG\templatesemail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\CFG\templatesemaildetails.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\CFG\templateshttp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\CFG\templateshttpdetails.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\collectordefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\custommetrics.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\ENT\collectordefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\ENT\collectors.calls.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\DBMon.0\ENT\collectors.timespent.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\configuration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\devmode.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\CFG\seps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\application.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\backends.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\backendsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\businesstransactions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\errors.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\informationpoints.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\informationpointsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\nodes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\serviceendpoints.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\serviceendpointsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyAPM.0\ENT\tiers.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\applicationkeymobile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\monitoringstatemobile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\pagesettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\CFG\rulesnetworkreq.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyMOBILE.0\ENT\networkrequests.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\agentconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\applicationkeyweb.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\monitoringstateweb.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\pagesettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\rulesajax.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\ruleserror.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\rulespage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\rulesvirtpage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\CFG\syntheticjobs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\ENT\georegions.all.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ConfigCompare\reference.controller\EmptyWEB.0\ENT\webpages.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\CFG\controllerversion.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\CFG\templatesemail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\CFG\templatesemaildetails.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\CFG\templateshttp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\CFG\templateshttpdetails.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\collectordefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\custommetrics.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\ENT\collectordefinitions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\ENT\collectors.calls.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\DBMon.0\ENT\collectors.timespent.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\configuration.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\devmode.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\seps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\application.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\backends.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\backendsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\businesstransactions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\errors.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\informationpoints.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\informationpointsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\nodes.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\serviceendpoints.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\serviceendpointsdetail.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\ENT\tiers.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\applicationkeymobile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\monitoringstatemobile.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\pagesettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\CFG\rulesnetworkreq.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyMOBILE.0\ENT\networkrequests.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\actions.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\agentconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\applicationkeyweb.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\healthrules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\healthrules.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\monitoringstateweb.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\pagesettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\policies.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\rulesajax.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\ruleserror.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\rulespage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\rulesvirtpage.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\CFG\syntheticjobs.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\ENT\georegions.all.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EmptyConfig\reference.controller\EmptyWEB.0\ENT\webpages.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="global.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -77,9 +413,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NLog.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TemplateApplicationConfiguration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

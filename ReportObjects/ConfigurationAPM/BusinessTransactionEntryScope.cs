@@ -6,6 +6,7 @@ namespace AppDynamics.Dexter.ReportObjects
     {
 
         public string ScopeName { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string ScopeType { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public string Description { get; set; }
@@ -26,7 +27,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return String.Format("{0}/{1}", this.ScopeName, this.ScopeName);
+                return this.ScopeName;
             }
         }
 
@@ -42,7 +43,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "Scope";
+                return "APMBTScope";
             }
         }
 

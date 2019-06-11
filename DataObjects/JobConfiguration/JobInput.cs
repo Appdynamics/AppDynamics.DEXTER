@@ -14,7 +14,10 @@ namespace AppDynamics.Dexter
         public string[] MetricsSelectionCriteria { get; set; }
         public bool Snapshots { get; set; }
         public bool Configuration { get; set; }
-        public JobTarget ConfigurationComparisonReferenceCriteria { get; set; }
+        public JobTarget ConfigurationComparisonReferenceAPM { get; set; }
+        public JobTarget ConfigurationComparisonReferenceWEB { get; set; }
+        public JobTarget ConfigurationComparisonReferenceMOBILE { get; set; }
+        public JobTarget ConfigurationComparisonReferenceDB { get; set; }
         public bool Events { get; set; }
         public bool UsersGroupsRolesPermissions { get; set; }
         public bool Dashboards { get; set; }

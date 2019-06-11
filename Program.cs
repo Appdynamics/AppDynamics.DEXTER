@@ -266,6 +266,10 @@ namespace AppDynamics.Dexter
 
                         return;
                     }
+                    logger.Info("UTC Input.TimeRange.From='{0:o}' to Input.TimeRange.To='{1:o}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                    loggerConsole.Info("UTC Input.TimeRange.From='{0:o}' to Input.TimeRange.To='{1:o}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                    logger.Info("Local Input.TimeRange.From='{0:o}' to Input.TimeRange.To='{1:o}'", jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime());
+                    loggerConsole.Info("Local Input.TimeRange.From='{0:o}' to Input.TimeRange.To='{1:o}'", jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime());
 
                     // Validate Metrics selection
                     if (jobConfiguration.Input.MetricsSelectionCriteria == null)
@@ -320,25 +324,64 @@ namespace AppDynamics.Dexter
                     }
 
                     // Validate Configuration Comparison selection
-                    if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria == null)
+                    if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM == null ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.Length == 0 ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application.Length == 0)
                     {
-                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria = new JobTarget();
-                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
-                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application = JobStepBase.BLANK_APPLICATION_APPLICATION;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM = new JobTarget();
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application = JobStepBase.BLANK_APPLICATION_APM;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = JobStepBase.APPLICATION_TYPE_APM;
                     }
                     else
                     {
-                        if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == null ||
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == null)
-                        {
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria = new JobTarget();
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application = JobStepBase.BLANK_APPLICATION_APPLICATION;
-                        }
-                        else
-                        {
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller.TrimEnd('/');
-                        }
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.TrimEnd('/');
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = JobStepBase.APPLICATION_TYPE_APM;
+                    }
+
+                    if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB == null ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller.Length == 0 ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application.Length == 0)
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB = new JobTarget();
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application = JobStepBase.BLANK_APPLICATION_WEB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = JobStepBase.APPLICATION_TYPE_WEB;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller.TrimEnd('/');
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = JobStepBase.APPLICATION_TYPE_WEB;
+                    }
+
+                    if (jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE == null ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller.Length == 0 ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application.Length == 0)
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE = new JobTarget();
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application = JobStepBase.BLANK_APPLICATION_MOBILE;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = JobStepBase.APPLICATION_TYPE_MOBILE;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller.TrimEnd('/');
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = JobStepBase.APPLICATION_TYPE_MOBILE;
+                    }
+
+                    if (jobConfiguration.Input.ConfigurationComparisonReferenceDB == null ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.Length == 0 ||
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application.Length == 0)
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB = new JobTarget();
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application = JobStepBase.BLANK_APPLICATION_DB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = JobStepBase.APPLICATION_TYPE_DB;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller.TrimEnd('/');
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = JobStepBase.APPLICATION_TYPE_DB;
                     }
 
                     #endregion
@@ -410,27 +453,28 @@ namespace AppDynamics.Dexter
                     for (int i = 0; i < jobConfiguration.Target.Count; i++)
                     {
                         JobTarget jobTarget = jobConfiguration.Target[i];
-                        loggerConsole.Info("Target {0} {1} as {2}", i + 1, jobTarget.Controller, jobTarget.UserName);
+
+                        loggerConsole.Info("Target {0} {1}/{2} [{3}] as {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type, jobTarget.UserName);
 
                         jobTarget.ApplicationID = -1;
 
                         #region Validate target Controller properties against being empty
 
-                        if (jobTarget.Controller == null || jobTarget.Controller == string.Empty)
+                        if (jobTarget.Controller == null || jobTarget.Controller == String.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "Controller");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Controller");
 
                             continue;
                         }
-                        if (jobTarget.UserName == null || jobTarget.UserName == string.Empty)
+                        if (jobTarget.UserName == null || jobTarget.UserName == String.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "UserName");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserName");
 
                             continue;
                         }
-                        if (jobTarget.Application == null || jobTarget.Application == string.Empty)
+                        if (jobTarget.Application == null || jobTarget.Application == String.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "Application");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "Application");
@@ -480,7 +524,7 @@ namespace AppDynamics.Dexter
                             }
                         }
 
-                        if (jobTarget.UserPassword == null || jobTarget.UserPassword == string.Empty)
+                        if (jobTarget.UserPassword == null || jobTarget.UserPassword == String.Empty)
                         {
                             logger.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
                             loggerConsole.Warn("Target {0} property {1} is empty", i + 1, "UserPassword");
@@ -552,12 +596,12 @@ namespace AppDynamics.Dexter
                                             }
                                             Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
                                             applicationsMatchingCriteria = applicationsInController.Where(
-                                                app => regexApplication.Match(app["name"].ToString()).Success == true);
+                                                app => regexApplication.Match(JobStepBase.getStringValueFromJToken(app, "name")).Success == true);
                                         }
                                         else
                                         {
                                             applicationsMatchingCriteria = applicationsInController.Where(
-                                                app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
+                                                app => String.Compare(JobStepBase.getStringValueFromJToken(app, "name"), jobTarget.Application, true) == 0);
                                         }
 
                                         if (applicationsMatchingCriteria.Count() == 0)
@@ -576,8 +620,8 @@ namespace AppDynamics.Dexter
 
                                             jobTargetExpanded.UserName = jobTarget.UserName;
                                             jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                            jobTargetExpanded.Application = application["name"].ToString();
-                                            jobTargetExpanded.ApplicationID = (long)application["id"];
+                                            jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(application, "name");
+                                            jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(application, "id");
                                             jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_APM;
 
                                             expandedJobTargets.Add(jobTargetExpanded);
@@ -603,7 +647,7 @@ namespace AppDynamics.Dexter
                                     {
                                         JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
 
-                                        if (applicationsAll["eumWebApplications"] != null)
+                                        if (JobStepBase.isTokenPropertyNull(applicationsAll, "eumWebApplications") == false)
                                         {
                                             JArray applicationsInController = (JArray)applicationsAll["eumWebApplications"];
 
@@ -616,12 +660,12 @@ namespace AppDynamics.Dexter
                                                 }
                                                 Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
                                                 applicationsMatchingCriteria = applicationsInController.Where(
-                                                    app => regexApplication.Match(app["name"].ToString()).Success == true);
+                                                    app => regexApplication.Match(JobStepBase.getStringValueFromJToken(app, "name")).Success == true);
                                             }
                                             else
                                             {
                                                 applicationsMatchingCriteria = applicationsInController.Where(
-                                                    app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
+                                                    app => String.Compare(JobStepBase.getStringValueFromJToken(app, "name"), jobTarget.Application, true) == 0);
                                             }
 
                                             if (applicationsMatchingCriteria.Count() == 0)
@@ -640,8 +684,8 @@ namespace AppDynamics.Dexter
 
                                                 jobTargetExpanded.UserName = jobTarget.UserName;
                                                 jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                                jobTargetExpanded.Application = application["name"].ToString();
-                                                jobTargetExpanded.ApplicationID = (long)application["id"];
+                                                jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(application, "name");
+                                                jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(application, "id");
                                                 jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_WEB;
 
                                                 expandedJobTargets.Add(jobTargetExpanded);
@@ -683,12 +727,12 @@ namespace AppDynamics.Dexter
                                                     }
                                                     Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
                                                     applicationsMatchingCriteria = applicationsInTarget.Where(
-                                                        app => regexApplication.Match(app["name"].ToString()).Success == true);
+                                                        app => regexApplication.Match(JobStepBase.getStringValueFromJToken(app, "name")).Success == true);
                                                 }
                                                 else
                                                 {
                                                     applicationsMatchingCriteria = applicationsInTarget.Where(
-                                                        app => String.Compare(app["name"].ToString(), jobTarget.Application, true) == 0);
+                                                        app => String.Compare(JobStepBase.getStringValueFromJToken(app, "name"), jobTarget.Application, true) == 0);
                                                 }
 
                                                 if (applicationsMatchingCriteria.Count() == 0)
@@ -707,9 +751,9 @@ namespace AppDynamics.Dexter
 
                                                     jobTargetExpanded.UserName = jobTarget.UserName;
                                                     jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                                    jobTargetExpanded.Application = application["name"].ToString();
-                                                    jobTargetExpanded.ApplicationID = (long)application["mobileAppId"];
-                                                    jobTargetExpanded.ParentApplicationID = (long)application["applicationId"];
+                                                    jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(application, "name");
+                                                    jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(application, "mobileAppId");
+                                                    jobTargetExpanded.ParentApplicationID = JobStepBase.getLongValueFromJToken(application, "applicationId");
                                                     jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_MOBILE;
 
                                                     expandedJobTargets.Add(jobTargetExpanded);
@@ -734,7 +778,8 @@ namespace AppDynamics.Dexter
                                     {
                                         JObject applicationSIMInController = JObject.Parse(applicationSIMJSON);
 
-                                        if (applicationSIMInController["id"] != null && applicationSIMInController["name"].ToString().Equals("Server & Infrastructure Monitoring", StringComparison.CurrentCultureIgnoreCase))
+                                        if (JobStepBase.isTokenPropertyNull(applicationSIMInController, "id") ==false &&
+                                            JobStepBase.getStringValueFromJToken(applicationSIMInController, "name").Equals("Server & Infrastructure Monitoring", StringComparison.CurrentCultureIgnoreCase))
                                         {
                                             // Create a copy of target application for each individual application
                                             JobTarget jobTargetExpanded = new JobTarget();
@@ -742,8 +787,8 @@ namespace AppDynamics.Dexter
 
                                             jobTargetExpanded.UserName = jobTarget.UserName;
                                             jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                            jobTargetExpanded.Application = applicationSIMInController["name"].ToString();
-                                            jobTargetExpanded.ApplicationID = (long)applicationSIMInController["id"];
+                                            jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(applicationSIMInController, "name");
+                                            jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(applicationSIMInController, "id");
                                             jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_SIM;
 
                                             expandedJobTargets.Add(jobTargetExpanded);
@@ -769,7 +814,8 @@ namespace AppDynamics.Dexter
                                     {
                                         JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
 
-                                        if (applicationsAll["dbMonApplication"] != null && applicationsAll["dbMonApplication"]["name"].ToString().Equals("Database Monitoring", StringComparison.CurrentCultureIgnoreCase))
+                                        if (JobStepBase.isTokenNull(applicationsAll["dbMonApplication"]) == false &&
+                                            JobStepBase.getStringValueFromJToken(applicationsAll["dbMonApplication"], "name").Equals("Database Monitoring", StringComparison.CurrentCultureIgnoreCase))
                                         {
                                             // Get database collectors
                                             long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.TimeRange.From);
@@ -781,7 +827,7 @@ namespace AppDynamics.Dexter
                                             if (collectorsJSON != String.Empty && collectorsJSON.Length > 0)
                                             {
                                                 JObject collectorsContainer = JObject.Parse(collectorsJSON);
-                                                if (collectorsContainer != null && collectorsContainer["data"] != null)
+                                                if (JobStepBase.isTokenPropertyNull(collectorsContainer, "data") == false)
                                                 {
                                                     JArray dbCollectorsInTarget = (JArray)collectorsContainer["data"];
 
@@ -795,12 +841,12 @@ namespace AppDynamics.Dexter
                                                         }
                                                         Regex regexApplication = new Regex(jobTarget.Application, RegexOptions.IgnoreCase);
                                                         dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
-                                                            dbColl => regexApplication.Match(dbColl["name"].ToString()).Success == true);
+                                                            dbColl => regexApplication.Match(JobStepBase.getStringValueFromJToken(dbColl, "name")).Success == true);
                                                     }
                                                     else
                                                     {
                                                         dbCollectorsMatchingCriteria = dbCollectorsInTarget.Where(
-                                                            dbColl => String.Compare(dbColl["name"].ToString(), jobTarget.Application, true) == 0);
+                                                            dbColl => String.Compare(JobStepBase.getStringValueFromJToken(dbColl, "name"), jobTarget.Application, true) == 0);
                                                     }
 
                                                     if (dbCollectorsMatchingCriteria.Count() == 0)
@@ -819,9 +865,9 @@ namespace AppDynamics.Dexter
 
                                                         jobTargetExpanded.UserName = jobTarget.UserName;
                                                         jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                                        jobTargetExpanded.Application = dbCollector["name"].ToString();
-                                                        jobTargetExpanded.ApplicationID = (long)applicationsAll["dbMonApplication"]["id"];
-                                                        jobTargetExpanded.DBCollectorID = (long)dbCollector["id"];
+                                                        jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(dbCollector, "name");
+                                                        jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(applicationsAll["dbMonApplication"], "id");
+                                                        jobTargetExpanded.DBCollectorID = JobStepBase.getLongValueFromJToken(dbCollector, "id");
                                                         jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_DB;
 
                                                         expandedJobTargets.Add(jobTargetExpanded);
@@ -850,15 +896,16 @@ namespace AppDynamics.Dexter
                                     {
                                         JObject applicationsAll = JObject.Parse(applicationsAllTypesJSON);
 
-                                        if (applicationsAll["analyticsApplication"] != null && applicationsAll["analyticsApplication"]["name"].ToString().StartsWith("AppDynamics Analytics", StringComparison.CurrentCultureIgnoreCase))
+                                        if (JobStepBase.isTokenNull(applicationsAll["analyticsApplication"]) == false && 
+                                            JobStepBase.getStringValueFromJToken(applicationsAll["analyticsApplication"], "name").StartsWith("AppDynamics Analytics", StringComparison.CurrentCultureIgnoreCase))
                                         {
                                             JobTarget jobTargetExpanded = new JobTarget();
                                             jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
 
                                             jobTargetExpanded.UserName = jobTarget.UserName;
                                             jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                            jobTargetExpanded.Application = applicationsAll["analyticsApplication"]["name"].ToString();
-                                            jobTargetExpanded.ApplicationID = (long)applicationsAll["analyticsApplication"]["id"];
+                                            jobTargetExpanded.Application = JobStepBase.getStringValueFromJToken(applicationsAll["analyticsApplication"], "name");
+                                            jobTargetExpanded.ApplicationID = JobStepBase.getLongValueFromJToken(applicationsAll["analyticsApplication"], "id");
                                             jobTargetExpanded.Type = JobStepBase.APPLICATION_TYPE_BIQ;
 
                                             expandedJobTargets.Add(jobTargetExpanded);

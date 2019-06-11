@@ -51,17 +51,17 @@
     ],
     "Input": {
         "TimeRange": {
-            "From": "2019-05-10T12:00:00",
-            "To": "2019-05-10T13:00:00"
+            "From": "2019-06-01T12:00:00",
+            "To": "2019-06-01T13:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
         "Events": true,
         "Configuration": true,
-        "ConfigurationComparisonReferenceCriteria": {
-            "Controller": "https://reference.controller",
-            "Application": "ReferenceApp"
-        },
+        "ConfigurationComparisonReferenceAPM": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceWEB": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceMOBILE": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceDB": { "Controller": "", "Application": "" },
         "DetectedEntities": true,
         "Metrics": true,
         "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "BusinessTransactionPercentiles" ],

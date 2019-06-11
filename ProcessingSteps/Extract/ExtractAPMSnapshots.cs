@@ -21,7 +21,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         private const int SNAPSHOTS_EXTRACT_NUMBER_OF_SNAPSHOTS_TO_PROCESS_PER_THREAD = 128;
         private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_ONPREM = 8;
-        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_SAAS = 16;
+        private const int SNAPSHOTS_EXTRACT_NUMBER_OF_THREADS_SAAS = 12;
         private const int SNAPSHOTS_QUERY_PAGE_SIZE = 600;
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)

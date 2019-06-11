@@ -98,14 +98,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     JObject myAccount = JObject.Parse(myAccountJSON);
                                     if (myAccount != null)
                                     {
-                                        long accountID = -1;
-                                        try { accountID = (long)myAccount["id"]; } catch { }
+                                        long accountID = getLongValueFromJToken(myAccount, "id");
 
-                                        if (accountID != -1)
-                                        {
-                                            string applicationConfigSEPJSON = controllerApi.GetAPMSEPConfiguration(accountID, jobTarget.ApplicationID);
-                                            if (applicationConfigSEPJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPDataFilePath(jobTarget));
-                                        }
+                                        string applicationConfigSEPJSON = controllerApi.GetAPMSEPConfiguration(accountID, jobTarget.ApplicationID);
+                                        if (applicationConfigSEPJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPDataFilePath(jobTarget));
                                     }
                                 }
                             }

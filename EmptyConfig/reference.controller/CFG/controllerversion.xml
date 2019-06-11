@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<serverstatus vendorid="" version="1">
+  <available>true</available>
+  <serverid></serverid>
+  <serverinfo>
+    <vendorname>AppDynamics</vendorname>
+    <productname>AppDynamics Application Performance Management</productname>
+    <serverversion>004-005-009-002</serverversion>
+    <implementationVersion>Controller v4.5.9.2 Build 4.5.9.5729 Commit 0a0f3ba30d47e08b9b8187cc88707cdbe26f201e</implementationVersion>
+  </serverinfo>
+  <startupTimeInSeconds>4</startupTimeInSeconds>
+</serverstatus>

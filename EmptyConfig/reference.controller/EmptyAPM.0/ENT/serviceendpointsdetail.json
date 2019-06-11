@@ -1,0 +1,30 @@
+﻿{
+  "entityMap" : { },
+  "serviceEndpointListEntries" : [ ],
+  "applicationEntity" : {
+    "entityDefinition" : {
+      "id" : 0,
+      "version" : 0,
+      "entityType" : "APPLICATION",
+      "entityId" : 1754,
+      "prettyToString" : null
+    },
+    "name" : "endor-app",
+    "properties" : null
+  },
+  "applicationComponent" : null,
+  "applicationComponentInfo" : {
+    "numberOfComponents" : 0,
+    "numberOfJavaComponents" : 0,
+    "numberOfDotNetComponents" : 0,
+    "numberOfPhpComponents" : 0,
+    "numberOfNodeJSComponents" : 0,
+    "numberOfMessageServerComponents" : 0,
+    "numberOfWebServerComponents" : 0,
+    "numberOfLoadBalancerComponents" : 0,
+    "numberOfOtherComponents" : 0,
+    "numberOfDBComponents" : 0,
+    "numberOfNodes" : 0,
+    "componentTypeMap" : { }
+  }
+}

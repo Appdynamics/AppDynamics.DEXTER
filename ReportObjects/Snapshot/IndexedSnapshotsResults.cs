@@ -23,8 +23,6 @@ namespace AppDynamics.Dexter.ReportObjects
             this.BusinessData = new List<BusinessData>(numSnapshots * AVERAGE_NUM_SEGMENTS * 3);
             // Assume each call graph is 250 items long
             this.MethodCallLines = new List<MethodCallLine>(numSnapshots * AVERAGE_NUM_SEGMENTS * 250);
-            // Some methods repeat though, so let's assume up to 50 unique ones
-            this.MethodCallLineOccurrences = new List<MethodCallLine>(numSnapshots * AVERAGE_NUM_SEGMENTS * 50);
             // Assume 100 nodes
             this.FoldedCallStacksNodesNoTiming = new Dictionary<long, Dictionary<string, FoldedStackLine>>(100);
             this.FoldedCallStacksNodesWithTiming = new Dictionary<long, Dictionary<string, FoldedStackLine>>(100);
@@ -40,7 +38,6 @@ namespace AppDynamics.Dexter.ReportObjects
         public List<DetectedError> DetectedErrors { get; set; }
         public List<BusinessData> BusinessData { get; set; }
         public List<MethodCallLine> MethodCallLines { get; set; }
-        public List<MethodCallLine> MethodCallLineOccurrences { get; set; }
         public Dictionary<long, Dictionary<string, FoldedStackLine>> FoldedCallStacksNodesNoTiming { get; set; }
         public Dictionary<long, Dictionary<string, FoldedStackLine>> FoldedCallStacksNodesWithTiming { get; set; }
         public Dictionary<long, Dictionary<string, FoldedStackLine>> FoldedCallStacksBusinessTransactionsNoTiming { get; set; }

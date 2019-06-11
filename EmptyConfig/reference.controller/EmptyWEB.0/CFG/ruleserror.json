@@ -1,0 +1,7 @@
+﻿{
+  "javaScriptErrorCaptureEnabled" : true,
+  "ajaxRequestErrorCaptureEnabled" : true,
+  "ignoreJavaScriptErrorConfigRules" : [ ],
+  "ignorePageNames" : [ ],
+  "ignoreUrls" : [ ]
+}
