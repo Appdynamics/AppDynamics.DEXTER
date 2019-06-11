@@ -36,10 +36,121 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                #region Template comparisons 
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == BLANK_APPLICATION_APM)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_APM &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application = BLANK_APPLICATION_APM;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = APPLICATION_TYPE_APM;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                    }
+                }
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == BLANK_APPLICATION_WEB)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_WEB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application = BLANK_APPLICATION_WEB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = APPLICATION_TYPE_WEB;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                    }
+                }
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application == BLANK_APPLICATION_MOBILE)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_MOBILE &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application = BLANK_APPLICATION_MOBILE;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = APPLICATION_TYPE_MOBILE;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                    }
+                }
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == BLANK_APPLICATION_DB)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_DB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application = BLANK_APPLICATION_DB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = APPLICATION_TYPE_DB;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                    }
+                }
+
+                #endregion
+
                 List<JobTarget> listOfTargetsAlreadyProcessed = new List<JobTarget>(jobConfiguration.Target.Count);
 
                 bool reportFolderCleaned = false;
-                bool haveProcessedAtLeastOneDBCollector = false;
 
                 // Process each target
                 for (int i = 0; i < jobConfiguration.Target.Count; i++)
@@ -63,7 +174,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
 
-                        if (listOfTargetsAlreadyProcessed.Count(j => (j.Controller == jobTarget.Controller) && (j.ApplicationID == jobTarget.ApplicationID)) > 0)
+                        if (listOfTargetsAlreadyProcessed.Count(j => (j.Controller == jobTarget.Controller) && (j.ApplicationID == jobTarget.ApplicationID) && (jobTarget.ApplicationID > 0)) > 0)
                         {
                             // Already saw this target, like an APM and WEB pairs together
                             continue;
@@ -81,16 +192,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         // For databases, we only process this once for the first collector we've seen
-                        if (jobTarget.Type == APPLICATION_TYPE_DB)
+                        if (listOfTargetsAlreadyProcessed.Count(j => (j.Controller == jobTarget.Controller) && (j.Type == APPLICATION_TYPE_DB)) > 0)
                         {
-                            if (haveProcessedAtLeastOneDBCollector == false)
-                            {
-                                haveProcessedAtLeastOneDBCollector = true;
-                            }
-                            else
-                            {
-                                continue;
-                            }
+                            // Already saw this target, DB Collectors for controller are all part of the same thing
+                            continue;
                         }
 
                         listOfTargetsAlreadyProcessed.Add(jobTarget);
@@ -513,6 +618,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
                 }
+
+                // Remove all templates from the list
+                jobConfiguration.Target.RemoveAll(t => t.Controller == BLANK_APPLICATION_CONTROLLER);
 
                 return true;
             }

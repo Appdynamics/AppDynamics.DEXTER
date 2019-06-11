@@ -51,7 +51,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "HTTPDC";
+                return "APMHTTPDC";
             }
         }
 

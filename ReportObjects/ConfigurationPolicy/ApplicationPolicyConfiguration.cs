@@ -38,7 +38,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "ApplicationConfigurationPolicy";
+                return "AlertAndRespondConfiguration";
             }
         }
 

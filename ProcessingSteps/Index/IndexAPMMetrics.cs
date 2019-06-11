@@ -1702,7 +1702,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                     if (entity is APMNode)
                     {
-                        ((APMNode)entity).IsLicenseAgentUsed = entity.AvailAgent > 0;
+                        ((APMNode)entity).IsAPMAgentUsed = entity.AvailAgent > 0;
                     }
                     break;
 
@@ -1726,7 +1726,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                     if (entity is APMNode)
                     {
-                        ((APMNode)entity).IsLicenseMachineUsed = entity.AvailMachine > 0;
+                        ((APMNode)entity).IsMachineAgentUsed = entity.AvailMachine > 0;
                     }
                     break;
 

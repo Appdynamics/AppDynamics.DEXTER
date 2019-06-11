@@ -41,7 +41,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "InformationPointRule";
+                return "APMInformationPointRule";
             }
         }
 

@@ -26,26 +26,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE_PIVOT = "11.Calls.Location";
         private const string SHEET_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE_PIVOT = "11.Calls.Timeline";
 
-        private const string SHEET_METHOD_CALL_LINES_OCCURRENCES = "12.Call Occurrences";
-        private const string SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT = "12.Call Occurrences.Type";
-
         private const string TABLE_CONTROLLERS = "t_Controllers";
         private const string TABLE_APPLICATIONS = "t_Applications";
 
         private const string TABLE_METHOD_CALL_LINES = "t_MethodCallLines";
-        private const string TABLE_METHOD_CALL_LINES_OCCURRENCES = "t_MethodCallLinesOccurrences";
 
         private const string PIVOT_METHOD_CALL_LINES_TYPE_EXEC_AVERAGE = "p_MethodCallLinesTypeAverage";
         private const string PIVOT_METHOD_CALL_LINES_LOCATION_EXEC_AVERAGE = "p_MethodCallLinesLocationAverage";
         private const string PIVOT_METHOD_CALL_LINES_TIMELINE_EXEC_AVERAGE = "p_MethodCallLinesTimelineAverage";
 
-        private const string PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE = "p_MethodCallLinesOccurrencesType";
-
         private const string GRAPH_METHOD_CALL_LINESTYPE_EXEC_AVERAGE = "g_MethodCallLinesTypeAverage";
         private const string GRAPH_METHOD_CALL_LINESLOCATION_EXEC_AVERAGE = "g_MethodCallLinesLocationAverage";
         private const string GRAPH_METHOD_CALL_LINESTIMELINE_EXEC_AVERAGE = "g_MethodCallLinesTimelineAverage";
-
-        private const string GRAPH_METHOD_CALL_LINES_OCCURRENCESTYPE = "g_MethodCallLinesOccurrencesType";
 
         private const int LIST_SHEET_START_TABLE_AT = 4;
         private const int PIVOT_SHEET_START_PIVOT_AT = 8;
@@ -172,24 +164,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 9, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_METHOD_CALL_LINES_OCCURRENCES);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Pivot";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_METHOD_CALL_LINES_OCCURRENCES);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 4, 1);
-
                 #endregion
 
                 #region Report file variables
@@ -225,15 +199,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_METHOD_CALL_LINES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsMethodCallLinesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT + 1, 1);
-
-                #endregion
-
-                #region Method Call Occurrences
-
-                loggerConsole.Info("List of Method Call Occurrences");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_METHOD_CALL_LINES_OCCURRENCES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsMethodCallLinesOccurrencesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -423,70 +388,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
-                }
-
-                #endregion
-
-                #region Method Call Occurrences
-
-                // Make table
-                sheet = excelReport.Workbook.Worksheets[SHEET_METHOD_CALL_LINES_OCCURRENCES];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_METHOD_CALL_LINES_OCCURRENCES);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    try
-                    {
-                        sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["SegmentUserExperience"].Position + 1).Width = 10;
-                        sheet.Column(table.Columns["SnapshotUserExperience"].Position + 1).Width = 10;
-                        sheet.Column(table.Columns["RequestID"].Position + 1).Width = 20;
-                        sheet.Column(table.Columns["SegmentID"].Position + 1).Width = 10;
-                        sheet.Column(table.Columns["Type"].Position + 1).Width = 10;
-                        sheet.Column(table.Columns["Framework"].Position + 1).Width = 15;
-                        sheet.Column(table.Columns["FullName"].Position + 1).Width = 45;
-                    }
-                    catch (OutOfMemoryException ex)
-                    {
-                        // Do nothing, we must have a lot of cells
-                    }
-
-                    ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
-                    addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
-
-                    cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SnapshotUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SnapshotUserExperience"].Position + 1);
-                    addUserExperienceConditionalFormatting(sheet, cfAddressUserExperience);
-
-                    sheet = excelReport.Workbook.Worksheets[SHEET_METHOD_CALL_LINES_OCCURRENCES_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_METHOD_CALL_LINES_OCCURRENCES_TYPE);
-                    setDefaultPivotTableSettings(pivot);
-                    addFilterFieldToPivot(pivot, "NumChildren", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "NumExits", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "BTName", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "ExecRange", eSortType.Ascending);
-                    addRowFieldToPivot(pivot, "NumCalls", eSortType.Ascending);
-                    addRowFieldToPivot(pivot, "FullName", eSortType.Ascending);
-                    addColumnFieldToPivot(pivot, "Type", eSortType.Ascending);
-                    addColumnFieldToPivot(pivot, "Framework", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "Exec", DataFieldFunctions.Average);
-
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_METHOD_CALL_LINES_OCCURRENCESTYPE, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
-
-                    sheet.Column(1).Width = 20;
-                    sheet.Column(2).Width = 20;
                 }
 
                 #endregion

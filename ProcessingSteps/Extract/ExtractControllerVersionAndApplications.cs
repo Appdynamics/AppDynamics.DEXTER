@@ -99,6 +99,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             #endregion
                         }
+
+                        // Also pre-copy the template controller configuration to the Data folder
+                        loggerConsole.Info("Template Configuration");
+                        FileIOHelper.CopyFolder(FilePathMap.TemplateControllerConfigurationSourceFolderPath(), FilePathMap.TemplateControllerConfigurationTargetFolderPath());
                     }
                     catch (Exception ex)
                     {

@@ -42,7 +42,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "TierConfiguration";
+                return "APMTierConfiguration";
             }
         }
 

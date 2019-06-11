@@ -13,13 +13,14 @@ namespace AppDynamics.Dexter.ReportObjects
         public string Edition { get; set; }
         public string Model { get; set; }
 
-        public long Licenses { get; set; }
-        public long Units { get; set; }
+        public long Provisioned { get; set; }
+        public long MaximumAllowed { get; set; }
         public long Min { get; set; }
-        public double Peak { get; set; }
+        public long Max { get; set; }
+        public long Average { get; set; }
+        //public double Peak { get; set; }
         public int Retention { get; set; }
 
-        public DateTime StartDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 
         public int Duration { get; set; }
@@ -34,8 +35,8 @@ namespace AppDynamics.Dexter.ReportObjects
                 "License: {0}/{1} {2}/{3}",
                 this.Controller,
                 this.AccountName, 
-                this.Peak,
-                this.Licenses);
+                this.Average,
+                this.Provisioned);
         }
     }
 }

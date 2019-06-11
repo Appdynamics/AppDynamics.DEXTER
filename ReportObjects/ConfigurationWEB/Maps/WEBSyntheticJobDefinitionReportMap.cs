@@ -21,6 +21,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
 
             Map(m => m.Rate).Index(i); i++;
             Map(m => m.RateUnit).Index(i); i++;
+            Map(m => m.Timeout).Index(i); i++;
 
             Map(m => m.Days).Index(i); i++;
             Map(m => m.Browsers).Index(i); i++;

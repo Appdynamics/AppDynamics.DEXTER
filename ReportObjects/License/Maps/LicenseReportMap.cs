@@ -16,13 +16,13 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Edition).Index(i); i++;
             Map(m => m.Model).Index(i); i++;
 
-            Map(m => m.Licenses).Index(i); i++;
-            Map(m => m.Units).Index(i); i++;
+            Map(m => m.Provisioned).Index(i); i++;
+            Map(m => m.MaximumAllowed).Index(i); i++;
+            Map(m => m.Average).Index(i); i++;
             Map(m => m.Min).Index(i); i++;
-            Map(m => m.Peak).Index(i); i++;
+            Map(m => m.Max).Index(i); i++;
             Map(m => m.Retention).Index(i); i++;
 
-            Map(m => m.StartDate).Index(i); i++;
             Map(m => m.ExpirationDate).Index(i); i++;
 
             Map(m => m.From).Index(i); i++;

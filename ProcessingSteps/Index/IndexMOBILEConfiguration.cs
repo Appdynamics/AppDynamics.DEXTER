@@ -41,6 +41,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                #region Template comparisons 
+
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application == BLANK_APPLICATION_MOBILE)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_MOBILE &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application = BLANK_APPLICATION_MOBILE;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = APPLICATION_TYPE_MOBILE;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                    }
+                }
+
+                #endregion
+
                 bool reportFolderCleaned = false;
 
                 // Process each target
@@ -245,6 +275,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
                 }
+
+                // Remove all templates from the list
+                jobConfiguration.Target.RemoveAll(t => t.Controller == BLANK_APPLICATION_CONTROLLER);
 
                 return true;
             }

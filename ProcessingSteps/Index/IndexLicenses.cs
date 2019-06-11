@@ -135,188 +135,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Account License Entitlements
+                        #region Account Level License Entitlements and Usage
 
-                        loggerConsole.Info("Account License");
+                        loggerConsole.Info("Account License Summary and Usage");
 
-                        List<License> licensesList = new List<License>(20);
+                        List<License> licensesList = new List<License>(24);
 
-                        JObject licensesContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseDataFilePath(jobTarget));
-                        JObject licensesMoreDetailAllButEUMContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseUsageSummaryAllExceptEUMDataFilePath(jobTarget));
-                        JObject licensesMoreDetailEUMContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseUsageSummaryEUMDataFilePath(jobTarget));
-                        if (licensesContainerObject != null)
+                        // Typically there are 12 values per hour, if we extracted every 5 minute things
+                        List<LicenseValue> licenseValuesGlobalList = new List<LicenseValue>(jobConfiguration.Input.HourlyTimeRanges.Count * 12 * licensesList.Count);
+
+                        JObject licenseModulesContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseModulesDataFilePath(jobTarget));
+                        if (licenseModulesContainer != null &&
+                            isTokenPropertyNull(licenseModulesContainer, "modules") == false)
                         {
-                            // Parse almost all except User Experience licenses
-                            foreach (JToken licenseContainerToken in licensesContainerObject.Children())
+                            JArray licenseModulesArray = (JArray)licenseModulesContainer["modules"];
+                            foreach (JObject licenseModuleObject in licenseModulesArray)
                             {
-                                License license = new License();
-
-                                license.Controller = jobTarget.Controller;
-                                license.AccountID = licenseAccountSummary.AccountID;
-                                license.AccountName = licenseAccountSummary.AccountName;
-
-                                // Duration
-                                license.Duration = (int)(jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).Duration().TotalMinutes;
-                                license.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
-                                license.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
-                                license.FromUtc = jobConfiguration.Input.TimeRange.From;
-                                license.ToUtc = jobConfiguration.Input.TimeRange.To;
-                                
-                                license.AgentType = String.Empty;
-                                JToken licenseMinConsumptionContainer = null;
-                                switch (licenseContainerToken.Path)
-                                {
-                                    case "apmAgentLicenseProperties" :
-                                        break;
-                                    case "apmLicenseProperties" :
-                                        license.AgentType = "APM";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "apm");
-                                        break;
-                                    case "appAgentLicenseProperties" :
-                                        license.AgentType = "JAVA";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "java");
-                                        break;
-                                    case "browserAnalyticsLicenseProperties" :
-                                        license.AgentType = LICENSE_DISPLAY_NAME_BROWSER_ANALYTICS;
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "browser-analytics");
-                                        break;
-                                    case "dbLicenseProperties" :
-                                        license.AgentType = LICENSE_DISPLAY_NAME_DATABASE;
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "database");
-                                        break;
-                                    case "dotNetLicenseProperties" :
-                                        license.AgentType = "DOT_NET";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "dot-net");
-                                        break;
-                                    case "golangSDKLicenseProperties" :
-                                        license.AgentType = "GOLANG_SDK";
-                                        // Not sure about the name of this container, not seen it in my development. Guessing
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "golang-sdk");
-                                        break;
-                                    case "logAnalyticsLicenseProperties" :
-                                        license.AgentType = LICENSE_DISPLAY_NAME_LOG_ANALYTICS;
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "log-analytics");
-                                        break;
-                                    case "machineLicenseProperties" :
-                                        license.AgentType = "MACHINE_AGENT";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "machine-agent");
-                                        break;
-                                    case "mobileAnalyticsLicenseProperties" :
-                                        license.AgentType = LICENSE_DISPLAY_NAME_MOBILE_ANALYTICS;
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "mobile-analytics");
-                                        break;
-                                    case "nativeDynamicLicenseProperties" :
-                                        break;
-                                    case "nativeLicenseProperties" :
-                                        break;
-                                    case "nativeSDKLicenseProperties" :
-                                        license.AgentType = "NATIVE_SDK";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "native-sdk");
-                                        break;
-                                    case "nativeWebServerLicenseProperties" :
-                                        license.AgentType = "NATIVE_WEB_SERVER";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "native-web-server");
-                                        break;
-                                    case "netvizLicenseProperties" :
-                                        license.AgentType = "NETVIZ";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "netviz");
-                                        break;
-                                    case "nodeJsLicenseProperties" :
-                                        license.AgentType = "NODEJS";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "nodejs");
-                                        break;
-                                    case "phpLicenseProperties" :
-                                        license.AgentType = "PHP";
-                                        // Not sure about the name of this container, not seen it in my development. Guessing
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "php");
-                                        break;
-                                    case "pythonLicenseProperties" :
-                                        license.AgentType = "PYTHON";
-                                        // Not sure about the name of this container, not seen it in my development. Guessing
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "python");
-                                        break;
-                                    case "serverAvailMonLicenseProperties" :
-                                        license.AgentType = "SERVICE_AVAIL_MON";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "service-avail-mon");
-                                        break;
-                                    case "simAgentLicenseProperties" :
-                                        license.AgentType = "SIM_MACHINE_AGENT";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "sim-machine-agent");
-                                        break;
-                                    case "transactionAnalyticsLicenseProperties" :
-                                        license.AgentType = LICENSE_DISPLAY_NAME_TRANSACTION_ANALYTICS;
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "transaction-analytics");
-                                        break;
-                                    case "wmbAgentLicenseProperties" :
-                                        license.AgentType = "WMB_AGENT";
-                                        licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "wmb-agent");
-                                        break;
-                                    default:
-                                        // Unknown, let's just replace the value of the string
-                                        logger.Warn("Unknown type of license {0} in license", licenseContainerToken.Path);
-                                        license.AgentType = licenseContainerToken.Path.Replace("LicenseProperties", "");
-                                        break;
-                                }
-
-                                // Parse licenses
-                                if (isTokenNull(licenseContainerToken) == false &&
-                                    licenseContainerToken.First.HasValues == true)
-                                {
-                                    JObject licenseContainerObject = (JObject)licenseContainerToken.First;
-                                    license.Edition = getStringValueFromJToken(licenseContainerObject, "edition");
-                                    license.Model = getStringValueFromJToken(licenseContainerObject, "licenseModel");
-
-                                    long valueLong = 0;
-                                    double valueDouble = 0;
-                                    if (long.TryParse(getStringValueFromJToken(licenseContainerObject, "expirationDate"), out valueLong) == true)
-                                    {
-                                        license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(valueLong);
-                                    }
-
-                                    if (long.TryParse(getStringValueFromJToken(licenseContainerObject, "numOfProvisionedLicense"), out valueLong) == true)
-                                    {
-                                        license.Licenses = valueLong;
-                                    }
-
-                                    if (long.TryParse(getStringValueFromJToken(licenseContainerObject, "maxAllowedLicenses"), out valueLong) == true)
-                                    {
-                                        license.Units = valueLong;
-                                    }
-
-                                    if (long.TryParse(getStringValueFromJToken(licenseContainerObject, "peakUsage"), out valueLong) == true)
-                                    {
-                                        license.Peak = valueLong;
-                                    }
-                                    else if (double.TryParse(getStringValueFromJToken(licenseContainerObject, "peakUsage"), out valueDouble) == true)
-                                    {
-                                        // Transaction and Browser Analytics
-                                        // Not sure what this is, but it shows as double
-                                        if (license.AgentType == LICENSE_DISPLAY_NAME_TRANSACTION_ANALYTICS)
-                                        {
-                                            // Not sure what this is, but it shows as double
-                                        }
-                                        else if (license.AgentType == LICENSE_DISPLAY_NAME_BROWSER_ANALYTICS)
-                                        {
-                                        }
-                                        license.Peak = valueDouble;
-                                    }
-
-                                    int valueInt = 0;
-                                    if (int.TryParse(getStringValueFromJToken(licenseContainerObject, "dataRetentionPeriod"), out valueInt) == true)
-                                    {
-                                        license.Retention = valueInt;
-                                    }
-
-                                    license.Min = getLongValueFromJToken(licenseMinConsumptionContainer, "minUnitsUsed");
-
-                                    licensesList.Add(license);
-                                }
-                            }
-
-                            // Parse User Experience licenses
-                            if (licensesMoreDetailEUMContainerObject != null)
-                            {
-                                #region Browser RUM
+                                string licenseModuleName = getStringValueFromJToken(licenseModuleObject, "name");
 
                                 License license = new License();
 
@@ -331,152 +166,113 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 license.FromUtc = jobConfiguration.Input.TimeRange.From;
                                 license.ToUtc = jobConfiguration.Input.TimeRange.To;
 
-                                license.Edition = getStringValueFromJToken(licensesMoreDetailEUMContainerObject, "licenseType");
-                                license.Model = getBoolValueFromJToken(licensesMoreDetailEUMContainerObject, "licenseAllowsOverages") == true ? "Overage Allowed" : "No Overage";
+                                license.AgentType = licenseModuleName;
 
-                                license.AgentType = LICENSE_DISPLAY_NAME_BROWSER_RUM;
-                                JToken licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "browser-rum");
+                                JObject licenseModulePropertiesContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseModulePropertiesDataFilePath(jobTarget, licenseModuleName));
+                                if (licenseModulePropertiesContainer != null &&
+                                    isTokenPropertyNull(licenseModulePropertiesContainer, "properties") == false)
+                                {
+                                    foreach (JObject licensePropertyObject in licenseModulePropertiesContainer["properties"])
+                                    {
+                                        string valueOfProperty = getStringValueFromJToken(licensePropertyObject, "value");
+                                        switch (getStringValueFromJToken(licensePropertyObject, "name"))
+                                        {
+                                            case "expiry-date":
+                                                long expiryDateLong = 0;
+                                                if (long.TryParse(valueOfProperty, out expiryDateLong) == true)
+                                                {
+                                                    license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(expiryDateLong);
+                                                }
+                                                break;
 
-                                license.StartDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "currentUsagePeriodStartMillis"));
-                                license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "currentUsagePeriodEndMillis"));
+                                            case "licensing-model":
+                                                license.Model = valueOfProperty;
+                                                break;
 
-                                license.Licenses = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "licenseUnits");
-                                license.Peak = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "consumedPageViews");
-                                license.Units= getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "allocatedPageViews");
-                                license.Min = getLongValueFromJToken(licenseMinConsumptionContainer, "minUnitsUsed");
+                                            case "edition":
+                                                license.Edition = valueOfProperty;
+                                                break;
 
-                                licensesList.Add(license);
+                                            case "number-of-provisioned-licenses":
+                                                long numberOfLicensesLong = 0;
+                                                if (long.TryParse(valueOfProperty, out numberOfLicensesLong) == true)
+                                                {
+                                                    license.Provisioned = numberOfLicensesLong;
+                                                }
+                                                break;
 
-                                #endregion
+                                            case "maximum-allowed-licenses":
+                                                long maximumNumberOfLicensesLong = 0;
+                                                if (long.TryParse(valueOfProperty, out maximumNumberOfLicensesLong) == true)
+                                                {
+                                                    license.MaximumAllowed = maximumNumberOfLicensesLong;
+                                                }
+                                                break;
 
-                                #region Mobile RUM
+                                            case "data-retention-period":
+                                                int dataRetentionPeriodInt = 0;
+                                                if (int.TryParse(valueOfProperty, out dataRetentionPeriodInt) == true)
+                                                {
+                                                    license.Retention = dataRetentionPeriodInt;
+                                                }
+                                                break;
 
-                                license = new License();
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                }
 
-                                license.Controller = jobTarget.Controller;
-                                license.AccountID = licenseAccountSummary.AccountID;
-                                license.AccountName = licenseAccountSummary.AccountName;
+                                List<LicenseValue> licenseValuesList = new List<LicenseValue>(jobConfiguration.Input.HourlyTimeRanges.Count * 12);
 
-                                // Duration
-                                license.Duration = (int)(jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).Duration().TotalMinutes;
-                                license.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
-                                license.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
-                                license.FromUtc = jobConfiguration.Input.TimeRange.From;
-                                license.ToUtc = jobConfiguration.Input.TimeRange.To;
+                                JObject licenseModuleUsagesContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.LicenseModuleUsagesDataFilePath(jobTarget, licenseModuleName));
+                                if (licenseModuleUsagesContainer != null &&
+                                    isTokenPropertyNull(licenseModuleUsagesContainer, "usages") == false)
+                                {
+                                    foreach (JObject licenseUsageObject in licenseModuleUsagesContainer["usages"])
+                                    {
+                                        LicenseValue licenseValue = new LicenseValue();
 
-                                license.Edition = getStringValueFromJToken(licensesMoreDetailEUMContainerObject, "mobileLicenseType");
-                                license.Model = getBoolValueFromJToken(licensesMoreDetailEUMContainerObject, "mobileLicenseAllowsOverages") == true ? "Overage Allowed" : "No Overage";
+                                        licenseValue.Controller = license.Controller;
+                                        licenseValue.AccountName = license.AccountName;
+                                        licenseValue.AccountID = license.AccountID;
 
-                                license.AgentType = LICENSE_DISPLAY_NAME_MOBILE_RUM;
-                                licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "mobile-rum");
+                                        licenseValue.AgentType = license.AgentType;
 
-                                license.StartDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "mobileCurrentUsagePeriodStartMillis"));
-                                license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "mobileCurrentUsagePeriodEndMillis"));
+                                        licenseValue.RuleName = "Account";
+                                        
+                                        licenseValue.LicenseEventTimeUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licenseUsageObject, "createdOn"));
+                                        licenseValue.LicenseEventTime = licenseValue.LicenseEventTimeUtc.ToLocalTime();
 
-                                license.Licenses = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "mobileLicenseUnits");
-                                license.Peak = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "consumedMobileAgents");
-                                license.Units = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "allocatedMobileAgents");
-                                license.Min = getLongValueFromJToken(licenseMinConsumptionContainer, "minUnitsUsed");
+                                        licenseValue.Min = getLongValueFromJToken(licenseUsageObject, "minUnitsUsed");
+                                        licenseValue.Max = getLongValueFromJToken(licenseUsageObject, "maxUnitsUsed");
+                                        licenseValue.Average = getLongValueFromJToken(licenseUsageObject, "avgUnitsUsed");
+                                        licenseValue.Total = getLongValueFromJToken(licenseUsageObject, "totalUnitsUsed");
+                                        licenseValue.Samples = getLongValueFromJToken(licenseUsageObject, "sampleCount");
 
-                                licensesList.Add(license);
+                                        licenseValuesList.Add(licenseValue);
+                                    }
+                                }
 
-                                #endregion
-
-                                #region Synthetic Hosted
-
-                                license = new License();
-
-                                license.Controller = jobTarget.Controller;
-                                license.AccountID = licenseAccountSummary.AccountID;
-                                license.AccountName = licenseAccountSummary.AccountName;
-
-                                // Duration
-                                license.Duration = (int)(jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).Duration().TotalMinutes;
-                                license.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
-                                license.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
-                                license.FromUtc = jobConfiguration.Input.TimeRange.From;
-                                license.ToUtc = jobConfiguration.Input.TimeRange.To;
-
-                                license.Edition = getStringValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticLicenseType");
-
-                                license.AgentType = LICENSE_DISPLAY_NAME_SYNTHETIC_HOSTED;
-                                licenseMinConsumptionContainer = getJTokenValueFromJToken(licensesMoreDetailAllButEUMContainerObject, "synthetic");
-
-                                license.StartDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticCurrentUsagePeriodStartMillis"));
-                                license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticCurrentUsagePeriodEndMillis"));
-
-                                license.Licenses = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticLicenseUnits");
-                                license.Peak = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "consumedSyntheticMeasurementUnits");
-                                license.Units = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "allocatedSyntheticMeasurementUnits");
-                                license.Min = getLongValueFromJToken(licenseMinConsumptionContainer, "minUnitsUsed");
-
-                                licensesList.Add(license);
-
-                                #endregion
-
-                                #region Synthetic Private
-
-                                license = new License();
-
-                                license.Controller = jobTarget.Controller;
-                                license.AccountID = licenseAccountSummary.AccountID;
-                                license.AccountName = licenseAccountSummary.AccountName;
-
-                                // Duration
-                                license.Duration = (int)(jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).Duration().TotalMinutes;
-                                license.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
-                                license.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
-                                license.FromUtc = jobConfiguration.Input.TimeRange.From;
-                                license.ToUtc = jobConfiguration.Input.TimeRange.To;
-
-                                license.Edition = getStringValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticLicenseType");
-
-                                license.AgentType = LICENSE_DISPLAY_NAME_SYNTHETIC_PRIVATE;
-
-                                license.Licenses = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticPrivateAgentLicenseUnits");
-                                license.Peak = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticPrivateAgentUnitsUtilized");
-                                license.Units = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "syntheticPrivateAgentUnitsAllocated");
+                                // Do the counts and averages from per hour consumption to the total line
+                                if (licenseValuesList.Count > 0)
+                                {
+                                    license.Average = (long)Math.Round((double)((double)licenseValuesList.Sum(mv => mv.Average) / (double)licenseValuesList.Count), 0);
+                                    license.Min = licenseValuesList.Min(l => l.Min);
+                                    license.Max = licenseValuesList.Max(l => l.Max);
+                                }
 
                                 licensesList.Add(license);
-
-                                #endregion
-
-                                #region IoT
-
-                                license = new License();
-
-                                license.Controller = jobTarget.Controller;
-                                license.AccountID = licenseAccountSummary.AccountID;
-                                license.AccountName = licenseAccountSummary.AccountName;
-
-                                // Duration
-                                license.Duration = (int)(jobConfiguration.Input.TimeRange.To - jobConfiguration.Input.TimeRange.From).Duration().TotalMinutes;
-                                license.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
-                                license.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();
-                                license.FromUtc = jobConfiguration.Input.TimeRange.From;
-                                license.ToUtc = jobConfiguration.Input.TimeRange.To;
-
-                                license.Edition = getStringValueFromJToken(licensesMoreDetailEUMContainerObject, "iotLicenseType");
-                                license.Model = getBoolValueFromJToken(licensesMoreDetailEUMContainerObject, "iotLicenseAllowsOverages") == true ? "Overage Allowed" : "No Overage";
-
-                                license.AgentType = LICENSE_DISPLAY_NAME_IOT_ANALYTICS;
-                                license.StartDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "iotCurrentUsagePeriodStartMillis"));
-                                license.ExpirationDate = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "iotCurrentUsagePeriodEndMillis"));
-
-                                license.Licenses = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "iotLicenseUnits");
-                                license.Peak = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "uniqueIotDevices");
-                                license.Units = getLongValueFromJToken(licensesMoreDetailEUMContainerObject, "allocatedIotDevices");
-
-                                licensesList.Add(license);
-
-                                #endregion
+                                licenseValuesGlobalList.AddRange(licenseValuesList);
                             }
-
-                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + licensesList.Count;
-
-                            licensesList = licensesList.OrderBy(l => l.AgentType).ToList();
-                            FileIOHelper.WriteListToCSVFile(licensesList, new LicenseReportMap(), FilePathMap.LicensesIndexFilePath(jobTarget));
                         }
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + licensesList.Count;
+
+                        licensesList = licensesList.OrderBy(l => l.AgentType).ToList();
+                        FileIOHelper.WriteListToCSVFile(licensesList, new LicenseReportMap(), FilePathMap.LicensesIndexFilePath(jobTarget));
+
+                        FileIOHelper.WriteListToCSVFile(licenseValuesGlobalList, new LicenseValueReportMap(), FilePathMap.LicenseUsageAccountIndexFilePath(jobTarget));
 
                         #endregion
 
@@ -484,13 +280,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("License Rules");
 
-                        JArray licenseApplicationsReferenceArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseApplicationsDataFilePath(jobTarget));
-                        JArray licenseSIMMachinesReferenceArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseSIMMachinesDataFilePath(jobTarget));
-
                         #region Preload the application and machine mapping
 
                         Dictionary<string, string> applicationsUsedByRules = null;
                         Dictionary<string, string> simMachinesUsedByRules = null;
+
+                        JArray licenseApplicationsReferenceArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseApplicationsDataFilePath(jobTarget));
+                        JArray licenseSIMMachinesReferenceArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseSIMMachinesDataFilePath(jobTarget));
 
                         if (licenseApplicationsReferenceArray == null)
                         {
@@ -682,141 +478,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Global License consumption details
-
-                        loggerConsole.Info("Global License Consumption");
-
-                        // Typically there are 12 values per hour
-                        // Assume there will be 16 different license types
-                        List<LicenseValue> licenseValuesGlobalList = new List<LicenseValue>(jobConfiguration.Input.HourlyTimeRanges.Count * 12 * 16);
-
-                        // Parse the APM results first
-                        JArray licenseValuesAPMContainerArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageAPMDataFilePath(jobTarget));
-                        if (licenseValuesAPMContainerArray != null)
-                        {
-                            foreach (JObject licenseValuesContainerObject in licenseValuesAPMContainerArray)
-                            {
-                                License thisLicense = licensesList.Where(l => l.AgentType == getStringValueFromJToken(licenseValuesContainerObject, "licenseModuleType")).FirstOrDefault();
-
-                                // If we have the license looked up, look through the values
-                                if (thisLicense != null && 
-                                    isTokenPropertyNull(licenseValuesContainerObject, "graphPoints") == false)
-                                {
-                                    // Looks like [[ 1555484400000, 843 ], [ 1555488000000, 843 ]]
-                                    JArray licenseValuesAPMArray = (JArray)licenseValuesContainerObject["graphPoints"];
-
-                                    List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesAPMArray, thisLicense);
-                                    if (licenseValuesList != null)
-                                    {
-                                        licenseValuesGlobalList.AddRange(licenseValuesList);
-                                    }
-                                }
-                            }
-                        }
-
-                        // Parse individual graphs for other types of agents
-                        JArray licenseValuesDBArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageDatabaseVisibilityDataFilePath(jobTarget));
-                        if (licenseValuesDBArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == LICENSE_DISPLAY_NAME_DATABASE).FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesDBArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesMAArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageMachineAgentDataFilePath(jobTarget));
-                        if (licenseValuesMAArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == "MACHINE_AGENT").FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesMAArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesSIMArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageSIMDataFilePath(jobTarget));
-                        if (licenseValuesSIMArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == "SIM_MACHINE_AGENT").FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesSIMArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesSAArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageServiceAvailabilityDataFilePath(jobTarget));
-                        if (licenseValuesSAArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == "SERVICE_AVAIL_MON").FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesSAArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesNetVizArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageNetworkVisibilityDataFilePath(jobTarget));
-                        if (licenseValuesNetVizArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == "NETVIZ").FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesNetVizArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesTXAnalyticsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageTransactionAnalyticsDataFilePath(jobTarget));
-                        if (licenseValuesTXAnalyticsArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == LICENSE_DISPLAY_NAME_TRANSACTION_ANALYTICS).FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesTXAnalyticsArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        JArray licenseValuesLogAnalyticsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.LicenseUsageLogAnalyticsDataFilePath(jobTarget));
-                        if (licenseValuesLogAnalyticsArray != null)
-                        {
-                            License thisLicense = licensesList.Where(l => l.AgentType == LICENSE_DISPLAY_NAME_LOG_ANALYTICS).FirstOrDefault(); ;
-                            if (thisLicense != null)
-                            {
-                                List<LicenseValue> licenseValuesList = parseLicenseValuesArray(licenseValuesLogAnalyticsArray, thisLicense);
-                                if (licenseValuesList != null)
-                                {
-                                    licenseValuesGlobalList.AddRange(licenseValuesList);
-                                }
-                            }
-                        }
-
-                        FileIOHelper.WriteListToCSVFile(licenseValuesGlobalList, new LicenseValueReportMap(), FilePathMap.LicenseUsageAccountIndexFilePath(jobTarget));
-
-                        #endregion
-
                         #region License Rule consumption details
 
                         loggerConsole.Info("Rules License Consumption");
@@ -886,7 +547,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         }
 
-                        FileIOHelper.WriteListToCSVFile(licenseValuesRulesList, new LicenseValueReportMap(), FilePathMap.LicenseUsageRulesIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(licenseValuesRulesList, new LicenseRuleValueReportMap(), FilePathMap.LicenseUsageRulesIndexFilePath(jobTarget));
 
                         #endregion
 
@@ -1017,7 +678,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (isTokenNull(licenseValueArray[1]) == false)
                         {
-                            licenseValue.Value = (long)licenseValueArray[1];
+                            licenseValue.Average = (long)licenseValueArray[1];
                         }
 
                         licenseValuesList.Add(licenseValue);
@@ -1056,7 +717,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (isTokenNull(licenseValueArray[1]) == false)
                         {
-                            licenseValue.Value = (long)licenseValueArray[1];
+                            licenseValue.Average = (long)licenseValueArray[1];
                         }
 
                         licenseValuesList.Add(licenseValue);

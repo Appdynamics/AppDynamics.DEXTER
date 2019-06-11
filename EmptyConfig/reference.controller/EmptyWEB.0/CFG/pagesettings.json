@@ -1,0 +1,27 @@
+﻿{
+  "thresholds" : {
+    "slowThreshold" : {
+      "type" : "STANDARD_DEVIATION",
+      "value" : 3
+    },
+    "verySlowThreshold" : {
+      "type" : "STANDARD_DEVIATION",
+      "value" : 4
+    },
+    "stallThreshold" : {
+      "type" : "STATIC_MS",
+      "value" : 45000
+    }
+  },
+  "percentileMetrics" : [ 50.0, 90.0, 95.0, 99.0 ],
+  "sessionsMonitor" : {
+    "sessionTimeoutMins" : 5
+  },
+  "ipAddressDisplayed" : false,
+  "eventPolicy" : {
+    "enableSlowSnapshotCollection" : true,
+    "enablePeriodicSnapshotCollection" : true,
+    "enableErrorSnapshotCollection" : true
+  },
+  "primaryMetricsName" : "END_USER_RESPONSE_TIME"
+}

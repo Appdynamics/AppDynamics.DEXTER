@@ -38,43 +38,139 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
-                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
-                {
-                    return true;
-                }
+                #region Template comparison setup
 
                 // Check to see if the reference application is the template
-                bool compareAgainstTemplateConfiguration = false;
-                if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == BLANK_APPLICATION_CONTROLLER &&
-                    jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == BLANK_APPLICATION_APPLICATION)
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == BLANK_APPLICATION_APM)
                 {
-                    compareAgainstTemplateConfiguration = true;
+                    // Do nothing
                 }
                 else
                 {
                     // Check if there is a valid reference application
-                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t => String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller, true) == 0 && String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application, true) == 0).FirstOrDefault();
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_APM &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
                     if (jobTargetReferenceApp == null)
                     {
                         // No valid reference, fall back to comparing against template
-                        logger.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
-                        loggerConsole.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                        logger.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                        loggerConsole.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
 
-                        compareAgainstTemplateConfiguration = true;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application = BLANK_APPLICATION_APM;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = APPLICATION_TYPE_APM;
                     }
                     else
                     {
-                        jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.ApplicationID = jobTargetReferenceApp.ApplicationID;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.ApplicationID = jobTargetReferenceApp.ApplicationID;
                     }
                 }
-                if (compareAgainstTemplateConfiguration == true)
+                
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == BLANK_APPLICATION_WEB)
                 {
-                    // Add this target to the list of targets to unwrap
-                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                    // Do nothing
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_WEB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application = BLANK_APPLICATION_WEB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = APPLICATION_TYPE_WEB;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceWEB.ApplicationID = jobTargetReferenceApp.ApplicationID;
+                    }
                 }
 
-                logger.Info("Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
-                loggerConsole.Info("Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application == BLANK_APPLICATION_MOBILE)
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_MOBILE &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                        loggerConsole.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application = BLANK_APPLICATION_MOBILE;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = APPLICATION_TYPE_MOBILE;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.ApplicationID = jobTargetReferenceApp.ApplicationID;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.ParentApplicationID = jobTargetReferenceApp.ParentApplicationID;
+                    }
+                }
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == BLANK_APPLICATION_DB)
+                {
+                    // Do nothing
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_DB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will compare against default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application = BLANK_APPLICATION_DB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = APPLICATION_TYPE_DB;
+                    }
+                    else
+                    {
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.ApplicationID = jobTargetReferenceApp.ApplicationID;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.DBCollectorID = jobTargetReferenceApp.DBCollectorID;
+                    }
+                }
+
+                logger.Info("APM Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                loggerConsole.Info("APM Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+
+                logger.Info("WEB Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+                loggerConsole.Info("WEB Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceWEB);
+
+                logger.Info("MOBILE Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+                loggerConsole.Info("MOBILE Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
+
+                logger.Info("DB Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                loggerConsole.Info("DB Comparing with target {0}", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+
+                #endregion
 
                 List<ConfigurationDifference> configurationDifferencesListAll = new List<ConfigurationDifference>(10240 * jobConfiguration.Target.Count);
 
@@ -87,8 +183,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     stopWatchTarget.Start();
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
-
-                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_APM) continue;
 
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
@@ -105,202 +199,426 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
 
-                        #region Skip the reference Application
-
-                        // Skip itself
-                        if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == jobTarget.Controller &&
-                            jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == jobTarget.Application)
-                        {
-                            continue;
-                        }
-
-                        #endregion
-
                         List<ConfigurationDifference> configurationDifferencesList = new List<ConfigurationDifference>(10240);
 
-                        #region Controller Settings
+                        JobTarget referenceTarget = null;
 
-                        loggerConsole.Info("Controller Settings");
-
-                        List<ControllerSetting> controllerSettingsListReference = FileIOHelper.ReadListFromCSVFile<ControllerSetting>(FilePathMap.ControllerSettingsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new ControllerSettingReportMap());
-                        List<ControllerSetting> controllerSettingsListDifference = FileIOHelper.ReadListFromCSVFile<ControllerSetting>(FilePathMap.ControllerSettingsIndexFilePath(jobTarget), new ControllerSettingReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, controllerSettingsListReference, controllerSettingsListDifference));
-
-                        #endregion
-
-                        #region Application Summary
-
-                        loggerConsole.Info("Application Summary");
-
-                        List<APMApplicationConfiguration> applicationConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new APMApplicationConfigurationReportMap());
-                        List<APMApplicationConfiguration> applicationConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobTarget), new APMApplicationConfigurationReportMap());
-
-                        if (applicationConfigurationsListReference != null && applicationConfigurationsListReference.Count > 0 &&
-                            applicationConfigurationsListDifference != null && applicationConfigurationsListDifference.Count > 0)
+                        switch (jobTarget.Type)
                         {
-                            configurationDifferencesList.AddRange(compareTwoEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, applicationConfigurationsListReference[0], applicationConfigurationsListDifference[0]));
+                            case APPLICATION_TYPE_APM:
+
+                                #region APM Application Comparison
+
+                                #region Skip the reference Application
+
+                                // Skip itself
+                                if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == jobTarget.Controller &&
+                                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == jobTarget.Application)
+                                {
+                                    continue;
+                                }
+
+                                #endregion
+
+                                referenceTarget = jobConfiguration.Input.ConfigurationComparisonReferenceAPM;
+
+                                #region Application Summary
+
+                                loggerConsole.Info("Application Summary");
+
+                                List<APMApplicationConfiguration> applicationConfigurationsAPMListReference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(referenceTarget), new APMApplicationConfigurationReportMap());
+                                List<APMApplicationConfiguration> applicationConfigurationsAPMListDifference = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobTarget), new APMApplicationConfigurationReportMap());
+
+                                if (applicationConfigurationsAPMListReference != null && applicationConfigurationsAPMListReference.Count > 0 &&
+                                    applicationConfigurationsAPMListDifference != null && applicationConfigurationsAPMListDifference.Count > 0)
+                                {
+                                    configurationDifferencesList.AddRange(compareTwoEntities(referenceTarget, jobTarget, applicationConfigurationsAPMListReference[0], applicationConfigurationsAPMListDifference[0]));
+                                }
+
+                                #endregion
+
+                                #region Business Transaction Detection Rules
+
+                                loggerConsole.Info("Business Transaction Detection Rules");
+
+                                List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(referenceTarget), new BusinessTransactionDiscoveryRuleReportMap());
+                                List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(jobTarget), new BusinessTransactionDiscoveryRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionDiscoveryRulesListReference, businessTransactionDiscoveryRulesListDifference));
+
+                                #endregion
+
+                                #region Business Transaction Rules
+
+                                loggerConsole.Info("Business Transaction Include and Exclude Rules");
+
+                                List<BusinessTransactionEntryRule> businessTransactionEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(referenceTarget), new BusinessTransactionEntryRuleReportMap());
+                                List<BusinessTransactionEntryRule> businessTransactionEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionEntryRulesListReference, businessTransactionEntryRulesListDifference));
+
+                                #endregion
+
+                                #region Service Endpoint Rules
+
+                                loggerConsole.Info("Service Endpoint Entry Rules");
+
+                                List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(referenceTarget), new ServiceEndpointEntryRuleReportMap());
+                                List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, serviceEndpointEntryRulesListReference, serviceEndpointEntryRulesListDifference));
+
+                                #endregion
+
+                                #region MDS/Config 2.0 Scopes, BT Detection and BT Rules
+
+                                loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");
+
+                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(referenceTarget), new BusinessTransactionEntryRuleScopeReportMap());
+                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleScopeReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionEntryScopeListReference, businessTransactionEntryScopeListDifference));
+
+                                List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(referenceTarget), new BusinessTransactionEntryRule20ReportMap());
+                                List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionEntryRules20ListReference, businessTransactionEntryRules20ListDifference));
+
+                                List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(referenceTarget), new BusinessTransactionDiscoveryRule20ReportMap());
+                                List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobTarget), new BusinessTransactionDiscoveryRule20ReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionDiscoveryRule20ListReference, businessTransactionDiscoveryRule20ListDifference));
+
+                                #endregion
+
+                                #region Backend Rules 
+
+                                loggerConsole.Info("Backend Detection Rules");
+
+                                List<BackendDiscoveryRule> backendDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(referenceTarget), new BackendDiscoveryRuleReportMap());
+                                List<BackendDiscoveryRule> backendDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, backendDiscoveryRulesListReference, backendDiscoveryRulesListDifference));
+
+                                #endregion
+
+                                #region Custom Exit Rules 
+
+                                loggerConsole.Info("Custom Exit Rules");
+
+                                List<CustomExitRule> customExitRulesListReference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(referenceTarget), new CustomExitRuleReportMap());
+                                List<CustomExitRule> customExitRulesListDifference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, customExitRulesListReference, customExitRulesListDifference));
+
+                                #endregion
+
+                                #region Agent Configuration Properties 
+
+                                loggerConsole.Info("Agent Configuration Properties");
+
+                                List<AgentConfigurationProperty> agentConfigurationPropertiesListReference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(referenceTarget), new AgentConfigurationPropertyReportMap());
+                                List<AgentConfigurationProperty> agentConfigurationPropertiesListDifference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, agentConfigurationPropertiesListReference, agentConfigurationPropertiesListDifference));
+
+                                #endregion
+
+                                #region Information Point Rules
+
+                                loggerConsole.Info("Information Point Rules");
+
+                                List<InformationPointRule> informationPointRulesListReference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(referenceTarget), new InformationPointRuleReportMap());
+                                List<InformationPointRule> informationPointRulesListDifference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(jobTarget), new InformationPointRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, informationPointRulesListReference, informationPointRulesListDifference));
+
+                                #endregion
+
+                                #region Detected Business Transaction and Assigned Data Collectors
+
+                                loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors");
+
+                                List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(referenceTarget), new BusinessTransactionConfigurationReportMap());
+                                List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(jobTarget), new BusinessTransactionConfigurationReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, entityBusinessTransactionConfigurationsListReference, entityBusinessTransactionConfigurationsListDifference));
+
+                                #endregion
+
+                                #region Tier Settings
+
+                                loggerConsole.Info("Tier Settings");
+
+                                List<TierConfiguration> entityTierConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(referenceTarget), new TierConfigurationReportMap());
+                                List<TierConfiguration> entityTierConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(jobTarget), new TierConfigurationReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, entityTierConfigurationsListReference, entityTierConfigurationsListDifference));
+
+                                #endregion
+
+                                #region Data Collectors
+
+                                loggerConsole.Info("Data Collectors");
+
+                                List<MethodInvocationDataCollector> methodInvocationDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(referenceTarget), new MethodInvocationDataCollectorReportMap());
+                                List<MethodInvocationDataCollector> methodInvocationDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, methodInvocationDataCollectorsListReference, methodInvocationDataCollectorsListDifference));
+
+                                List<HTTPDataCollector> httpDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(referenceTarget), new HTTPDataCollectorReportMap());
+                                List<HTTPDataCollector> httpDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, httpDataCollectorsListReference, httpDataCollectorsListDifference));
+
+                                #endregion
+
+                                #region Call Graph Settings
+
+                                loggerConsole.Info("Call Graph Settings");
+
+                                List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListReference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(referenceTarget), new AgentCallGraphSettingReportMap());
+                                List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobTarget), new AgentCallGraphSettingReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, agentCallGraphSettingCollectorsListReference, agentCallGraphSettingCollectorsListDifference));
+
+                                #endregion                                
+
+                                #endregion
+
+                                break;
+
+                            case APPLICATION_TYPE_WEB:
+
+                                #region WEB Application Comparison
+
+                                #region Skip the reference Application
+
+                                // Skip itself
+                                if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == jobTarget.Controller &&
+                                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == jobTarget.Application)
+                                {
+                                    continue;
+                                }
+
+                                #endregion
+
+                                referenceTarget = jobConfiguration.Input.ConfigurationComparisonReferenceWEB;
+
+                                #region Application Summary
+
+                                loggerConsole.Info("Application Summary");
+
+                                List<WEBApplicationConfiguration> applicationConfigurationsWEBListReference = FileIOHelper.ReadListFromCSVFile<WEBApplicationConfiguration>(FilePathMap.WEBApplicationConfigurationIndexFilePath(referenceTarget), new WEBApplicationConfigurationReportMap());
+                                List<WEBApplicationConfiguration> applicationConfigurationsWEBListDifference = FileIOHelper.ReadListFromCSVFile<WEBApplicationConfiguration>(FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget), new WEBApplicationConfigurationReportMap());
+
+                                if (applicationConfigurationsWEBListReference != null && applicationConfigurationsWEBListReference.Count > 0 &&
+                                    applicationConfigurationsWEBListDifference != null && applicationConfigurationsWEBListDifference.Count > 0)
+                                {
+                                    configurationDifferencesList.AddRange(compareTwoEntities(referenceTarget, jobTarget, applicationConfigurationsWEBListReference[0], applicationConfigurationsWEBListDifference[0]));
+                                }
+
+                                #endregion
+
+                                #region Page and AJAX Request Rules
+
+                                loggerConsole.Info("Page and AJAX Request Rules");
+
+                                List<WEBPageDetectionRule> pageDetectionRulesListReference = FileIOHelper.ReadListFromCSVFile<WEBPageDetectionRule>(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(referenceTarget), new WEBPageDetectionRuleReportMap());
+                                List<WEBPageDetectionRule> pageDetectionRulesListDifference = FileIOHelper.ReadListFromCSVFile<WEBPageDetectionRule>(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget), new WEBPageDetectionRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, pageDetectionRulesListReference, pageDetectionRulesListDifference));
+
+                                #endregion
+
+                                #region Synthetic Jobs
+
+                                loggerConsole.Info("Synthetic Jobs");
+
+                                List<WEBSyntheticJobDefinition> syntheticJobDefinitionsListReference = FileIOHelper.ReadListFromCSVFile<WEBSyntheticJobDefinition>(FilePathMap.WEBSyntheticJobsIndexFilePath(referenceTarget), new WEBSyntheticJobDefinitionReportMap());
+                                List<WEBSyntheticJobDefinition> syntheticJobDefinitionsListDifference = FileIOHelper.ReadListFromCSVFile<WEBSyntheticJobDefinition>(FilePathMap.WEBSyntheticJobsIndexFilePath(jobTarget), new WEBSyntheticJobDefinitionReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, syntheticJobDefinitionsListReference, syntheticJobDefinitionsListDifference));
+
+                                #endregion
+
+                                #endregion
+
+                                break;
+
+                            case APPLICATION_TYPE_MOBILE:
+
+                                #region DB Application Comparison
+
+                                #region Skip the reference Application
+
+                                // Skip itself
+                                if (jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller == jobTarget.Controller &&
+                                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Application == jobTarget.Application)
+                                {
+                                    continue;
+                                }
+
+                                #endregion
+
+                                referenceTarget = jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE;
+
+                                #region Application Summary
+
+                                loggerConsole.Info("Application Summary");
+
+                                List<MOBILEApplicationConfiguration> applicationConfigurationsMOBILEListReference = FileIOHelper.ReadListFromCSVFile<MOBILEApplicationConfiguration>(FilePathMap.MOBILEApplicationConfigurationIndexFilePath(referenceTarget), new MOBILEApplicationConfigurationReportMap());
+                                List<MOBILEApplicationConfiguration> applicationConfigurationsMOBILEListDifference = FileIOHelper.ReadListFromCSVFile<MOBILEApplicationConfiguration>(FilePathMap.MOBILEApplicationConfigurationIndexFilePath(jobTarget), new MOBILEApplicationConfigurationReportMap());
+
+                                if (applicationConfigurationsMOBILEListReference != null && applicationConfigurationsMOBILEListReference.Count > 0 &&
+                                    applicationConfigurationsMOBILEListDifference != null && applicationConfigurationsMOBILEListDifference.Count > 0)
+                                {
+                                    configurationDifferencesList.AddRange(compareTwoEntities(referenceTarget, jobTarget, applicationConfigurationsMOBILEListReference[0], applicationConfigurationsMOBILEListDifference[0]));
+                                }
+
+                                #endregion
+
+                                #region Network Request Rules
+
+                                loggerConsole.Info("Network Request Rules");
+
+                                List<MOBILENetworkRequestRule> networkRequestRulesListReference = FileIOHelper.ReadListFromCSVFile<MOBILENetworkRequestRule>(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(referenceTarget), new MOBILENetworkRequestRuleReportMap());
+                                List<MOBILENetworkRequestRule> networkRequestRulesListDifference = FileIOHelper.ReadListFromCSVFile<MOBILENetworkRequestRule>(FilePathMap.WEBPageAjaxVirtualPageRulesIndexFilePath(jobTarget), new MOBILENetworkRequestRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, networkRequestRulesListReference, networkRequestRulesListDifference));
+
+                                #endregion
+
+                                #endregion
+
+                                break;
+
+                            case APPLICATION_TYPE_DB:
+
+                                #region DB Application Comparison
+
+                                #region Skip the reference Application
+
+                                // Skip itself
+                                if (jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == jobTarget.Controller &&
+                                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == jobTarget.Application)
+                                {
+                                    continue;
+                                }
+
+                                #endregion
+
+                                referenceTarget = jobConfiguration.Input.ConfigurationComparisonReferenceDB;
+
+                                #region Application Summary
+
+                                loggerConsole.Info("Application Summary");
+
+                                List<DBApplicationConfiguration> applicationConfigurationsDBListReference = FileIOHelper.ReadListFromCSVFile<DBApplicationConfiguration>(FilePathMap.DBApplicationConfigurationIndexFilePath(referenceTarget), new DBApplicationConfigurationReportMap());
+                                List<DBApplicationConfiguration> applicationConfigurationsDBListDifference = FileIOHelper.ReadListFromCSVFile<DBApplicationConfiguration>(FilePathMap.DBApplicationConfigurationIndexFilePath(jobTarget), new DBApplicationConfigurationReportMap());
+
+                                if (applicationConfigurationsDBListReference != null && applicationConfigurationsDBListReference.Count > 0 &&
+                                    applicationConfigurationsDBListDifference != null && applicationConfigurationsDBListDifference.Count > 0)
+                                {
+                                    configurationDifferencesList.AddRange(compareTwoEntities(referenceTarget, jobTarget, applicationConfigurationsDBListReference[0], applicationConfigurationsDBListDifference[0]));
+                                }
+
+                                #endregion
+
+                                #region Collector Definitions
+
+                                loggerConsole.Info("Collector Definitions");
+
+                                List<DBCollectorDefinition> dbCollectorDefinitionsListReference = FileIOHelper.ReadListFromCSVFile<DBCollectorDefinition>(FilePathMap.DBCollectorDefinitionsIndexFilePath(referenceTarget), new DBCollectorDefinitionReportMap());
+                                List<DBCollectorDefinition> dbCollectorDefinitionsListDifference = FileIOHelper.ReadListFromCSVFile<DBCollectorDefinition>(FilePathMap.DBCollectorDefinitionsIndexFilePath(jobTarget), new DBCollectorDefinitionReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, dbCollectorDefinitionsListReference, dbCollectorDefinitionsListDifference));
+
+                                #endregion
+
+                                #region Custom Metrics
+
+                                loggerConsole.Info("Custom Metrics");
+
+                                List<DBCustomMetric> dbCustomMetricsListReference = FileIOHelper.ReadListFromCSVFile<DBCustomMetric>(FilePathMap.DBCustomMetricsIndexFilePath(referenceTarget), new DBCustomMetricReportMap());
+                                List<DBCustomMetric> dbCustomMetricsListDifference = FileIOHelper.ReadListFromCSVFile<DBCustomMetric>(FilePathMap.DBCustomMetricsIndexFilePath(jobTarget), new DBCustomMetricReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, dbCustomMetricsListReference, dbCustomMetricsListDifference));
+
+                                #endregion
+
+                                #endregion
+
+                                break;
+
+                            default: 
+                                logger.Warn("Comparing type unsupported for target {0}, skipping", jobTarget);
+                                loggerConsole.Warn("Comparing type unsupported for target {0}, skipping", jobTarget);
+
+                                break;
                         }
 
-                        #endregion
+                        if (referenceTarget != null && referenceTarget.Type == jobTarget.Type)
+                        {
+                            #region Controller Settings
 
-                        #region Business Transaction Detection Rules
+                            loggerConsole.Info("Controller Settings");
 
-                        loggerConsole.Info("Business Transaction Detection Rules");
+                            List<ControllerSetting> controllerSettingsAPMListReference = FileIOHelper.ReadListFromCSVFile<ControllerSetting>(FilePathMap.ControllerSettingsIndexFilePath(referenceTarget), new ControllerSettingReportMap());
+                            List<ControllerSetting> controllerSettingsAPMListDifference = FileIOHelper.ReadListFromCSVFile<ControllerSetting>(FilePathMap.ControllerSettingsIndexFilePath(jobTarget), new ControllerSettingReportMap());
 
-                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRuleReportMap());
-                        List<BusinessTransactionDiscoveryRule> businessTransactionDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule>(FilePathMap.APMBusinessTransactionDiscoveryRulesIndexFilePath(jobTarget), new BusinessTransactionDiscoveryRuleReportMap());
+                            configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, controllerSettingsAPMListReference, controllerSettingsAPMListDifference));
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionDiscoveryRulesListReference, businessTransactionDiscoveryRulesListDifference));
+                            #endregion
 
-                        #endregion
+                            #region Health Rules Application Summary
 
-                        #region Business Transaction Rules
+                            loggerConsole.Info("Health Rules Application Summary");
 
-                        loggerConsole.Info("Business Transaction Include and Exclude Rules");
+                            List<ApplicationConfigurationPolicy> applicationConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<ApplicationConfigurationPolicy>(FilePathMap.ApplicationConfigurationHealthRulesIndexFilePath(referenceTarget), new ApplicationConfigurationPolicyReportMap());
+                            List<ApplicationConfigurationPolicy> applicationConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<ApplicationConfigurationPolicy>(FilePathMap.ApplicationConfigurationHealthRulesIndexFilePath(jobTarget), new ApplicationConfigurationPolicyReportMap());
 
-                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleReportMap());
-                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleReportMap());
+                            if (applicationConfigurationsListReference != null && applicationConfigurationsListReference.Count > 0 &&
+                                applicationConfigurationsListDifference != null && applicationConfigurationsListDifference.Count > 0)
+                            {
+                                configurationDifferencesList.AddRange(compareTwoEntities(referenceTarget, jobTarget, applicationConfigurationsListReference[0], applicationConfigurationsListDifference[0]));
+                            }
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryRulesListReference, businessTransactionEntryRulesListDifference));
+                            #endregion
 
-                        #endregion
+                            #region Health Rules
 
-                        #region Service Endpoint Rules
+                            loggerConsole.Info("Health Rules");
 
-                        loggerConsole.Info("Service Endpoint Entry Rules");
+                            List<HealthRule> healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(referenceTarget), new HealthRuleReportMap());
+                            List<HealthRule> healthRulesListDifference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
 
-                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new ServiceEndpointEntryRuleReportMap());
-                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
+                            configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, healthRulesListReference, healthRulesListDifference));
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, serviceEndpointEntryRulesListReference, serviceEndpointEntryRulesListDifference));
+                            #endregion
 
-                        #endregion
+                            #region Actions
 
-                        #region MDS/Config 2.0 Scopes, BT Detection and BT Rules
+                            loggerConsole.Info("Actions");
 
-                        loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");
+                            List<ReportObjects.Action> actionsListReference = FileIOHelper.ReadListFromCSVFile<ReportObjects.Action>(FilePathMap.ApplicationActionsIndexFilePath(referenceTarget), new ActionReportMap());
+                            List<ReportObjects.Action> actionsListDifference = FileIOHelper.ReadListFromCSVFile<ReportObjects.Action>(FilePathMap.ApplicationActionsIndexFilePath(jobTarget), new ActionReportMap());
 
-                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRuleScopeReportMap());
-                        List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleScopeReportMap());
+                            configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, actionsListReference, actionsListDifference));
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryScopeListReference, businessTransactionEntryScopeListDifference));
+                            #endregion
 
-                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionEntryRule20ReportMap());
-                        List<BusinessTransactionEntryRule20> businessTransactionEntryRules20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
+                            #region Policies
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionEntryRules20ListReference, businessTransactionEntryRules20ListDifference));
+                            loggerConsole.Info("Policies");
 
-                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionDiscoveryRule20ReportMap());
-                        List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRule20ListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobTarget), new BusinessTransactionDiscoveryRule20ReportMap());
+                            List<Policy> policiesListReference = FileIOHelper.ReadListFromCSVFile<Policy>(FilePathMap.ApplicationPoliciesIndexFilePath(referenceTarget), new PolicyReportMap());
+                            List<Policy> policiesListDifference = FileIOHelper.ReadListFromCSVFile<Policy>(FilePathMap.ApplicationPoliciesIndexFilePath(jobTarget), new PolicyReportMap());
 
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, businessTransactionDiscoveryRule20ListReference, businessTransactionDiscoveryRule20ListDifference));
+                            configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, policiesListReference, policiesListDifference));
 
-                        #endregion
-
-                        #region Backend Rules 
-
-                        loggerConsole.Info("Backend Detection Rules");
-
-                        List<BackendDiscoveryRule> backendDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BackendDiscoveryRuleReportMap());
-                        List<BackendDiscoveryRule> backendDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, backendDiscoveryRulesListReference, backendDiscoveryRulesListDifference));
-
-                        #endregion
-
-                        #region Custom Exit Rules 
-
-                        loggerConsole.Info("Custom Exit Rules");
-
-                        List<CustomExitRule> customExitRulesListReference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new CustomExitRuleReportMap());
-                        List<CustomExitRule> customExitRulesListDifference = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, customExitRulesListReference, customExitRulesListDifference));
-
-                        #endregion
-
-                        #region Agent Configuration Properties 
-
-                        loggerConsole.Info("Agent Configuration Properties");
-
-                        List<AgentConfigurationProperty> agentConfigurationPropertiesListReference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentConfigurationPropertyReportMap());
-                        List<AgentConfigurationProperty> agentConfigurationPropertiesListDifference = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, agentConfigurationPropertiesListReference, agentConfigurationPropertiesListDifference));
-
-                        #endregion
-
-                        #region Information Point Rules
-
-                        loggerConsole.Info("Information Point Rules");
-
-                        List<InformationPointRule> informationPointRulesListReference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new InformationPointRuleReportMap());
-                        List<InformationPointRule> informationPointRulesListDifference = FileIOHelper.ReadListFromCSVFile<InformationPointRule>(FilePathMap.APMInformationPointRulesIndexFilePath(jobTarget), new InformationPointRuleReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, informationPointRulesListReference, informationPointRulesListDifference));
-
-                        #endregion
-
-                        #region Detected Business Transaction and Assigned Data Collectors
-
-                        loggerConsole.Info("Detected Business Transaction and Assigned Data Collectors");
-
-                        List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new BusinessTransactionConfigurationReportMap());
-                        List<BusinessTransactionConfiguration> entityBusinessTransactionConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionConfiguration>(FilePathMap.APMBusinessTransactionConfigurationsIndexFilePath(jobTarget), new BusinessTransactionConfigurationReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, entityBusinessTransactionConfigurationsListReference, entityBusinessTransactionConfigurationsListDifference));
-
-                        #endregion
-
-                        #region Tier Settings
-
-                        loggerConsole.Info("Tier Settings");
-
-                        List<TierConfiguration> entityTierConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new TierConfigurationReportMap());
-                        List<TierConfiguration> entityTierConfigurationsListDifference = FileIOHelper.ReadListFromCSVFile<TierConfiguration>(FilePathMap.APMTierConfigurationsIndexFilePath(jobTarget), new TierConfigurationReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, entityTierConfigurationsListReference, entityTierConfigurationsListDifference));
-
-                        #endregion
-
-                        #region Data Collectors
-
-                        loggerConsole.Info("Data Collectors");
-
-                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new MethodInvocationDataCollectorReportMap());
-                        List<MethodInvocationDataCollector> methodInvocationDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, methodInvocationDataCollectorsListReference, methodInvocationDataCollectorsListDifference));
-
-                        List<HTTPDataCollector> httpDataCollectorsListReference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HTTPDataCollectorReportMap());
-                        List<HTTPDataCollector> httpDataCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, httpDataCollectorsListReference, httpDataCollectorsListDifference));
-
-                        #endregion
-
-                        #region Call Graph Settings
-
-                        loggerConsole.Info("Call Graph Settings");
-
-                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListReference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new AgentCallGraphSettingReportMap());
-                        List<AgentCallGraphSetting> agentCallGraphSettingCollectorsListDifference = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobTarget), new AgentCallGraphSettingReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, agentCallGraphSettingCollectorsListReference, agentCallGraphSettingCollectorsListDifference));
-
-                        #endregion
-
-                        #region Health Rules
-
-                        loggerConsole.Info("Health Rules");
-
-                        List<HealthRule> healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria), new HealthRuleReportMap());
-                        List<HealthRule> healthRulesListDifference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
-
-                        configurationDifferencesList.AddRange(compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria, jobTarget, healthRulesListReference, healthRulesListDifference));
-
-                        #endregion
+                            #endregion
+                        }
 
                         #region Save data for this comparison
 
@@ -350,12 +668,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         stepTimings.Add(stepTimingTarget);
                         FileIOHelper.WriteListToCSVFile(stepTimings, new StepTimingReportMap(), FilePathMap.StepTimingReportFilePath(), true);
                     }
-                }
-
-                // Remove the last item from job configuration that was put there earlier if comparing against template
-                if (compareAgainstTemplateConfiguration == true)
-                {
-                    jobConfiguration.Target.RemoveAt(jobConfiguration.Target.Count - 1);
                 }
 
                 return true;
@@ -680,7 +992,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return configurationDifferencesList;
         }
 
-
         private List<ConfigurationDifference> compareTwoEntitiesJSONProperty(
             JobTarget jobTargetReference,
             JobTarget jobTargetDifference,
@@ -824,90 +1135,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
 
             return configurationDifferencesList;
-        }
-
-        private void flattenJSONObjectIntoDictionary(JToken jTokenRoot, Dictionary<string, string> dictionary)
-        {
-            // Recursively go through each of the tokens
-            foreach (JToken jToken in jTokenRoot)
-            {
-                if (jToken.Type == JTokenType.Object)
-                {
-                    // Object
-                    // "{ "test1": 123, "test2: 321 }"
-                    flattenJSONObjectIntoDictionary(jToken, dictionary);
-                }
-                else if (jToken.Type == JTokenType.Array)
-                {
-                    // Array of something
-                    // [{ "test1": 123, "test2: 321 }, { "test1": 123, "test2: 321 }]
-                    foreach (JToken jTokenArrayMember in jToken)
-                    {
-                        flattenJSONObjectIntoDictionary(jTokenArrayMember, dictionary);
-                    }
-                }
-                else if (jToken.Type == JTokenType.Property)
-                {
-                    JToken jTokenProperty = ((JProperty)jToken).Value;
-
-                    if (jTokenProperty is JObject)
-                    {
-                        if (jTokenProperty.HasValues == false)
-                        {
-                            // Empty object
-                            // "test1" : {} 
-                            dictionary.Add(jTokenProperty.Path, jTokenProperty.ToString());
-                        }
-                        else
-                        {
-                            // Object
-                            // "test1" : { "test1": 123, "test2: 321 }
-                            flattenJSONObjectIntoDictionary(jTokenProperty, dictionary);
-                        }
-                    }
-                    else if (jTokenProperty is JArray)
-                    {
-                        if (jTokenProperty.HasValues == false)
-                        {
-                            // Empty array
-                            // "test1" : [] 
-                            dictionary.Add(jTokenProperty.Path, jTokenProperty.ToString());
-                        }
-                        else
-                        {
-                            int i = 0;
-                            foreach (JToken jTokenArrayMember in jTokenProperty)
-                            {
-                                if (jTokenArrayMember.Type == JTokenType.Object || jTokenArrayMember.Type == JTokenType.Array)
-                                {
-                                    // Array of objects
-                                    // "test1" : [{ "test1": 123, "test2: 321 }, { "test1": 123, "test2: 321 }]
-                                    flattenJSONObjectIntoDictionary(jTokenArrayMember, dictionary);
-                                }
-                                else
-                                {
-                                    // Array of values
-                                    // "test1" : ["test1", "test2", "test3"]
-                                    dictionary.Add(String.Format("{0}/{1}", jTokenProperty.Path, i), jTokenArrayMember.ToString());
-                                }
-                                i++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // Value
-                        // "test1" : "value1"
-                        dictionary.Add(jToken.Path, ((JProperty)jToken).Value.ToString());
-                    }
-                }
-                else
-                {
-                    // Value
-                    // "test1" : "value1"
-                    dictionary.Add(jToken.Path, ((JProperty)jToken).Value.ToString());
-                }
-            }
         }
 
         private List<ConfigurationDifference> compareTwoEntitiesXMLProperty(
@@ -1058,6 +1285,90 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return configurationDifferencesList;
         }
 
+        private void flattenJSONObjectIntoDictionary(JToken jTokenRoot, Dictionary<string, string> dictionary)
+        {
+            // Recursively go through each of the tokens
+            foreach (JToken jToken in jTokenRoot)
+            {
+                if (jToken.Type == JTokenType.Object)
+                {
+                    // Object
+                    // "{ "test1": 123, "test2: 321 }"
+                    flattenJSONObjectIntoDictionary(jToken, dictionary);
+                }
+                else if (jToken.Type == JTokenType.Array)
+                {
+                    // Array of something
+                    // [{ "test1": 123, "test2: 321 }, { "test1": 123, "test2: 321 }]
+                    foreach (JToken jTokenArrayMember in jToken)
+                    {
+                        flattenJSONObjectIntoDictionary(jTokenArrayMember, dictionary);
+                    }
+                }
+                else if (jToken.Type == JTokenType.Property)
+                {
+                    JToken jTokenProperty = ((JProperty)jToken).Value;
+
+                    if (jTokenProperty is JObject)
+                    {
+                        if (jTokenProperty.HasValues == false)
+                        {
+                            // Empty object
+                            // "test1" : {} 
+                            dictionary.Add(jTokenProperty.Path, jTokenProperty.ToString());
+                        }
+                        else
+                        {
+                            // Object
+                            // "test1" : { "test1": 123, "test2: 321 }
+                            flattenJSONObjectIntoDictionary(jTokenProperty, dictionary);
+                        }
+                    }
+                    else if (jTokenProperty is JArray)
+                    {
+                        if (jTokenProperty.HasValues == false)
+                        {
+                            // Empty array
+                            // "test1" : [] 
+                            dictionary.Add(jTokenProperty.Path, jTokenProperty.ToString());
+                        }
+                        else
+                        {
+                            int i = 0;
+                            foreach (JToken jTokenArrayMember in jTokenProperty)
+                            {
+                                if (jTokenArrayMember.Type == JTokenType.Object || jTokenArrayMember.Type == JTokenType.Array)
+                                {
+                                    // Array of objects
+                                    // "test1" : [{ "test1": 123, "test2: 321 }, { "test1": 123, "test2: 321 }]
+                                    flattenJSONObjectIntoDictionary(jTokenArrayMember, dictionary);
+                                }
+                                else
+                                {
+                                    // Array of values
+                                    // "test1" : ["test1", "test2", "test3"]
+                                    dictionary.Add(String.Format("{0}/{1}", jTokenProperty.Path, i), jTokenArrayMember.ToString());
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // Value
+                        // "test1" : "value1"
+                        dictionary.Add(jToken.Path, jTokenProperty.ToString());
+                    }
+                }
+                else
+                {
+                    // Value
+                    // "test1" : "value1"
+                    dictionary.Add(jToken.Path, jToken.ToString());
+                }
+            }
+        }
+
         private void flattenXMLObjectIntoDictionary(XmlNode xmlNodeRoot, string relativePath, Dictionary<string, string> dictionary)
         {
             if (xmlNodeRoot.ChildNodes != null && xmlNodeRoot.ChildNodes.Count > 0)
@@ -1146,6 +1457,5 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return configDifference;
         }
-
     }
 }

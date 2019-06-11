@@ -60,7 +60,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "AgentProperty";
+                return "APMAgentProperty";
             }
         }
 

@@ -1,0 +1,33 @@
+﻿{
+  "customNamingIncludeRules" : [ {
+    "name" : null,
+    "matchOnMobileApplicationName" : null,
+    "enabled" : true,
+    "priority" : 2147483647,
+    "matchOnURL" : null,
+    "isDefault" : true,
+    "pageNamingConfig" : {
+      "classType" : "virtualPageIncludeNamingRuleCriteria",
+      "useProtocol" : false,
+      "useDomainName" : false,
+      "useURL" : true,
+      "useRegex" : false,
+      "type" : "FIRST_N_SEGMENTS",
+      "anchorType" : "FIRST_N_SEGMENTS",
+      "urlMatchSegments" : {
+        "firstNSegments" : 1,
+        "lastNSegments" : 0,
+        "segmentNumbers" : null
+      },
+      "anchorMatchSegments" : {
+        "firstNSegments" : 2,
+        "lastNSegments" : 0,
+        "segmentNumbers" : null
+      },
+      "regexGroupConfig" : null,
+      "domainNameType" : null,
+      "queryStringMatch" : null
+    }
+  } ],
+  "customNamingExcludeRules" : [ ]
+}

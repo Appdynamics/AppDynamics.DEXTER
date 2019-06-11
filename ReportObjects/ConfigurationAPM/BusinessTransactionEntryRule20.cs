@@ -4,6 +4,7 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class BusinessTransactionEntryRule20 : ConfigurationEntityBase
     {
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string ScopeName { get; set; }
 
         public string AgentType { get; set; }
@@ -32,7 +33,9 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string Properties { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumDetectedBTs { get; set; }
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string DetectedBTs { get; set; }
 
         public string RuleRawValue { get; set; }
@@ -57,7 +60,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "BTEntryRule20";
+                return "APMBTEntryRule20";
             }
         }
 

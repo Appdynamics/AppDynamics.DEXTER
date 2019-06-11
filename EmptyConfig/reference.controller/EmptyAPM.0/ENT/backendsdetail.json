@@ -1,0 +1,27 @@
+﻿{
+  "application" : {
+    "id" : 1754,
+    "version" : 1,
+    "name" : "endor-app",
+    "nameUnique" : true,
+    "builtIn" : false,
+    "createdBy" : "dodievich",
+    "createdOn" : 1558551795530,
+    "modifiedBy" : "dodievich",
+    "modifiedOn" : 1558551795530,
+    "description" : "",
+    "template" : false,
+    "active" : true,
+    "running" : false,
+    "runningSince" : null,
+    "deployWorkflowId" : 0,
+    "undeployWorkflowId" : 0,
+    "visualization" : null,
+    "environmentProperties" : [ ],
+    "eumAppName" : null,
+    "accountGuid" : null,
+    "applicationTypeInfo" : null
+  },
+  "backendListEntries" : [ ],
+  "databaseTiers" : null
+}

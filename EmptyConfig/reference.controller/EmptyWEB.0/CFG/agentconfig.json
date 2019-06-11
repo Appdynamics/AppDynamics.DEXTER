@@ -1,0 +1,12 @@
+﻿{
+  "enableXssc" : false,
+  "hostOption" : 0,
+  "jsAgentUrlHttp" : null,
+  "jsAgentUrlHttps" : null,
+  "geoUrlHttp" : null,
+  "geoUrlHttps" : null,
+  "customConfig" : null,
+  "codeSnippet" : "<script charset='UTF-8'>\nwindow['adrum-start-time'] = new Date().getTime();\n(function(config){\n    config.appKey = 'THIS-IS-NOT-REAL';\n    config.adrumExtUrlHttp = 'http://cdn.appdynamics.com';\n    config.adrumExtUrlHttps = 'https://cdn.appdynamics.com';\n    config.beaconUrlHttp = 'http://col.eum-appdynamics.com';\n    config.beaconUrlHttps = 'https://col.eum-appdynamics.com';\n    config.xd = {enable : false};\n})(window['adrum-config'] || (window['adrum-config'] = {}));\n</script>\n<script src='//cdn.appdynamics.com/adrum/adrum-4.5.9.2098.js'></script>",
+  "beaconUrlHttp" : "col.eum-appdynamics.com",
+  "beaconUrlHttps" : "col.eum-appdynamics.com"
+}

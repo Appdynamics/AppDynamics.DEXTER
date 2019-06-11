@@ -31,21 +31,14 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int MaxRows { get; set; }
 
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string ApplicationIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string BTIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string TierIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string NodeIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string ErrorIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public int NumHRs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
         public string HRIDs { get; set; }
-        [FieldComparison(FieldComparisonType.JSONValueComparison)]
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string HRNames { get; set; }
 
         [FieldComparison(FieldComparisonType.ValueComparison)]
@@ -94,11 +87,6 @@ namespace AppDynamics.Dexter.ReportObjects
         public string EntityFiltersRawValue { get; set; }
 
         public long PolicyID { get; set; }
-
-        //public Policy Clone()
-        //{
-        //    return (Policy)this.MemberwiseClone();
-        //}
 
         public override string EntityIdentifier
         {

@@ -43,35 +43,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
-                // Check to see if the reference application is the template
-                bool compareAgainstTemplateConfiguration = false;
-                if (jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller == BLANK_APPLICATION_CONTROLLER &&
-                    jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application == BLANK_APPLICATION_APPLICATION)
+                #region Template comparisons 
+
+                // Check to see if the reference application is the template or specific application, and add one of them to the 
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == BLANK_APPLICATION_APM)
                 {
-                    compareAgainstTemplateConfiguration = true;
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
                 }
                 else
                 {
                     // Check if there is a valid reference application
-                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t => String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Controller, true) == 0 && String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceCriteria.Application, true) == 0).FirstOrDefault();
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t => 
+                        t.Type == APPLICATION_TYPE_APM &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 && 
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
                     if (jobTargetReferenceApp == null)
                     {
                         // No valid reference, fall back to comparing against template
-                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
-                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
 
-                        compareAgainstTemplateConfiguration = true;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application = BLANK_APPLICATION_APM;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = APPLICATION_TYPE_APM;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
                     }
                 }
-                if (compareAgainstTemplateConfiguration == true)
-                {
-                    // Copy the template file into the Data folder to prepare for index
-                    string templateConfigValue = FileIOHelper.ReadFileFromPath(FilePathMap.TemplateApplicationConfigurationFilePath());
-                    FileIOHelper.SaveFileToPath(templateConfigValue, FilePathMap.APMApplicationConfigurationDataFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria));
 
-                    // Add this target to the list of targets to unwrap
-                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceCriteria);
-                }
+                #endregion
 
                 bool reportFolderCleaned = false;
 
@@ -1032,11 +1033,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
 
-                // Remove the last item from job configuration that was put there earlier if comparing against template
-                if (compareAgainstTemplateConfiguration == true)
-                {
-                    jobConfiguration.Target.RemoveAt(jobConfiguration.Target.Count - 1);
-                }
+                // Remove all templates from the list
+                jobConfiguration.Target.RemoveAll(t => t.Controller == BLANK_APPLICATION_CONTROLLER);
 
                 return true;
             }

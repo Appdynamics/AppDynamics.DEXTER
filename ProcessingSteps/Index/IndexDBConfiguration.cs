@@ -40,6 +40,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
+                #region Template comparisons 
+
+                if (jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == BLANK_APPLICATION_CONTROLLER &&
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == BLANK_APPLICATION_DB)
+                {
+                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                }
+                else
+                {
+                    // Check if there is a valid reference application
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
+                        t.Type == APPLICATION_TYPE_DB &&
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
+                        String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
+                    if (jobTargetReferenceApp == null)
+                    {
+                        // No valid reference, fall back to comparing against template
+                        logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                        loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = BLANK_APPLICATION_CONTROLLER;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application = BLANK_APPLICATION_DB;
+                        jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = APPLICATION_TYPE_DB;
+
+                        jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceDB);
+                    }
+                }
+
+                #endregion
+
                 bool reportFolderCleaned = false;
 
                 // Process each Controller once
@@ -306,6 +336,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     i++;
                 }
+
+                // Remove all templates from the list
+                jobConfiguration.Target.RemoveAll(t => t.Controller == BLANK_APPLICATION_CONTROLLER);
 
                 return true;
             }

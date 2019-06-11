@@ -26,11 +26,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APPLICATIONS_PERF_PIVOT = "4.Applications.Perf";
         private const string SHEET_TIERS_FULL = "5.Tiers";
         private const string SHEET_TIERS_HOURLY = "5.Tiers.Hourly";
-        private const string SHEET_TIERS_LICENSE_PIVOT = "5.Tiers.Availability";
+        private const string SHEET_TIERS_AVAILABILITY_PIVOT = "5.Tiers.Availability";
         private const string SHEET_TIERS_PERF_PIVOT = "5.Tiers.Perf";
         private const string SHEET_NODES_FULL = "6.Nodes";
         private const string SHEET_NODES_HOURLY = "6.Nodes.Hourly";
-        private const string SHEET_NODES_LICENSE_PIVOT = "6.Nodes.Availability";
+        private const string SHEET_NODES_AVAILABILITY_PIVOT = "6.Nodes.Availability";
         private const string SHEET_NODES_PERF_PIVOT = "6.Nodes.Perf";
         private const string SHEET_BACKENDS_FULL = "7.Backends";
         private const string SHEET_BACKENDS_HOURLY = "7.Backends.Hourly";
@@ -80,9 +80,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string PIVOT_APPLICATIONS = "p_Applications";
         private const string PIVOT_TIERS = "p_Tiers";
-        private const string PIVOT_TIERS_LICENSE = "p_Tiers_License";
+        private const string PIVOT_TIERS_AVAILABILITY = "p_TiersAvailability";
         private const string PIVOT_NODES = "p_Nodes";
-        private const string PIVOT_NODES_LICENSE = "p_NodesLicense";
+        private const string PIVOT_NODES_AVAILABILITY = "p_NodesAvailability";
         private const string PIVOT_BACKENDS = "p_Backends";
         private const string PIVOT_BUSINESS_TRANSACTIONS = "p_BusinessTransactions";
         private const string PIVOT_SERVICE_ENDPOINTS = "p_ServiceEndpoints";
@@ -91,10 +91,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string GRAPH_APPLICATIONS_FULL = "g_Applications_Full_Scatter";
         private const string GRAPH_APPLICATIONS_HOURLY = "g_Applications_Hourly_Scatter";
-        private const string GRAPH_TIERS_LICENSE = "g_TiersLicense";
+        private const string GRAPH_TIERS_AVAILABILITY = "g_TiersAvailability";
         private const string GRAPH_TIERS_FULL = "g_Tiers_Full_Scatter";
         private const string GRAPH_TIERS_HOURLY = "g_Tiers_Hourly_Scatter";
-        private const string GRAPH_NODES_LICENSE = "g_NodesLicense";
+        private const string GRAPH_NODES_AVAILABILITY = "g_NodesAvailability";
         private const string GRAPH_NODES_FULL = "g_Nodes_Full_Scatter";
         private const string GRAPH_NODES_HOURLY = "g_Nodes_Hourly_Scatter";
         private const string GRAPH_BACKENDS_FULL = "g_Backends_Full_Scatter";
@@ -233,7 +233,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_ACTIVITYFLOW);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.Cells[4, 1].Value = "See Agent Availability";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_LICENSE_PIVOT);
+                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
                 sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
@@ -247,8 +247,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[3, 1].Value = "See Activity Flow";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_ACTIVITYFLOW);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See License Consumption";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_LICENSE_PIVOT);
+                sheet.Cells[4, 1].Value = "See Agent Availability";
+                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
                 sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
@@ -261,7 +261,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 3, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_LICENSE_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_AVAILABILITY_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -289,8 +289,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[3, 1].Value = "See Activity Flow";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_ACTIVITYFLOW);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See License Consumption";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_LICENSE_PIVOT);
+                sheet.Cells[4, 1].Value = "See Agent Availability";
+                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
                 sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
@@ -304,8 +304,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[3, 1].Value = "See Activity Flow";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_ACTIVITYFLOW);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See License Consumption";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_LICENSE_PIVOT);
+                sheet.Cells[4, 1].Value = "See Agent Availability";
+                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
                 sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
@@ -318,7 +318,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 3, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_LICENSE_PIVOT);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_AVAILABILITY_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -823,8 +823,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(3).Width = 20;
                     sheet.Column(4).Width = 20;
 
-                    sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_LICENSE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_TIERS_LICENSE);
+                    sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_AVAILABILITY_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_TIERS_AVAILABILITY);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "AvailAgent");
                     addFilterFieldToPivot(pivot, "AgentType");
@@ -837,7 +837,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "TierName", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "AvailAgent", DataFieldFunctions.Average);
 
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_TIERS_LICENSE, eChartType.Line, pivot);
+                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_TIERS_AVAILABILITY, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 
@@ -934,11 +934,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(4).Width = 20;
                     sheet.Column(5).Width = 20;
 
-                    sheet = excelReport.Workbook.Worksheets[SHEET_NODES_LICENSE_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1], range, PIVOT_NODES_LICENSE);
+                    sheet = excelReport.Workbook.Worksheets[SHEET_NODES_AVAILABILITY_PIVOT];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1], range, PIVOT_NODES_AVAILABILITY);
                     setDefaultPivotTableSettings(pivot);
-                    addFilterFieldToPivot(pivot, "IsLicenseAgentUsed");
-                    addFilterFieldToPivot(pivot, "IsLicenseMachineUsed");
+                    addFilterFieldToPivot(pivot, "IsAPMAgentUsed");
+                    addFilterFieldToPivot(pivot, "IsMachineAgentUsed");
                     addFilterFieldToPivot(pivot, "AvailAgent");
                     addFilterFieldToPivot(pivot, "AvailMachine");
                     addFilterFieldToPivot(pivot, "AgentType");
@@ -951,7 +951,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "TierName", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeID", DataFieldFunctions.Count);
 
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODES_LICENSE, eChartType.Line, pivot);
+                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODES_AVAILABILITY, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 

@@ -40,7 +40,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "SEPEntryRule";
+                return "APMServiceEndpointEntryRule";
             }
         }
 

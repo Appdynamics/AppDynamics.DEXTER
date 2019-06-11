@@ -54,7 +54,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string DATA_FOLDER_NAME = "Data";
 
-        private const string DBMON_APPLICATION_NAME = "Database Monitoring";
+        private const string DBMON_APPLICATION_NAME = "DBMon";
 
         // Controller wide settings file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
@@ -77,17 +77,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EXTRACT_LICENSE_ALL_APPLICATIONS_FILE_NAME = "allapplications.lic.json";
         private const string EXTRACT_LICENSE_SIM_MACHINES_FILE_NAME = "sim.machines.json";
         private const string EXTRACT_LICENSE_ACCOUNT_FILE_NAME = "account.json";
-        private const string EXTRACT_LICENSE_FILE_NAME = "license.json";
-        private const string EXTRACT_LICENSE_USAGE_SUMMARY_FILE_NAME = "licenseusage.summary.all.json";
-        private const string EXTRACT_LICENSE_EUM_USAGE_SUMMARY_FILE_NAME = "licenseusage.summary.eum.json";
-        private const string EXTRACT_LICENSE_USAGE_APM_DETAIL_FILE_NAME = "licenseusage.apm.json";
-        private const string EXTRACT_LICENSE_USAGE_DB_DETAIL_FILE_NAME = "licenseusage.db.json";
-        private const string EXTRACT_LICENSE_USAGE_MA_DETAIL_FILE_NAME = "licenseusage.ma.json";
-        private const string EXTRACT_LICENSE_USAGE_SIM_DETAIL_FILE_NAME = "licenseusage.sim.json";
-        private const string EXTRACT_LICENSE_USAGE_SA_DETAIL_FILE_NAME = "licenseusage.sa.json";
-        private const string EXTRACT_LICENSE_USAGE_NETVIZ_DETAIL_FILE_NAME = "licenseusage.netviz.json";
-        private const string EXTRACT_LICENSE_USAGE_TX_ANALYTICS_DETAIL_FILE_NAME = "licenseusage.txbiq.json";
-        private const string EXTRACT_LICENSE_USAGE_LOG_ANALYTICS_DETAIL_FILE_NAME = "licenseusage.logbiq.json";
+        private const string EXTRACT_LICENSE_MODULES_FILE_NAME = "licensemodules.json";
+        private const string EXTRACT_LICENSE_MODULE_PROPERTIES_FILE_NAME = "license.props.{0}.json";
+        private const string EXTRACT_LICENSE_MODULE_USAGES_FILE_NAME = "license.usage.{0}.json";
         private const string EXTRACT_LICENSE_RULES_FILE_NAME = "licenserules.json";
         private const string EXTRACT_LICENSE_RULE_USAGE_DETAIL_FILE_NAME = "licenserule.usage.{0}.json";
         private const string EXTRACT_LICENSE_RULE_CONFIGURATION_DETAIL_FILE_NAME = "licenserule.config.{0}.json";
@@ -381,7 +373,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME = "snapshots.errors.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME = "snapshots.businessdata.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME = "snapshots.methodcalllines.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME = "snapshots.methodcalllinesoccurrences.csv";
 
         // Folded call stacks rollups
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_FILE_NAME = "snapshots.foldedcallstacks.csv";
@@ -395,7 +386,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_TIMERANGE_FILE_NAME = "snapshots.errors.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_TIMERANGE_FILE_NAME = "snapshots.businessdata.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
         private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_TIMERANGE_NAME = "snapshots.methodcalllines.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
-        private const string CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_TIMERANGE_FILE_NAME = "snapshots.methodcalllinesoccurrences.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
 
         // Folded call stacks rollups for each BT and Nodes
         private const string CONVERT_SNAPSHOTS_SEGMENTS_FOLDED_CALL_STACKS_TIMERANGE_FILE_NAME = "snapshots.foldedcallstacks.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.csv";
@@ -424,7 +414,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "Snapshots.MethodCallLines.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "CallGraphs.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
@@ -466,9 +456,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Flame graph template SVG XML file
         private const string FLAME_GRAPH_TEMPLATE_FILE_NAME = "FlameGraphTemplate.svg";
 
-        // Template application export of an empty application
-        private const string TEMPLATE_APPLICATION_CONFIGURATION_FILE_NAME = "TemplateApplicationConfiguration.xml";
-
+        // Template controller export of an empty applications
+        private const string TEMPLATE_CONTROLLER_AND_APPLICATIONS_FOLDER_NAME = "EmptyConfig";
 
         #endregion
 
@@ -1088,7 +1077,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
         }
 
-        public string WEBAgentPageAjaxVirtualPageRulesIndexFilePath(JobTarget jobTarget)
+        public string WEBPageAjaxVirtualPageRulesIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -1131,7 +1120,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
         }
 
-        public string WEBAgentPageAjaxVirtualPageRulesReportFilePath()
+        public string WEBPageAjaxVirtualPageRulesReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -3134,114 +3123,42 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_LICENSE_ACCOUNT_FILE_NAME);
         }
 
-        public string LicenseDataFilePath(JobTarget jobTarget)
+        public string LicenseModulesDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_FILE_NAME);
+                EXTRACT_LICENSE_MODULES_FILE_NAME);
         }
 
-        public string LicenseUsageSummaryAllExceptEUMDataFilePath(JobTarget jobTarget)
+        public string LicenseModulePropertiesDataFilePath(JobTarget jobTarget, string licenseModuleName)
         {
+            string reportFileName = String.Format(
+                EXTRACT_LICENSE_MODULE_PROPERTIES_FILE_NAME,
+                licenseModuleName);
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_SUMMARY_FILE_NAME);
+                reportFileName);
         }
 
-        public string LicenseUsageSummaryEUMDataFilePath(JobTarget jobTarget)
+        public string LicenseModuleUsagesDataFilePath(JobTarget jobTarget, string licenseModuleName)
         {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_EUM_USAGE_SUMMARY_FILE_NAME);
-        }
+            string reportFileName = String.Format(
+                EXTRACT_LICENSE_MODULE_USAGES_FILE_NAME,
+                licenseModuleName);
 
-        public string LicenseUsageAPMDataFilePath(JobTarget jobTarget)
-        {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_APM_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageDatabaseVisibilityDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_DB_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageMachineAgentDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_MA_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageSIMDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_SIM_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageServiceAvailabilityDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_SA_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageNetworkVisibilityDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_NETVIZ_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageTransactionAnalyticsDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_TX_ANALYTICS_DETAIL_FILE_NAME);
-        }
-
-        public string LicenseUsageLogAnalyticsDataFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                LICENSE_FOLDER_NAME,
-                EXTRACT_LICENSE_USAGE_LOG_ANALYTICS_DETAIL_FILE_NAME);
+                reportFileName);
         }
 
         public string LicenseRulesDataFilePath(JobTarget jobTarget)
@@ -4118,11 +4035,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Configuration Comparison Data
 
-        public string TemplateApplicationConfigurationFilePath()
+        public string TemplateControllerConfigurationSourceFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.ProgramLocationFolderPath,
-                TEMPLATE_APPLICATION_CONFIGURATION_FILE_NAME);
+                TEMPLATE_CONTROLLER_AND_APPLICATIONS_FOLDER_NAME);
+        }
+
+        public string TemplateControllerConfigurationTargetFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME);
         }
 
         #endregion
@@ -4131,13 +4055,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public string ConfigurationComparisonIndexFilePath(JobTarget jobTarget)
         {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                CONFIGURATION_COMPARISON_FOLDER_NAME,
-                CONFIGURATION_DIFFERENCES_FILE_NAME);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    CONFIGURATION_COMPARISON_FOLDER_NAME,
+                    CONFIGURATION_DIFFERENCES_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_COMPARISON_FOLDER_NAME,
+                    CONFIGURATION_DIFFERENCES_FILE_NAME);
+            }
         }
 
         #endregion
@@ -5469,24 +5406,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionHourRangeFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction, JobTimeRange jobTimeRange)
-        {
-            string reportFileName = String.Format(
-                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_TIMERANGE_FILE_NAME,
-                jobTimeRange.From,
-                jobTimeRange.To);
-
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_SNAPSHOTS_FOLDER_NAME,
-                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
-                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
-                reportFileName);
-        }
-
         #endregion
 
         #region Snapshots Business Transaction
@@ -5582,19 +5501,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
 
-        public string SnapshotsMethodCallLinesOccurrencesIndexBusinessTransactionFilePath(JobTarget jobTarget, APMBusinessTransaction businessTransaction)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_SNAPSHOTS_FOLDER_NAME,
-                getShortenedEntityNameForFileSystem(businessTransaction.TierName, businessTransaction.TierID),
-                getShortenedEntityNameForFileSystem(businessTransaction.BTName, businessTransaction.BTID),
-                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
-        }
-
         #endregion
 
         #region Snapshots All
@@ -5674,17 +5580,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
-        }
-
-        public string SnapshotsMethodCallLinesOccurrencesIndexFilePath(JobTarget jobTarget)
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_SNAPSHOTS_FOLDER_NAME,
-                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
         #endregion
@@ -5953,15 +5848,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
-        }
-
-        public string SnapshotsMethodCallLinesOccurrencesReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
-                APM_SNAPSHOTS_FOLDER_NAME,
-                CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_OCCURRENCES_FILE_NAME);
         }
 
         public string ApplicationSnapshotsReportFilePath()

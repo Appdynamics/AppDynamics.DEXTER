@@ -22,7 +22,9 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsApplyToAllBTs { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumDetectedBackends { get; set; }
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string DetectedBackends { get; set; }
 
         public string RuleRawValue { get; set; }
@@ -47,7 +49,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "CustomExit";
+                return "APMCustomExitRule";
             }
         }
 

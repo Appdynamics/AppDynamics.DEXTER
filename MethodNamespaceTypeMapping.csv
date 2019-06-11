@@ -41,6 +41,8 @@ com.fasterxml.jackson.databind,Jackson DataBind,C2961D,E3B022,000000
 com.filenet,FileNet,98b023,b3cc33,000000
 com.google,Google Core,FBBC05,FCD049,000000
 com.guidewire,Guidewire,BA90FC,C5A7FC,000000
+com.hybris,SAP Hybris,0069B6,00A6E8,FFFFFF
+de.hybris,SAP Hybris,0069B6,00A6E8,FFFFFF
 com.ibatis,Ibatis ORM,60bfb4,79e0d4,000000
 com.ibm,IBM Core,00BFA9,35CCBA,000000
 com.inet.ora,Inet Oracle JDBC Driver,36ffc3,9ffce0,000000
@@ -85,17 +87,17 @@ custom03,Custom Mapping for Flame Graphs,fcd121,fcd94c,000000
 custom04,Custom Mapping for Flame Graphs,fc911e,ffa647,000000
 custom05,Custom Mapping for Flame Graphs,ff7a0d,fc9744,000000
 custom06,Custom Mapping for Flame Graphs,ff6219,ff9361,000000
-custom07,Custom Mapping for Flame Graphs,ff4314,fc7d5d,000000
+custom07,Custom Mapping for Flame Graphs,62fcce,8affdc,000000
 custom08,Custom Mapping for Flame Graphs,f0757e,f29ba1,000000
-custom09,Custom Mapping for Flame Graphs,f5254e,f5627f,000000
+custom09,Custom Mapping for Flame Graphs,12588b,226494,FFFFFF
 custom10,Custom Mapping for Flame Graphs,FE5810,FF8754,000000
 custom11,Custom Mapping for Flame Graphs,ad5fc9,c169e0,000000
 custom12,Custom Mapping for Flame Graphs,bb9bc7,d8b3e6,000000
 custom13,Custom Mapping for Flame Graphs,f20ab0,f549c4,000000
-custom14,Custom Mapping for Flame Graphs,e3396f,f25587,000000
+custom14,Custom Mapping for Flame Graphs,7668CF,978FCF,FFFFFF
 custom15,Custom Mapping for Flame Graphs,f7abc3,ffd1e0,000000
-custom16,Custom Mapping for Flame Graphs,e31414,e34b4b,FFFFFF
-custom17,Custom Mapping for Flame Graphs,940303,b02727,FFFFFF
+custom16,Custom Mapping for Flame Graphs,8abfb9,a7d6d1,000000
+custom17,Custom Mapping for Flame Graphs,c5d186,e1f099,000000
 custom18,Custom Mapping for Flame Graphs,c4d14d,e1f059,000000
 custom19,Custom Mapping for Flame Graphs,e4ff36,ecff73,000000
 custom20,Custom Mapping for Flame Graphs,d17c15,f09322,000000

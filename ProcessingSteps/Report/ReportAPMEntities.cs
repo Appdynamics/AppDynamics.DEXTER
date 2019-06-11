@@ -1028,6 +1028,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_BACKENDS_TYPE);
                     setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "IsExplicitRule");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "BackendName");
@@ -1082,6 +1083,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_BUSINESS_TRANSACTIONS_TYPE);
                     setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "IsExplicitRule");
                     addFilterFieldToPivot(pivot, "IsRenamed");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");

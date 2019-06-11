@@ -4,6 +4,7 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class APMApplicationConfiguration : ConfigurationEntityBase
     {
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public string ApplicationDescription { get; set; }
 
         [FieldComparison(FieldComparisonType.ValueComparison)]

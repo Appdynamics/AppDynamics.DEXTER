@@ -406,7 +406,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["AccountName"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["AgentType"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["StartDate"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ExpirationDate"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["From"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["To"].Position + 1).Width = 20;
@@ -417,10 +416,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet = excelReport.Workbook.Worksheets[SHEET_LICENSES_TYPE_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_LICENSES_TYPE);
                     setDefaultPivotTableSettings(pivot);
-                    addFilterFieldToPivot(pivot, "Licenses", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "Edition", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "Model", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "Controller");
                     addColumnFieldToPivot(pivot, "AgentType");
-                    addDataFieldToPivot(pivot, "Peak", DataFieldFunctions.Sum);
+                    addDataFieldToPivot(pivot, "Average", DataFieldFunctions.Sum);
 
                     ExcelChart chart = sheet.Drawings.AddChart(GRAPH_LICENSES_TYPE, eChartType.ColumnClustered, pivot);
                     chart.SetPosition(2, 0, 0, 0);
@@ -463,7 +463,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "Controller", eSortType.Ascending);
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "Value", DataFieldFunctions.Average);
+                    addDataFieldToPivot(pivot, "Average", DataFieldFunctions.Average);
 
                     ExcelChart chart = sheet.Drawings.AddChart(GRAPH_LICENSES_USAGE_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
@@ -553,7 +553,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "Controller", eSortType.Ascending);
                     addColumnFieldToPivot(pivot, "RuleName", eSortType.Ascending);
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "Value", DataFieldFunctions.Average);
+                    addDataFieldToPivot(pivot, "Average", DataFieldFunctions.Average);
 
                     ExcelChart chart = sheet.Drawings.AddChart(GRAPH_LICENSE_RULES_USAGE_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);

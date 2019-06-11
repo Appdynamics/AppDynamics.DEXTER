@@ -57,7 +57,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "MIDC";
+                return "APMMIDC";
             }
         }
 

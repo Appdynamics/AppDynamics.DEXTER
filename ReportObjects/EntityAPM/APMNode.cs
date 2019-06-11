@@ -41,8 +41,8 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string AgentRuntime { get; set; }
 
-        public bool IsLicenseAgentUsed { get; set; }
-        public bool IsLicenseMachineUsed { get; set; }
+        public bool IsAPMAgentUsed { get; set; }
+        public bool IsMachineAgentUsed { get; set; }
 
         public override long EntityID
         {

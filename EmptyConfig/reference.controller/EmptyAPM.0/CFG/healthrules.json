@@ -1,0 +1,1215 @@
+﻿[ {
+  "id" : 11840,
+  "version" : 0,
+  "name" : "Business Transaction response time is much higher than normal",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435040,
+    "version" : 0,
+    "aemcType" : "BT_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "ALL",
+    "businessTransactionIds" : [ ],
+    "nameMatch" : null
+  },
+  "type" : "BUSINESS_TRANSACTION",
+  "description" : "Average Response Time (ms) is > 2 : 3 standard deviation of the default baseline and Calls per Minute is > 50 per minute for the last 30 minutes",
+  "enabled" : true,
+  "critical" : {
+    "id" : 31849,
+    "version" : 0,
+    "condition" : {
+      "id" : 69365,
+      "version" : 0,
+      "type" : "POLICY_BOOLEAN_CONDITION",
+      "operator" : "AND",
+      "condition1" : {
+        "id" : 69366,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Average Response Time (ms)",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 3.0,
+        "valueUnitType" : "BASELINE_STANDARD_DEVIATION",
+        "useActiveBaseline" : true,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Average Response Time (ms) Baseline Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      },
+      "condition2" : {
+        "id" : 69367,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Calls per Minute",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 50.0,
+        "valueUnitType" : "ABSOLUTE",
+        "useActiveBaseline" : false,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Calls per Minute Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      }
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31850,
+    "version" : 0,
+    "condition" : {
+      "id" : 69368,
+      "version" : 0,
+      "type" : "POLICY_BOOLEAN_CONDITION",
+      "operator" : "AND",
+      "condition1" : {
+        "id" : 69369,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Average Response Time (ms)",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 2.0,
+        "valueUnitType" : "BASELINE_STANDARD_DEVIATION",
+        "useActiveBaseline" : true,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Average Response Time (ms) Baseline Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      },
+      "condition2" : {
+        "id" : 69370,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Calls per Minute",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 100.0,
+        "valueUnitType" : "ABSOLUTE",
+        "useActiveBaseline" : false,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Calls per Minute Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      }
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11841,
+  "version" : 0,
+  "name" : "Business Transaction error rate is much higher than normal",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435041,
+    "version" : 0,
+    "aemcType" : "BT_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "ALL",
+    "businessTransactionIds" : [ ],
+    "nameMatch" : null
+  },
+  "type" : "BUSINESS_TRANSACTION",
+  "description" : "Errors per Minute is > 2 : 3 standard deviation of the default baseline and Errors per Minute is > 10 per minute and Calls per Minute is > 50 per minute for the last 30 minutes",
+  "enabled" : true,
+  "critical" : {
+    "id" : 31851,
+    "version" : 0,
+    "condition" : {
+      "id" : 69371,
+      "version" : 0,
+      "type" : "POLICY_BOOLEAN_CONDITION",
+      "operator" : "AND",
+      "condition1" : {
+        "id" : 69372,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Errors per Minute",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 3.0,
+        "valueUnitType" : "BASELINE_STANDARD_DEVIATION",
+        "useActiveBaseline" : true,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Errors per Minute Baseline Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      },
+      "condition2" : {
+        "id" : 69373,
+        "version" : 0,
+        "type" : "POLICY_BOOLEAN_CONDITION",
+        "operator" : "AND",
+        "condition1" : {
+          "id" : 69374,
+          "version" : 0,
+          "type" : "POLICY_LEAF_CONDITION",
+          "metricExpression" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Errors per Minute",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "SUM",
+            "displayName" : "null",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : "GREATER_THAN",
+          "value" : 10.0,
+          "valueUnitType" : "ABSOLUTE",
+          "useActiveBaseline" : false,
+          "baselineId" : 0,
+          "conditionExpression" : null,
+          "conditionDisplayName" : "Errors per Minute Condition",
+          "conditionValueFunction" : null,
+          "entityDefs" : [ ],
+          "metrics" : [ ],
+          "triggerOnNoData" : false
+        },
+        "condition2" : {
+          "id" : 69375,
+          "version" : 0,
+          "type" : "POLICY_LEAF_CONDITION",
+          "metricExpression" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Calls per Minute",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "null",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : "GREATER_THAN",
+          "value" : 50.0,
+          "valueUnitType" : "ABSOLUTE",
+          "useActiveBaseline" : false,
+          "baselineId" : 0,
+          "conditionExpression" : null,
+          "conditionDisplayName" : "Calls per Minute Condition",
+          "conditionValueFunction" : null,
+          "entityDefs" : [ ],
+          "metrics" : [ ],
+          "triggerOnNoData" : false
+        }
+      }
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31852,
+    "version" : 0,
+    "condition" : {
+      "id" : 69376,
+      "version" : 0,
+      "type" : "POLICY_BOOLEAN_CONDITION",
+      "operator" : "AND",
+      "condition1" : {
+        "id" : 69377,
+        "version" : 0,
+        "type" : "POLICY_LEAF_CONDITION",
+        "metricExpression" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : false,
+          "literalValue" : 0,
+          "metricDefinition" : {
+            "type" : "LOGICAL_METRIC",
+            "logicalMetricName" : "Errors per Minute",
+            "scope" : null,
+            "metricId" : 0
+          },
+          "functionType" : "VALUE",
+          "displayName" : "null",
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 0
+        },
+        "operator" : "GREATER_THAN",
+        "value" : 2.0,
+        "valueUnitType" : "BASELINE_STANDARD_DEVIATION",
+        "useActiveBaseline" : true,
+        "baselineId" : 0,
+        "conditionExpression" : null,
+        "conditionDisplayName" : "Errors per Minute Baseline Condition",
+        "conditionValueFunction" : null,
+        "entityDefs" : [ ],
+        "metrics" : [ ],
+        "triggerOnNoData" : false
+      },
+      "condition2" : {
+        "id" : 69378,
+        "version" : 0,
+        "type" : "POLICY_BOOLEAN_CONDITION",
+        "operator" : "AND",
+        "condition1" : {
+          "id" : 69379,
+          "version" : 0,
+          "type" : "POLICY_LEAF_CONDITION",
+          "metricExpression" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Errors per Minute",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "SUM",
+            "displayName" : "null",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : "GREATER_THAN",
+          "value" : 5.0,
+          "valueUnitType" : "ABSOLUTE",
+          "useActiveBaseline" : false,
+          "baselineId" : 0,
+          "conditionExpression" : null,
+          "conditionDisplayName" : "Errors per Minute Condition",
+          "conditionValueFunction" : null,
+          "entityDefs" : [ ],
+          "metrics" : [ ],
+          "triggerOnNoData" : false
+        },
+        "condition2" : {
+          "id" : 69380,
+          "version" : 0,
+          "type" : "POLICY_LEAF_CONDITION",
+          "metricExpression" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Calls per Minute",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "null",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : "GREATER_THAN",
+          "value" : 50.0,
+          "valueUnitType" : "ABSOLUTE",
+          "useActiveBaseline" : false,
+          "baselineId" : 0,
+          "conditionExpression" : null,
+          "conditionDisplayName" : "Calls per Minute Condition",
+          "conditionValueFunction" : null,
+          "entityDefs" : [ ],
+          "metrics" : [ ],
+          "triggerOnNoData" : false
+        }
+      }
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11842,
+  "version" : 0,
+  "name" : "CPU utilization is too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435042,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31228,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : null
+    }
+  },
+  "type" : "INFRASTRUCTURE",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31853,
+    "version" : 0,
+    "condition" : {
+      "id" : 69381,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "Hardware Resources|CPU|%Busy",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 90.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "Hardware Resources|CPU|%Busy Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31854,
+    "version" : 0,
+    "condition" : {
+      "id" : 69382,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "Hardware Resources|CPU|%Busy",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 75.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "Hardware Resources|CPU|%Busy Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11843,
+  "version" : 0,
+  "name" : "Memory utilization is too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435043,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31229,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : null
+    }
+  },
+  "type" : "INFRASTRUCTURE",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31855,
+    "version" : 0,
+    "condition" : {
+      "id" : 69383,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "Hardware Resources|Memory|Used %",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 90.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "Hardware Resources|Memory|Used % Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31856,
+    "version" : 0,
+    "condition" : {
+      "id" : 69384,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "Hardware Resources|Memory|Used %",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 75.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "Hardware Resources|Memory|Used % Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11844,
+  "version" : 0,
+  "name" : "JVM Heap utilization is too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435044,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31230,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : [ "APP_AGENT" ]
+    }
+  },
+  "type" : "INFRASTRUCTURE",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31857,
+    "version" : 0,
+    "condition" : {
+      "id" : 69385,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "JVM|Memory:Heap|Used %",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 90.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "JVM|Memory:Heap|Used % Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31858,
+    "version" : 0,
+    "condition" : {
+      "id" : 69386,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "JVM|Memory:Heap|Used %",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 75.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "JVM|Memory:Heap|Used % Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11845,
+  "version" : 0,
+  "name" : "JVM Garbage Collection Time is too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435045,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31231,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : [ "APP_AGENT" ]
+    }
+  },
+  "type" : "INFRASTRUCTURE",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31859,
+    "version" : 0,
+    "condition" : {
+      "id" : 69387,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "JVM|Garbage Collection|GC Time Spent Per Min (ms)",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 45000.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "JVM|Garbage Collection|GC Time Spent Per Min (ms) Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31860,
+    "version" : 0,
+    "condition" : {
+      "id" : 69388,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "JVM|Garbage Collection|GC Time Spent Per Min (ms)",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 30000.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "JVM|Garbage Collection|GC Time Spent Per Min (ms) Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11846,
+  "version" : 0,
+  "name" : "CLR Garbage Collection Time is too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435046,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31232,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : [ "DOT_NET_APP_AGENT" ]
+    }
+  },
+  "type" : "INFRASTRUCTURE",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31861,
+    "version" : 0,
+    "condition" : {
+      "id" : 69389,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "CLR|Garbage Collection|GC Time Spent (%)",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 75.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "CLR|Garbage Collection|GC Time Spent (%) Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31862,
+    "version" : 0,
+    "condition" : {
+      "id" : 69390,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "LEAF_METRIC_EXPRESSION",
+        "literalValueExpression" : false,
+        "literalValue" : 0,
+        "metricDefinition" : {
+          "type" : "LOGICAL_METRIC",
+          "logicalMetricName" : "CLR|Garbage Collection|GC Time Spent (%)",
+          "scope" : null,
+          "metricId" : 0
+        },
+        "functionType" : "VALUE",
+        "displayName" : "null",
+        "inputMetricText" : false,
+        "inputMetricPath" : null,
+        "value" : 0
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 50.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : null,
+      "conditionDisplayName" : "CLR|Garbage Collection|GC Time Spent (%) Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "AGGREGATE",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+}, {
+  "id" : 11847,
+  "version" : 0,
+  "name" : "Network-Host : Packet drops too high",
+  "nameUnique" : true,
+  "applicationId" : 1754,
+  "affectedEntityDefinitionRule" : {
+    "id" : 435047,
+    "version" : 0,
+    "aemcType" : "INFRASTRUCTURE_AFFECTED_EMC",
+    "componentIds" : [ ],
+    "missingEntities" : null,
+    "type" : "NODES",
+    "nodeMatchCriteria" : {
+      "id" : 31233,
+      "version" : 0,
+      "nodeIds" : null,
+      "componentIds" : null,
+      "nodeNameMatchCriteria" : null,
+      "nodeMetaInfoMatchCritera" : null,
+      "latestVmSystemProperties" : null,
+      "latestEnvironmentVariables" : null,
+      "type" : "ANY",
+      "nodeTypes" : null
+    }
+  },
+  "type" : "NETVIZ",
+  "description" : null,
+  "enabled" : true,
+  "critical" : {
+    "id" : 31863,
+    "version" : 0,
+    "condition" : {
+      "id" : 69391,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "BOOLEAN_METRIC_EXPRESSION",
+        "expression1" : {
+          "type" : "BOOLEAN_METRIC_EXPRESSION",
+          "expression1" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Dropped Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Dropped Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "expression2" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Received Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Received Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : {
+            "type" : "DIVIDE"
+          }
+        },
+        "expression2" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : true,
+          "literalValue" : 100,
+          "metricDefinition" : null,
+          "functionType" : null,
+          "displayName" : null,
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 100
+        },
+        "operator" : {
+          "type" : "MULTIPLY"
+        }
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 5.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : "({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100",
+      "conditionDisplayName" : "Packet Drop Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "ANY",
+      "value" : 0
+    }
+  },
+  "warning" : {
+    "id" : 31864,
+    "version" : 0,
+    "condition" : {
+      "id" : 69392,
+      "version" : 0,
+      "type" : "POLICY_LEAF_CONDITION",
+      "metricExpression" : {
+        "type" : "BOOLEAN_METRIC_EXPRESSION",
+        "expression1" : {
+          "type" : "BOOLEAN_METRIC_EXPRESSION",
+          "expression1" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Dropped Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Dropped Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "expression2" : {
+            "type" : "LEAF_METRIC_EXPRESSION",
+            "literalValueExpression" : false,
+            "literalValue" : 0,
+            "metricDefinition" : {
+              "type" : "LOGICAL_METRIC",
+              "logicalMetricName" : "Advanced Network|Host|PCAP|Interface|Packets Received Per Sec",
+              "scope" : null,
+              "metricId" : 0
+            },
+            "functionType" : "VALUE",
+            "displayName" : "Packets Received Per Sec",
+            "inputMetricText" : false,
+            "inputMetricPath" : null,
+            "value" : 0
+          },
+          "operator" : {
+            "type" : "DIVIDE"
+          }
+        },
+        "expression2" : {
+          "type" : "LEAF_METRIC_EXPRESSION",
+          "literalValueExpression" : true,
+          "literalValue" : 100,
+          "metricDefinition" : null,
+          "functionType" : null,
+          "displayName" : null,
+          "inputMetricText" : false,
+          "inputMetricPath" : null,
+          "value" : 100
+        },
+        "operator" : {
+          "type" : "MULTIPLY"
+        }
+      },
+      "operator" : "GREATER_THAN",
+      "value" : 3.0,
+      "valueUnitType" : "ABSOLUTE",
+      "useActiveBaseline" : false,
+      "baselineId" : 0,
+      "conditionExpression" : "({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100",
+      "conditionDisplayName" : "Packet Drop Condition",
+      "conditionValueFunction" : null,
+      "entityDefs" : [ ],
+      "metrics" : [ ],
+      "triggerOnNoData" : false
+    },
+    "entityAggregationScope" : {
+      "type" : "ANY",
+      "value" : 0
+    }
+  },
+  "durationInMinutes" : 30,
+  "waitTimeInMinutes" : 30,
+  "schedule" : 0,
+  "alwaysEnabled" : true,
+  "defaultPolicy" : true,
+  "createdBy" : null,
+  "modifiedBy" : null
+} ]

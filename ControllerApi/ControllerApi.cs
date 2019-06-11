@@ -1568,15 +1568,34 @@ namespace AppDynamics.Dexter
             return this.apiGET("controller/restui/user/account", "application/json", true);
         }
 
+        public string GetLicenseModules(long accountID)
+        {
+            return this.apiGET(String.Format("api/accounts/{0}/licensemodules", accountID), "application/vnd.appd.cntrl+json", false);
+        }
+
+        public string GetLicenseModuleProperties(long accountID, string licenseModule)
+        {
+            return this.apiGET(String.Format("api/accounts/{0}/licensemodules/{1}/properties", accountID, licenseModule), "application/vnd.appd.cntrl+json", false);
+        }
+
+        public string GetLicenseModuleUsages(long accountID, string licenseModule, DateTime from, DateTime to)
+        {
+            // I really want to use {0:o} but our Controller chokes on this:
+            //     yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK
+            //                                   ^^^^^^^^^
+            
+            return this.apiGET(String.Format("api/accounts/{0}/licensemodules/{1}/usages?startdate={2:yyyy-MM-ddTHH:mm:ssK}&enddate={3:yyyy-MM-ddTHH:mm:ssK}&showfiveminutesresolution=false", accountID, licenseModule, from, to), "application/vnd.appd.cntrl+json", false);
+        }
+
         public string GetLicense(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
-}}";
+        	""type"": ""BETWEEN_TIMES"",
+        	""startTime"": {0},
+        	""endTime"": {1},
+        	""durationInMinutes"": {2}
+        }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1590,11 +1609,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
-}}";
+        	""type"": ""BETWEEN_TIMES"",
+        	""startTime"": {0},
+        	""endTime"": {1},
+        	""durationInMinutes"": {2}
+        }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1608,11 +1627,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
-}}";
+        	""type"": ""BETWEEN_TIMES"",
+        	""startTime"": {0},
+        	""endTime"": {1},
+        	""durationInMinutes"": {2}
+        }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1626,11 +1645,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
-}}";
+        	""type"": ""BETWEEN_TIMES"",
+        	""startTime"": {0},
+        	""endTime"": {1},
+        	""durationInMinutes"": {2}
+        }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1679,13 +1698,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2},
-    ""timeRange"": null,
-    ""timeRangeAdjusted"":false
-}}";
+        	""type"": ""BETWEEN_TIMES"",
+        	""startTime"": {0},
+        	""endTime"": {1},
+        	""durationInMinutes"": {2},
+            ""timeRange"": null,
+            ""timeRangeAdjusted"":false
+        }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1695,32 +1714,19 @@ namespace AppDynamics.Dexter
             return this.apiPOST(String.Format("controller/restui/licenseRule/getAccountUsageGraphData/{0}", licenseType), "application/json", requestBody, "application/json", true);
         }
 
-        public string GetLicenseRules(long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
-        {
-            string requestJSONTemplate =
-@"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
-}}";
-
-            string requestBody = String.Format(requestJSONTemplate,
-                startTimeInUnixEpochFormat,
-                endTimeInUnixEpochFormat,
-                durationBetweenTimes);
-
-            return this.apiPOST("controller/restui/licenseRule/getAllRulesSummary", "application/json", requestBody, "application/json", true);
+        public string GetLicenseRules()
+        {        
+            return this.apiGET("/mds/v1/license/rules", "application/json", false);
         }
 
         public string GetLicenseRuleUsage(string ruleID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
         {
             string requestJSONTemplate =
 @"{{
-	""type"": ""BETWEEN_TIMES"",
-	""startTime"": {0},
-	""endTime"": {1},
-	""durationInMinutes"": {2}
+    ""type"": ""BETWEEN_TIMES"",
+    ""startTime"": {0},
+    ""endTime"": {1},
+    ""durationInMinutes"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1733,7 +1739,7 @@ namespace AppDynamics.Dexter
 
         public string GetLicenseRuleConfiguration(string ruleID)
         {
-            return this.apiGET(String.Format("controller/restui/licenseRule/getRuleById/{0}", ruleID), "application/json", true);
+            return this.apiGET(String.Format("mds/v1/license/rules/{0}", ruleID), "application/json", false);
         }
 
         public string GetControllerApplicationsForLicenseRule()

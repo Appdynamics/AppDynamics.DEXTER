@@ -497,7 +497,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         if (foldedStackLine.ExitCallsArray[i - 1].Length > 0)
                         {
-                            flameGraphBox.Exits = Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLine.ExitCallsArray[i - 1]));
+                            try
+                            {
+                                flameGraphBox.Exits = XmlConvert.VerifyXmlChars(Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLine.ExitCallsArray[i - 1])));
+                            }
+                            catch (XmlException ex)
+                            {
+                                // When this is thrown, that means that there are invalid characters. Encode the string then.
+                                flameGraphBox.Exits = XmlConvert.EncodeName(Encoding.UTF8.GetString(Convert.FromBase64String(foldedStackLine.ExitCallsArray[i - 1])));
+                            }
                         }
                     }
 

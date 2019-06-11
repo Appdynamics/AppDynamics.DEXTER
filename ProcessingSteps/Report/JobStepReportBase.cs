@@ -177,7 +177,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[l, 2].Value = jobConfiguration.Input.TimeRange.From.ToString("G");
             sheet.Cells[l, 3].Value = jobConfiguration.Input.TimeRange.To.ToString("G");
             l++;
-            sheet.Cells[l, 1].Value = "Number of Hours Intervals";
+            sheet.Cells[l, 1].Value = "Number of Hour Intervals";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.HourlyTimeRanges.Count;
             l++;
             sheet.Cells[l, 1].Value = "Export Entities";

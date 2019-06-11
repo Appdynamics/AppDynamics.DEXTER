@@ -30,7 +30,9 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string Parameters { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumDetectedBTs { get; set; }
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string DetectedBTs { get; set; }
 
         public string RuleRawValue { get; set; }
@@ -55,7 +57,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return "BTEntryRule";
+                return "APMBTEntryRule";
             }
         }
 
