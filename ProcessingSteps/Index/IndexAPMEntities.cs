@@ -889,6 +889,112 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        #region Overflow Business Transactions
+
+                        List<APMBusinessTransaction> unregisteredBusinessTransactionsList = null;
+                        Dictionary<string, APMBusinessTransaction> unregisteredBusinessTransactionsDictionary = null;
+                        if (tiersRESTList != null && tiersList != null)
+                        {
+                            loggerConsole.Info("Index List of Unregistered Business Transactions in Tiers ({0} entities)", tiersRESTList.Count);
+
+                            unregisteredBusinessTransactionsList = new List<APMBusinessTransaction>(tiersRESTList.Count * 50);
+                            unregisteredBusinessTransactionsDictionary = new Dictionary<string, APMBusinessTransaction>(tiersRESTList.Count * 50);
+
+                            foreach (AppDRESTTier tierREST in tiersRESTList)
+                            {
+                                APMTier tier = tiersList.Where(t => t.TierID == tierREST.id).FirstOrDefault();                                
+
+                                if (tier != null)
+                                {
+                                    JArray droppedBTsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMTierOverflowBusinessTransactionRegularDataFilePath(jobTarget, tierREST));
+                                    JArray droppedBTsDebugModeArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMTierOverflowBusinessTransactionRegularDataFilePath(jobTarget, tierREST));
+
+                                    if (droppedBTsArray != null)
+                                    {
+                                        foreach (JObject unregisteredBusinessTransactionObject in droppedBTsArray)
+                                        {
+                                            string btName = getStringValueFromJToken(unregisteredBusinessTransactionObject, "name");
+                                            if (unregisteredBusinessTransactionsDictionary.ContainsKey(btName) == true)
+                                            {
+                                                APMBusinessTransaction unregisteredBusinessTransaction = unregisteredBusinessTransactionsDictionary[btName];
+                                                unregisteredBusinessTransaction.Calls += getLongValueFromJToken(unregisteredBusinessTransactionObject, "count");
+                                            }
+                                            else
+                                            {
+                                                APMBusinessTransaction unregisteredBusinessTransaction = new APMBusinessTransaction();
+                                                unregisteredBusinessTransaction.ApplicationID = jobTarget.ApplicationID;
+                                                unregisteredBusinessTransaction.ApplicationName = jobTarget.Application;
+                                                unregisteredBusinessTransaction.BTID = -1;
+                                                unregisteredBusinessTransaction.BTName = btName;
+                                                unregisteredBusinessTransaction.BTNameOriginal = btName;
+                                                unregisteredBusinessTransaction.IsRenamed = false;
+                                                unregisteredBusinessTransaction.BTType = getStringValueFromJToken(unregisteredBusinessTransactionObject, "type"); ;
+                                                unregisteredBusinessTransaction.Controller = jobTarget.Controller;
+                                                unregisteredBusinessTransaction.TierID = tier.TierID;
+                                                unregisteredBusinessTransaction.TierName = tier.TierName;
+
+                                                unregisteredBusinessTransaction.Calls = getLongValueFromJToken(unregisteredBusinessTransactionObject, "count");
+
+                                                updateEntityWithDeeplinks(unregisteredBusinessTransaction);
+
+                                                unregisteredBusinessTransactionsList.Add(unregisteredBusinessTransaction);
+                                                unregisteredBusinessTransactionsDictionary.Add(unregisteredBusinessTransaction.BTName, unregisteredBusinessTransaction);
+                                            }
+                                        }
+                                    }
+
+                                    #region Debug mode Overflow BT counting
+
+                                    // It appears that the array in debug mode produces the same counts
+                                    // It just contains the node name of the APM agent that tried to register this BT is 
+                                    //if (droppedBTsDebugModeArray != null)
+                                    //{
+                                    //    foreach (JObject unregisteredBusinessTransactionObject in droppedBTsArray)
+                                    //    {
+                                    //        string btName = getStringValueFromJToken(unregisteredBusinessTransactionObject, "name");
+                                    //        if (unregisteredBusinessTransactionsDictionary.ContainsKey(btName) == true)
+                                    //        {
+                                    //            APMBusinessTransaction unregisteredBusinessTransaction = unregisteredBusinessTransactionsDictionary[btName];
+                                    //            unregisteredBusinessTransaction.Calls += getLongValueFromJToken(unregisteredBusinessTransactionObject, "count");
+                                    //        }
+                                    //        else
+                                    //        {
+                                    //            APMBusinessTransaction unregisteredBusinessTransaction = new APMBusinessTransaction();
+                                    //            unregisteredBusinessTransaction.ApplicationID = jobTarget.ApplicationID;
+                                    //            unregisteredBusinessTransaction.ApplicationName = jobTarget.Application;
+                                    //            unregisteredBusinessTransaction.BTID = -1;
+                                    //            unregisteredBusinessTransaction.BTName = btName;
+                                    //            unregisteredBusinessTransaction.BTNameOriginal = btName;
+                                    //            unregisteredBusinessTransaction.IsRenamed = false;
+                                    //            unregisteredBusinessTransaction.BTType = getStringValueFromJToken(unregisteredBusinessTransactionObject, "type"); ;
+                                    //            unregisteredBusinessTransaction.Controller = jobTarget.Controller;
+                                    //            unregisteredBusinessTransaction.TierID = tier.TierID;
+                                    //            unregisteredBusinessTransaction.TierName = tier.TierName;
+
+                                    //            unregisteredBusinessTransaction.Calls = getLongValueFromJToken(unregisteredBusinessTransactionObject, "count");
+
+                                    //            updateEntityWithDeeplinks(unregisteredBusinessTransaction);
+
+                                    //            unregisteredBusinessTransactionsList.Add(unregisteredBusinessTransaction);
+                                    //            unregisteredBusinessTransactionsDictionary.Add(unregisteredBusinessTransaction.BTName, unregisteredBusinessTransaction);
+                                    //        }
+                                    //    }
+                                    //}
+
+                                    #endregion
+                                }
+                            }
+
+                            // Sort them
+                            unregisteredBusinessTransactionsList = unregisteredBusinessTransactionsList.OrderBy(o => o.TierName).ThenBy(o => o.BTName).ToList();
+
+                            FileIOHelper.WriteListToCSVFile(unregisteredBusinessTransactionsList, new APMOverflowBusinessTransactionReportMap(), FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget));
+
+                            stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + unregisteredBusinessTransactionsList.Count;
+                        }
+
+                        #endregion
+
                         #region Application
 
                         JArray applicationsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMApplicationDataFilePath(jobTarget));
@@ -969,6 +1075,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMBusinessTransactionsReportFilePath(), FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMOverflowBusinessTransactionsReportFilePath(), FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.APMServiceEndpointsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMServiceEndpointsIndexFilePath(jobTarget)).Length > 0)
                         {

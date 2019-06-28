@@ -17,6 +17,9 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string SEPType { get; set; }
 
+        public bool IsExplicitRule { get; set; }
+        public string RuleName { get; set; }
+
         public override long EntityID
         {
             get

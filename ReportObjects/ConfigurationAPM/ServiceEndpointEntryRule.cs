@@ -17,6 +17,11 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public string NamingConfigType { get; set; }
 
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public int NumDetectedSEPs { get; set; }
+        [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
+        public string DetectedSEPs { get; set; }
+
         [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string RuleRawValue { get; set; }
 
