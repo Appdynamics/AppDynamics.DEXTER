@@ -286,6 +286,32 @@ namespace AppDynamics.Dexter
             return this.GetAPMBusinessTransactions(applicationID.ToString());
         }
 
+        public string GetAPMBusinessTransactionsInOverflow(long tierID, long currentEventCount, long endEventID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            string requestJSONTemplate =
+@"{{
+	""componentId"": {0},
+	""timeRangeSpecifier"": {{
+		""type"": ""BETWEEN_TIMES"",
+		""startTime"": {3},
+		""endTime"": {4},
+		""durationInMinutes"": {5}
+	}},
+	""endEventId"": {2},
+	""currentFetchedEventCount"": {1}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                tierID,
+                currentEventCount,
+                endEventID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat,
+                durationBetweenTimes);
+
+            return this.apiPOST("controller/restui/overflowtraffic/event", "application/json", requestBody, "application/json", true);
+        }
+
         public string GetAPMBackends(string applicationName)
         {
             return this.apiGET(String.Format("controller/rest/applications/{0}/backends?output=JSON", applicationName), "application/json", false);
@@ -1591,11 +1617,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-        	""type"": ""BETWEEN_TIMES"",
-        	""startTime"": {0},
-        	""endTime"": {1},
-        	""durationInMinutes"": {2}
-        }}";
+    ""type"": ""BETWEEN_TIMES"",
+    ""startTime"": {0},
+    ""endTime"": {1},
+    ""durationInMinutes"": {2}
+}}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1609,11 +1635,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-        	""type"": ""BETWEEN_TIMES"",
-        	""startTime"": {0},
-        	""endTime"": {1},
-        	""durationInMinutes"": {2}
-        }}";
+    ""type"": ""BETWEEN_TIMES"",
+    ""startTime"": {0},
+    ""endTime"": {1},
+    ""durationInMinutes"": {2}
+}}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1627,11 +1653,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-        	""type"": ""BETWEEN_TIMES"",
-        	""startTime"": {0},
-        	""endTime"": {1},
-        	""durationInMinutes"": {2}
-        }}";
+    ""type"": ""BETWEEN_TIMES"",
+    ""startTime"": {0},
+    ""endTime"": {1},
+    ""durationInMinutes"": {2}
+}}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1645,11 +1671,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-        	""type"": ""BETWEEN_TIMES"",
-        	""startTime"": {0},
-        	""endTime"": {1},
-        	""durationInMinutes"": {2}
-        }}";
+    ""type"": ""BETWEEN_TIMES"",
+    ""startTime"": {0},
+    ""endTime"": {1},
+    ""durationInMinutes"": {2}
+}}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 startTimeInUnixEpochFormat,
@@ -1703,7 +1729,7 @@ namespace AppDynamics.Dexter
         	""endTime"": {1},
         	""durationInMinutes"": {2},
             ""timeRange"": null,
-            ""timeRangeAdjusted"":false
+            ""timeRangeAdjusted"": false
         }}";
 
             string requestBody = String.Format(requestJSONTemplate,

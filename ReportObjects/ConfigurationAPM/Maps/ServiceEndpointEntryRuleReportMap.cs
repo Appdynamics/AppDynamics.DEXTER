@@ -20,6 +20,9 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.DiscoveryType).Index(i); i++;
             Map(m => m.IsOverride).Index(i); i++;
 
+            Map(m => m.NumDetectedSEPs).Index(i); i++;
+            Map(m => m.DetectedSEPs).Index(i); i++;
+
             Map(m => m.RuleRawValue).Index(i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;

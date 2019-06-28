@@ -46,13 +46,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser" Version="1.9.71" />
+    <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="CsvHelper" Version="7.1.1" />
     <PackageReference Include="EPPlus" Version="4.5.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="NLog" Version="4.5.11" />
-    <PackageReference Include="NLog.Config" Version="4.5.11" />
-    <PackageReference Include="NLog.Schema" Version="4.5.11" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NLog" Version="4.6.5" />
+    <PackageReference Include="NLog.Config" Version="4.6.5" />
+    <PackageReference Include="NLog.Schema" Version="4.6.5" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
@@ -227,6 +227,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="ConfigCompare\reference.controller\EmptyWEB.0\ENT\webpages.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="CompareStates.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="EmptyConfig\reference.controller\CFG\controllerversion.xml">

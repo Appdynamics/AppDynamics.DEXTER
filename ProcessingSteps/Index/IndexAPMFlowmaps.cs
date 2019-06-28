@@ -69,11 +69,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int numEntitiesTotal = 0;
 
                         // Preload list of Tiers from APM metadata
+                        // Have to get it from the full list, not just for the local application, because of the cross-application calls
                         List<APMTier> tiersAllIndexedItemsList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
                         Dictionary<string, APMTier> tiersAllIndexedItemsDictionary = null;
                         if (tiersAllIndexedItemsList != null)
                         {
-                            tiersAllIndexedItemsDictionary = tiersAllIndexedItemsList.ToDictionary(e => string.Format("{0}/{1}", e.ApplicationID, e.EntityID), e => e.Clone());
+                            tiersAllIndexedItemsDictionary = tiersAllIndexedItemsList.Where(t => t.Controller.StartsWith(jobTarget.Controller)).ToDictionary(e => string.Format("{0}/{1}", e.ApplicationID, e.EntityID), e => e.Clone());
                         }
                         else
                         {

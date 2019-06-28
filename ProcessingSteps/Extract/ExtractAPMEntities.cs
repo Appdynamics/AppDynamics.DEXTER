@@ -2,6 +2,7 @@
 using AppDynamics.Dexter.Extensions;
 using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -71,6 +72,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
+
+                        #region Prepare time range
+
+                        long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.HourlyTimeRanges[jobConfiguration.Input.HourlyTimeRanges.Count - 1].From);
+                        long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobConfiguration.Input.HourlyTimeRanges[jobConfiguration.Input.HourlyTimeRanges.Count - 1].To);
+                        long differenceInMinutes = (toTimeUnix - fromTimeUnix) / (60000);
+
+                        #endregion
 
                         // Set up controller access
                         using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
@@ -279,6 +288,78 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 loggerConsole.Info("Completed {0} Tiers", tiersRESTList.Count);
 
                                 stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + tiersRESTList.Count;
+                            }
+
+                            #endregion
+
+                            #region Overflow Business Transactions
+
+                            if (tiersRESTList != null)
+                            {
+                                loggerConsole.Info("Contents of Overflow Business Transaction in Tiers ({0} entities)", tiersRESTList.Count);
+
+                                int j = 0;
+
+                                foreach (AppDRESTTier tier in tiersRESTList)
+                                {
+                                    JArray droppedBTsArray = new JArray();
+                                    JArray droppedBTsDebugModeArray = new JArray();
+
+                                    bool noMoreBTs = false;
+                                    long currentFetchedEventCount = 0;
+                                    long endEventID = 0;
+                                    while (noMoreBTs == false)
+                                    {
+                                        string batchOfBTsJSON = controllerApi.GetAPMBusinessTransactionsInOverflow(tier.id, currentFetchedEventCount, endEventID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+
+                                        if (batchOfBTsJSON != String.Empty)
+                                        {
+                                            JObject batchOfBTsContainer = JObject.Parse(batchOfBTsJSON);
+                                            if (batchOfBTsContainer != null)
+                                            {
+                                                // Copy out both of the containers, not sure why there are multiple
+                                                if (isTokenPropertyNull(batchOfBTsContainer, "droppedTransactionItemList") == false)
+                                                {
+                                                    foreach (JObject btObject in batchOfBTsContainer["droppedTransactionItemList"])
+                                                    {
+                                                        droppedBTsArray.Add(btObject);
+                                                    }
+                                                }
+                                                if (isTokenPropertyNull(batchOfBTsContainer, "debugModeDroppedTransactionItemList") == false)
+                                                {
+                                                    foreach (JObject btObject in batchOfBTsContainer["debugModeDroppedTransactionItemList"])
+                                                    {
+                                                        droppedBTsDebugModeArray.Add(btObject);
+                                                    }
+                                                }
+
+                                                currentFetchedEventCount = getLongValueFromJToken(batchOfBTsContainer, "eventSummariesCount");
+                                                endEventID = getLongValueFromJToken(batchOfBTsContainer, "endEventId");
+
+                                                if (currentFetchedEventCount == 0 || endEventID == 0)
+                                                {
+                                                    // Done getting batches
+                                                    noMoreBTs = true;
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            noMoreBTs = true;
+                                        }
+                                    }
+
+                                    if (droppedBTsArray.Count > 0) FileIOHelper.SaveFileToPath(droppedBTsArray.ToString(), FilePathMap.APMTierOverflowBusinessTransactionRegularDataFilePath(jobTarget, tier));
+                                    if (droppedBTsDebugModeArray.Count > 0) FileIOHelper.SaveFileToPath(droppedBTsDebugModeArray.ToString(), FilePathMap.APMTierOverflowBusinessTransactionDebugDataFilePath(jobTarget, tier));
+
+                                    if (j % 10 == 0)
+                                    {
+                                        Console.Write("[{0}].", j);
+                                    }
+                                    j++;
+                                }
+
+                                loggerConsole.Info("Completed {0} Tiers", tiersRESTList.Count);
                             }
 
                             #endregion

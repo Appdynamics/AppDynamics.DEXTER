@@ -87,6 +87,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // APM Metadata file names
         private const string EXTRACT_ENTITY_APPLICATION_FILE_NAME = "application.json";
         private const string EXTRACT_ENTITY_TIERS_FILE_NAME = "tiers.json";
+        private const string EXTRACT_ENTITY_TIER_BUSINESS_TRANSACTION_OVERFLOW_REGULAR_FILE_NAME = "overflowbt.regular.json";
+        private const string EXTRACT_ENTITY_TIER_BUSINESS_TRANSACTION_OVERFLOW_DEBUG_FILE_NAME = "overflowbt.debug.json";
         private const string EXTRACT_ENTITY_NODES_FILE_NAME = "nodes.json";
         private const string EXTRACT_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.json";
         private const string EXTRACT_ENTITY_BACKENDS_FILE_NAME = "backends.json";
@@ -229,6 +231,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_APM_NODE_PROPERTIES_FILE_NAME = "nodeproperties.csv";
         private const string CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME = "nodeenvironmentvariables.csv";
         private const string CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
+        private const string CONVERT_APM_OVERFLOW_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.overflow.csv";
         private const string CONVERT_APM_BACKENDS_FILE_NAME = "backends.csv";
         private const string CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME = "serviceendpoints.csv";
         private const string CONVERT_APM_ERRORS_FILE_NAME = "errors.csv";
@@ -524,6 +527,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_ENTITY_TIERS_FILE_NAME);
         }
 
+        public string APMTierOverflowBusinessTransactionRegularDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(tier.name, tier.id),
+                EXTRACT_ENTITY_TIER_BUSINESS_TRANSACTION_OVERFLOW_REGULAR_FILE_NAME);
+        }
+
+        public string APMTierOverflowBusinessTransactionDebugDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                getShortenedEntityNameForFileSystem(tier.name, tier.id),
+                EXTRACT_ENTITY_TIER_BUSINESS_TRANSACTION_OVERFLOW_DEBUG_FILE_NAME);
+        }
+
         public string APMNodesDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
@@ -785,6 +812,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
+        public string APMOverflowBusinessTransactionsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                ENTITIES_FOLDER_NAME,
+                CONVERT_APM_OVERFLOW_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
         public string APMServiceEndpointsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
@@ -916,6 +954,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
+        }
+
+        public string APMOverflowBusinessTransactionsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                ENTITIES_APM_FOLDER_NAME,
+                CONVERT_APM_OVERFLOW_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
 
         public string APMServiceEndpointsReportFilePath()

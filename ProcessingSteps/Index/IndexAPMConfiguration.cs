@@ -105,14 +105,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
                         List<APMBackend> backendsList = FileIOHelper.ReadListFromCSVFile<APMBackend>(FilePathMap.APMBackendsReportFilePath(), new APMBackendReportMap());
                         List<APMBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMBusinessTransactionsReportFilePath(), new APMBusinessTransactionReportMap());
+                        List<APMServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<APMServiceEndpoint>(FilePathMap.APMServiceEndpointsReportFilePath(), new APMServiceEndpointReportMap());
 
                         List<APMTier> tiersThisAppList = null;
                         List<APMBackend> backendsThisAppList = null;
                         List<APMBusinessTransaction> businessTransactionsThisAppList = null;
+                        List<APMServiceEndpoint> serviceEndpointsThisAppList = null;
 
                         if (tiersList != null) tiersThisAppList = tiersList.Where(t => t.Controller.StartsWith(jobTarget.Controller) == true && t.ApplicationID == jobTarget.ApplicationID).ToList<APMTier>();
                         if (backendsList != null) backendsThisAppList = backendsList.Where(b => b.Controller.StartsWith(jobTarget.Controller) == true && b.ApplicationID == jobTarget.ApplicationID).ToList<APMBackend>();
                         if (businessTransactionsList != null) businessTransactionsThisAppList = businessTransactionsList.Where(b => b.Controller.StartsWith(jobTarget.Controller) == true && b.ApplicationID == jobTarget.ApplicationID).ToList<APMBusinessTransaction>();
+                        if (serviceEndpointsList != null) serviceEndpointsThisAppList = serviceEndpointsList.Where(b => b.Controller.StartsWith(jobTarget.Controller) == true && b.ApplicationID == jobTarget.ApplicationID).ToList<APMServiceEndpoint>();
 
                         #endregion
 
@@ -415,7 +418,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     if (isTokenPropertyNull(serviceEndpointContainer, "sEPDefinitions") == false)
                                     {
-                                        foreach (JObject serviceEndpoint in serviceEndpointContainer["sEPDefinitions"])
+                                        foreach (JObject serviceEndpointObject in serviceEndpointContainer["sEPDefinitions"])
                                         {
                                             ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
 
@@ -435,12 +438,41 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
 
                                             serviceEndpointEntryRule.AgentType = getStringValueFromJToken(serviceEndpointContainer, "agentType");
-                                            serviceEndpointEntryRule.RuleName = getStringValueFromJToken(serviceEndpoint, "definitionName");
-                                            serviceEndpointEntryRule.EntryPointType = getStringValueFromJToken(serviceEndpoint, "entryPointType");
+                                            serviceEndpointEntryRule.RuleName = getStringValueFromJToken(serviceEndpointObject, "definitionName");
+                                            serviceEndpointEntryRule.EntryPointType = getStringValueFromJToken(serviceEndpointObject, "entryPointType");
                                             serviceEndpointEntryRule.IsOverride = getBoolValueFromJToken(serviceEndpointContainer, "override");
                                             serviceEndpointEntryRule.IsMonitoringEnabled = true;
 
-                                            serviceEndpointEntryRule.RuleRawValue = makeXMLFormattedAndIndented(serviceEndpoint["MatchPointRuleXml"].ToString());
+                                            serviceEndpointEntryRule.RuleRawValue = makeXMLFormattedAndIndented(serviceEndpointObject["MatchPointRuleXml"].ToString());
+
+                                            if (serviceEndpointsThisAppList != null)
+                                            {
+                                                List<APMServiceEndpoint> serviceEndpointsForThisRule = new List<APMServiceEndpoint>();
+
+                                                serviceEndpointsForThisRule.AddRange(serviceEndpointsThisAppList.Where(s => s.SEPName == serviceEndpointEntryRule.RuleName).ToList());
+                                                serviceEndpointsForThisRule.AddRange(serviceEndpointsThisAppList.Where(s => s.SEPName.StartsWith(String.Format("{0}.", serviceEndpointEntryRule.RuleName))).ToList());
+                                                serviceEndpointsForThisRule = serviceEndpointsForThisRule.Distinct().ToList();
+                                                serviceEndpointEntryRule.NumDetectedSEPs = serviceEndpointsForThisRule.Count;
+                                                if (serviceEndpointsForThisRule.Count > 0)
+                                                {
+                                                    StringBuilder sb = new StringBuilder(32 * serviceEndpointsForThisRule.Count);
+                                                    foreach (APMServiceEndpoint sep in serviceEndpointsForThisRule)
+                                                    {
+                                                        sb.AppendFormat("{0}/{1};\n", sep.TierName, sep.SEPName);
+                                                    }
+                                                    sb.Remove(sb.Length - 1, 1);
+
+                                                    serviceEndpointEntryRule.DetectedSEPs = sb.ToString();
+
+                                                    // Now update the list of Entities to map which rule we are in
+                                                    foreach (APMServiceEndpoint serviceEndpoint in serviceEndpointsForThisRule)
+                                                    {
+                                                        serviceEndpoint.IsExplicitRule = true;
+                                                        serviceEndpoint.RuleName = String.Format("{0}/{1} [{2}]", serviceEndpointEntryRule.TierName, serviceEndpointEntryRule.RuleName, serviceEndpointEntryRule.EntryPointType);
+                                                        serviceEndpoint.RuleName = serviceEndpoint.RuleName.TrimStart('/');
+                                                    }
+                                                }
+                                            }
 
                                             serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
                                         }
@@ -920,10 +952,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Save the updated Backends and Business Transactions
+                        #region Save the updated Backends, Business Transactions and Service Endpoints
 
                         FileIOHelper.WriteListToCSVFile(backendsList, new APMBackendReportMap(), FilePathMap.APMBackendsReportFilePath());
                         FileIOHelper.WriteListToCSVFile(businessTransactionsList, new APMBusinessTransactionReportMap(), FilePathMap.APMBusinessTransactionsReportFilePath());
+                        FileIOHelper.WriteListToCSVFile(serviceEndpointsList, new APMServiceEndpointReportMap(), FilePathMap.APMServiceEndpointsReportFilePath());
 
                         #endregion
 
@@ -1495,7 +1528,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Try to find them by match first
                 backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName == backendDiscoveryRule.RuleName).ToList());
-                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName.StartsWith(String.Format("{0}", backendDiscoveryRule.RuleName))).ToList());
+                backendsForThisRule.AddRange(backendsList.Where(b => b.BackendName.StartsWith(backendDiscoveryRule.RuleName)).ToList());
                 backendsForThisRule = backendsForThisRule.Distinct().ToList();
                 if (backendsForThisRule.Count == 0)
                 {
