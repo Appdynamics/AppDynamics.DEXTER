@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class APMBusinessTransaction: APMEntityBase
+    public class APMBusinessTransaction : APMEntityBase
     {
         public const string ENTITY_TYPE = "Business Transaction";
         public const string ENTITY_FOLDER = "BT";

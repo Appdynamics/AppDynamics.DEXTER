@@ -20,7 +20,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.MatchType).Index(i); i++;
             Map(m => m.MatchParameterTypes).Index(i); i++;
             Map(m => m.IsApplyToAllBTs).Index(i); i++;
-            
+
             Map(m => m.DataCollectorsConfig).Index(i); i++;
             Map(m => m.InfoPointsConfig).Index(i); i++;
             Map(m => m.RuleRawValue).Index(i); i++;

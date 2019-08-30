@@ -80,7 +80,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 this.ApplicationName,
                 this.ScopeName,
                 this.AgentType,
-                this.EntryPointType, 
+                this.EntryPointType,
                 this.RuleName);
         }
     }

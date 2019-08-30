@@ -9,7 +9,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public int NumMultiSearches { get; set; }
         public int NumLegacySearches { get; set; }
 
-        public int NumSavedMetrics{ get; set; }
+        public int NumSavedMetrics { get; set; }
 
         public int NumBusinessJourneys { get; set; }
 

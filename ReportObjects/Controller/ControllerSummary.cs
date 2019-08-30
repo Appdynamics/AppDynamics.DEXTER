@@ -25,7 +25,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             return String.Format(
                 "ControllerSummary: {0} {1}",
-                this.Controller, 
+                this.Controller,
                 this.Version);
         }
 

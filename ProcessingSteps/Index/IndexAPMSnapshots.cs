@@ -147,7 +147,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         loggerConsole.Info("Index Snapshots");
 
                         int totalNumberOfSnapshots = 0;
-                        
+
                         // Process each hour at a time
                         foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
                         {
@@ -257,7 +257,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             j += listOfBTSnapshotsInHour.Count;
 
                                             // Save results for this BT for all the Snapshots
-                                            if (indexedSnapshotsResults != null && indexedSnapshotsResults.Snapshots.Count > 0)   
+                                            if (indexedSnapshotsResults != null && indexedSnapshotsResults.Snapshots.Count > 0)
                                             {
                                                 // Sort things prettily
                                                 indexedSnapshotsResults.Snapshots = indexedSnapshotsResults.Snapshots.OrderBy(s => s.Occurred).ThenBy(s => s.UserExperience).ToList();
@@ -554,7 +554,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     foreach (APMNode node in nodesList)
                                     {
                                         if (node.TierID == businessTransaction.TierID)
-                                        {   
+                                        {
                                             // Flame graph
                                             if (foldedCallStacksNodesList.ContainsKey(node.NodeID) == false) foldedCallStacksNodesList[node.NodeID] = new Dictionary<string, FoldedStackLine>(50);
                                             if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexBusinessTransactionNodeHourRangeFilePath(jobTarget, businessTransaction, node, jobTimeRange)) == true)
@@ -751,7 +751,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             Dictionary<long, APMServiceEndpoint> serviceEndpointsDictionary,
             Dictionary<long, APMError> errorsDictionary,
             List<MethodInvocationDataCollector> methodInvocationDataCollectorsList,
-            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,            
+            Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary,
             bool progressToConsole)
         {
             int j = 0;
@@ -2829,9 +2829,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 // Populate current method call class, methods and types
                 methodCallLine.Type = getStringValueFromJToken(methodCallLineJSON, "type");
-                methodCallLine.PrettyName = getStringValueFromJToken(methodCallLineJSON, "name"); 
-                methodCallLine.Class = getStringValueFromJToken(methodCallLineJSON, "className"); 
-                methodCallLine.Method = getStringValueFromJToken(methodCallLineJSON, "methodName"); 
+                methodCallLine.PrettyName = getStringValueFromJToken(methodCallLineJSON, "name");
+                methodCallLine.Class = getStringValueFromJToken(methodCallLineJSON, "className");
+                methodCallLine.Method = getStringValueFromJToken(methodCallLineJSON, "methodName");
                 methodCallLine.LineNumber = getIntValueFromJToken(methodCallLineJSON, "lineNumber");
                 if (methodCallLine.Type == "JS")
                 {

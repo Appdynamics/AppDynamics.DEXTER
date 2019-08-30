@@ -7,7 +7,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
     {
         public BackendMetricReportMap()
         {
-            int i = 0; 
+            int i = 0;
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.BackendName).Index(i); i++;

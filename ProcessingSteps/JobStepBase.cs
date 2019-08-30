@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class JobStepBase 
+    public class JobStepBase
     {
         #region Constants for metric retrieval and mapping
 
@@ -281,7 +281,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         internal Dictionary<string, List<MethodCallLineClassTypeMapping>> populateMethodCallMappingDictionary(string methodCallLinesToFrameworkTypeMappingFilePath)
         {
-            List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = FileIOHelper.ReadListFromCSVFile<MethodCallLineClassTypeMapping>(methodCallLinesToFrameworkTypeMappingFilePath, new MethodCallLineClassTypeMappingReportMap());            
+            List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = FileIOHelper.ReadListFromCSVFile<MethodCallLineClassTypeMapping>(methodCallLinesToFrameworkTypeMappingFilePath, new MethodCallLineClassTypeMappingReportMap());
             methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingList.OrderByDescending(m => m.ClassPrefix).ToList();
             Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = new Dictionary<string, List<MethodCallLineClassTypeMapping>>(26);
             methodCallLineClassToFrameworkTypeMappingDictionary.Add("a", methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.Substring(0, 1).ToLower() == "a").ToList());

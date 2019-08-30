@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Text;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace AppDynamics.Dexter.ReportObjects
@@ -79,7 +79,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 // Add stack frame to the beginning of the string
                 if (sbFoldedCallStack.Length > 0) sbFoldedCallStack.Insert(0, ";");
                 sbFoldedCallStack.Insert(0, methodCallLine.FullName);
-                
+
                 // Add method timing to the array
                 this.StackTimingArray[methodCallLine.Depth + numberOfSpecialSlotsForTime] = methodCallLine.Exec;
 
@@ -107,9 +107,9 @@ namespace AppDynamics.Dexter.ReportObjects
             {
                 // Add synthetic frames for Flame Chart
                 if (sbFoldedCallStack.Length > 0) sbFoldedCallStack.Insert(0, ";");
-                sbFoldedCallStack.Insert(0, 
-                    String.Format("{0:yyyyMMddHH};{1};{2:00}", 
-                    methodCallLineOriginal.Occurred, 
+                sbFoldedCallStack.Insert(0,
+                    String.Format("{0:yyyyMMddHH};{1};{2:00}",
+                    methodCallLineOriginal.Occurred,
                     get10MinuteRange(methodCallLineOriginal.Occurred.Minute),
                     methodCallLineOriginal.Occurred.Minute));
                 this.StackTimingArray[0] = 0;
@@ -171,7 +171,7 @@ namespace AppDynamics.Dexter.ReportObjects
                     }
                     else if (
                         (this.ExitCallsArray[i] == null || this.ExitCallsArray[i].Length == 0) &&
-                        foldedStackLineToAdd.ExitCallsArray[i] != null && 
+                        foldedStackLineToAdd.ExitCallsArray[i] != null &&
                         foldedStackLineToAdd.ExitCallsArray[i].Length > 0)
                     {
                         // Move the target exit call into here
@@ -182,7 +182,7 @@ namespace AppDynamics.Dexter.ReportObjects
                         (foldedStackLineToAdd.ExitCallsArray[i] == null || foldedStackLineToAdd.ExitCallsArray[i].Length == 0))
                     {
                         // Do nothing, nothing to join
-                    }                    
+                    }
                 }
             }
         }
@@ -190,7 +190,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public override String ToString()
         {
             return String.Format(
-                "{0} {1} {2}",                
+                "{0} {1} {2}",
                 this.NumSamples,
                 this.StackTiming,
                 this.FoldedStack);

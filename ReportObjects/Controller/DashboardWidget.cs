@@ -16,7 +16,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string SelectedEntities { get; set; }
         public int NumSelectedEntities { get; set; }
 
-        public string Title{ get; set; }
+        public string Title { get; set; }
         public string Description { get; set; }
         public string Label { get; set; }
         public string Text { get; set; }
@@ -46,7 +46,7 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string VerticalAxisLabel { get; set; }
         public string HorizontalAxisLabel { get; set; }
-        public string AxisType{ get; set; }
+        public string AxisType { get; set; }
         public bool IsMultipleYAxis { get; set; }
         public string StackMode { get; set; }
 
@@ -74,7 +74,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             return String.Format(
                 "DashboardWidget: {0}/{1} {2} {3}x{4}",
-                this.Controller, 
+                this.Controller,
                 this.DashboardName,
                 this.WidgetType,
                 this.Width,

@@ -90,7 +90,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "WEBPageDetectionRule: {0}/{1}({2}) {3} {4} {5}",
                 this.Controller,
                 this.ApplicationName,
-                this.ApplicationID, 
+                this.ApplicationID,
                 this.EntityCategory,
                 this.DetectionType,
                 this.RuleName);

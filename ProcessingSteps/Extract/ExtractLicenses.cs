@@ -97,7 +97,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             if (licenseModulesJSON != String.Empty)
                             {
                                 JObject licenseModulesContainer = JObject.Parse(licenseModulesJSON);
-                                if (licenseModulesContainer != null && 
+                                if (licenseModulesContainer != null &&
                                     isTokenPropertyNull(licenseModulesContainer, "modules") == false)
                                 {
                                     JArray licenseModulesArray = (JArray)licenseModulesContainer["modules"];
@@ -129,31 +129,37 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 JArray licenseRulesArray = JArray.Parse(licenseRulesJSON);
                                 if (licenseRulesArray != null)
                                 {
-                                    foreach (JObject licenseRuleObject in licenseRulesArray)
+                                    using (ControllerApi controllerApi1 = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                                     {
-                                        string ruleID = getStringValueFromJToken(licenseRuleObject, "id");
-                                        string ruleName = getStringValueFromJToken(licenseRuleObject, "name");
+                                        controllerApi1.PrivateApiLogin();
 
-                                        loggerConsole.Info("License Rule Configuration - {0}", ruleName);
+                                        foreach (JObject licenseRuleObject in licenseRulesArray)
+                                        {
+                                            string ruleID = getStringValueFromJToken(licenseRuleObject, "id");
+                                            string ruleName = getStringValueFromJToken(licenseRuleObject, "name");
 
-                                        string licenseRuleDetailsJSON = controllerApi.GetLicenseRuleConfiguration(ruleID);
-                                        if (licenseRuleDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRuleDetailsJSON, FilePathMap.LicenseRuleConfigurationDataFilePath(jobTarget, ruleName, ruleID));
+                                            loggerConsole.Info("License Rule Configuration - {0}", ruleName);
+
+                                            string licenseRuleDetailsJSON = controllerApi.GetLicenseRuleConfiguration(ruleID);
+                                            if (licenseRuleDetailsJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRuleDetailsJSON, FilePathMap.LicenseRuleConfigurationDataFilePath(jobTarget, ruleName, ruleID));
+                                        }
+
+                                        foreach (JObject licenseRuleObject in licenseRulesArray)
+                                        {
+                                            string ruleID = getStringValueFromJToken(licenseRuleObject, "id");
+                                            string ruleName = getStringValueFromJToken(licenseRuleObject, "name");
+
+                                            loggerConsole.Info("License Rule Usage - {0}", ruleName);
+
+                                            string licenseRuleUsageJSON = controllerApi1.GetLicenseRuleUsage(ruleID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (licenseRuleUsageJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRuleUsageJSON, FilePathMap.LicenseRuleUsageDataFilePath(jobTarget, ruleName, ruleID));
+                                        }
                                     }
 
-                                    controllerApi.PrivateApiLogin();
-
-                                    foreach (JObject licenseRuleObject in licenseRulesArray)
-                                    {
-                                        string ruleID = getStringValueFromJToken(licenseRuleObject, "id");
-                                        string ruleName = getStringValueFromJToken(licenseRuleObject, "name");
-
-                                        loggerConsole.Info("License Rule Usage - {0}", ruleName);
-
-                                        string licenseRuleUsageJSON = controllerApi.GetLicenseRuleUsage(ruleID, fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                        if (licenseRuleUsageJSON != String.Empty) FileIOHelper.SaveFileToPath(licenseRuleUsageJSON, FilePathMap.LicenseRuleUsageDataFilePath(jobTarget, ruleName, ruleID));
-                                    }
                                 }
                             }
+
+                            controllerApi.PrivateApiLogin();
 
                             loggerConsole.Info("List of Applications Referenced by License Rules");
 
@@ -173,7 +179,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             string accountJSON = controllerApi.GetAccount();
                             if (accountJSON != String.Empty) FileIOHelper.SaveFileToPath(accountJSON, FilePathMap.LicenseAccountDataFilePath(jobTarget));
-                            
+
                             #endregion
                         }
                     }

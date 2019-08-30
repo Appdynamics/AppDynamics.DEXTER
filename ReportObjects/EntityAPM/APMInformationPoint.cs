@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class APMInformationPoint: APMEntityBase
+    public class APMInformationPoint : APMEntityBase
     {
         public const string ENTITY_TYPE = "Information Point";
         public const string ENTITY_FOLDER = "IP";

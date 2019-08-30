@@ -137,10 +137,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     () => 0,
                                     (listOfBackendsInHourChunk, loop, subtotal) =>
                                     {
-                                    // Set up controller access
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
-                                    // Login into private API
-                                    controllerApiParallel.PrivateApiLogin();
+                                        // Set up controller access
+                                        ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                        // Login into private API
+                                        controllerApiParallel.PrivateApiLogin();
 
                                         foreach (AppDRESTBackend backend in listOfBackendsInHourChunk)
                                         {
@@ -228,11 +228,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     () => 0,
                                     (listOfNodesInHourChunk, loop, subtotal) =>
                                     {
-                                    // Set up controller access
-                                    ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
+                                        // Set up controller access
+                                        ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
 
-                                    // Login into private API
-                                    controllerApiParallel.PrivateApiLogin();
+                                        // Login into private API
+                                        controllerApiParallel.PrivateApiLogin();
 
                                         foreach (AppDRESTNode node in listOfNodesInHourChunk)
                                         {

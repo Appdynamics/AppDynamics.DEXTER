@@ -88,7 +88,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 dashboard.TemplateEntityType = getStringValueFromJToken(dashboardObject, "templateEntityType");
                                 dashboard.SecurityToken = getStringValueFromJToken(dashboardObject, "securityToken");
                                 if (dashboard.SecurityToken.Length > 0) dashboard.IsShared = true;
-                                dashboard.IsSharingRevoked= getBoolValueFromJToken(dashboardObject, "sharingRevoked");
+                                dashboard.IsSharingRevoked = getBoolValueFromJToken(dashboardObject, "sharingRevoked");
                                 dashboard.IsTemplate = getBoolValueFromJToken(dashboardObject, "template");
 
                                 dashboard.Height = getIntValueFromJToken(dashboardObject, "height");
@@ -102,7 +102,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 dashboard.StartTimeUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(dashboardObject, "startTime"));
                                 try { dashboard.StartTime = dashboard.StartTimeUtc.ToLocalTime(); } catch { }
                                 dashboard.EndTimeUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(dashboardObject, "endTime"));
-                                try { dashboard.EndTime = dashboard.EndTimeUtc.ToLocalTime();} catch { }
+                                try { dashboard.EndTime = dashboard.EndTimeUtc.ToLocalTime(); } catch { }
 
                                 dashboard.CreatedBy = getStringValueFromJToken(dashboardObject, "createdBy");
                                 dashboard.CreatedOnUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(dashboardObject, "createdOn"));
@@ -448,7 +448,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                                 else
                                 {
-                                    if (isTokenPropertyNull(dashboardDetailObject, "success") == false && 
+                                    if (isTokenPropertyNull(dashboardDetailObject, "success") == false &&
                                         getBoolValueFromJToken(dashboardDetailObject, "success") == false)
                                     {
                                         dashboard.NumWidgets = -1;

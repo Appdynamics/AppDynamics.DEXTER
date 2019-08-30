@@ -60,7 +60,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     stepTimingTarget.StartTime = DateTime.Now;
 
                     stepTimingTarget.NumEntities = 1;
-                    
+
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);

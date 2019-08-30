@@ -229,9 +229,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         JToken agentRegistrationRequestConfigToken = machineObject["agentConfig"]["rawConfig"]["_agentRegistrationRequestConfig"];
 
                                         machine.MachineInfo = getStringValueFromJToken(agentRegistrationRequestConfigToken, "machineInfo");
-                                        machine.JVMInfo = getStringValueFromJToken(agentRegistrationRequestConfigToken, "jvmInfo"); 
-                                        machine.InstallDirectory = getStringValueFromJToken(agentRegistrationRequestConfigToken, "installDirectory"); 
-                                        machine.AgentVersionRaw = getStringValueFromJToken(agentRegistrationRequestConfigToken, "agentVersion"); 
+                                        machine.JVMInfo = getStringValueFromJToken(agentRegistrationRequestConfigToken, "jvmInfo");
+                                        machine.InstallDirectory = getStringValueFromJToken(agentRegistrationRequestConfigToken, "installDirectory");
+                                        machine.AgentVersionRaw = getStringValueFromJToken(agentRegistrationRequestConfigToken, "agentVersion");
                                         if (machine.AgentVersionRaw != String.Empty)
                                         {
                                             // Machine agent looks like that 
@@ -256,7 +256,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 }
                                             }
                                         }
-                                        machine.AutoRegisterAgent = getBoolValueFromJToken(agentRegistrationRequestConfigToken, "autoRegisterAgent"); 
+                                        machine.AutoRegisterAgent = getBoolValueFromJToken(agentRegistrationRequestConfigToken, "autoRegisterAgent");
                                         machine.AgentType = getStringValueFromJToken(agentRegistrationRequestConfigToken, "agentType");
                                         try
                                         {
@@ -277,7 +277,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                         catch { }
-                                        machine.APMTierName = agentRegistrationRequestConfigToken["tierName"].ToString(); 
+                                        machine.APMTierName = agentRegistrationRequestConfigToken["tierName"].ToString();
                                         machine.APMNodeName = agentRegistrationRequestConfigToken["nodeName"].ToString();
                                     }
 
@@ -467,11 +467,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             // This worked in 4.4.1, the format is 
                                             //   {
-	                                        //	"containerId": "e25bf24eb981bd10d0ef22b78b4b4a73b4cc242813371c43849635c77b3be95f",
-	                                        //	"containerName": "settlementServices",
-	                                        //	"imageName": "fin-java-services",
-	                                        //	"containerSimMachineId": 224
-	                                        // }
+                                            //	"containerId": "e25bf24eb981bd10d0ef22b78b4b4a73b4cc242813371c43849635c77b3be95f",
+                                            //	"containerName": "settlementServices",
+                                            //	"imageName": "fin-java-services",
+                                            //	"containerSimMachineId": 224
+                                            // }
                                             machineContainer.ContainerID = getStringValueFromJToken(containerObject, "containerId");
                                             machineContainer.ContainerName = getStringValueFromJToken(containerObject, "containerName");
                                             machineContainer.ImageName = getStringValueFromJToken(containerObject, "imageName");
@@ -737,7 +737,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
 
             // Determine what kind of entity we are dealing with and adjust accordingly
-            if (entityRow is WEBApplication)
+            if (entityRow is SIMApplication)
             {
                 entityRow.ControllerLink = String.Format(DEEPLINK_CONTROLLER, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);
                 entityRow.ApplicationLink = String.Format(DEEPLINK_SIM_APPLICATION, entityRow.Controller, DEEPLINK_THIS_TIMERANGE);

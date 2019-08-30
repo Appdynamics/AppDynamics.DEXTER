@@ -3,7 +3,7 @@ using CsvHelper.Configuration;
 
 namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class SegmentReportMap: ClassMap<Segment>
+    public class SegmentReportMap : ClassMap<Segment>
     {
         public SegmentReportMap()
         {
@@ -74,7 +74,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumCallsToApplications).Index(i); i++;
 
             Map(m => m.NumSEPs).Index(i); i++;
-            
+
             Map(m => m.NumHTTPDCs).Index(i); i++;
             Map(m => m.NumMIDCs).Index(i); i++;
 

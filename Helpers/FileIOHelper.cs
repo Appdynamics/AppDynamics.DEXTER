@@ -348,7 +348,7 @@ namespace AppDynamics.Dexter
                     logger.Warn("Unable to find file {0}", configurationFilePath);
                 }
                 else
-                { 
+                {
                     logger.Trace("Reading JobConfiguration JSON from job file {0}", configurationFilePath);
 
                     return JsonConvert.DeserializeObject<JobConfiguration>(File.ReadAllText(configurationFilePath));

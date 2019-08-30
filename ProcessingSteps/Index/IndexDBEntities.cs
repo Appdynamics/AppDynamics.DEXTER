@@ -125,7 +125,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     // Performance data
                                     dbCollector.Calls = getLongValueFromJToken(dbCollectorToken["rolledUpMetricDatas"], "DB|KPI|Calls per Minute");
-                                    
+
                                     try
                                     {
                                         JToken dbCollectorDefinitionWithTimeREST = dbCollectorsTimeSpentArray.Where(t => (long)t["id"] == (long)dbCollectorToken["id"]).FirstOrDefault();
@@ -296,7 +296,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     dbQuery.UserName = dbCollectorThis.UserName;
 
                                     dbQuery.Calls = getLongValueFromJToken(dbQueryToken, "hits");
-                                    try {dbQuery.ExecTime = Convert.ToInt64((Decimal)dbQueryToken["duration"]); } catch { }
+                                    try { dbQuery.ExecTime = Convert.ToInt64((Decimal)dbQueryToken["duration"]); } catch { }
                                     dbQuery.ExecTimeSpan = new TimeSpan(dbQuery.ExecTime * TimeSpan.TicksPerMillisecond);
                                     dbQuery.AvgExecTime = 0;
                                     if (dbQuery.Calls != 0) dbQuery.AvgExecTime = dbQuery.ExecTime / dbQuery.Calls;
@@ -526,7 +526,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             dbBlockingSession.BlockTime = getLongValueFromJToken(dbBlockedQueryDetail, "duration");
                                             dbBlockingSession.BlockTimeSpan = new TimeSpan(dbBlockingSession.BlockTime * TimeSpan.TicksPerMillisecond);
                                             dbBlockingSession.FirstOccurrenceUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(dbBlockedQueryDetail, "timeStamp"));
-                                            try {dbBlockingSession.FirstOccurrence = dbBlockingSession.FirstOccurrenceUtc.ToLocalTime(); } catch { }
+                                            try { dbBlockingSession.FirstOccurrence = dbBlockingSession.FirstOccurrenceUtc.ToLocalTime(); } catch { }
 
                                             dbBlockingSession.Duration = differenceInMinutes;
                                             dbBlockingSession.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
@@ -580,7 +580,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     dbDatabase.UserName = dbCollectorThis.UserName;
 
                                     try { dbDatabase.ExecTime = Convert.ToInt64((Decimal)dbDatabaseToken["duration"]); } catch { }
-                                    dbDatabase.ExecTimeSpan = new TimeSpan(dbDatabase.ExecTime * TimeSpan.TicksPerMillisecond); 
+                                    dbDatabase.ExecTimeSpan = new TimeSpan(dbDatabase.ExecTime * TimeSpan.TicksPerMillisecond);
                                     try { dbDatabase.Weight = Math.Round((Decimal)dbDatabaseToken["weight"], 2); } catch { }
 
                                     dbDatabase.DatabaseName = getStringValueFromJToken(dbDatabaseToken, "name");
@@ -814,8 +814,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     dbBusinessTransaction.Calls = getLongValueFromJToken(dbBusinessTransactionToken, "hits");
                                     try { dbBusinessTransaction.ExecTime = Convert.ToInt64((Decimal)dbBusinessTransactionToken["duration"]); } catch { }
-                                    dbBusinessTransaction.ExecTimeSpan = new TimeSpan(dbBusinessTransaction.ExecTime * TimeSpan.TicksPerMillisecond); 
-                                    if (dbBusinessTransaction.Calls != 0) dbBusinessTransaction.AvgExecTime = dbBusinessTransaction.ExecTime / dbBusinessTransaction.Calls; 
+                                    dbBusinessTransaction.ExecTimeSpan = new TimeSpan(dbBusinessTransaction.ExecTime * TimeSpan.TicksPerMillisecond);
+                                    if (dbBusinessTransaction.Calls != 0) dbBusinessTransaction.AvgExecTime = dbBusinessTransaction.ExecTime / dbBusinessTransaction.Calls;
 
                                     dbBusinessTransaction.AvgExecRange = getDurationRangeAsString(dbBusinessTransaction.AvgExecTime);
 
@@ -927,7 +927,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
 
                 // Let's append all Applications
-                var controllers = jobConfiguration.Target.Where(t=> t.Type == APPLICATION_TYPE_DB).GroupBy(t => t.Controller);
+                var controllers = jobConfiguration.Target.Where(t => t.Type == APPLICATION_TYPE_DB).GroupBy(t => t.Controller);
                 foreach (var controllerGroup in controllers)
                 {
                     if (File.Exists(FilePathMap.DBCollectorsIndexFilePath(controllerGroup.ToList()[0])) == true && new FileInfo(FilePathMap.DBCollectorsIndexFilePath(controllerGroup.ToList()[0])).Length > 0)

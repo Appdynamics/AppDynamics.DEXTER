@@ -58,6 +58,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Controller wide settings file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
+        private const string EXTRACT_CONFIGURATION_APPLICATION_DETAILS_FILE_NAME = "configuration.json";
         private const string EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME = "seps.json";
 
         private const string EXTRACT_CONTROLLER_VERSION_FILE_NAME = "controllerversion.xml";
@@ -317,6 +318,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME = "bts.configuration.csv";
         private const string CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME = "callgraphs.configuration.csv";
         private const string CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME = "devmode.nodes.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_RULES_FILE_NAME = "errordetection.rules.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_IGNORE_MESSAGES_FILE_NAME = "errordetection.ignore.messages.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_IGNORE_LOGGERS_FILE_NAME = "errordetection.ignore.loggers.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_LOGGERS_FILE_NAME = "errordetection.loggers.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_HTTP_CODES_FILE_NAME = "errordetection.httpcodes.csv";
+        private const string CONVERT_CONFIG_ERROR_DETECTION_REDIRECT_PAGES_FILE_NAME = "errordetection.redirectpages.csv";
 
         // Settings report list conversion file names - WEB
         private const string CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME = "application.config.web.csv";
@@ -2115,7 +2122,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_CURRENT_WAIT_STATES_FILE_NAME,
                 jobTimeRange.From,
                 jobTimeRange.To);
-            
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,
@@ -2421,7 +2428,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 ENTITIES_FOLDER_NAME,
                 CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
-        
+
         #endregion
 
         #region DB Entity Report
@@ -3675,7 +3682,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region APM Application Configuration Data 
 
-        public string APMApplicationConfigurationDataFilePath(JobTarget jobTarget)
+        public string APMApplicationConfigurationXMLDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -3685,6 +3692,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONFIGURATION_FOLDER_NAME,
                 EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME);
         }
+
+        public string APMApplicationConfigurationDetailsDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                EXTRACT_CONFIGURATION_APPLICATION_DETAILS_FILE_NAME);
+        }
+
 
         public string APMApplicationConfigurationSEPDataFilePath(JobTarget jobTarget)
         {
@@ -3899,6 +3918,72 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
         }
 
+        public string APMErrorDetectionRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_RULES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionIgnoreMessagesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_IGNORE_MESSAGES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionIgnoreLoggersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_IGNORE_LOGGERS_FILE_NAME);
+        }
+
+        public string APMErrorDetectionLoggersIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_LOGGERS_FILE_NAME);
+        }
+
+        public string APMErrorDetectionHTTPCodesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_HTTP_CODES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionRedirectPagesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_REDIRECT_PAGES_FILE_NAME);
+        }
+
         #endregion
 
         #region APM Application Configuration Report
@@ -4063,6 +4148,60 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
         }
+
+        public string APMErrorDetectionRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_RULES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionIgnoreMessagesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_IGNORE_MESSAGES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionIgnoreLoggersReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_IGNORE_LOGGERS_FILE_NAME);
+        }
+
+        public string APMErrorDetectionLoggersReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_LOGGERS_FILE_NAME);
+        }
+
+        public string APMErrorDetectionHTTPCodesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_HTTP_CODES_FILE_NAME);
+        }
+
+        public string APMErrorDetectionRedirectPagesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_ERROR_DETECTION_REDIRECT_PAGES_FILE_NAME);
+        }        
 
         public string ConfigurationExcelReportFilePath(JobTimeRange jobTimeRange)
         {
@@ -4298,7 +4437,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_PERMISSIONS_FILE_NAME);
-        }        
+        }
 
         public string GroupMembershipsIndexFilePath(JobTarget jobTarget)
         {
@@ -4328,7 +4467,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USER_PERMISSIONS_FILE_NAME);
-        }        
+        }
 
         public string RBACControllerSummaryIndexFilePath(JobTarget jobTarget)
         {
@@ -4574,7 +4713,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,                
+                REPORT_FOLDER_NAME,
                 APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
@@ -5080,7 +5219,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EXTRACT_AUDIT_EVENTS_FILE_NAME,
                 this.JobConfiguration.Input.TimeRange.From,
                 this.JobConfiguration.Input.TimeRange.To);
-            
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 DATA_FOLDER_NAME,

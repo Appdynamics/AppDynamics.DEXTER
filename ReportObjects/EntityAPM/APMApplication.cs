@@ -62,7 +62,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 return ENTITY_FOLDER;
             }
         }
-        
+
         public APMApplication Clone()
         {
             return (APMApplication)this.MemberwiseClone();

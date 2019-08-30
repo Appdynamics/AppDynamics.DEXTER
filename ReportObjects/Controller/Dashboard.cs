@@ -55,8 +55,8 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             return String.Format(
                 "Dashboard: {0}/{1} ({2}) {3} widgets",
-                this.Controller, 
-                this.DashboardName, 
+                this.Controller,
+                this.DashboardName,
                 this.CanvasType,
                 this.NumWidgets);
         }

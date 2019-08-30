@@ -76,7 +76,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "APMBackend:  {0}/{1}({2})/{3}({4})",
                 this.Controller,
                 this.ApplicationName,
-                this.ApplicationID, 
+                this.ApplicationID,
                 this.BackendName,
                 this.BackendID);
         }

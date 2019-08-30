@@ -923,7 +923,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 case APMApplication.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName), 
+                                        FilePathMap.MetricReportFilePath(APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 

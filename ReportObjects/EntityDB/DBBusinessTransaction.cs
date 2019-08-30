@@ -4,8 +4,6 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class DBBusinessTransaction : DBEntityBase
     {
-        public string ApplicationName { get; set; }
-
         public string BTName { get; set; }
 
         public long Calls { get; set; }
@@ -16,7 +14,6 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public decimal Weight { get; set; }
 
-        public long ApplicationID { get; set; }
         public long BTID { get; set; }
 
         public override String ToString()
@@ -25,9 +22,9 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBBusinessTransaction: {0}/{1}({2}) [{3}] {4}/{5}",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.CollectorType, 
-                this.ApplicationName, 
+                this.ConfigID,
+                this.CollectorType,
+                this.ApplicationName,
                 this.BTName);
         }
     }

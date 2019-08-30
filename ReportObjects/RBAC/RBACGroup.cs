@@ -16,7 +16,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "RBACGroup: {0}/{1}({2})",
                 this.Controller,
-                this.GroupName, 
+                this.GroupName,
                 this.SecurityProvider);
         }
     }

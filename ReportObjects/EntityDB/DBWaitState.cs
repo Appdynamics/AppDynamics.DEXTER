@@ -17,9 +17,9 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBWaitState: {0}/{1}({2}) [{3}] {4}({5})",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.CollectorType, 
-                this.State, 
+                this.ConfigID,
+                this.CollectorType,
+                this.State,
                 this.WaitStateID);
         }
     }

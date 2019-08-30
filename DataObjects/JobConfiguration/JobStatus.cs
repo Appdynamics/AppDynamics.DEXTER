@@ -54,7 +54,7 @@
         IndexWEBConfiguration = 73,
         IndexMOBILEConfiguration = 74,
         IndexBIQConfiguration = 75,
-         
+
         IndexApplicationConfigurationDifferences = 76,
 
         IndexAPMMetrics = 80,

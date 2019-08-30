@@ -21,9 +21,9 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBSession: {0}/{1}({2}) [{3}] {4}({5})",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.CollectorType, 
-                this.SessionName, 
+                this.ConfigID,
+                this.CollectorType,
+                this.SessionName,
                 this.SessionID);
         }
     }

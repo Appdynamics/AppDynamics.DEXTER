@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AppDynamics.Dexter
+﻿namespace AppDynamics.Dexter
 {
     public class JobSnapshotSelectionCriteria
     {

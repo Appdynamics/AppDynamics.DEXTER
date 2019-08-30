@@ -42,7 +42,7 @@ namespace AppDynamics.Dexter
                 var parserResult = Parser.Default
                     .ParseArguments<ProgramOptions>(args)
                     .WithParsed((ProgramOptions programOptions) => { RunProgram(programOptions); })
-                    .WithNotParsed((errs) => 
+                    .WithNotParsed((errs) =>
                     {
                         logger.Error("Could not parse command line arguments into ProgramOptions");
                         //loggerConsole.Error("Could not parse command line arguments into ProgramOptions");

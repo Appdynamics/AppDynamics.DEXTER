@@ -7,7 +7,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
     {
         public APMNodePropertyReportMap()
         {
-            int i = 0; 
+            int i = 0;
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;

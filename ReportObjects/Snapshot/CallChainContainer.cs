@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 
 namespace AppDynamics.Dexter.ReportObjects
@@ -37,7 +36,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 }
                 if (i < this.CallTimings.Count - 1)
                 {
-                    sb.Append(", ");                    
+                    sb.Append(", ");
                 }
             }
             if (this.CallTimings.Count > 1)

@@ -1882,7 +1882,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     // Remove DetailLink column because this document would be pointing to relative location from the overall metric reports, and the link would be invalid
                     if (table.Columns["DetailLink"] != null)
                     {
-//                        sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 1;
+                        //                        sheet.Column(table.Columns["DetailLink"].Position + 1).Width = 1;
                         sheet.DeleteColumn(table.Columns["DetailLink"].Position + 1);
                     }
                 }

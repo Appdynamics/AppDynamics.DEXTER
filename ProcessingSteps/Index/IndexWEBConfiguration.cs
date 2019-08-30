@@ -182,7 +182,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 applicationConfiguration.StallThresholdType = getStringValueFromJToken(pageSettingsObject["thresholds"]["stallThreshold"], "type");
                                 applicationConfiguration.StallThreshold = getIntValueFromJToken(pageSettingsObject["thresholds"]["stallThreshold"], "value");
                             }
-                            applicationConfiguration.Percentiles= getStringValueOfObjectFromJToken(pageSettingsObject, "percentileMetrics", true);
+                            applicationConfiguration.Percentiles = getStringValueOfObjectFromJToken(pageSettingsObject, "percentileMetrics", true);
                             applicationConfiguration.SessionTimeout = getIntValueFromJToken(pageSettingsObject["sessionsMonitor"], "sessionTimeoutMins");
                             applicationConfiguration.IsIPDisplayed = getBoolValueFromJToken(pageSettingsObject, "ipAddressDisplayed");
 
@@ -194,7 +194,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #endregion
 
                         #region Rules of all kinds
-                         
+
                         loggerConsole.Info("Page and AJAX Request Rules");
 
                         #region Page Rules

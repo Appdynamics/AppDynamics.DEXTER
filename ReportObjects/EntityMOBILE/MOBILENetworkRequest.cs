@@ -31,7 +31,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public long Server { get; set; }
 
         public long HttpErrors { get; set; }
-        public long HttpEPM{ get; set; }
+        public long HttpEPM { get; set; }
         public long NetworkErrors { get; set; }
         public long NetworkEPM { get; set; }
 

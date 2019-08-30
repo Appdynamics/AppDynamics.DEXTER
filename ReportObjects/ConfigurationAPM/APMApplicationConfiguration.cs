@@ -32,8 +32,6 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumHealthRules { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public int NumErrorRules { get; set; }
-        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumHTTPDCVariablesCollected { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumHTTPDCs { get; set; }
@@ -56,6 +54,12 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool IsDeveloperModeEnabled { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsBTLockdownEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public bool IsBTCleanupEnabled { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public int BTCleanupInterval { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public long BTCleanupCallCount { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsAsyncSupported { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
@@ -98,8 +102,6 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string MetricBaselinesConfig { get; set; }
 
-        [FieldComparison(FieldComparisonType.XmlValueComparison)]
-        public string ErrorAgentConfig { get; set; }
 
         public override string EntityIdentifier
         {

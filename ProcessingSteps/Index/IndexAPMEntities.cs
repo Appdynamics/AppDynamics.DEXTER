@@ -207,7 +207,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             if (optionValueAdjusted.Length > 0)
                                             {
-                                                string[] optionValueAdjustedTokens = optionValueAdjusted.Split(new char[] { '=' , ':'});
+                                                string[] optionValueAdjustedTokens = optionValueAdjusted.Split(new char[] { '=', ':' });
                                                 if (optionValueAdjustedTokens.Length > 0)
                                                 {
                                                     nodePropertyRow.PropName = optionValueAdjustedTokens[0];
@@ -400,7 +400,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     additionalInfoLookupSucceeded = true;
                                                 }
                                             }
-                                        } catch { }
+                                        }
+                                        catch { }
 
                                         if (additionalInfoLookupSucceeded == false)
                                         {
@@ -413,7 +414,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     backend.BackendType = betterBackendType;
                                                     additionalInfoLookupSucceeded = true;
                                                 }
-                                            } catch { }
+                                            }
+                                            catch { }
                                         }
                                     }
                                 }
@@ -902,7 +904,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (AppDRESTTier tierREST in tiersRESTList)
                             {
-                                APMTier tier = tiersList.Where(t => t.TierID == tierREST.id).FirstOrDefault();                                
+                                APMTier tier = tiersList.Where(t => t.TierID == tierREST.id).FirstOrDefault();
 
                                 if (tier != null)
                                 {

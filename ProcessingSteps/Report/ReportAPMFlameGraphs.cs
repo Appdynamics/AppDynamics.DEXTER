@@ -167,7 +167,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List <APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Nodes ({0} entities)", nodesList.Count);
@@ -354,7 +354,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<MethodCallLineClassTypeMapping> methodCallLineClassToFrameworkTypeMappingList = methodCallLineClassToFrameworkTypeMappingDictionary["c"];
                 if (methodCallLineClassToFrameworkTypeMappingList != null)
                 {
-                   listOfCustomMethodCallMappings = methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.StartsWith("custom") == true).ToList();
+                    listOfCustomMethodCallMappings = methodCallLineClassToFrameworkTypeMappingList.Where(m => m.ClassPrefix.StartsWith("custom") == true).ToList();
                 }
             }
 

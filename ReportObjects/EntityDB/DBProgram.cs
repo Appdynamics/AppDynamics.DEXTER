@@ -19,9 +19,9 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBProgram: {0}/{1}({2}) [{3}] {4}({5})",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.CollectorType, 
-                this.ProgramName, 
+                this.ConfigID,
+                this.CollectorType,
+                this.ProgramName,
                 this.ProgramID);
         }
     }

@@ -15,7 +15,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumHealthRules).Index(i); i++;
             Map(m => m.NumPolicies).Index(i); i++;
             Map(m => m.NumActions).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;

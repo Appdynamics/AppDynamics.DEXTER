@@ -54,9 +54,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 else
                 {
                     // Check if there is a valid reference application
-                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t => 
+                    JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
                         t.Type == APPLICATION_TYPE_APM &&
-                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 && 
+                        String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
                         String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
                     if (jobTargetReferenceApp == null)
                     {
@@ -123,10 +123,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Load Configuration file");
 
-                        XmlDocument configXml = FileIOHelper.LoadXmlDocumentFromFile(FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget));
+                        XmlDocument configXml = FileIOHelper.LoadXmlDocumentFromFile(FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
                         if (configXml == null)
                         {
-                            logger.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget));
+                            logger.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
                             continue;
                         }
 
@@ -174,7 +174,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 applicationConfiguration.EUMConfigPage = ruleSetting.ToString();
                             }
                         }
-                        catch (JsonReaderException ex) {}
+                        catch (JsonReaderException ex) { }
                         try
                         {
                             JObject ruleSetting = JObject.Parse(getStringValueFromXmlNode(configXml.SelectSingleNode("application/eum-cloud-config/mobile-page-config")));
@@ -202,8 +202,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         applicationConfiguration.MetricBaselinesConfig = makeXMLFormattedAndIndented(configXml.SelectSingleNode("application/metric-baselines"));
                         applicationConfiguration.NumBaselines = configXml.SelectNodes("application/metric-baselines/metric-baseline").Count;
 
-                        applicationConfiguration.ErrorAgentConfig = makeXMLFormattedAndIndented(String.Format("<error-configurations>{0}</error-configurations>", makeXMLFormattedAndIndented(configXml.SelectNodes("application/configuration/error-configuration"))));
-                        applicationConfiguration.NumErrorRules = configXml.SelectNodes("application/configuration/error-configuration").Count;
+                        JObject applicationConfigurationDetailsObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.APMApplicationConfigurationDetailsDataFilePath(jobTarget));
+                        if (applicationConfigurationDetailsObject != null)
+                        {
+                            applicationConfiguration.BTCleanupInterval = getIntValueFromJToken(applicationConfigurationDetailsObject, "btCleanupTimeframeInMinutes");
+                            applicationConfiguration.BTCleanupCallCount = getLongValueFromJToken(applicationConfigurationDetailsObject, "btCleanupCallCountThreshold");
+                            applicationConfiguration.IsBTCleanupEnabled = (applicationConfiguration.BTCleanupInterval > 0);
+                        }
 
                         #endregion
 
@@ -901,7 +906,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<DeveloperModeNode> developerModeSettingsList = new List<DeveloperModeNode>();
 
                         JArray developerModeTiersArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMApplicationDeveloperModeNodesDataFilePath(jobTarget));
-
                         if (developerModeTiersArray != null && developerModeTiersArray.Count > 0)
                         {
                             foreach (JToken developerModeBusinessTransactionToken in developerModeTiersArray)
@@ -939,6 +943,431 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + developerModeSettingsList.Count;
 
+
+                        #endregion
+
+                        #region Error Detection rules, loggers, ignore exceptions, messages, HTTP codes and redirect pages
+
+                        loggerConsole.Info("Error Detection Settings");
+
+                        // 6 types of agent. Java has 6 checkboxes, others have less
+                        List<ErrorDetectionRule> errorDetectionRulesList = new List<ErrorDetectionRule>(6 * 5);
+
+                        // 6 types of agent. Let's assume there are 10 rules each, which is probably too generous 
+                        List<ErrorDetectionIgnoreMessage> errorDetectionIgnoreMessagesList = new List<ErrorDetectionIgnoreMessage>(6 * 10);
+
+                        // 2 types of agent support it
+                        List<ErrorDetectionIgnoreLogger> errorDetectionIgnoreLoggersList = new List<ErrorDetectionIgnoreLogger>(2 * 2);
+
+                        // 2 types of agent support it
+                        List<ErrorDetectionLogger> errorDetectionLoggersList = new List<ErrorDetectionLogger>(2 * 2);
+
+                        // 4 types of agent support it
+                        List<ErrorDetectionHTTPCode> errorDetectionHTTPCodesList = new List<ErrorDetectionHTTPCode>(4 * 2);
+
+                        // 2 types of agent support it
+                        List<ErrorDetectionRedirectPage> errorDetectionRedirectPagesList = new List<ErrorDetectionRedirectPage>(2 * 2);
+
+                        #region Java
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "errorConfig") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["errorConfig"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Detect errors from java.util.logging", (getBoolValueFromJToken(errorConfigContainer, "disableJavaLogging") == false).ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Detect errors from Log4j", (getBoolValueFromJToken(errorConfigContainer, "disableLog4JLogging") == false).ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Detect errors from SLF4j/Logback", (getBoolValueFromJToken(errorConfigContainer, "disableSLF4JLogging") == false).ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Detect errors at ERROR or higher", getBoolValueFromJToken(errorConfigContainer, "captureLoggerErrorAndFatalMessages").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Java", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Java", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Java", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerNames") == false)
+                            {
+                                JArray ignoreLoggersArray = (JArray)errorConfigContainer["ignoreLoggerNames"];
+
+                                if (ignoreLoggersArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreLoggersArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreLoggersList.Add(fillErrorDetectionIgnoreLogger(applicationConfiguration, "Java", ignoreLoggersArray[j].ToString()));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "customerLoggerDefinitions") == false)
+                            {
+                                JArray loggersArray = (JArray)errorConfigContainer["customerLoggerDefinitions"];
+
+                                if (loggersArray.Count > 0)
+                                {
+                                    foreach (JObject loggerObject in loggersArray)
+                                    {
+                                        errorDetectionLoggersList.Add(fillErrorDetectionLogger(applicationConfiguration, "Java", loggerObject));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "httpErrorReturnCodes") == false)
+                            {
+                                JArray httpErrorCodesArray = (JArray)errorConfigContainer["httpErrorReturnCodes"];
+
+                                if (httpErrorCodesArray.Count > 0)
+                                {
+                                    foreach (JObject httpErrorCodeObject in httpErrorCodesArray)
+                                    {
+                                        errorDetectionHTTPCodesList.Add(fillErrorDetectionHTTPCode(applicationConfiguration, "Java", httpErrorCodeObject));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "errorRedirectPages") == false)
+                            {
+                                JArray errorRedirectPagesArray = (JArray)errorConfigContainer["errorRedirectPages"];
+
+                                if (errorRedirectPagesArray.Count > 0)
+                                {
+                                    foreach (JObject errorRedirectPageObject in errorRedirectPagesArray)
+                                    {
+                                        errorDetectionRedirectPagesList.Add(fillErrorDetectionRedirectPage(applicationConfiguration, "Java", errorRedirectPageObject));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region .NET
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "dotNetErrorConfig") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["dotNetErrorConfig"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect errors from NLog", (getBoolValueFromJToken(errorConfigContainer, "disableNLog") == false).ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect errors from Log4Net", (getBoolValueFromJToken(errorConfigContainer, "disableLog4NetLogging") == false).ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect errors from System.Diagnostics.Trace", (getBoolValueFromJToken(errorConfigContainer, "disableSystemTrace") == false).ToString())); ;
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect errors from EventLog", (getBoolValueFromJToken(errorConfigContainer, "disableEventLog") == false).ToString())); ;
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect errors at ERROR or higher", getBoolValueFromJToken(errorConfigContainer, "captureLoggerErrorAndFatalMessages").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, ".NET", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, ".NET", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, ".NET", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerNames") == false)
+                            {
+                                JArray ignoreLoggersArray = (JArray)errorConfigContainer["ignoreLoggerNames"];
+
+                                if (ignoreLoggersArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreLoggersArray.Count; j++)
+                                    {
+                                         errorDetectionIgnoreLoggersList.Add(fillErrorDetectionIgnoreLogger(applicationConfiguration, ".NET", ignoreLoggersArray[j].ToString()));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "customerLoggerDefinitions") == false)
+                            {
+                                JArray loggersArray = (JArray)errorConfigContainer["customerLoggerDefinitions"];
+
+                                if (loggersArray.Count > 0)
+                                {
+                                    foreach (JObject loggerObject in loggersArray)
+                                    {
+                                        errorDetectionLoggersList.Add(fillErrorDetectionLogger(applicationConfiguration, ".NET", loggerObject));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "httpErrorReturnCodes") == false)
+                            {
+                                JArray httpErrorCodesArray = (JArray)errorConfigContainer["httpErrorReturnCodes"];
+
+                                if (httpErrorCodesArray.Count > 0)
+                                {
+                                    foreach (JObject httpErrorCodeObject in httpErrorCodesArray)
+                                    {
+                                        errorDetectionHTTPCodesList.Add(fillErrorDetectionHTTPCode(applicationConfiguration, ".NET", httpErrorCodeObject));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "errorRedirectPages") == false)
+                            {
+                                JArray errorRedirectPagesArray = (JArray)errorConfigContainer["errorRedirectPages"];
+
+                                if (errorRedirectPagesArray.Count > 0)
+                                {
+                                    foreach (JObject errorRedirectPageObject in errorRedirectPagesArray)
+                                    {
+                                        errorDetectionRedirectPagesList.Add(fillErrorDetectionRedirectPage(applicationConfiguration, ".NET", errorRedirectPageObject));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region PHP
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "phpErrorConfiguration") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["phpErrorConfiguration"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "PHP", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "PHP", "Detect errors", getBoolValueFromJToken(errorConfigContainer, "detectPhpErrors").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "PHP", "Detect errors of Level", getStringValueFromJToken(errorConfigContainer, "errorThreshold")));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "PHP", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "PHP", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "PHP", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region Node.JS
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "nodeJsErrorConfiguration") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["nodeJsErrorConfiguration"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Node.js", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Node.js", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Node.js", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Node.js", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "httpErrorReturnCodes") == false)
+                            {
+                                JArray httpErrorCodesArray = (JArray)errorConfigContainer["httpErrorReturnCodes"];
+
+                                if (httpErrorCodesArray.Count > 0)
+                                {
+                                    foreach (JObject httpErrorCodeObject in httpErrorCodesArray)
+                                    {
+                                        errorDetectionHTTPCodesList.Add(fillErrorDetectionHTTPCode(applicationConfiguration, "Node.js", httpErrorCodeObject));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region Python
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "pythonErrorConfiguration") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["pythonErrorConfiguration"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Python", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Python", "Detect errors", getBoolValueFromJToken(errorConfigContainer, "detectPythonErrors").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Python", "Detect errors of Level", getStringValueFromJToken(errorConfigContainer, "errorThreshold")));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Python", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Python", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Python", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "httpErrorReturnCodes") == false)
+                            {
+                                JArray httpErrorCodesArray = (JArray)errorConfigContainer["httpErrorReturnCodes"];
+
+                                if (httpErrorCodesArray.Count > 0)
+                                {
+                                    foreach (JObject httpErrorCodeObject in httpErrorCodesArray)
+                                    {
+                                        errorDetectionHTTPCodesList.Add(fillErrorDetectionHTTPCode(applicationConfiguration, "Python", httpErrorCodeObject));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        #region Ruby
+
+                        if (applicationConfigurationDetailsObject != null &&
+                            isTokenPropertyNull(applicationConfigurationDetailsObject, "rubyErrorConfiguration") == false)
+                        {
+                            JObject errorConfigContainer = (JObject)applicationConfigurationDetailsObject["rubyErrorConfiguration"];
+
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Ruby", "Mark BT As Error", getBoolValueFromJToken(errorConfigContainer, "markTransactionAsErrorOnErrorMessageLog").ToString()));
+                            errorDetectionRulesList.Add(fillErrorDetectionRule(applicationConfiguration, "Ruby", "Detect default HTTP error code", (getBoolValueFromJToken(errorConfigContainer, "disableDefaultHTTPErrorCode") == false).ToString()));
+
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreExceptions") == false && isTokenPropertyNull(errorConfigContainer, "ignoreExceptionMsgPatterns") == false)
+                            {
+
+                                JArray ignoreExceptionsArray = (JArray)errorConfigContainer["ignoreExceptions"];
+                                JArray ignoreExceptionsMessagesArray = (JArray)errorConfigContainer["ignoreExceptionMsgPatterns"];
+
+                                if (ignoreExceptionsArray.Count > 0 && ignoreExceptionsMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreExceptionsArray.Count; j++)
+                                    {
+                                        try
+                                        {
+                                            errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Ruby", ignoreExceptionsArray[j].ToString(), (JObject)ignoreExceptionsMessagesArray[j]));
+                                        }
+                                        catch { }
+                                    }
+                                }
+                            }
+                            if (isTokenPropertyNull(errorConfigContainer, "ignoreLoggerMsgPatterns") == false)
+                            {
+                                JArray ignoreMessagesArray = (JArray)errorConfigContainer["ignoreLoggerMsgPatterns"];
+
+                                if (ignoreMessagesArray.Count > 0)
+                                {
+                                    for (int j = 0; j < ignoreMessagesArray.Count; j++)
+                                    {
+                                        errorDetectionIgnoreMessagesList.Add(fillErrorDetectionIgnoreException(applicationConfiguration, "Ruby", String.Format("<Message {0}>", j), (JObject)ignoreMessagesArray[j]));
+                                    }
+                                }
+                            }
+                        }
+
+                        #endregion
+
+                        FileIOHelper.WriteListToCSVFile(errorDetectionRulesList, new ErrorDetectionRuleReportMap(), FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(errorDetectionIgnoreMessagesList, new ErrorDetectionIgnoreMessageReportMap(), FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(errorDetectionIgnoreLoggersList, new ErrorDetectionIgnoreLoggerReportMap(), FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(errorDetectionLoggersList, new ErrorDetectionLoggerReportMap(), FilePathMap.APMErrorDetectionLoggersIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(errorDetectionHTTPCodesList, new ErrorDetectionHTTPCodeReportMap(), FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(errorDetectionRedirectPagesList, new ErrorDetectionRedirectPageReportMap(), FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + errorDetectionRulesList.Count + errorDetectionIgnoreMessagesList.Count + errorDetectionIgnoreLoggersList.Count + errorDetectionLoggersList.Count + errorDetectionHTTPCodesList.Count + errorDetectionRedirectPagesList.Count;
 
                         #endregion
 
@@ -1040,6 +1469,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMDeveloperModeNodesReportFilePath(), FilePathMap.APMDeveloperModeNodesIndexFilePath(jobTarget));
                         }
+                        if (File.Exists(FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionRulesReportFilePath(), FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionIgnoreMessagesReportFilePath(), FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionIgnoreLoggersReportFilePath(), FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMErrorDetectionLoggersIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionLoggersIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionLoggersReportFilePath(), FilePathMap.APMErrorDetectionLoggersIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionHTTPCodesReportFilePath(), FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMErrorDetectionRedirectPagesReportFilePath(), FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(jobTarget));
+                        }
 
                         #endregion
                     }
@@ -1136,7 +1589,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return sb.ToString();
         }
-
 
         private static BusinessTransactionDiscoveryRule fillBusinessTransactionDiscoveryRule(XmlNode entryMatchPointConfigurationNode, XmlNode entryMatchPointTransactionConfigurationNode, APMApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode)
         {
@@ -1952,6 +2404,161 @@ namespace AppDynamics.Dexter.ProcessingSteps
             agentCallGraphSetting.IsHotSpotEnabled = getBoolValueFromXmlNode(agentCallGraphSettingConfigurationNode.SelectSingleNode("hotspots-enabled"));
 
             return agentCallGraphSetting;
+        }
+
+        private static ErrorDetectionRule fillErrorDetectionRule(APMApplicationConfiguration applicationConfiguration, string agentType, string ruleName, string ruleValue)
+        {
+            ErrorDetectionRule errorDetectionRule = new ErrorDetectionRule();
+
+            errorDetectionRule.Controller = applicationConfiguration.Controller;
+            errorDetectionRule.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionRule.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionRule.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionRule.AgentType = agentType;
+            errorDetectionRule.RuleName = ruleName;
+            errorDetectionRule.RuleValue = ruleValue;
+
+            return errorDetectionRule;
+        }
+
+        private static ErrorDetectionIgnoreMessage fillErrorDetectionIgnoreException(APMApplicationConfiguration applicationConfiguration, string agentType, string exceptionClass, JObject messageMatchObject)
+        {
+            ErrorDetectionIgnoreMessage errorDetectionIgnoreException = new ErrorDetectionIgnoreMessage();
+
+            errorDetectionIgnoreException.Controller = applicationConfiguration.Controller;
+            errorDetectionIgnoreException.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionIgnoreException.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionIgnoreException.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionIgnoreException.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionIgnoreException.AgentType = agentType;
+            errorDetectionIgnoreException.ExceptionClass = exceptionClass;
+            errorDetectionIgnoreException.MatchType = getStringValueFromJToken(messageMatchObject, "matchType");
+            if (getBoolValueFromJToken(messageMatchObject, "inverse") == true)
+            {
+                errorDetectionIgnoreException.MatchType = String.Format("NOT {0}", errorDetectionIgnoreException.MatchType);
+            }
+            switch (errorDetectionIgnoreException.MatchType)
+            {
+                case "INLIST":
+                    errorDetectionIgnoreException.MessagePattern = getStringValueOfObjectFromJToken(messageMatchObject, "inList", true);
+
+                    break;
+
+                default:
+                    errorDetectionIgnoreException.MessagePattern = getStringValueFromJToken(messageMatchObject, "matchPattern");
+
+                    break;
+            }
+
+            return errorDetectionIgnoreException;
+        }
+
+        private static ErrorDetectionIgnoreLogger fillErrorDetectionIgnoreLogger(APMApplicationConfiguration applicationConfiguration, string agentType, string loggerName)
+        {
+            ErrorDetectionIgnoreLogger errorDetectionIgnoreLogger = new ErrorDetectionIgnoreLogger();
+
+            errorDetectionIgnoreLogger.Controller = applicationConfiguration.Controller;
+            errorDetectionIgnoreLogger.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionIgnoreLogger.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionIgnoreLogger.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionIgnoreLogger.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionIgnoreLogger.AgentType = agentType;
+            errorDetectionIgnoreLogger.LoggerName = loggerName;
+
+            return errorDetectionIgnoreLogger;
+        }
+
+        private static ErrorDetectionLogger fillErrorDetectionLogger(APMApplicationConfiguration applicationConfiguration, string agentType, JObject loggerObject)
+        {
+            ErrorDetectionLogger errorDetectionLogger = new ErrorDetectionLogger();
+
+            errorDetectionLogger.Controller = applicationConfiguration.Controller;
+            errorDetectionLogger.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionLogger.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionLogger.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionLogger.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionLogger.AgentType = agentType;
+            errorDetectionLogger.LoggerName = getStringValueFromJToken(loggerObject, "name");
+            errorDetectionLogger.IsEnabled = !getBoolValueFromJToken(loggerObject, "disable");
+
+            errorDetectionLogger.ExceptionParam = getIntValueFromJToken(loggerObject, "methodParamExceptionIndex");
+            errorDetectionLogger.MessageParam = getIntValueFromJToken(loggerObject, "methodParamMessageIndex");
+
+            if (isTokenPropertyNull(loggerObject, "definition") == false)
+            {
+                errorDetectionLogger.MatchClass = getStringValueFromJToken(loggerObject["definition"], "className");
+                errorDetectionLogger.MatchMethod = getStringValueFromJToken(loggerObject["definition"], "methodName");
+                errorDetectionLogger.MatchType = getStringValueFromJToken(loggerObject["definition"], "matchType");
+                errorDetectionLogger.MatchParameterTypes = getStringValueOfObjectFromJToken(loggerObject["definition"], "methodParameterTypes", true);
+            }
+            
+            return errorDetectionLogger;
+        }
+
+        private static ErrorDetectionHTTPCode fillErrorDetectionHTTPCode(APMApplicationConfiguration applicationConfiguration, string agentType, JObject loggerObject)
+        {
+            ErrorDetectionHTTPCode errorDetectionHTTPCode = new ErrorDetectionHTTPCode();
+
+            errorDetectionHTTPCode.Controller = applicationConfiguration.Controller;
+            errorDetectionHTTPCode.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionHTTPCode.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionHTTPCode.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionHTTPCode.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionHTTPCode.AgentType = agentType;
+            errorDetectionHTTPCode.RangeName = getStringValueFromJToken(loggerObject, "name");
+            errorDetectionHTTPCode.IsEnabled = !getBoolValueFromJToken(loggerObject, "disable");
+            errorDetectionHTTPCode.CaptureURL = !getBoolValueFromJToken(loggerObject, "captureURL");
+
+            errorDetectionHTTPCode.CodeFrom = getIntValueFromJToken(loggerObject, "lowerBound");
+            errorDetectionHTTPCode.CodeTo = getIntValueFromJToken(loggerObject, "upperBound");
+
+            return errorDetectionHTTPCode;
+        }
+
+        private static ErrorDetectionRedirectPage fillErrorDetectionRedirectPage(APMApplicationConfiguration applicationConfiguration, string agentType, JObject errorRedirectPageObject)
+        {
+            ErrorDetectionRedirectPage errorDetectionRedirectPage = new ErrorDetectionRedirectPage();
+
+            errorDetectionRedirectPage.Controller = applicationConfiguration.Controller;
+            errorDetectionRedirectPage.ControllerLink = applicationConfiguration.ControllerLink;
+            errorDetectionRedirectPage.ApplicationName = applicationConfiguration.ApplicationName;
+            errorDetectionRedirectPage.ApplicationID = applicationConfiguration.ApplicationID;
+            errorDetectionRedirectPage.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            errorDetectionRedirectPage.AgentType = agentType;
+            errorDetectionRedirectPage.PageName = getStringValueFromJToken(errorRedirectPageObject, "name");
+            errorDetectionRedirectPage.IsEnabled = !getBoolValueFromJToken(errorRedirectPageObject, "disable");
+
+            if (isTokenPropertyNull(errorRedirectPageObject, "match") == false)
+            {
+                errorDetectionRedirectPage.MatchType = getStringValueFromJToken(errorRedirectPageObject["match"], "matchType");
+                errorDetectionRedirectPage.MatchPattern = getStringValueFromJToken(errorRedirectPageObject["match"], "matchPattern");
+                if (getBoolValueFromJToken(errorRedirectPageObject["match"], "inverse") == true)
+                {
+                    errorDetectionRedirectPage.MatchType = String.Format("NOT {0}", errorDetectionRedirectPage.MatchType);
+                }
+
+                switch (errorDetectionRedirectPage.MatchType)
+                {
+                    case "INLIST":
+                        errorDetectionRedirectPage.MatchPattern = getStringValueOfObjectFromJToken(errorRedirectPageObject["match"], "inList", true);
+
+                        break;
+
+                    default:
+                        errorDetectionRedirectPage.MatchPattern = getStringValueFromJToken(errorRedirectPageObject["match"], "matchPattern");
+
+                        break;
+                }
+            }
+
+            return errorDetectionRedirectPage;
         }
 
         private static void fillMatchRuleDetails(BusinessTransactionEntryRule businessTransactionEntryRule, XmlNode matchRule)

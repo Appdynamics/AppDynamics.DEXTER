@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class APMServiceEndpoint: APMEntityBase
+    public class APMServiceEndpoint : APMEntityBase
     {
         public const string ENTITY_TYPE = "Service Endpoint";
         public const string ENTITY_FOLDER = "SEP";

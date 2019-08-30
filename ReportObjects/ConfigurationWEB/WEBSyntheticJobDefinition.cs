@@ -91,7 +91,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "WEBSyntheticJobDefinition: {0}/{1}({2}) {3} {4} {5}",
                 this.Controller,
                 this.ApplicationName,
-                this.ApplicationID, 
+                this.ApplicationID,
                 this.JobName,
                 this.JobType,
                 this.URL);

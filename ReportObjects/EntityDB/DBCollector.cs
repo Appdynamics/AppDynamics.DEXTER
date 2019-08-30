@@ -16,7 +16,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBCollector: {0}/{1}({2}) [{3}]",
                 this.Controller,
                 this.CollectorName,
-                this.CollectorID, 
+                this.CollectorID,
                 this.CollectorType);
         }
     }

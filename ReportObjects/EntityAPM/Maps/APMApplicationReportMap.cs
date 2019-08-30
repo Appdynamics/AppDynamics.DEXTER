@@ -3,7 +3,7 @@ using CsvHelper.Configuration;
 
 namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class APMApplicationReportMap: ClassMap<APMApplication>
+    public class APMApplicationReportMap : ClassMap<APMApplication>
     {
         public APMApplicationReportMap()
         {

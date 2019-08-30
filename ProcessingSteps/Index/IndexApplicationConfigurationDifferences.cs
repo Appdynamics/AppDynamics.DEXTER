@@ -68,7 +68,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         jobConfiguration.Input.ConfigurationComparisonReferenceAPM.ApplicationID = jobTargetReferenceApp.ApplicationID;
                     }
                 }
-                
+
                 // Check to see if the reference application is the template or specific application, and add one of them to the 
                 if (jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller == BLANK_APPLICATION_CONTROLLER &&
                     jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Application == BLANK_APPLICATION_WEB)
@@ -382,7 +382,43 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, agentCallGraphSettingCollectorsListReference, agentCallGraphSettingCollectorsListDifference));
 
-                                #endregion                                
+                                #endregion
+
+                                #region Error Detection Settings
+
+                                loggerConsole.Info("Error Detection Settings");
+
+                                List<ErrorDetectionRule> errorDetectionRulesListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionRule>(FilePathMap.APMErrorDetectionRulesIndexFilePath(referenceTarget), new ErrorDetectionRuleReportMap());
+                                List<ErrorDetectionRule> errorDetectionRulesListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionRule>(FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget), new ErrorDetectionRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionRulesListReference, errorDetectionRulesListDifference));
+
+                                List<ErrorDetectionIgnoreMessage> errorDetectionIgnoreMessagesListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionIgnoreMessage>(FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(referenceTarget), new ErrorDetectionIgnoreMessageReportMap());
+                                List<ErrorDetectionIgnoreMessage> errorDetectionIgnoreMessagesListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionIgnoreMessage>(FilePathMap.APMErrorDetectionIgnoreMessagesIndexFilePath(jobTarget), new ErrorDetectionIgnoreMessageReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionIgnoreMessagesListReference, errorDetectionIgnoreMessagesListDifference));
+
+                                List<ErrorDetectionIgnoreLogger> errorDetectionIgnoreLoggersListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionIgnoreLogger>(FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(referenceTarget), new ErrorDetectionIgnoreLoggerReportMap());
+                                List<ErrorDetectionIgnoreLogger> errorDetectionIgnoreLoggersListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionIgnoreLogger>(FilePathMap.APMErrorDetectionIgnoreLoggersIndexFilePath(jobTarget), new ErrorDetectionIgnoreLoggerReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionIgnoreLoggersListReference, errorDetectionIgnoreLoggersListDifference));
+
+                                List<ErrorDetectionLogger> errorDetectionLoggersListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionLogger>(FilePathMap.APMErrorDetectionLoggersIndexFilePath(referenceTarget), new ErrorDetectionLoggerReportMap());
+                                List<ErrorDetectionLogger> errorDetectionLoggersListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionLogger>(FilePathMap.APMErrorDetectionLoggersIndexFilePath(jobTarget), new ErrorDetectionLoggerReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionLoggersListReference, errorDetectionLoggersListDifference));
+
+                                List<ErrorDetectionHTTPCode> errorDetectionHTTPCodesListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionHTTPCode>(FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(referenceTarget), new ErrorDetectionHTTPCodeReportMap());
+                                List<ErrorDetectionHTTPCode> errorDetectionHTTPCodesListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionHTTPCode>(FilePathMap.APMErrorDetectionHTTPCodesIndexFilePath(jobTarget), new ErrorDetectionHTTPCodeReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionHTTPCodesListReference, errorDetectionHTTPCodesListDifference));
+
+                                List<ErrorDetectionRedirectPage> errorDetectionRedirectPagesListReference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionRedirectPage>(FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(referenceTarget), new ErrorDetectionRedirectPageReportMap());
+                                List<ErrorDetectionRedirectPage> errorDetectionRedirectPagesListDifference = FileIOHelper.ReadListFromCSVFile<ErrorDetectionRedirectPage>(FilePathMap.APMErrorDetectionRedirectPagesIndexFilePath(jobTarget), new ErrorDetectionRedirectPageReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, errorDetectionRedirectPagesListReference, errorDetectionRedirectPagesListDifference));
+                                
+                                #endregion
 
                                 #endregion
 
@@ -551,7 +587,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 break;
 
-                            default: 
+                            default:
                                 logger.Warn("Comparing type unsupported for target {0}, skipping", jobTarget);
                                 loggerConsole.Warn("Comparing type unsupported for target {0}, skipping", jobTarget);
 
@@ -709,7 +745,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private List<ConfigurationDifference> compareListOfEntities<T>(
             JobTarget jobTargetReference,
             JobTarget jobTargetDifference,
-            List<T> configEntitiesListReference, 
+            List<T> configEntitiesListReference,
             List<T> configEntitiesListDifference) where T : ConfigurationEntityBase
         {
             List<ConfigurationDifference> configurationDifferencesList = new List<ConfigurationDifference>(256);
@@ -1032,9 +1068,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             // Check for success in parsing object from string
             if (propValueReference == null && propValueDifference == null)
-                {
-                    return configurationDifferencesList;
-                }
+            {
+                return configurationDifferencesList;
+            }
             else if (propValueReference != null && propValueDifference == null)
             {
                 ConfigurationDifference configDifference = fillConfigurationDifference(

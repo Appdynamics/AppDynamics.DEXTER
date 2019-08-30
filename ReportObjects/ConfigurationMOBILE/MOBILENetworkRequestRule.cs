@@ -89,7 +89,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "MOBILENetworkRequestRule: {0}/{1}({2}) {3} {4}",
                 this.Controller,
                 this.ApplicationName,
-                this.ApplicationID, 
+                this.ApplicationID,
                 this.DetectionType,
                 this.RuleName);
         }

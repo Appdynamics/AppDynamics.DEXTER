@@ -71,7 +71,7 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsLDAPEnabled { get; set; }
 
-        public string CreatedBy{ get; set; }
+        public string CreatedBy { get; set; }
         public DateTime CreatedOn { get; set; }
         public string ModifiedBy { get; set; }
         public DateTime ModifiedOn { get; set; }
@@ -114,7 +114,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBCollectorDefinition: {0}/{1}({2}) [{3}]",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
+                this.ConfigID,
                 this.CollectorType);
         }
     }
