@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net.Security;
 using System.Reflection;
 using System.Text;
 
@@ -13,6 +12,7 @@ namespace AppDynamics.Dexter
     public class ControllerApi : IDisposable
     {
         private static Logger logger = LogManager.GetCurrentClassLogger();
+        private static Logger loggerConsole = LogManager.GetLogger("AppDynamics.Dexter.Console");
 
         #region Private variables
 
@@ -217,7 +217,7 @@ namespace AppDynamics.Dexter
 
         #region APM Application configuration
 
-        public string GetAPMConfiguration(long applicationID)
+        public string GetAPMConfigurationExportXML(long applicationID)
         {
             return this.apiGET(String.Format("controller/ConfigObjectImportExportServlet?applicationId={0}", applicationID), "text/xml", false);
         }
@@ -230,6 +230,11 @@ namespace AppDynamics.Dexter
         public string GetAPMDeveloperModeConfiguration(long applicationID)
         {
             return this.apiGET(String.Format("controller/restui/applicationManagerUiBean/getDevModeConfig/{0}", applicationID), "application/json", true);
+        }
+
+        public string GetAPMConfigurationDetailsJSON(long applicationID)
+        {
+            return this.apiGET(String.Format("controller/restui/applicationManagerUiBean/applicationConfiguration/{0}", applicationID), "application/json", true);
         }
 
         #endregion
@@ -290,15 +295,15 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""componentId"": {0},
-	""timeRangeSpecifier"": {{
-		""type"": ""BETWEEN_TIMES"",
-		""startTime"": {3},
-		""endTime"": {4},
-		""durationInMinutes"": {5}
-	}},
-	""endEventId"": {2},
-	""currentFetchedEventCount"": {1}
+    ""componentId"": {0},
+    ""timeRangeSpecifier"": {{
+        ""type"": ""BETWEEN_TIMES"",
+        ""startTime"": {3},
+        ""endTime"": {4},
+        ""durationInMinutes"": {5}
+    }},
+    ""endEventId"": {2},
+    ""currentFetchedEventCount"": {1}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -859,14 +864,14 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""requestFilter"": {{ ""applicationId"": {0}, ""fetchSyntheticData"": false }},
-	""resultColumns"": [ ""PAGE_TYPE"", ""PAGE_NAME"", ""TOTAL_REQUESTS"", ""END_USER_RESPONSE_TIME"" ],
-	""offset"": 0,
-	""limit"": -1,
-	""searchFilters"": [],
-	""columnSorts"": [ {{ ""column"": ""TOTAL_REQUESTS"", ""direction"": ""DESC"" }} ],
-	""timeRangeStart"": {1},
-	""timeRangeEnd"": {2}
+    ""requestFilter"": {{ ""applicationId"": {0}, ""fetchSyntheticData"": false }},
+    ""resultColumns"": [ ""PAGE_TYPE"", ""PAGE_NAME"", ""TOTAL_REQUESTS"", ""END_USER_RESPONSE_TIME"" ],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [ {{ ""column"": ""TOTAL_REQUESTS"", ""direction"": ""DESC"" }} ],
+    ""timeRangeStart"": {1},
+    ""timeRangeEnd"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -881,10 +886,10 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""addId"": {1},
-	""applicationId"": {0},
-	""timeRangeString"": ""Custom_Time_Range|BETWEEN_TIMES|{3}|{2}|{4}"",
-	""fetchSyntheticData"": false
+    ""addId"": {1},
+    ""applicationId"": {0},
+    ""timeRangeString"": ""Custom_Time_Range|BETWEEN_TIMES|{3}|{2}|{4}"",
+    ""fetchSyntheticData"": false
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -901,21 +906,21 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""applicationId"": {0},
+    ""applicationId"": {0},
     ""timeRangeString"": ""Custom_Time_Range.BETWEEN_TIMES.{5}.{4}.{6}"",
-	""country"": ""{1}"",
-	""state"": ""{2}"",
-	""city"": ""{3}"",
-	""zipCode"": """"
+    ""country"": ""{1}"",
+    ""state"": ""{2}"",
+    ""city"": ""{3}"",
+    ""zipCode"": """"
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
                 applicationID,
                 country,
-                region, 
+                region,
                 city,
                 startTimeInUnixEpochFormat,
-                endTimeInUnixEpochFormat, 
+                endTimeInUnixEpochFormat,
                 differenceInMinutes);
 
             return this.apiPOST("controller/restui/geoDashboardUiService/getEUMWebGeoDashboardSubLocationsData", "application/json", requestBody, "application/json", true);
@@ -969,8 +974,8 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""applicationId"": {0},
-	""timeRangeString"": ""last_1_hour.BEFORE_NOW.-1.-1.60""
+    ""applicationId"": {0},
+    ""timeRangeString"": ""last_1_hour.BEFORE_NOW.-1.-1.60""
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -987,14 +992,14 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""requestFilter"": {{ ""applicationId"": {0}, ""mobileApplicationId"": {1} }},
-	""resultColumns"": [""NETWORK_REQUEST_NAME"", ""NETWORK_REQUEST_ORIGINAL_NAME"", ""TOTAL_REQUESTS"", ""NETWORK_REQUEST_TIME""],
-	""offset"": 0,
-	""limit"": -1,
-	""searchFilters"": [],
-	""columnSorts"": [ {{ ""column"": ""TOTAL_REQUESTS"", ""direction"": ""DESC"" }}	],
-	""timeRangeStart"": {2},
-	""timeRangeEnd"": {3}
+    ""requestFilter"": {{ ""applicationId"": {0}, ""mobileApplicationId"": {1} }},
+    ""resultColumns"": [""NETWORK_REQUEST_NAME"", ""NETWORK_REQUEST_ORIGINAL_NAME"", ""TOTAL_REQUESTS"", ""NETWORK_REQUEST_TIME""],
+    ""offset"": 0,
+    ""limit"": -1,
+    ""searchFilters"": [],
+    ""columnSorts"": [ {{ ""column"": ""TOTAL_REQUESTS"", ""direction"": ""DESC"" }}	],
+    ""timeRangeStart"": {2},
+    ""timeRangeEnd"": {3}
 }}
 ";
             string requestBody = String.Format(requestJSONTemplate,
@@ -1010,9 +1015,9 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""addId"": {1},
-	""applicationId"": {0},
-	""timeRangeString"": ""Custom_Time_Range|BETWEEN_TIMES|{3}|{2}|{4}""
+    ""addId"": {1},
+    ""applicationId"": {0},
+    ""timeRangeString"": ""Custom_Time_Range|BETWEEN_TIMES|{3}|{2}|{4}""
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1210,15 +1215,15 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""cluster"": false,
-	""serverId"": {0},
-	""field"": ""query-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2},
-	""waitStateIds"": [],
-	""useTimeBasedCorrelation"": false
+    ""cluster"": false,
+    ""serverId"": {0},
+    ""field"": ""query-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2},
+    ""waitStateIds"": [],
+    ""useTimeBasedCorrelation"": false
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1243,13 +1248,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""client-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""client-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1274,13 +1279,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""session-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""session-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1365,13 +1370,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""schema-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""schema-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1396,13 +1401,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""db-user-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""db-user-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1427,13 +1432,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""module-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""module-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1458,13 +1463,13 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""field"": ""program-id"",
-	""size"": 5000,
-	""filterBy"": ""time"",
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""program-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1489,11 +1494,11 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-	""serverId"": {0},
-	""cluster"": false,
-	""size"": 5000,
-	""startTime"": {1},
-	""endTime"": {2}
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""size"": 5000,
+    ""startTime"": {1},
+    ""endTime"": {2}
 }}";
 
             string requestBody = String.Format(requestJSONTemplate,
@@ -1609,7 +1614,7 @@ namespace AppDynamics.Dexter
             // I really want to use {0:o} but our Controller chokes on this:
             //     yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fffffffK
             //                                   ^^^^^^^^^
-            
+
             return this.apiGET(String.Format("api/accounts/{0}/licensemodules/{1}/usages?startdate={2:yyyy-MM-ddTHH:mm:ssK}&enddate={3:yyyy-MM-ddTHH:mm:ssK}&showfiveminutesresolution=false", accountID, licenseModule, from, to), "application/vnd.appd.cntrl+json", false);
         }
 
@@ -1724,10 +1729,10 @@ namespace AppDynamics.Dexter
         {
             string requestJSONTemplate =
 @"{{
-        	""type"": ""BETWEEN_TIMES"",
-        	""startTime"": {0},
-        	""endTime"": {1},
-        	""durationInMinutes"": {2},
+            ""type"": ""BETWEEN_TIMES"",
+            ""startTime"": {0},
+            ""endTime"": {1},
+            ""durationInMinutes"": {2},
             ""timeRange"": null,
             ""timeRangeAdjusted"": false
         }}";
@@ -1741,8 +1746,8 @@ namespace AppDynamics.Dexter
         }
 
         public string GetLicenseRules()
-        {        
-            return this.apiGET("/mds/v1/license/rules", "application/json", false);
+        {
+            return this.apiGET("mds/v1/license/rules", "application/json", false);
         }
 
         public string GetLicenseRuleUsage(string ruleID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
@@ -1830,6 +1835,12 @@ namespace AppDynamics.Dexter
                     {
                         logger.Error("{0}/{1} GET as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }
+
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        loggerConsole.Error("{0}/{1} GET as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+                    }
+
                     return String.Empty;
                 }
             }
@@ -1896,6 +1907,11 @@ namespace AppDynamics.Dexter
                     else
                     {
                         logger.Error("{0}/{1} POST as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
+                    }
+
+                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        loggerConsole.Error("{0}/{1} POST as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }
 
                     return String.Empty;

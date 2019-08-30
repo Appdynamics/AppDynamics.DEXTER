@@ -480,8 +480,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             logger.Info("Finalize Entity Metric Graphs Report File {0}", reportFilePath);
 
             ExcelWorksheet sheet;
-            ExcelRangeBase range;
-            ExcelTable table;
 
             #region TOC sheet
 

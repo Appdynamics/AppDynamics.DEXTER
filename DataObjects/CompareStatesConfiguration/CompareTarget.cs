@@ -21,10 +21,10 @@ namespace AppDynamics.Dexter
         public override string ToString()
         {
             return String.Format(
-                "CompareTarget: {0}/{1}({2})[{3}] vs {4}/{5}({6})[{7}]", 
-                this.ReferenceConroller, 
-                this.ReferenceApplication, 
-                this.ReferenceApplicationID, 
+                "CompareTarget: {0}/{1}({2})[{3}] vs {4}/{5}({6})[{7}]",
+                this.ReferenceConroller,
+                this.ReferenceApplication,
+                this.ReferenceApplicationID,
                 this.Type,
                 this.DifferenceController,
                 this.DifferenceApplication,

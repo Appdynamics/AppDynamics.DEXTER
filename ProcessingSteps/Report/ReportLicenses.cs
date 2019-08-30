@@ -377,7 +377,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
-                   
+
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["AccountName"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["AccountNameGlobal"].Position + 1).Width = 20;

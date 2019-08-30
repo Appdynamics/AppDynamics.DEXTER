@@ -547,11 +547,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
         }
 
         private int extractSnapshots(
-            JobConfiguration jobConfiguration, 
-            JobTarget jobTarget, 
-            ControllerApi controllerApi, 
-            List<JToken> snapshotTokenList, 
-            List<AppDRESTTier> tiersNodeJSList, 
+            JobConfiguration jobConfiguration,
+            JobTarget jobTarget,
+            ControllerApi controllerApi,
+            List<JToken> snapshotTokenList,
+            List<AppDRESTTier> tiersNodeJSList,
             bool progressToConsole)
         {
             int j = 0;
@@ -667,7 +667,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         tw.WriteLine("\"errors\" :");
                                         tw.WriteLine("{");
                                         someObjectWrittenAlready = false;
-                                        foreach(JToken snapshotSegment in snapshotSegmentsList)
+                                        foreach (JToken snapshotSegment in snapshotSegmentsList)
                                         {
                                             if ((bool)snapshotSegment["errorOccurred"] == true)
                                             {

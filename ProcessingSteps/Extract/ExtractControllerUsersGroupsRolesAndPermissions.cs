@@ -34,7 +34,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
 
                 // Process each Controller once
-                int i = 0; 
+                int i = 0;
                 var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                 foreach (var controllerGroup in controllers)
                 {

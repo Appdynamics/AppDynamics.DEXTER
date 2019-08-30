@@ -45,7 +45,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "APMResolvedBackend:  {0}/{1}({2})/{3}({4})={5}({6})",
                 this.Controller,
                 this.ApplicationName,
-                this.ApplicationID, 
+                this.ApplicationID,
                 this.BackendName,
                 this.BackendID,
                 this.TierName,

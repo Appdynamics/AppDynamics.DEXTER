@@ -42,7 +42,7 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsIPDisplayed { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public bool EnableScreenshot{ get; set; }
+        public bool EnableScreenshot { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool AutoScreenshot { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]

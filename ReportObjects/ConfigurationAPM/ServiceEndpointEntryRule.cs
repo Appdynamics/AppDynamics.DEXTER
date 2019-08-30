@@ -31,7 +31,7 @@ namespace AppDynamics.Dexter.ReportObjects
             {
                 return String.Format("{0}/{1}/{2}", this.EntryPointType, this.AgentType, this.TierName);
             }
-       }
+        }
 
         public override string EntityName
         {

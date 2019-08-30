@@ -75,8 +75,8 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBCustomMetric: {0}/{1}({2}) {3}({4})",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.MetricName, 
+                this.ConfigID,
+                this.MetricName,
                 this.MetricID);
         }
     }

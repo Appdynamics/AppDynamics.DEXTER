@@ -77,7 +77,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 this.ApplicationName,
                 this.TierName,
                 this.AgentType,
-                this.EntryPointType, 
+                this.EntryPointType,
                 this.RuleName);
         }
     }

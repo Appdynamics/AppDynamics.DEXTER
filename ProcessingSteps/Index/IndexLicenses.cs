@@ -2,12 +2,10 @@
 using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace AppDynamics.Dexter.ProcessingSteps
@@ -240,7 +238,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         licenseValue.AgentType = license.AgentType;
 
                                         licenseValue.RuleName = "Account";
-                                        
+
                                         licenseValue.LicenseEventTimeUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(licenseUsageObject, "createdOn"));
                                         licenseValue.LicenseEventTime = licenseValue.LicenseEventTimeUtc.ToLocalTime();
 

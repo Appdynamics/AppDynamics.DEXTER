@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace AppDynamics.Dexter
+﻿namespace AppDynamics.Dexter
 {
     public class CompareInput
     {

@@ -38,7 +38,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APP_ACTIONS = "11.Actions";
         private const string SHEET_APP_ACTIONS_PIVOT = "11.Actions.Type";
         private const string SHEET_APP_POLICIES_TO_ACTIONS_MAPPING = "12.Policy Actions";
-        
+
         // APM Configuration
         private const string SHEET_APM_APPLICATION_CONFIGURATION = "20.APM Application Config";
         private const string SHEET_APM_BUSINESS_TRANSACTION_DISCOVERY_RULES = "21.APM BT Discovery Rules";
@@ -64,6 +64,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APM_AGENT_CALL_GRAPH_SETTINGS = "34.APM Call Graph Settings";
         private const string SHEET_APM_SERVICE_ENDPOINT_RULES_SETTINGS = "35.APM Service Endpoint Rules";
         private const string SHEET_APM_DEVELOPER_MODE_NODES = "36.APM Developer Mode Nodes";
+        private const string SHEET_APM_ERROR_DETECTION_RULES = "37.APM Error Detection Rules";
+        private const string SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES = "38.APM Error Ignore Messages";
+        private const string SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS = "39.APM Error Ignore Loggers";
+        private const string SHEET_APM_ERROR_DETECTION_LOGGERS = "40.APM Error Loggers";
+        private const string SHEET_APM_ERROR_DETECTION_HTTP_CODES = "41.APM Error HTTP Codes";
+        private const string SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES = "42.APM Error Redired Pages";
 
         // DB Configuration
         private const string SHEET_DB_APPLICATION_CONFIGURATION = "50.DB Application Config";
@@ -120,7 +126,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_APM_AGENT_CALL_GRAPH_SETTINGS = "t_APM_AgentCallGraphSettings";
         private const string TABLE_APM_SERVICE_ENDPOINT_ENTRY_RULES = "t_APM_SEPEntryRules";
         private const string TABLE_APM_DEVELOPER_MODE_NODES = "t_APM_DevModeNodes";
-
+        private const string TABLE_APM_ERROR_DETECTION_RULES = "t_APM_ErrorDetectionRules";
+        private const string TABLE_APM_ERROR_DETECTION_IGNORE_MESSAGES = "t_APM_ErrorIgnoreMessages";
+        private const string TABLE_APM_ERROR_DETECTION_IGNORE_LOGGERS = "t_APM_ErrorIgnoreLoggers";
+        private const string TABLE_APM_ERROR_DETECTION_LOGGERS = "t_APM_ErrorLoggers";
+        private const string TABLE_APM_ERROR_DETECTION_HTTP_CODES = "t_APM_ErrorHTTPCodes";
+        private const string TABLE_APM_ERROR_DETECTION_REDIRECT_PAGES = "t_APM_ErrorRediredPages";
         // DB Configuration
         private const string TABLE_DB_APPLICATION_CONFIGURATION = "t_DB_ApplicationConfiguration";
         private const string TABLE_DB_COLLECTOR_DEFINITIONS = "t_DB_CollectorDefinitions";
@@ -532,6 +543,42 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_LOGGERS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_HTTP_CODES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_DB_APPLICATION_CONFIGURATION);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -845,6 +892,40 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_DEVELOPER_MODE_NODES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMDeveloperModeNodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region APM Error Settings
+
+                loggerConsole.Info("List of Error Detection Rules");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_RULES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                loggerConsole.Info("List of Error Detection Ignore Messages");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreMessagesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                loggerConsole.Info("List of Error Detection Ignore Loggers");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreLoggersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                loggerConsole.Info("List of Error Detection Loggers");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_LOGGERS];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionLoggersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                loggerConsole.Info("List of Error Detection HTTP Codes");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_HTTP_CODES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionHTTPCodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                loggerConsole.Info("List of Error Detection Redirect Pages");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRedirectPagesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1426,7 +1507,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(3).Width = 20;
                     sheet.Column(4).Width = 20;
                     sheet.Column(5).Width = 20;
-                    sheet.Column(6).Width = 20;                    
+                    sheet.Column(6).Width = 20;
                 }
 
                 #endregion
@@ -1888,6 +1969,125 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["BTName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["NodeName"].Position + 1).Width = 20;
+                }
+
+                #endregion
+
+                #region APM Error Settings
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_RULES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_IGNORE_MESSAGES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["RuleValue"].Position + 1).Width = 15;
+                }
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_IGNORE_LOGGERS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ExceptionClass"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["MatchType"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["MessagePattern"].Position + 1).Width = 20;
+                }
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_LOGGERS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["LoggerName"].Position + 1).Width = 20;
+                }
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_LOGGERS];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_HTTP_CODES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["LoggerName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["MatchClass"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["MatchMethod"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["MatchType"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["MatchParameterTypes"].Position + 1).Width = 15;
+                }
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_HTTP_CODES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_REDIRECT_PAGES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["RangeName"].Position + 1).Width = 20;
+                }
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_ERROR_DETECTION_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["PageName"].Position + 1).Width = 20;
                 }
 
                 #endregion

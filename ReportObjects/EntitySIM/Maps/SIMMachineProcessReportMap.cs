@@ -31,7 +31,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.PID).Index(i); i++;
             Map(m => m.ParentPID).Index(i); i++;
             Map(m => m.PGID).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.NodeID).Index(i); i++;

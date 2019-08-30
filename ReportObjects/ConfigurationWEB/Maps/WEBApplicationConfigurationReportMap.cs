@@ -55,7 +55,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.EnableSlowSnapshots).Index(i); i++;
             Map(m => m.EnablePeriodicSnapshots).Index(i); i++;
             Map(m => m.EnableErrorSnapshots).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;

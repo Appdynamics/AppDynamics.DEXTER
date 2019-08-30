@@ -39,9 +39,9 @@ namespace AppDynamics.Dexter.ReportObjects
                 "DBQuery: {0}/{1}({2}) [{3}] {4}({5})",
                 this.Controller,
                 this.CollectorName,
-                this.ConfigID, 
-                this.CollectorType, 
-                this.QueryHash, 
+                this.ConfigID,
+                this.CollectorType,
+                this.QueryHash,
                 this.QueryID);
         }
     }

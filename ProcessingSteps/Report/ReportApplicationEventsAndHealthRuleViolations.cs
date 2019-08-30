@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 
 namespace AppDynamics.Dexter.ProcessingSteps
@@ -215,7 +214,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-                
+
                 #endregion
 
                 #region Report file variables

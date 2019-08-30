@@ -381,7 +381,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                         break;
 
-                                   
+
                                     default:
                                         break;
                                 }

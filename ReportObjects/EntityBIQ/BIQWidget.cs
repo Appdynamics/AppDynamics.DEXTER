@@ -55,7 +55,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 this.SearchName,
                 this.SearchType,
                 this.SearchID,
-                this.WidgetName, 
+                this.WidgetName,
                 this.WidgetType,
                 this.WidgetID);
         }

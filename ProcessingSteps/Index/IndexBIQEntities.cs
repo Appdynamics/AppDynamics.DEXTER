@@ -156,7 +156,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         widget.SearchLink = search.SearchLink;
 
                                         widget.InternalName = getStringValueFromJToken(searchWidget, "name");
-                                        widget.WidgetID= getLongValueFromJToken(searchWidget, "id");
+                                        widget.WidgetID = getLongValueFromJToken(searchWidget, "id");
 
                                         if (isTokenPropertyNull(searchWidget, "adqlQueries") == false)
                                         {
@@ -471,7 +471,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 experienceLevelsList = experienceLevelsList.OrderBy(o => o.ExperienceLevelName).ToList();
                                 FileIOHelper.WriteListToCSVFile(experienceLevelsList, new BIQExperienceLevelReportMap(), FilePathMap.BIQExperienceLevelsIndexFilePath(jobTarget));
 
-                                stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessJourneysList.Count;
+                                stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + experienceLevelsList.Count;
                             }
                         }
 

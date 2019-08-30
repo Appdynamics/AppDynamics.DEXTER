@@ -17,7 +17,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "RBACUser: {0}/{1}({2})",
                 this.Controller,
-                this.UserName, 
+                this.UserName,
                 this.SecurityProvider);
         }
     }

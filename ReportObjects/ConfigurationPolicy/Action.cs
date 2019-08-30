@@ -27,7 +27,7 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool CollectScriptOutputs { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public int TimeoutMinutes  { get; set; }
+        public int TimeoutMinutes { get; set; }
 
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public string To { get; set; }

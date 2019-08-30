@@ -39,7 +39,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "EmailAlertTemplate: {0} {1} {2}",
                 this.Controller,
-                this.Name, 
+                this.Name,
                 this.To);
         }
     }

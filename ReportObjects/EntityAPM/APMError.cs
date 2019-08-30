@@ -2,7 +2,7 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class APMError: APMEntityBase
+    public class APMError : APMEntityBase
     {
         public const string ENTITY_TYPE = "Error";
         public const string ENTITY_FOLDER = "ERR";

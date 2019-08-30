@@ -109,7 +109,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 int j = 0;
 
                                 Parallel.For(0,
-                                    differenceInMinutesForLastTimeRange, 
+                                    differenceInMinutesForLastTimeRange,
                                     new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
                                     () => 0,
                                     (minute, loop, subtotal) =>

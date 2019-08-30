@@ -35,7 +35,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.EnableScreenshot).Index(i); i++;
             Map(m => m.AutoScreenshot).Index(i); i++;
             Map(m => m.UseCellular).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;

@@ -26,7 +26,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             stepTimingFunction.NumEntities = jobConfiguration.Target.Count;
 
             this.DisplayJobStepStartingStatus(jobConfiguration);
-            
+
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
             try
@@ -94,7 +94,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             @event.EventID = getLongValueFromJToken(interestingEvent, "id");
                                             @event.OccurredUtc = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(interestingEvent["notificationData"], "time"));
-                                            try { @event.Occurred = @event.OccurredUtc.ToLocalTime();} catch { }
+                                            try { @event.Occurred = @event.OccurredUtc.ToLocalTime(); } catch { }
 
                                             @event.Type = getStringValueFromJToken(interestingEvent["notificationData"], "eventType");
                                             @event.Severity = getStringValueFromJToken(interestingEvent["notificationData"], "severity");

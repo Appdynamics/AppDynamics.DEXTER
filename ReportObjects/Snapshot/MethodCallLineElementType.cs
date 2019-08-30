@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AppDynamics.Dexter.ReportObjects
+﻿namespace AppDynamics.Dexter.ReportObjects
 {
     public enum MethodCallLineElementType
     {

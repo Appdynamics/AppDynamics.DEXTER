@@ -81,7 +81,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<WEBPageToBusinessTransaction> webPageToBTsList = null;
                         List<WEBPageToWebPage> webPageToWebPagesList = null;
 
-                        JObject webPagesContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.WEBPagesDataFilePath(jobTarget));                        
+                        JObject webPagesContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.WEBPagesDataFilePath(jobTarget));
                         if (isTokenPropertyNull(webPagesContainerObject, "data") == false)
                         {
                             JArray webPagesArray = (JArray)webPagesContainerObject["data"];

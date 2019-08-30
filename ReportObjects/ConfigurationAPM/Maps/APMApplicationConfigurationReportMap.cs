@@ -24,7 +24,6 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumInfoPointRules).Index(i); i++;
             Map(m => m.NumAgentProps).Index(i); i++;
             Map(m => m.NumHealthRules).Index(i); i++;
-            Map(m => m.NumErrorRules).Index(i); i++;
             Map(m => m.NumHTTPDCVariablesCollected).Index(i); i++;
             Map(m => m.NumHTTPDCs).Index(i); i++;
             Map(m => m.NumMIDCVariablesCollected).Index(i); i++;
@@ -37,6 +36,9 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsHREngineEnabled).Index(i); i++;
             Map(m => m.IsDeveloperModeEnabled).Index(i); i++;
             Map(m => m.IsBTLockdownEnabled).Index(i); i++;
+            Map(m => m.IsBTCleanupEnabled).Index(i); i++;
+            Map(m => m.BTCleanupInterval).Index(i); i++;
+            Map(m => m.BTCleanupCallCount).Index(i); i++;
             Map(m => m.IsAsyncSupported).Index(i); i++;
             Map(m => m.SnapshotEvalInterval).Index(i); i++;
             Map(m => m.SnapshotQuietTime).Index(i); i++;
@@ -57,8 +59,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.TasksConfig).Index(i); i++;
             Map(m => m.BTGroupsConfig).Index(i); i++;
             Map(m => m.MetricBaselinesConfig).Index(i); i++;
-            Map(m => m.ErrorAgentConfig).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;

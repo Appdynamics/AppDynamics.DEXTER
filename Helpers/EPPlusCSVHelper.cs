@@ -207,6 +207,7 @@ namespace AppDynamics.Dexter
                 }
                 catch (OutOfMemoryException ex)
                 {
+                    logger.Error(ex);
                     logger.Warn("Max number of rows or cells in sheet {0} reached", sheet.Name);
                     return null;
                 }

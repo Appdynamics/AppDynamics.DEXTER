@@ -38,7 +38,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 bool reportFolderCleaned = false;
 
                 // Process each Controller once
-                int i = 0; 
+                int i = 0;
                 var controllers = jobConfiguration.Target.GroupBy(t => t.Controller);
                 foreach (var controllerGroup in controllers)
                 {
@@ -499,8 +499,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             bool parsedBool = false;
                             Boolean.TryParse(requireStrongPasswords, out parsedBool);
                             controller.IsStrongPasswords = parsedBool;
-                        } 
-                
+                        }
+
                         if (usersList != null) controller.NumUsers = usersList.Count;
                         if (groupsList != null) controller.NumGroups = groupsList.Count;
                         if (rolesList != null) controller.NumRoles = rolesList.Count;

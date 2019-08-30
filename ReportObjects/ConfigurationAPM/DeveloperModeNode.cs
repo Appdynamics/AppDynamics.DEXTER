@@ -45,7 +45,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public override String ToString()
         {
             return String.Format(
-                "DeveloperModeSetting: {0}/{1}/{2} {3} {4} {5}",
+                "DeveloperModeSetting: {0}/{1}/{2} {3} {4}",
                 this.Controller,
                 this.ApplicationName,
                 this.TierName,

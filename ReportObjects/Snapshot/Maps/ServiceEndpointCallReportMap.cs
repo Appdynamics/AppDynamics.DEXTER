@@ -28,7 +28,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
 
             Map(m => m.SEPName).Index(i); i++;
             Map(m => m.SEPType).Index(i); i++;
-            
+
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.NodeID).Index(i); i++;

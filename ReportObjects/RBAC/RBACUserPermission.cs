@@ -32,8 +32,8 @@ namespace AppDynamics.Dexter.ReportObjects
                 this.Controller,
                 this.UserName,
                 this.GroupName,
-                this.RoleName, 
-                this.PermissionName, 
+                this.RoleName,
+                this.PermissionName,
                 this.Allowed);
         }
     }

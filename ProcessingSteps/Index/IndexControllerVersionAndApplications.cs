@@ -113,7 +113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         JArray mobileApplicationsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.MOBILEApplicationsDataFilePath(jobTarget));
 
                         List<ControllerApplication> controllerApplicationsList = new List<ControllerApplication>(100);
-                        
+
                         if (isTokenPropertyNull(allApplicationsContainerObject, "apmApplications") == false)
                         {
                             loggerConsole.Info("Index List of APM Applications");
@@ -182,7 +182,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 {
                                     controllerApplicationsList.Add(controllerApplication);
                                 }
-                                    
+
                                 // Now go through children
                                 if (mobileApplicationsArray != null)
                                 {

@@ -161,7 +161,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<EmailAlertTemplate> emailTemplatesList = new List<EmailAlertTemplate>();
                         JArray emailTemplatesArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.EmailTemplatesDataFilePath(jobTarget));
-                        JArray emailTemplatesDetailArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.EmailTemplatesDetailDataFilePath(jobTarget));                        
+                        JArray emailTemplatesDetailArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.EmailTemplatesDetailDataFilePath(jobTarget));
                         if (emailTemplatesArray != null)
                         {
                             foreach (JObject emailTemplateObject in emailTemplatesArray)
@@ -175,10 +175,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 emailAlertTemplate.OneEmailPerEvent = getBoolValueFromJToken(emailTemplateObject, "oneEmailPerEvent");
                                 emailAlertTemplate.EventLimit = getLongValueFromJToken(emailTemplateObject, "eventClampLimit");
 
-                                try {
+                                try
+                                {
                                     string[] emails = emailTemplateObject["toRecipients"].Select(s => getStringValueFromJToken(s, "value")).ToArray();
                                     emailAlertTemplate.To = String.Join(";", emails);
-                                } catch { }
+                                }
+                                catch { }
                                 try
                                 {
                                     string[] emails = emailTemplateObject["ccRecipients"].Select(s => getStringValueFromJToken(s, "value")).ToArray();
@@ -211,7 +213,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                                 catch { }
                                 emailAlertTemplate.TestLogLevel = getStringValueFromJToken(emailTemplateObject, "testLogLevel");
-                                
+
                                 emailAlertTemplate.Headers = getStringValueOfObjectFromJToken(emailTemplateObject, "headers", true);
                                 emailAlertTemplate.Subject = getStringValueFromJToken(emailTemplateObject, "subject");
                                 emailAlertTemplate.TextBody = getStringValueFromJToken(emailTemplateObject, "textBody");

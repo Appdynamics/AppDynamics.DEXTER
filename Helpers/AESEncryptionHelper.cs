@@ -55,7 +55,7 @@ namespace AppDynamics.Dexter
             catch (FormatException ex)
             {
                 if (ex.Message == "Invalid length for a Base-64 char array or string." || ex.Message.StartsWith("The input is not a valid Base-64 string"))
-                { 
+                {
                     // This is plaintext
                     return cipherText;
                 }

@@ -33,7 +33,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "ControllerApplication: {0}/{1}({2}) [{3}]",
                 this.Controller,
-                this.ApplicationName, 
+                this.ApplicationName,
                 this.ApplicationID,
                 this.Type);
         }

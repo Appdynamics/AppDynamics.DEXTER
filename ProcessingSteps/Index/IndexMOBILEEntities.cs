@@ -341,7 +341,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
 
                                             // Has Activity
-                                            if (networkRequestToBT.ART == 0 && 
+                                            if (networkRequestToBT.ART == 0 &&
                                                 networkRequestToBT.CPM == 0 && networkRequestToBT.Calls == 0)
                                             {
                                                 networkRequestToBT.HasActivity = false;

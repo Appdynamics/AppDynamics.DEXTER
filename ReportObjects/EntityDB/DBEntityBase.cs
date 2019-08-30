@@ -10,7 +10,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string ApplicationName { get; set; }
         public long ApplicationID { get; set; }
         public string ApplicationLink { get; set; }
-    
+
         public long ConfigID { get; set; }
 
         public long CollectorID { get; set; }

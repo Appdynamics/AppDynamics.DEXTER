@@ -71,12 +71,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Application Configuration");
 
-                            if (File.Exists(FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget)) == false)
+                            if (File.Exists(FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget)) == false)
                             {
                                 controllerApi.Timeout = 3;
-                                string applicationConfigXml = controllerApi.GetAPMConfiguration(jobTarget.ApplicationID);
-                                if (applicationConfigXml != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.APMApplicationConfigurationDataFilePath(jobTarget));
+                                string applicationConfigXml = controllerApi.GetAPMConfigurationExportXML(jobTarget.ApplicationID);
+                                if (applicationConfigXml != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
                             }
+
+                            controllerApi.PrivateApiLogin();
+
+                            if (File.Exists(FilePathMap.APMApplicationConfigurationDetailsDataFilePath(jobTarget)) == false)
+                            {
+                                controllerApi.PrivateApiLogin();
+
+                                string applicationConfigJSON = controllerApi.GetAPMConfigurationDetailsJSON(jobTarget.ApplicationID);
+                                if (applicationConfigJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigJSON, FilePathMap.APMApplicationConfigurationDetailsDataFilePath(jobTarget));
+                            }
+
                             #endregion
 
                             #region Service Endpoints
@@ -114,8 +125,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             if (File.Exists(FilePathMap.APMApplicationDeveloperModeNodesDataFilePath(jobTarget)) == false)
                             {
-                                controllerApi.PrivateApiLogin();
-
                                 string devModeConfigurationJSON = controllerApi.GetAPMDeveloperModeConfiguration(jobTarget.ApplicationID);
                                 if (devModeConfigurationJSON != String.Empty) FileIOHelper.SaveFileToPath(devModeConfigurationJSON, FilePathMap.APMApplicationDeveloperModeNodesDataFilePath(jobTarget));
                             }

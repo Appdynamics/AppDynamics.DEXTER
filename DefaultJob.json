@@ -51,8 +51,8 @@
     ],
     "Input": {
         "TimeRange": {
-            "From": "2019-06-01T12:00:00",
-            "To": "2019-06-01T13:00:00"
+            "From": "2019-09-01T09:00:00",
+            "To": "2019-09-01T10:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,

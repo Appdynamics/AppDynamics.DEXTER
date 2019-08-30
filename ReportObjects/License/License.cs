@@ -34,7 +34,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "License: {0}/{1} {2}/{3}",
                 this.Controller,
-                this.AccountName, 
+                this.AccountName,
                 this.Average,
                 this.Provisioned);
         }

@@ -38,7 +38,7 @@ namespace AppDynamics.Dexter.ReportObjects
                 "HTTPAlertTemplate: {0} {1} {2}://{3}:{4}/{5}?{6}",
                 this.Controller,
                 this.Name,
-                this.Scheme, 
+                this.Scheme,
                 this.Host,
                 this.Port,
                 this.Path,

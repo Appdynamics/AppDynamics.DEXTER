@@ -22,7 +22,7 @@ namespace AppDynamics.Dexter.ReportObjects
             }
         }
 
-        public override string EntityName 
+        public override string EntityName
         {
             get
             {

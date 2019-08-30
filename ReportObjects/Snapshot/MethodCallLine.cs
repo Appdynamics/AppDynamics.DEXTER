@@ -51,7 +51,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool ExecAdjusted { get; set; }
 
         public string ExecRange { get; set; }
-        
+
         public int Depth { get; set; }
         public MethodCallLineElementType ElementType { get; set; }
         public int NumChildren { get; set; }

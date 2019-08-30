@@ -53,7 +53,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             return String.Format(
                 "DashboardMetricSeries: {0}/{1} {2} {3} {4}",
-                this.Controller, 
+                this.Controller,
                 this.DashboardName,
                 this.WidgetType,
                 this.Index,
