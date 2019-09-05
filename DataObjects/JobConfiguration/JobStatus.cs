@@ -86,6 +86,8 @@
 
         ReportAPMEntityDetails = 133,
 
+        ReportCSHealth = 200,
+
         // The rest
         Done = 500,
 
