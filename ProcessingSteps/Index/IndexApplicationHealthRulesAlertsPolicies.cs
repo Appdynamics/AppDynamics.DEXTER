@@ -192,10 +192,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         // For databases, we only process this once for the first collector we've seen
-                        if (listOfTargetsAlreadyProcessed.Count(j => (j.Controller == jobTarget.Controller) && (j.Type == APPLICATION_TYPE_DB)) > 0)
+                        if (jobTarget.Type == APPLICATION_TYPE_DB)
                         {
-                            // Already saw this target, DB Collectors for controller are all part of the same thing
-                            continue;
+                            if (listOfTargetsAlreadyProcessed.Count(j => (j.Controller == jobTarget.Controller) && (j.Type == APPLICATION_TYPE_DB)) > 0)
+                            {
+                                // Already saw this target, DB Collectors for controller are all part of the same thing
+                                continue;
+                            }
                         }
 
                         listOfTargetsAlreadyProcessed.Add(jobTarget);
