@@ -99,6 +99,8 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMEntityDetails,
 
+                JobStatus.ReportCSHealth,
+
                 // Done 
                 JobStatus.Done,
 
