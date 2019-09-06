@@ -363,6 +363,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
 
+                case JobStatus.ReportCSHealth:
+                    return new ReportCSHealth();
 
                 default:
                     break;

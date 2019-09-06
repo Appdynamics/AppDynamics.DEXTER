@@ -54,6 +54,37 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Health Check");
 
+                //Create new list to temporarily store HealthCheck entities
+                List<object> listHealthCheck = new List<object>();
+
+                //Read List of APM Configurations
+                List<APMApplicationConfiguration> listAPMConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
+
+                if (listAPMConfigurations != null)
+                {
+                    foreach(APMApplicationConfiguration apmAppConfig in listAPMConfigurations)
+                    {
+                        //write to CSV controller name, app name, BTLockdown and others
+                        listHealthCheck.Add(apmAppConfig.Controller);
+                        listHealthCheck.Add(apmAppConfig.ApplicationName);
+                        listHealthCheck.Add(apmAppConfig.IsBTLockdownEnabled);
+                        /*
+                        if (apmAppConfig.IsBTLockdownEnabled == true)
+                        {
+                            //set as true
+
+                        }
+                        else
+                        {
+                            //set as false
+                        }
+                        */
+                    }
+
+                }
+
+                loggerConsole.Info("***************ListAPMConfig***********");
+                listHealthCheck.ForEach(x => { Console.Write(x); });
                 #endregion
 
                 loggerConsole.Info("Finalize CS Healthcheck Report File");
