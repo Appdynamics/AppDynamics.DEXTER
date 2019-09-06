@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "--job-file \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\errordetect.json\" -v"
+      "commandLineArgs": "--job-file \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\configrefactor.json\" -v"
     }
   }
 }
