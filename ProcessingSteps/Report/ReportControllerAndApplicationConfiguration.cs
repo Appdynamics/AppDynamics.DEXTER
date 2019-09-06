@@ -1382,9 +1382,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHealthRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHealthRules"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumErrorRules"].Position + 1, sheet.Dimension.Rows, table.Columns["NumErrorRules"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
                     cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumHTTPDCVariablesCollected"].Position + 1, sheet.Dimension.Rows, table.Columns["NumHTTPDCVariablesCollected"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
 
@@ -1399,7 +1396,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBaselines"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBaselines"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
 
                     cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
