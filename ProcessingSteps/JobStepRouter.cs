@@ -99,7 +99,7 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMEntityDetails,
 
-                JobStatus.ReportCSHealth,
+                JobStatus.ReportApplicationHealthCheck,
 
                 // Done 
                 JobStatus.Done,
@@ -363,8 +363,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
 
-                case JobStatus.ReportCSHealth:
-                    return new ReportCSHealth();
+                case JobStatus.ReportApplicationHealthCheck:
+                    return new ReportApplicationHealthCheck();
 
                 default:
                     break;

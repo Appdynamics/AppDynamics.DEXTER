@@ -14,7 +14,7 @@ using System.Reflection;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class ReportCSHealth : JobStepReportBase
+    public class ReportApplicationHealthCheck : JobStepReportBase
     {
         #region Constants for report contents
 
@@ -67,6 +67,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         //write to CSV controller name, app name, BTLockdown and others
                         listHealthCheck.Add(apmAppConfig.Controller);
                         listHealthCheck.Add(apmAppConfig.ApplicationName);
+                        listHealthCheck.Add(apmAppConfig.NumTiers);
+                        listHealthCheck.Add(apmAppConfig.NumBTs);
+                        listHealthCheck.Add(apmAppConfig.IsDeveloperModeEnabled);
                         listHealthCheck.Add(apmAppConfig.IsBTLockdownEnabled);
                         /*
                         if (apmAppConfig.IsBTLockdownEnabled == true)
