@@ -1,2 +1,4 @@
-LatestAppAgentVersion,4.5.13
-LatestMachineAgentVersion,4.5
+Name,Value,Description
+LatestAppAgentVersion,4.5,Latest Major Version of the AppDynamics App Agent
+LatestMachineAgentVersion,4.5,Latest Major Version of the AppDynamics Machine Agent
+AgentOldPercent,25,Acceptable Percentage of Old Agents (two Major release behind current)
