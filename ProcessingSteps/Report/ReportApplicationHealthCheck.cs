@@ -65,13 +65,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 //Create new list to temporarily store HealthCheck entities
                 //List<object> listHealthCheck = new List<object>();
 
-                ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(1);
+                
+                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMConfigurations.Count);
 
                 if (listAPMConfigurations != null)
                 {
                     foreach(APMApplicationConfiguration apmAppConfig in listAPMConfigurations)
                     {
+                        ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
+
                         healthCheck.Controller = apmAppConfig.Controller;
                         healthCheck.ApplicationName = apmAppConfig.ApplicationName;
                         healthCheck.ApplicationID = apmAppConfig.ApplicationID;
