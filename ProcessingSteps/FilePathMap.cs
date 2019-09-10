@@ -447,6 +447,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_CHART_NODE_FILE_NAME = "FlameChart.Node.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
         private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
 
+        //Application HealthCheck Report file names
+        private const string REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME = "application.healthcheck.csv";
+
         #endregion
 
         #region Constants for Step Timing report
@@ -6330,6 +6333,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
+        #region Application Healthcheck Report
+
+        public string ApplicationHealthCheckCSVFilePath()
+        {
+            return Path.Combine(this.ProgramOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME);
+        }
+
+        #endregion
 
         #region Helper function for various entity naming
 
