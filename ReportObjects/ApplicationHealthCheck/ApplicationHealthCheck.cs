@@ -2,50 +2,17 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class ApplicationHealthCheck : ConfigurationEntityBase
+    public class ApplicationHealthCheck
     {
-        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public string Controller { get; set; }
+        public string ApplicationName { get; set; }
+        public long ApplicationID { get; set; }
         public int NumTiers { get; set; }
-        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumBTs { get; set; }
 
-        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsDeveloperModeEnabled { get; set; }
-        [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsBTLockdownEnabled { get; set; }
  
-        public override string EntityIdentifier
-        {
-            get
-            {
-                return this.ApplicationName;
-            }
-        }
-
-        public override string EntityName
-        {
-            get
-            {
-                return this.ApplicationName;
-            }
-        }
-
-        public override string RuleType
-        {
-            get
-            {
-                return "ApplicationHealthCheck";
-            }
-        }
-
-        public override string RuleSubType
-        {
-            get
-            {
-                return String.Empty;
-            }
-        }
-
         public override String ToString()
         {
             return String.Format(
