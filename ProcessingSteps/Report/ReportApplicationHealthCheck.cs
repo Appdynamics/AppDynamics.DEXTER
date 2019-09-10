@@ -46,36 +46,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
-            #region Template comparisons 
-
-            // Check to see if the reference application is the template or specific application, and add one of them to the 
-            if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == BLANK_APPLICATION_CONTROLLER &&
-                jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application == BLANK_APPLICATION_APM)
-            {
-                jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
-            }
-            else
-            {
-                // Check if there is a valid reference application
-                JobTarget jobTargetReferenceApp = jobConfiguration.Target.Where(t =>
-                    t.Type == APPLICATION_TYPE_APM &&
-                    String.Compare(t.Controller, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller, StringComparison.InvariantCultureIgnoreCase) == 0 &&
-                    String.Compare(t.Application, jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application, StringComparison.InvariantCultureIgnoreCase) == 0).FirstOrDefault();
-                if (jobTargetReferenceApp == null)
-                {
-                    // No valid reference, fall back to comparing against template
-                    logger.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
-                    loggerConsole.Warn("Unable to find reference target {0}, will index default template", jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
-
-                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = BLANK_APPLICATION_CONTROLLER;
-                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application = BLANK_APPLICATION_APM;
-                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = APPLICATION_TYPE_APM;
-
-                    jobConfiguration.Target.Add(jobConfiguration.Input.ConfigurationComparisonReferenceAPM);
-                }
-            }
-
-            #endregion
+      
 
             try
             {
@@ -95,7 +66,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 //List<object> listHealthCheck = new List<object>();
 
                 ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>();
+                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(1);
 
                 if (listAPMConfigurations != null)
                 {
@@ -111,9 +82,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
                         healthChecksList.Add(healthCheck);
+                        Console.WriteLine("****{0}****",healthCheck);
+                        
 
+                        #region TO DELETE
                         //write to CSV controller name, app name, BTLockdown and others
-                        /*      listHealthCheck.Add(apmAppConfig.Controller);
+                        /*    listHealthCheck.Add(apmAppConfig.Controller);
                               listHealthCheck.Add(apmAppConfig.ApplicationName);
                               listHealthCheck.Add(apmAppConfig.NumTiers);
                               listHealthCheck.Add(apmAppConfig.NumBTs);
@@ -131,20 +105,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             //set as false
                         }
                         */
+                        #endregion
                     }
-
+                    FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(), FilePathMap.ApplicationHealthCheckCSVFilePath());
                 }
 
-                //listHealthCheck.ForEach(x => { Console.Write(x); });
+                //listHealthCheck.ForEach(x => { Console.WriteLine(x); });
 
                 #endregion
 
-                #region Create HealthCheck CSV
-
-                healthChecksList.Add(healthCheck);
-                FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(),FilePathMap.ApplicationHealthCheckCSVFilePath());
-
-                #endregion
 
                 loggerConsole.Info("Finalize CS Healthcheck Report File");
 
