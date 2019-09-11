@@ -48,6 +48,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string CONTROLLER_RBAC_FOLDER_NAME = "RBAC";
 
+        private const string APPLICATION_HEALTHCHECK_FOLDER_NAME = "AHC";
+
         #endregion
 
         #region Constants for the folder and file names of data extract
@@ -449,6 +451,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         //Application HealthCheck Report file names
         private const string REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME = "application.healthcheck.csv";
+        private const string REPORT_HEALTHCHECK_FILE_NAME = "HealthCheck.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         #endregion
 
@@ -6337,7 +6340,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public string ApplicationHealthCheckCSVFilePath()
         {
-            return Path.Combine(this.ProgramOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath, 
+                REPORT_FOLDER_NAME, 
+                APPLICATION_HEALTHCHECK_FOLDER_NAME,
+                REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME);
+        }
+
+        public string ApplicationHealthCheckReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                REPORT_HEALTHCHECK_FILE_NAME);
         }
 
         #endregion

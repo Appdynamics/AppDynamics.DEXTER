@@ -58,14 +58,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 //Read List of APM Configurations
                 List<APMApplicationConfiguration> listAPMConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
+                
+                
                 #endregion
 
-                #region Health Check
+                #region Add APMConfigurations into HealthCheckList
 
-                //Create new list to temporarily store HealthCheck entities
-                //List<object> listHealthCheck = new List<object>();
-
-                
                 List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMConfigurations.Count);
 
                 if (listAPMConfigurations != null)
@@ -84,7 +82,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
                         healthChecksList.Add(healthCheck);
-                        Console.WriteLine("****{0}****",healthCheck);
+                        //Console.WriteLine("****{0}****",healthCheck);
                         
 
                         #region TO DELETE
@@ -109,15 +107,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         */
                         #endregion
                     }
-                    FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(), FilePathMap.ApplicationHealthCheckCSVFilePath());
                 }
-
-                //listHealthCheck.ForEach(x => { Console.WriteLine(x); });
-
                 #endregion
 
 
+
+                #region Write HealthChecks to CSV
+
+                if (healthChecksList.Count != 0)
+                {
+                    FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(), FilePathMap.ApplicationHealthCheckCSVFilePath());
+                }
+
                 loggerConsole.Info("Finalize CS Healthcheck Report File");
+
+                #endregion
 
                 return true;
             }
