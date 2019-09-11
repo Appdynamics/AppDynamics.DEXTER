@@ -6347,19 +6347,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME);
         }
 
-        public string ApplicationHealthCheckReportFilePath()
+        public string ApplicationHealthCheckExcelReportFilePath(JobTimeRange jobTimeRange)
         {
+            string reportFileName = String.Format(
+                REPORT_HEALTHCHECK_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
-                REPORT_HEALTHCHECK_FILE_NAME);
+                reportFileName);
         }
 
-        #endregion
+            #endregion
 
-        #region Helper function for various entity naming
+            #region Helper function for various entity naming
 
-        public static string getFileSystemSafeString(string fileOrFolderNameToClear)
+            public static string getFileSystemSafeString(string fileOrFolderNameToClear)
         {
             foreach (var c in Path.GetInvalidFileNameChars())
             {
