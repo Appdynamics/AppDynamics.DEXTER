@@ -17,6 +17,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
     public class ReportApplicationHealthCheck : JobStepReportBase
     {
         #region Constants for report contents
+        // --------------------------------------------------
+        // Sheets
+        private const string SHEET_APP_HEALTHCHECK = "3.Health Check";
+
+        // --------------------------------------------------
+        // Tables
+        private const string TABLE_APP_HEALTH_CHECK = "t_APP_HealthCheck";
+
+
+        private const int LIST_SHEET_START_TABLE_AT = 4;
 
         #endregion
 
@@ -46,80 +56,130 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
-      
-
             try
             {
-                loggerConsole.Info("Prepare CS Healthcheck Report File");
-  
-                loggerConsole.Info("List of Health Check");
+                loggerConsole.Info("Prepare Application Health Check Report File");
 
-                #region Preload Entity Lists
+                #region Prepare the report package
 
-                //Read List of APM Configurations
-                List<APMApplicationConfiguration> listAPMConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
-                
-                
+                // Prepare package
+                ExcelPackage excelReport = new ExcelPackage();
+                excelReport.Workbook.Properties.Author = String.Format("AppDynamics DEXTER {0}", Assembly.GetEntryAssembly().GetName().Version);
+                excelReport.Workbook.Properties.Title = "AppDynamics DEXTER Application Health Check Report";
+                excelReport.Workbook.Properties.Subject = programOptions.JobName;
+
+                excelReport.Workbook.Properties.Comments = String.Format("Targets={0}\nFrom={1:o}\nTo={2:o}", jobConfiguration.Target.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+
                 #endregion
 
-                #region Add APMConfigurations into HealthCheckList
+                #region Parameters sheet
 
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMConfigurations.Count);
+                // Parameters sheet
+                ExcelWorksheet sheet = excelReport.Workbook.Worksheets.Add(SHEET_PARAMETERS);
 
-                if (listAPMConfigurations != null)
-                {
-                    foreach(APMApplicationConfiguration apmAppConfig in listAPMConfigurations)
-                    {
-                        ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
+                var hyperLinkStyle = sheet.Workbook.Styles.CreateNamedStyle("HyperLinkStyle");
+                hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
+                hyperLinkStyle.Style.Font.Color.SetColor(colorBlueForHyperlinks);
 
-                        healthCheck.Controller = apmAppConfig.Controller;
-                        healthCheck.ApplicationName = apmAppConfig.ApplicationName;
-                        healthCheck.ApplicationID = apmAppConfig.ApplicationID;
-                        healthCheck.NumTiers = apmAppConfig.NumTiers;
-                        healthCheck.NumBTs = apmAppConfig.NumBTs;
+                fillReportParametersSheet(sheet, jobConfiguration, "AppDynamics DEXTER Application Health Check Report");
 
-                        healthCheck.IsDeveloperModeEnabled = apmAppConfig.IsDeveloperModeEnabled;
-                        healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
-
-                        healthChecksList.Add(healthCheck);
-                        //Console.WriteLine("****{0}****",healthCheck);
-                        
-
-                        #region TO DELETE
-                        //write to CSV controller name, app name, BTLockdown and others
-                        /*    listHealthCheck.Add(apmAppConfig.Controller);
-                              listHealthCheck.Add(apmAppConfig.ApplicationName);
-                              listHealthCheck.Add(apmAppConfig.NumTiers);
-                              listHealthCheck.Add(apmAppConfig.NumBTs);
-                              listHealthCheck.Add(apmAppConfig.IsDeveloperModeEnabled);
-                              listHealthCheck.Add(apmAppConfig.IsBTLockdownEnabled);*/
-
-                        /*
-                        if (apmAppConfig.IsBTLockdownEnabled == true)
-                        {
-                            //set as true
-
-                        }
-                        else
-                        {
-                            //set as false
-                        }
-                        */
-                        #endregion
-                    }
-                }
                 #endregion
 
+                #region TOC sheet
 
+                // Navigation sheet with link to other sheets
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_TOC);
 
-                #region Write HealthChecks to CSV
+                #endregion
 
-                if (healthChecksList.Count != 0)
+                #region Entity Sheets
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APP_HEALTHCHECK);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                #endregion
+
+                loggerConsole.Info("Fill Application Health Check Report File");
+
+                #region Report file variables
+
+                ExcelRangeBase range = null;
+                ExcelTable table = null;
+
+                #endregion
+
+                #region Load Health Check to Sheet
+
+                loggerConsole.Info("List of Controllers");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTHCHECK];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthCheckCSVFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                loggerConsole.Info("Finalize Application Health Check Report File");
+
+                #region Format Health Check Sheet
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTHCHECK];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
-                    FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(), FilePathMap.ApplicationHealthCheckCSVFilePath());
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APP_HEALTH_CHECK);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["IsBTLockdownEnabled"].Position + 1);
+                    sheet.Column(table.Columns["IsDeveloperModeEnabled"].Position + 1);
+                    sheet.Column(table.Columns["NumTiers"].Position + 1);
+                    sheet.Column(table.Columns["NumBTs"].Position + 1);
+                    sheet.Column(table.Columns["ApplicationID"].Position + 1);
+
+
                 }
 
-                loggerConsole.Info("Finalize CS Healthcheck Report File");
+                #endregion
+
+                #region TOC sheet
+
+                // TOC sheet again
+                sheet = excelReport.Workbook.Worksheets[SHEET_TOC];
+                fillTableOfContentsSheet(sheet, excelReport);
+
+                #endregion
+
+                #region Save file 
+
+                if (Directory.Exists(FilePathMap.ReportFolderPath()) == false)
+                {
+                    Directory.CreateDirectory(FilePathMap.ReportFolderPath());
+                }
+
+                string reportFilePath = FilePathMap.ApplicationHealthCheckExcelReportFilePath(jobConfiguration.Input.TimeRange);
+                logger.Info("Saving Excel report {0}", reportFilePath);
+                loggerConsole.Info("Saving Excel report {0}", reportFilePath);
+
+                try
+                {
+                    // Save full report Excel files
+                    excelReport.SaveAs(new FileInfo(reportFilePath));
+                }
+                catch (InvalidOperationException ex)
+                {
+                    logger.Warn("Unable to save Excel file {0}", reportFilePath);
+                    logger.Warn(ex);
+                    loggerConsole.Warn("Unable to save Excel file {0}", reportFilePath);
+                }
 
                 #endregion
 
