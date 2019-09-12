@@ -14,8 +14,24 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumTiers).Index(i); i++;
             Map(m => m.NumBTs).Index(i); i++;
 
+            Map(m => m.IsCustomBTRules).Index(i); i++;
+            Map(m => m.IsBTOverflow).Index(i); i++;
             Map(m => m.IsBTLockdownEnabled).Index(i); i++;
             Map(m => m.IsDeveloperModeEnabled).Index(i); i++;
+            Map(m => m.IsBTErrorRateHigh).Index(i); i++;
+            Map(m => m.IsBackendOverflow).Index(i); i++;
+            Map(m => m.IsDataCollectorsEnabled).Index(i); i++;
+            Map(m => m.IsInfoPointsEnabled).Index(i); i++;
+
+            Map(m => m.IsHRViolationsHigh).Index(i); i++;
+            Map(m => m.IsPoliciesAndActionsEnabled).Index(i); i++;
+
+            Map(m => m.AppAgentVersion).Index(i); i++;
+            Map(m => m.MachineAgentVersion).Index(i); i++;
+            Map(m => m.IsMachineAgentEnabled).Index(i); i++;
+
+            Map(m => m.PercentActiveTiers).Index(i); i++;
+            Map(m => m.PercentActiveNodes).Index(i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
 

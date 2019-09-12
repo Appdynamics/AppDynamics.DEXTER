@@ -138,8 +138,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
+                    //Format Table columns
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
                     ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBTLockdownEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
@@ -150,12 +152,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
-                    /*sheet.Column(table.Columns["NumTiers"].Position + 1);
-                    sheet.Column(table.Columns["NumBTs"].Position + 1);
-                    */
-                    //sheet.Column(table.Columns["AgentVersion"].Position + 1);
+                    //sheet.Column(table.Columns["AppAgentVersion"].Position + 1);
                     //sheet.Column(table.Columns["MachineAgentVersion"].Position + 1);
-                    sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
                 }
 
