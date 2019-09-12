@@ -18,10 +18,19 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public bool IsBTOverflow { get; set; }
         public bool IsCustomBTRules { get; set; }
-        public bool isBTErrorRateHigh { get; set; }
-        public bool isBackendOverflow { get; set; }
-        public bool isDataCollectorsEnabled { get; set; }
-        public bool isInfoPointsEnabled { get; set; }
+        public bool IsBTErrorRateHigh { get; set; }
+        public bool IsBackendOverflow { get; set; }
+        public bool IsDataCollectorsEnabled { get; set; }
+        public bool IsInfoPointsEnabled { get; set; }
+
+        public string IsHRViolationsHigh { get; set; }
+        public string IsPoliciesAndActionsEnabled { get; set; }
+
+        public string AppAgentVersion { get; set; }
+        public string MachineAgentVersion { get; set; }
+        public string IsMachineAgentEnabled { get; set; }
+        public string PercentActiveTiers { get; set; }
+        public string PercentActiveNodes { get; set; }
 
 
         public override String ToString()
