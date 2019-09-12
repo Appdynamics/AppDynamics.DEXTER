@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Drawing;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -113,7 +114,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Load Health Check to Sheet
 
-                loggerConsole.Info("List of Controllers");
+                loggerConsole.Info("List of Entities");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTHCHECK];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthCheckCSVFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
@@ -139,12 +140,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["IsBTLockdownEnabled"].Position + 1);
-                    sheet.Column(table.Columns["IsDeveloperModeEnabled"].Position + 1);
-                    sheet.Column(table.Columns["NumTiers"].Position + 1);
-                    sheet.Column(table.Columns["NumBTs"].Position + 1);
-                    sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
+                    ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBTLockdownEnabled"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsDeveloperModeEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsDeveloperModeEnabled"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+
+                    /*sheet.Column(table.Columns["NumTiers"].Position + 1);
+                    sheet.Column(table.Columns["NumBTs"].Position + 1);
+                    */
+                    //sheet.Column(table.Columns["AgentVersion"].Position + 1);
+                    //sheet.Column(table.Columns["MachineAgentVersion"].Position + 1);
+                    sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
                 }
 
@@ -220,5 +231,33 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
             return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.Configuration == true);
         }
+
+        internal static void AddHealthCheckConditionalFormatting(ExcelWorksheet sheet, ExcelAddress cfAddressAHC)
+        {
+            //Color Green if True or "Pass"
+            var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
+            cfUserExperience.Formula = @"=TRUE";
+
+            //Color Red if False or "Fail" or 0
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
+            cfUserExperience.Formula = @"=FALSE";
+
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
+            cfUserExperience.Formula = @"=0";
+
+            //Color Yellow if "Warning" or 2
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.Yellow;
+            cfUserExperience.Formula = @"=""WARNING""";
+
+        }
+
     }
 }
