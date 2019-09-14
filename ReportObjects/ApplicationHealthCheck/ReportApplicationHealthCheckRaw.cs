@@ -50,10 +50,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
                 /**********************************************/
+                double LatestAppAgentVersion = 4.5;
+                double LatestMachineAgentVersion = 4.5;
+                int MachineAgentPassScore = 80;
+                int MachineAgentFailScore = 60;
+
                 int InfoPointFailScore = 1;
                 int InfoPointPassScore = 3;
                 int DataCollectorPassScore = 3;
                 int DataCollectorFailScore = 1;
+
                 /**********************************************/
 
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");
@@ -63,21 +69,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Preload Entity Lists
 
                 //Read List of APM Configurations
-                List<APMApplicationConfiguration> listAPMApplicationConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
-                //List<> listBTOverflow
-                
-                //List<> listPolicies
-                //List<> listPolicyToAction
+                List<APMApplicationConfiguration> APMApplicationConfigurationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
+                List <HTTPDataCollector> httpDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHttpDataCollectorsReportFilePath(), new HTTPDataCollectorReportMap());
+                List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMMethodInvocationDataCollectorsReportFilePath(), new MethodInvocationDataCollectorReportMap());
+
+                //List<> BTOverflowList
+
+                List<Policy> PoliciesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesReportFilePath(), new PolicyReportMap());
+                List<PolicyActionMapping> policyToActionList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPolicyActionMappingsReportFilePath(), new PolicyActionMappingReportMap());
 
                 #endregion
 
                 #region Add APMConfigurations into HealthCheckList
 
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMApplicationConfigurations.Count);
+                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(APMApplicationConfigurationsList.Count);
 
-                if (listAPMApplicationConfigurations != null)
+                if (APMApplicationConfigurationsList != null)
                 {
-                    foreach (APMApplicationConfiguration apmAppConfig in listAPMApplicationConfigurations)
+                    foreach (APMApplicationConfiguration apmAppConfig in APMApplicationConfigurationsList)
                     {
                         ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
 
@@ -96,7 +105,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.NumInfoPoints = "FAIL";
                         else healthCheck.NumInfoPoints = "WARN";
 
-
                         /*Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true*/
                         int NumDCEnabled = apmAppConfig.NumHTTPDCs + apmAppConfig.NumMIDCs; //TODO Compare w/IsAssignedtoBTs = true
                         if (NumDCEnabled > DataCollectorPassScore)
@@ -105,40 +113,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.NumDataCollectorsEnabled = "FAIL";
                         else healthCheck.NumDataCollectorsEnabled = "WARN";
 
+
+
                         healthChecksList.Add(healthCheck);
-                        //Console.WriteLine("****{0}****",healthCheck);
-                        
-
-                        #region TO DELETE
-                        //write to CSV controller name, app name, BTLockdown and others
-                        /*    listHealthCheck.Add(apmAppConfig.Controller);
-                              listHealthCheck.Add(apmAppConfig.ApplicationName);
-                              listHealthCheck.Add(apmAppConfig.NumTiers);
-                              listHealthCheck.Add(apmAppConfig.NumBTs);
-                              listHealthCheck.Add(apmAppConfig.IsDeveloperModeEnabled);
-                              listHealthCheck.Add(apmAppConfig.IsBTLockdownEnabled);*/
-
-                        /*
-                        if (apmAppConfig.IsBTLockdownEnabled == true)
-                        {
-                            //set as true
-
-                        }
-                        else
-                        {
-                            //set as false
-                        }
-                        */
-                        #endregion
                     }
                 }
                 #endregion
 
-                #region Add BTOverflow into HealthCheckList
+                #region TODO Add BTOverflow into HealthCheckList
                 /*If BTOverflow count > 0, add FAIL to healthchecklist*/
                 #endregion
 
-                #region Add Policy To Action into HealthCheckList
+                #region TODO Add Policy To Action into HealthCheckList
                 /*TO DO:    If (policy active & has associated actions):Add count of policies to healthcheck list
                 */
                 #endregion
