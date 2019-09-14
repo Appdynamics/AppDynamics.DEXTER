@@ -46,10 +46,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
-      
-
             try
             {
+                /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
+                /**********************************************/
+                int InfoPointFailScore = 1;
+                int InfoPointPassScore = 3;
+                int DataCollectorPassScore = 3;
+                int DataCollectorFailScore = 3;
+                /**********************************************/
+
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");
   
                 loggerConsole.Info("List of Health Check");
@@ -57,18 +63,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Preload Entity Lists
 
                 //Read List of APM Configurations
-                List<APMApplicationConfiguration> listAPMConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
+                List<APMApplicationConfiguration> listAPMApplicationConfigurations = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
+                //List<> listBTOverflow
                 
-                
+                //List<> listPolicies
+                //List<> listPolicyToAction
+
                 #endregion
 
                 #region Add APMConfigurations into HealthCheckList
 
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMConfigurations.Count);
+                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(listAPMApplicationConfigurations.Count);
 
-                if (listAPMConfigurations != null)
+                if (listAPMApplicationConfigurations != null)
                 {
-                    foreach(APMApplicationConfiguration apmAppConfig in listAPMConfigurations)
+                    foreach (APMApplicationConfiguration apmAppConfig in listAPMApplicationConfigurations)
                     {
                         ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
 
@@ -80,6 +89,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         healthCheck.IsDeveloperModeEnabled = apmAppConfig.IsDeveloperModeEnabled;
                         healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
+
+                        if (apmAppConfig.NumInfoPointRules > InfoPointPassScore)
+                            healthCheck.NumInfoPoints = "PASS";
+                        else if (apmAppConfig.NumInfoPointRules < InfoPointFailScore)
+                            healthCheck.NumInfoPoints = "FAIL";
+                        else healthCheck.NumInfoPoints = "WARN";
+
+
+                        /*Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true*/
+                        int NumDCEnabled = apmAppConfig.NumHTTPDCs + apmAppConfig.NumMIDCs; //TODO Compare w/IsAssignedtoBTs = true
+                        if (NumDCEnabled > DataCollectorPassScore)
+                            healthCheck.NumDataCollectorsEnabled = "PASS";
+                        else if (NumDCEnabled < DataCollectorFailScore)
+                            healthCheck.NumDataCollectorsEnabled = "FAIL";
+                        else healthCheck.NumDataCollectorsEnabled = "WARN";
 
                         healthChecksList.Add(healthCheck);
                         //Console.WriteLine("****{0}****",healthCheck);
@@ -110,7 +134,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
                 #endregion
 
+                #region Add BTOverflow into HealthCheckList
+                /*If BTOverflow count > 0, add FAIL to healthchecklist*/
+                #endregion
 
+                #region Add Policy To Action into HealthCheckList
+                /*TO DO:    If (policy active & has associated actions):Add count of policies to healthcheck list
+                */
+                #endregion
 
                 #region Write HealthChecks to CSV
 

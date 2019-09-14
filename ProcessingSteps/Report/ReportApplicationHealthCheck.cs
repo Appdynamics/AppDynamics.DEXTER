@@ -152,6 +152,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumInfoPoints"].Position + 1, sheet.Dimension.Rows, table.Columns["NumInfoPoints"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumDataCollectorsEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["NumDataCollectorsEnabled"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     //sheet.Column(table.Columns["AppAgentVersion"].Position + 1);
                     //sheet.Column(table.Columns["MachineAgentVersion"].Position + 1);
 
@@ -238,11 +242,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Formula = @"=TRUE";
 
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
+            cfUserExperience.Formula = @"=PASS";
+
             //Color Red if False or "Fail" or 0
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Formula = @"=FALSE";
+
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
+            cfUserExperience.Formula = @"=FAIL";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
