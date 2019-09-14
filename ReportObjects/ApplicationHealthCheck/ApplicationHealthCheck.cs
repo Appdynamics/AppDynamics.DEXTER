@@ -20,8 +20,8 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool IsCustomBTRules { get; set; }
         public bool IsBTErrorRateHigh { get; set; }
         public bool IsBackendOverflow { get; set; }
-        public bool IsDataCollectorsEnabled { get; set; }
-        public bool IsInfoPointsEnabled { get; set; }
+        public string NumDataCollectorsEnabled { get; set; }
+        public string NumInfoPoints { get; set; }
 
         public string IsHRViolationsHigh { get; set; }
         public string IsPoliciesAndActionsEnabled { get; set; }
