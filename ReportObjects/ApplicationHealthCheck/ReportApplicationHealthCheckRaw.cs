@@ -53,7 +53,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int InfoPointFailScore = 1;
                 int InfoPointPassScore = 3;
                 int DataCollectorPassScore = 3;
-                int DataCollectorFailScore = 3;
+                int DataCollectorFailScore = 1;
                 /**********************************************/
 
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");

@@ -245,7 +245,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
-            cfUserExperience.Formula = @"=PASS";
+            cfUserExperience.Formula = @"=""PASS""";
 
             //Color Red if False or "Fail" or 0
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
@@ -256,7 +256,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
-            cfUserExperience.Formula = @"=FAIL";
+            cfUserExperience.Formula = @"=""FAIL""";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
@@ -267,7 +267,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.Black;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.Yellow;
-            cfUserExperience.Formula = @"=""WARNING""";
+            cfUserExperience.Formula = @"=""WARN""";
 
         }
 
