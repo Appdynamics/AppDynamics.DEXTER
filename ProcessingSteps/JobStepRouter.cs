@@ -99,6 +99,7 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMEntityDetails,
 
+                JobStatus.ApplicationHealthCheckComparison,
                 JobStatus.ReportApplicationHealthCheckRaw,
                 JobStatus.ReportApplicationHealthCheck,
 
@@ -363,6 +364,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
+
+                //case JobStatus.ApplicationHealthCheckComparison:
+                  //  return new ApplicationHealthCheckComparison();
 
                 case JobStatus.ReportApplicationHealthCheckRaw:
                     return new ReportApplicationHealthCheckRaw();
