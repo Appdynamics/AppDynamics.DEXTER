@@ -67,6 +67,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Health Check");
 
                 #region Preload Entity Lists
+                List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
 
                 //Read List of APM Configurations
                 List<APMApplicationConfiguration> APMApplicationConfigurationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
@@ -99,14 +100,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.IsDeveloperModeEnabled = apmAppConfig.IsDeveloperModeEnabled;
                         healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
+                        //Add InfoPoints score to Health Check
                         if (apmAppConfig.NumInfoPointRules > InfoPointPassScore)
                             healthCheck.NumInfoPoints = "PASS";
                         else if (apmAppConfig.NumInfoPointRules < InfoPointFailScore)
                             healthCheck.NumInfoPoints = "FAIL";
                         else healthCheck.NumInfoPoints = "WARN";
 
+                        //Add Data collector score to Health Check
                         /*Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true*/
-                        int NumDCEnabled = apmAppConfig.NumHTTPDCs + apmAppConfig.NumMIDCs; //TODO Compare w/IsAssignedtoBTs = true
+                        List<HTTPDataCollector> httpDataCollectorThisAppList = null;
+                        List<MethodInvocationDataCollector> methodInvocationDataCollectorThisAppList = null;
+
+                        if (httpDataCollectorsList != null) httpDataCollectorThisAppList = httpDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<HTTPDataCollector>();
+                        int HTTPDataCollectorCount = httpDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
+
+                        if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<MethodInvocationDataCollector>();
+                        int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
+
+                        Console.WriteLine("{0} HTTPDC: {1}, MIDC: {2}",apmAppConfig.ApplicationName, HTTPDataCollectorCount,MethodInvocationDataCollectorCount);
+
+                        int NumDCEnabled = HTTPDataCollectorCount + MethodInvocationDataCollectorCount; //TODO Compare w/IsAssignedtoBTs = true
                         if (NumDCEnabled > DataCollectorPassScore)
                             healthCheck.NumDataCollectorsEnabled = "PASS";
                         else if (NumDCEnabled < DataCollectorFailScore)

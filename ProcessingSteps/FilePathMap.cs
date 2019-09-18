@@ -475,6 +475,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Template controller export of an empty applications
         private const string TEMPLATE_CONTROLLER_AND_APPLICATIONS_FOLDER_NAME = "EmptyConfig";
 
+        //Settings for Health Check comparison
+        private const string APPLICATION_HEALTHCHECK_COMPARISON_MAPPING_FILE_NAME = "AppHealthCheckComparisonMapping.csv";
+
         #endregion
 
         #region Snapshot UX to Folder Mapping
@@ -6361,11 +6364,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 reportFileName);
         }
 
-            #endregion
+        public string ApplicationHealthCheckComparisonMappingFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                APPLICATION_HEALTHCHECK_COMPARISON_MAPPING_FILE_NAME);
+        }
 
-            #region Helper function for various entity naming
+        #endregion
 
-            public static string getFileSystemSafeString(string fileOrFolderNameToClear)
+        #region Helper function for various entity naming
+
+        public static string getFileSystemSafeString(string fileOrFolderNameToClear)
         {
             foreach (var c in Path.GetInvalidFileNameChars())
             {
