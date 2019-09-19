@@ -152,13 +152,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
+                    //Advanced APM Configurations
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumInfoPoints"].Position + 1, sheet.Dimension.Rows, table.Columns["NumInfoPoints"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumDataCollectorsEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["NumDataCollectorsEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    //sheet.Column(table.Columns["AppAgentVersion"].Position + 1);
-                    //sheet.Column(table.Columns["MachineAgentVersion"].Position + 1);
 
+                    //Alerting Configurations
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsPoliciesAndActionsEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsPoliciesAndActionsEnabled"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsHRViolationsHigh"].Position + 1, sheet.Dimension.Rows, table.Columns["IsHRViolationsHigh"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+
+                    //Infrastructure
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["AppAgentVersion"].Position + 1, sheet.Dimension.Rows, table.Columns["AppAgentVersion"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["MachineAgentVersion"].Position + 1, sheet.Dimension.Rows, table.Columns["MachineAgentVersion"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsMachineAgentEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsMachineAgentEnabled"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["PercentActiveTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["PercentActiveTiers"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["PercentActiveNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["PercentActiveNodes"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
                 }
 
                 #endregion
@@ -238,23 +254,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             //Color Green if True or "Pass"
             var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Font.Color.Color = Color.Green;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Formula = @"=TRUE";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Font.Color.Color = Color.Green;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Formula = @"=""PASS""";
 
             //Color Red if False or "Fail" or 0
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Font.Color.Color = Color.Red;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Formula = @"=FALSE";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Font.Color.Color = Color.Red;
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Formula = @"=""FAIL""";
 
@@ -265,8 +281,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             //Color Yellow if "Warning" or 2
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
-            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.Yellow;
+            cfUserExperience.Style.Font.Color.Color = Color.Yellow;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253,235,156);
             cfUserExperience.Formula = @"=""WARN""";
 
         }
