@@ -60,6 +60,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int DataCollectorPassScore = 3;
                 int DataCollectorFailScore = 1;
 
+                int PolicyUpper = 2;
+                int PolicyLower = 1;
+
                 /**********************************************/
 
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");
@@ -69,15 +72,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Preload Entity Lists
                 List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
 
-                //Read List of APM Configurations
+                //Read List of Configurations from CSV files
                 List<APMApplicationConfiguration> APMApplicationConfigurationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
                 List <HTTPDataCollector> httpDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHttpDataCollectorsReportFilePath(), new HTTPDataCollectorReportMap());
                 List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMMethodInvocationDataCollectorsReportFilePath(), new MethodInvocationDataCollectorReportMap());
+                List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesReportFilePath(), new PolicyReportMap());
+                List<APMTier> apmTierList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
+                List<APMNode> apmNodeList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesReportFilePath(), new APMNodeReportMap());
+
 
                 //List<> BTOverflowList
-
-                List<Policy> PoliciesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesReportFilePath(), new PolicyReportMap());
-                List<PolicyActionMapping> policyToActionList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPolicyActionMappingsReportFilePath(), new PolicyActionMappingReportMap());
 
                 #endregion
 
@@ -108,7 +112,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         else healthCheck.NumInfoPoints = "WARN";
 
                         //Add Data collector score to Health Check
-                        /*Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true*/
+                        //Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true
                         List<HTTPDataCollector> httpDataCollectorThisAppList = null;
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorThisAppList = null;
 
@@ -118,17 +122,40 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<MethodInvocationDataCollector>();
                         int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
-                        Console.WriteLine("{0} HTTPDC: {1}, MIDC: {2}",apmAppConfig.ApplicationName, HTTPDataCollectorCount,MethodInvocationDataCollectorCount);
-
-                        int NumDCEnabled = HTTPDataCollectorCount + MethodInvocationDataCollectorCount; //TODO Compare w/IsAssignedtoBTs = true
-                        if (NumDCEnabled > DataCollectorPassScore)
+                        if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) > DataCollectorPassScore)
                             healthCheck.NumDataCollectorsEnabled = "PASS";
-                        else if (NumDCEnabled < DataCollectorFailScore)
+                        else if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) < DataCollectorFailScore)
                             healthCheck.NumDataCollectorsEnabled = "FAIL";
                         else healthCheck.NumDataCollectorsEnabled = "WARN";
 
+                        //Add Policy To Action into HealthCheckList
+                        //If (policy active & has associated actions): Add count of policies to healthcheck list
+                        List<Policy> policiesThisAppList = null;
+
+                        if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<Policy>();
+                        int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
+
+                        if (PolicyCount > PolicyUpper)
+                            healthCheck.IsPoliciesAndActionsEnabled = "PASS";
+                        else if (PolicyCount < PolicyUpper)
+                            healthCheck.IsPoliciesAndActionsEnabled = "FAIL";
+                        else healthCheck.IsPoliciesAndActionsEnabled = "WARN";
+
+                        //Add PercentActiveTiers to HealthCheckList
+                        //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
+                        List<APMTier> apmTierThisAppList = null;
+                        if (apmTierList != null) apmTierThisAppList = apmTierList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMTier>();
+                        int TierActiveCount = apmTierThisAppList.Count(t => t.NumNodes > 0);
+                        int TierCount = apmTierThisAppList.Count();
+
+                        //TO DO if TierActiveCount >0 then calc percentage, else percent = 0
+                        int ActiveTierPercent = apmTierThisAppList.Count(t => t.NumNodes > 0) * 100 / apmTierThisAppList.Count();
+                        Console.WriteLine("{0} Active: {1}, Total: {2}", apmAppConfig.ApplicationName, TierActiveCount, TierCount);
 
 
+
+
+                        //Add properties to HealthCheckList
                         healthChecksList.Add(healthCheck);
                     }
                 }
@@ -138,10 +165,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 /*If BTOverflow count > 0, add FAIL to healthchecklist*/
                 #endregion
 
-                #region TODO Add Policy To Action into HealthCheckList
-                /*TO DO:    If (policy active & has associated actions):Add count of policies to healthcheck list
-                */
-                #endregion
+                
 
                 #region Write HealthChecks to CSV
 
