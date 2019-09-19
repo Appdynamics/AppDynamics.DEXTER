@@ -29,9 +29,9 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string AppAgentVersion { get; set; }
         public string MachineAgentVersion { get; set; }
-        public string IsMachineAgentEnabled { get; set; }
-        public string PercentActiveTiers { get; set; }
-        public string PercentActiveNodes { get; set; }
+        public string MachineAgentEnabledPercent { get; set; }
+        public string TiersActivePercent { get; set; }
+        public string NodesActivePercent { get; set; }
 
 
         public override String ToString()
