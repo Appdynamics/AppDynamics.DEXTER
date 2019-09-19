@@ -50,19 +50,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
                 /**********************************************/
-                double LatestAppAgentVersion = 4.5;
-                double LatestMachineAgentVersion = 4.5;
-                int MachineAgentPassScore = 80;
-                int MachineAgentFailScore = 60;
+                int BTErrorRateUpper = 80;
+                int BTErrorRateLower = 60;
 
-                int InfoPointFailScore = 1;
-                int InfoPointPassScore = 3;
-                int DataCollectorPassScore = 3;
-                int DataCollectorFailScore = 1;
+                int InfoPointUpper = 3;
+                int InfoPointLower = 1;
+                int DataCollectorUpper = 3;
+                int DataCollectorLower = 1;
 
+                int HRViolationUpper = 100;
+                int HRViolationLower = 50;
                 int PolicyUpper = 2;
                 int PolicyLower = 1;
 
+                double LatestAppAgentVersion = 4.5;
+                double LatestMachineAgentVersion = 4.5;
+                int MachineAgentEnabledUpper = 80;
+                int MachineAgentEnabledLower = 60;
+                int TierEnabledPercentUpper = 90;
+                int TierEnabledPercentLower = 70;
+                int NodeActivePercentUpper = 90;
+                int NodeActivePercentLower = 70;
+                
                 /**********************************************/
 
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");
@@ -105,9 +114,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
                         //Add InfoPoints score to Health Check
-                        if (apmAppConfig.NumInfoPointRules > InfoPointPassScore)
+                        if (apmAppConfig.NumInfoPointRules > InfoPointUpper)
                             healthCheck.NumInfoPoints = "PASS";
-                        else if (apmAppConfig.NumInfoPointRules < InfoPointFailScore)
+                        else if (apmAppConfig.NumInfoPointRules < InfoPointLower)
                             healthCheck.NumInfoPoints = "FAIL";
                         else healthCheck.NumInfoPoints = "WARN";
 
@@ -122,9 +131,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<MethodInvocationDataCollector>();
                         int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
-                        if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) > DataCollectorPassScore)
+                        if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) > DataCollectorUpper)
                             healthCheck.NumDataCollectorsEnabled = "PASS";
-                        else if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) < DataCollectorFailScore)
+                        else if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) < DataCollectorLower)
                             healthCheck.NumDataCollectorsEnabled = "FAIL";
                         else healthCheck.NumDataCollectorsEnabled = "WARN";
 
@@ -137,7 +146,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (PolicyCount > PolicyUpper)
                             healthCheck.IsPoliciesAndActionsEnabled = "PASS";
-                        else if (PolicyCount < PolicyUpper)
+                        else if (PolicyCount < PolicyLower)
                             healthCheck.IsPoliciesAndActionsEnabled = "FAIL";
                         else healthCheck.IsPoliciesAndActionsEnabled = "WARN";
 
@@ -148,9 +157,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int TierActiveCount = apmTierThisAppList.Count(t => t.NumNodes > 0);
                         int TierCount = apmTierThisAppList.Count();
 
-                        //TO DO if TierActiveCount >0 then calc percentage, else percent = 0
-                        int ActiveTierPercent = apmTierThisAppList.Count(t => t.NumNodes > 0) * 100 / apmTierThisAppList.Count();
-                        Console.WriteLine("{0} Active: {1}, Total: {2}", apmAppConfig.ApplicationName, TierActiveCount, TierCount);
+                        int ActiveTierPercent = 0;
+                        if (apmTierThisAppList.Count(t => t.NumNodes > 0) > 0)
+                            ActiveTierPercent = apmTierThisAppList.Count(t => t.NumNodes > 0) * 100 / apmTierThisAppList.Count();
+
+                        if (ActiveTierPercent > TierEnabledPercentUpper)
+                            healthCheck.PercentActiveTiers = "PASS";
+                        else if (ActiveTierPercent < TierEnabledPercentLower)
+                            healthCheck.PercentActiveTiers = "FAIL";
+                        else healthCheck.PercentActiveTiers = "WARN";
+
+                        Console.WriteLine("{0} Active Tiers: {1}, Total: {2}", apmAppConfig.ApplicationName, TierActiveCount, TierCount);
+
+                        //Add PercentActiveNodes to HealthCheckList
+                        //TO DO
+
+
 
 
 
