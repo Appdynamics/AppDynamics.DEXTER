@@ -67,8 +67,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 double LatestMachineAgentVersion = 4.5;
                 int MachineAgentEnabledUpper = 80;
                 int MachineAgentEnabledLower = 60;
-                int TierEnabledPercentUpper = 90;
-                int TierEnabledPercentLower = 70;
+                int TierActivePercentUpper = 90;
+                int TierActivePercentLower = 70;
                 int NodeActivePercentUpper = 90;
                 int NodeActivePercentLower = 70;
                 
@@ -150,28 +150,48 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.IsPoliciesAndActionsEnabled = "FAIL";
                         else healthCheck.IsPoliciesAndActionsEnabled = "WARN";
 
-                        //Add PercentActiveTiers to HealthCheckList
+                        //Add TiersActivePercent to HealthCheckList
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
-                        List<APMTier> apmTierThisAppList = null;
-                        if (apmTierList != null) apmTierThisAppList = apmTierList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMTier>();
-                        int TierActiveCount = apmTierThisAppList.Count(t => t.NumNodes > 0);
-                        int TierCount = apmTierThisAppList.Count();
-
                         int ActiveTierPercent = 0;
+                        List<APMTier> apmTierThisAppList = null;
+
+                        if (apmTierList != null) apmTierThisAppList = apmTierList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMTier>();
                         if (apmTierThisAppList.Count(t => t.NumNodes > 0) > 0)
-                            ActiveTierPercent = apmTierThisAppList.Count(t => t.NumNodes > 0) * 100 / apmTierThisAppList.Count();
+                            ActiveTierPercent = (int)Math.Round((double)(apmTierThisAppList.Count(t => t.NumNodes > 0) * 100) / apmTierThisAppList.Count());
 
-                        if (ActiveTierPercent > TierEnabledPercentUpper)
-                            healthCheck.PercentActiveTiers = "PASS";
-                        else if (ActiveTierPercent < TierEnabledPercentLower)
-                            healthCheck.PercentActiveTiers = "FAIL";
-                        else healthCheck.PercentActiveTiers = "WARN";
+                        if (ActiveTierPercent > TierActivePercentUpper)
+                            healthCheck.TiersActivePercent = "PASS";
+                        else if (ActiveTierPercent < TierActivePercentLower)
+                            healthCheck.TiersActivePercent = "FAIL";
+                        else healthCheck.TiersActivePercent = "WARN";
 
-                        Console.WriteLine("{0} Active Tiers: {1}, Total: {2}", apmAppConfig.ApplicationName, TierActiveCount, TierCount);
+                        //Add NodesActivePercent & MachineAgentEnabledPercent to HealthCheckList
+                        int ActiveNodePercent = 0;
+                        int ActiveMachineAgentPercent = 0;
+                        List<APMNode> apmNodesThisAppList = null;
 
-                        //Add PercentActiveNodes to HealthCheckList
-                        //TO DO
+                        if(apmNodeList !=null) apmNodesThisAppList = apmNodeList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMNode>();
+                        int NodeActiveCount = apmNodesThisAppList.Count(n => n.AgentPresent == true && n.IsDisabled == false);
+                        int MachineAgentPresentCount = apmNodesThisAppList.Count(n => n.MachineAgentPresent == true && n.IsDisabled == false);
 
+                        if (NodeActiveCount > 0)
+                            ActiveNodePercent = (int)Math.Round((double)(NodeActiveCount * 100) / apmNodesThisAppList.Count());
+                        if (ActiveNodePercent > NodeActivePercentUpper)
+                            healthCheck.NodesActivePercent = "PASS";
+                        else if (ActiveNodePercent < NodeActivePercentLower)
+                            healthCheck.NodesActivePercent = "FAIL";
+                        else healthCheck.NodesActivePercent = "WARN";
+
+                        if (MachineAgentPresentCount > 0)
+                            ActiveMachineAgentPercent = (int)Math.Round((double)(MachineAgentPresentCount * 100) / apmNodesThisAppList.Count());
+                        if (ActiveNodePercent > MachineAgentEnabledUpper)
+                            healthCheck.MachineAgentEnabledPercent = "PASS";
+                        else if (ActiveNodePercent < MachineAgentEnabledLower)
+                            healthCheck.MachineAgentEnabledPercent = "FAIL";
+                        else healthCheck.MachineAgentEnabledPercent = "WARN";
+
+
+                        Console.WriteLine("{0} - Total Nodes: {3} - ActiveNodes: {1} - Active MA: {2}", apmAppConfig.ApplicationName, NodeActiveCount, MachineAgentPresentCount, apmNodesThisAppList.Count());
 
 
 

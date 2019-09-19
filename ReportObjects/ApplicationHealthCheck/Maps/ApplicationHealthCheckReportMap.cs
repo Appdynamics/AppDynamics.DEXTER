@@ -30,10 +30,10 @@ namespace AppDynamics.Dexter.ReportObjectMaps
 
             Map(m => m.AppAgentVersion).Index(i); i++;
             Map(m => m.MachineAgentVersion).Index(i); i++;
-            Map(m => m.IsMachineAgentEnabled).Index(i); i++;
+            Map(m => m.MachineAgentEnabledPercent).Index(i); i++;
 
-            Map(m => m.PercentActiveTiers).Index(i); i++;
-            Map(m => m.PercentActiveNodes).Index(i); i++;
+            Map(m => m.TiersActivePercent).Index(i); i++;
+            Map(m => m.NodesActivePercent).Index(i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
 

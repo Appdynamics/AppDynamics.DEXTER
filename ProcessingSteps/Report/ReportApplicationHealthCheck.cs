@@ -169,11 +169,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["MachineAgentVersion"].Position + 1, sheet.Dimension.Rows, table.Columns["MachineAgentVersion"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsMachineAgentEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsMachineAgentEnabled"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["MachineAgentEnabledPercent"].Position + 1, sheet.Dimension.Rows, table.Columns["MachineAgentEnabledPercent"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["PercentActiveTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["PercentActiveTiers"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["TiersActivePercent"].Position + 1, sheet.Dimension.Rows, table.Columns["TiersActivePercent"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["PercentActiveNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["PercentActiveNodes"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NodesActivePercent"].Position + 1, sheet.Dimension.Rows, table.Columns["NodesActivePercent"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                 }
 
