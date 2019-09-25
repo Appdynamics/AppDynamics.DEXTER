@@ -16,11 +16,11 @@ namespace AppDynamics.Dexter.ReportObjects
         
         #endregion
 
-        public bool IsBTOverflow { get; set; }
-        public bool IsCustomBTRules { get; set; }
-        public bool IsBTErrorRateHigh { get; set; }
-        public bool IsCustomSEPRules { get; set; }
-        public bool IsBackendOverflow { get; set; }
+        public string IsBTOverflow { get; set; }
+        public string IsCustomBTRules { get; set; }
+        public string IsBTErrorRateHigh { get; set; }
+        public string IsCustomSEPRules { get; set; }
+        public string IsBackendOverflow { get; set; }
         public string NumDataCollectorsEnabled { get; set; }
         public string NumInfoPoints { get; set; }
 
