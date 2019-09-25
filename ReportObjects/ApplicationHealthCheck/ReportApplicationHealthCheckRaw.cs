@@ -63,8 +63,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int PolicyUpper = 2;
                 int PolicyLower = 1;
 
-                double LatestAppAgentVersion = 4.5;
+                string LatestAppAgentVersion = "4.5";
                 double LatestMachineAgentVersion = 4.5;
+                int AllowedVersionsBehind = 2;
+                int AgentOldPercent = 25;
                 int MachineAgentEnabledUpper = 80;
                 int MachineAgentEnabledLower = 60;
                 int TierActivePercentUpper = 90;
@@ -76,7 +78,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("Prepare Application Healthcheck Summary File");
   
-                loggerConsole.Info("List of Health Check");
+                loggerConsole.Info("Health Check List");
 
                 #region Preload Entity Lists
                 List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
@@ -88,6 +90,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesReportFilePath(), new PolicyReportMap());
                 List<APMTier> apmTierList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
                 List<APMNode> apmNodeList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesReportFilePath(), new APMNodeReportMap());
+                List<APMBackend> backendList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBackendsReportFilePath(), new APMBackendReportMap());
 
 
                 //List<> BTOverflowList
@@ -165,6 +168,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.TiersActivePercent = "FAIL";
                         else healthCheck.TiersActivePercent = "WARN";
 
+                        //Add BackendOverflow to HealthCheckList
+                        //If BackendOverflow contains "All Other Traffic": Fail
+                        List<APMBackend> backendThisAppList = null;
+                        if (backendList != null) backendThisAppList = backendList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBackend>();
+                        if (backendThisAppList.Count(b => b.BackendName.StartsWith("All other traffic")) == 0)
+                            healthCheck.IsBackendOverflow = "PASS";
+                        else healthCheck.IsBackendOverflow = "FAIL";
+
                         //Add NodesActivePercent & MachineAgentEnabledPercent to HealthCheckList
                         int ActiveNodePercent = 0;
                         int ActiveMachineAgentPercent = 0;
@@ -190,10 +201,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentEnabledPercent = "FAIL";
                         else healthCheck.MachineAgentEnabledPercent = "WARN";
 
+                        //Add AppAgentVersion to HealthCheckList
+                        //Count Active AppAgents with versions older than 2. Compare with total agent count as percent
+                        int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(LatestAppAgentVersion) && c.IsDisabled == false);
+                        int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
 
-                        Console.WriteLine("{0} - Total Nodes: {3} - ActiveNodes: {1} - Active MA: {2}", apmAppConfig.ApplicationName, NodeActiveCount, MachineAgentPresentCount, apmNodesThisAppList.Count());
+                        //TO DO
+                        Console.WriteLine("{0} - Total Nodes: {1} - LatestAgentCount: {2} - AcceptableAgent({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(),LatestAppAgentCount, AcceptableAppAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1)/10);
 
-
+                        /*This calcuation for MVP. More logic needed for robustness*/
+                        //Add BTOverflow to HealthCheckList
+                        //MVP: If BTLockdown disabled & BTCount > 200
+                        if (healthCheck.NumBTs > 200 && healthCheck.IsBTLockdownEnabled == false)
+                            healthCheck.IsBTOverflow = "FAIL";
+                        else healthCheck.IsBTOverflow = "PASS";
+                        
+                        
 
 
 
