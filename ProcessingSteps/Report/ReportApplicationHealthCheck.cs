@@ -145,7 +145,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBTLockdownEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsDeveloperModeEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsDeveloperModeEnabled"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["DeveloperModeOff"].Position + 1, sheet.Dimension.Rows, table.Columns["DeveloperModeOff"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
