@@ -17,7 +17,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsCustomBTRules).Index(i); i++;
             Map(m => m.IsBTOverflow).Index(i); i++;
             Map(m => m.IsBTLockdownEnabled).Index(i); i++;
-            Map(m => m.IsDeveloperModeEnabled).Index(i); i++;
+            Map(m => m.DeveloperModeOff).Index(i); i++;
             Map(m => m.IsBTErrorRateHigh).Index(i); i++;
             Map(m => m.IsCustomSEPRules).Index(i); i++;
             Map(m => m.IsBackendOverflow).Index(i); i++;
