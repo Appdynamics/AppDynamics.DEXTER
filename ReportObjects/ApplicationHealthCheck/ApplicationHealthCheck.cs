@@ -12,20 +12,20 @@ namespace AppDynamics.Dexter.ReportObjects
         public int NumBTs { get; set; }
 
         public string DeveloperModeOff { get; set; }
-        public bool IsBTLockdownEnabled { get; set; }
+        public bool BTLockdownEnabled { get; set; }
         
         #endregion
 
-        public string IsBTOverflow { get; set; }
-        public string IsCustomBTRules { get; set; }
-        public string IsBTErrorRateHigh { get; set; }
-        public string IsCustomSEPRules { get; set; }
-        public string IsBackendOverflow { get; set; }
+        public string BTOverflow { get; set; }
+        public string CustomBTRules { get; set; }
+        public string BTErrorRateHigh { get; set; }
+        public string CustomSEPRules { get; set; }
+        public string BackendOverflow { get; set; }
         public string NumDataCollectorsEnabled { get; set; }
         public string NumInfoPoints { get; set; }
 
-        public string IsHRViolationsHigh { get; set; }
-        public string IsPoliciesAndActionsEnabled { get; set; }
+        public string HRViolationsHigh { get; set; }
+        public string PoliciesActionsEnabled { get; set; }
 
         public string AppAgentVersion { get; set; }
         public string MachineAgentVersion { get; set; }

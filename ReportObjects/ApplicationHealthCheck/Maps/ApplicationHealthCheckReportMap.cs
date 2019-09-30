@@ -14,19 +14,19 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumTiers).Index(i); i++;
             Map(m => m.NumBTs).Index(i); i++;
 
-            Map(m => m.IsCustomBTRules).Index(i); i++;
-            Map(m => m.IsBTOverflow).Index(i); i++;
-            Map(m => m.IsBTLockdownEnabled).Index(i); i++;
+            Map(m => m.CustomBTRules).Index(i); i++;
+            Map(m => m.BTOverflow).Index(i); i++;
+            Map(m => m.BTLockdownEnabled).Index(i); i++;
             Map(m => m.DeveloperModeOff).Index(i); i++;
-            Map(m => m.IsBTErrorRateHigh).Index(i); i++;
-            Map(m => m.IsCustomSEPRules).Index(i); i++;
-            Map(m => m.IsBackendOverflow).Index(i); i++;
+            Map(m => m.BTErrorRateHigh).Index(i); i++;
+            Map(m => m.CustomSEPRules).Index(i); i++;
+            Map(m => m.BackendOverflow).Index(i); i++;
 
             Map(m => m.NumDataCollectorsEnabled).Index(i); i++;
             Map(m => m.NumInfoPoints).Index(i); i++;
 
-            Map(m => m.IsHRViolationsHigh).Index(i); i++;
-            Map(m => m.IsPoliciesAndActionsEnabled).Index(i); i++;
+            Map(m => m.HRViolationsHigh).Index(i); i++;
+            Map(m => m.PoliciesActionsEnabled).Index(i); i++;
 
             Map(m => m.AppAgentVersion).Index(i); i++;
             Map(m => m.MachineAgentVersion).Index(i); i++;
