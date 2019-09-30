@@ -13,5 +13,6 @@
         public bool UsersGroupsRolesPermissions { get; set; }
         public bool Dashboards { get; set; }
         public bool Licenses { get; set; }
+        public bool HealthCheck { get; set; }
     }
 }

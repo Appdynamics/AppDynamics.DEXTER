@@ -76,9 +76,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 
                 /**********************************************/
 
-                loggerConsole.Info("Prepare Application Healthcheck Summary File");
+                loggerConsole.Info("Prepare Application Health Check Summary File");
   
-                loggerConsole.Info("Health Check List");
+                loggerConsole.Info("Building Health Check List");
 
                 #region Preload Entity Lists
                 List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
@@ -236,8 +236,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentVersion = "FAIL";
                         }
 
-                        Console.WriteLine("{0} - Total Nodes: {1} - LatestAgentCount: {2} - AcceptableAgent({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(),LatestAppAgentCount, AcceptableAppAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1)/10);
-                        Console.WriteLine("{0} - Total Nodes: {1} - LatestMACount: {2} - AcceptableMA({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(), LatestMachineAgentCount, AcceptableMachineAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10);
+                        //Console.WriteLine("{0} - Total Nodes: {1} - LatestAgentCount: {2} - AcceptableAgent({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(),LatestAppAgentCount, AcceptableAppAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1)/10);
+                        //Console.WriteLine("{0} - Total Nodes: {1} - LatestMACount: {2} - AcceptableMA({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(), LatestMachineAgentCount, AcceptableMachineAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10);
 
                         /*This calcuation for MVP. More logic needed for robustness*/
                         //Add BTOverflow to HealthCheckList
@@ -273,11 +273,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
                 #endregion
 
-                #region TODO Add BTOverflow into HealthCheckList
-                /*If BTOverflow count > 0, add FAIL to healthchecklist*/
-                #endregion
-
-                
 
                 #region Write HealthChecks to CSV
 
@@ -286,7 +281,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     FileIOHelper.WriteListToCSVFile(healthChecksList, new ApplicationHealthCheckReportMap(), FilePathMap.ApplicationHealthCheckCSVFilePath());
                 }
 
-                loggerConsole.Info("Finalize Application Healthcheck Summary File");
+                loggerConsole.Info("Finalize Application Health Check Summary File");
 
                 #endregion
 
@@ -319,13 +314,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             logger.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             loggerConsole.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
-            logger.Trace("Output.Configuration={0}", jobConfiguration.Output.Configuration);
-            loggerConsole.Trace("Output.Configuration={0}", jobConfiguration.Output.Configuration);
-            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Output.Configuration == false)
+            logger.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
+            loggerConsole.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
+            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Output.HealthCheck == false)
             {
-                loggerConsole.Trace("Skipping report of configuration");
+                loggerConsole.Trace("Skipping building Health Check Summary File");
             }
-            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.Configuration == true);
+            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.HealthCheck == true);
         }
     }
 }
