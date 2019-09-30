@@ -247,13 +247,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             logger.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             loggerConsole.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
-            logger.Trace("Output.Configuration={0}", jobConfiguration.Output.Configuration);
-            loggerConsole.Trace("Output.Configuration={0}", jobConfiguration.Output.Configuration);
-            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Output.Configuration == false)
+            logger.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
+            loggerConsole.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
+            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Output.HealthCheck == false)
             {
-                loggerConsole.Trace("Skipping report of configuration");
+                loggerConsole.Trace("Skipping Health Check Report");
             }
-            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.Configuration == true);
+            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.HealthCheck == true);
         }
 
         internal static void AddHealthCheckConditionalFormatting(ExcelWorksheet sheet, ExcelAddress cfAddressAHC)
