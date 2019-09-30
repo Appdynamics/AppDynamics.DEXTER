@@ -112,7 +112,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.NumTiers = apmAppConfig.NumTiers;
                         healthCheck.NumBTs = apmAppConfig.NumBTs;
 
-                        healthCheck.IsBTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
+                        healthCheck.BTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
                         if (apmAppConfig.IsDeveloperModeEnabled == false)
                             healthCheck.DeveloperModeOff = "PASS";
@@ -151,10 +151,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
 
                         if (PolicyCount > PolicyUpper)
-                            healthCheck.IsPoliciesAndActionsEnabled = "PASS";
+                            healthCheck.PoliciesActionsEnabled = "PASS";
                         else if (PolicyCount < PolicyLower)
-                            healthCheck.IsPoliciesAndActionsEnabled = "FAIL";
-                        else healthCheck.IsPoliciesAndActionsEnabled = "WARN";
+                            healthCheck.PoliciesActionsEnabled = "FAIL";
+                        else healthCheck.PoliciesActionsEnabled = "WARN";
 
                         //Add TiersActivePercent to HealthCheckList
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
@@ -180,8 +180,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             var getBackendOverflow = backendThisAppList.FirstOrDefault(o => o.Prop1Name.Contains("Backend limit reached"));
                             if (getBackendOverflow != null)
                             //if (backendThisAppList.Count(b => b.BackendName.StartsWith("All other traffic")) > 0)
-                                healthCheck.IsBackendOverflow = "FAIL";
-                            else healthCheck.IsBackendOverflow = "PASS";
+                                healthCheck.BackendOverflow = "FAIL";
+                            else healthCheck.BackendOverflow = "PASS";
                         }
 
                         //Add NodesActivePercent & MachineAgentEnabledPercent to HealthCheckList
@@ -242,9 +242,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         /*This calcuation for MVP. More logic needed for robustness*/
                         //Add BTOverflow to HealthCheckList
                         //MVP: If BTLockdown disabled & BTCount > 200
-                        if (healthCheck.NumBTs > 200 && healthCheck.IsBTLockdownEnabled == false)
-                            healthCheck.IsBTOverflow = "FAIL";
-                        else healthCheck.IsBTOverflow = "PASS";
+                        if (healthCheck.NumBTs > 200 && healthCheck.BTLockdownEnabled == false)
+                            healthCheck.BTOverflow = "FAIL";
+                        else healthCheck.BTOverflow = "PASS";
                         
                         /*
                         // If Count of BTs in overflow table is greater than zero: Fail
@@ -252,9 +252,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (btOverflowList != null) btOverflowThisAppList = btOverflowList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
                         //if (btOverflowThisAppList != null)
                         {
-                            if (btOverflowThisAppList.Count() > 0 && healthCheck.IsBTLockdownEnabled == false)
-                                healthCheck.IsBTOverflow = "FAIL";
-                            else healthCheck.IsBTOverflow = "PASS";
+                            if (btOverflowThisAppList.Count() > 0 && healthCheck.BTLockdownEnabled == false)
+                                healthCheck.BTOverflow = "FAIL";
+                            else healthCheck.BTOverflow = "PASS";
                         }*/
                         /*
                         // If Count of BTs in overflow table is greater than zero: Fail
@@ -262,9 +262,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (btList != null) btThisAppList = btList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
                         if (btThisAppList != null)
                         {
-                            if ((btThisAppList.Where(b => b.BTType.Contains("OVERFLOW") == true).Count() > 0) && healthCheck.IsBTLockdownEnabled == false)
-                                healthCheck.IsBTOverflow = "FAIL";
-                            else healthCheck.IsBTOverflow = "PASS";
+                            if ((btThisAppList.Where(b => b.BTType.Contains("OVERFLOW") == true).Count() > 0) && healthCheck.BTLockdownEnabled == false)
+                                healthCheck.BTOverflow = "FAIL";
+                            else healthCheck.BTOverflow = "PASS";
                         }*/
 
                         //Add properties to HealthCheckList

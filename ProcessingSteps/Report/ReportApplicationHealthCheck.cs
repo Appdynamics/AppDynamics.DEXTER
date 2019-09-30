@@ -103,8 +103,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
-                loggerConsole.Info("Fill Application Health Check Report File");
-
                 #region Report file variables
 
                 ExcelRangeBase range = null;
@@ -114,7 +112,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Load Health Check to Sheet
 
-                loggerConsole.Info("List of Entities");
+                loggerConsole.Info("Fill Application Health Check Report File");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTHCHECK];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthCheckCSVFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
@@ -137,13 +135,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
+                    sheet.DefaultColWidth = 12;
 
                     //Format Table columns
                     sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
-                    ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBTLockdownEnabled"].Position + 1);
+                    ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["BTLockdownEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["DeveloperModeOff"].Position + 1, sheet.Dimension.Rows, table.Columns["DeveloperModeOff"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
@@ -152,9 +151,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBTOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBTOverflow"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BTOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsBackendOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["IsBackendOverflow"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BackendOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BackendOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
 
@@ -165,9 +164,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
                     //Alerting Configurations
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsPoliciesAndActionsEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["IsPoliciesAndActionsEnabled"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["PoliciesActionsEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["PoliciesActionsEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["IsHRViolationsHigh"].Position + 1, sheet.Dimension.Rows, table.Columns["IsHRViolationsHigh"].Position + 1);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["HRViolationsHigh"].Position + 1, sheet.Dimension.Rows, table.Columns["HRViolationsHigh"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
                     //Infrastructure
