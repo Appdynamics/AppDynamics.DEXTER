@@ -91,8 +91,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<APMTier> apmTierList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
                 List<APMNode> apmNodeList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesReportFilePath(), new APMNodeReportMap());
                 List<APMBackend> backendList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBackendsReportFilePath(), new APMBackendReportMap());
-                List<APMBusinessTransaction> btOverflowList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMOverflowBusinessTransactionsReportFilePath(), new APMOverflowBusinessTransactionReportMap());
-                List<APMBusinessTransaction> btList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBusinessTransactionsReportFilePath(), new APMOverflowBusinessTransactionReportMap());
+                List<APMBusinessTransaction> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
+
 
                 #endregion
 
@@ -236,36 +236,57 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentVersion = "FAIL";
                         }
 
-                        //Console.WriteLine("{0} - Total Nodes: {1} - LatestAgentCount: {2} - AcceptableAgent({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(),LatestAppAgentCount, AcceptableAppAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1)/10);
                         //Console.WriteLine("{0} - Total Nodes: {1} - LatestMACount: {2} - AcceptableMA({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(), LatestMachineAgentCount, AcceptableMachineAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10);
+
+                        //Add BTErrorRateHigh & BTOverflow to HealthCheckList
+
+                        List<APMBusinessTransaction> apmEntitiesThisAppList = null;
+                        if (apmEntitiesList != null) apmEntitiesThisAppList = apmEntitiesList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
+                        if (apmEntitiesThisAppList != null)
+                        {
+                            //Add BTErrorRateHigh to HealthCheckList
+                            //If ErrorPercentage < 60%: Pass, Else if > 80%: Fail, Else: Warning
+
+                            foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
+                            {
+                                if (BTEntity.ErrorsPercentage > BTErrorRateUpper)
+                                {
+                                    healthCheck.BTErrorRateHigh = "FAIL";
+                                    break;
+                                }
+                                else if (BTEntity.ErrorsPercentage > BTErrorRateLower)
+                                {
+                                    healthCheck.BTErrorRateHigh = "WARN";
+                                    break;
+                                }
+                                healthCheck.BTErrorRateHigh = "PASS";
+
+                            }
+
+                            //Add BTOverflow to HealthCheckList
+                            //If BT Type is Overflow & BT Lockdown is disabled: Fail
+                            foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
+                            {
+                                if (BTEntity.BTType == "OVERFLOW" && healthCheck.BTLockdownEnabled == false)
+                                {
+                                    healthCheck.BTOverflow = "FAIL";
+                                    break;
+                                }
+                                healthCheck.BTOverflow = "PASS";
+                            }
+                        }
 
                         /*This calcuation for MVP. More logic needed for robustness*/
                         //Add BTOverflow to HealthCheckList
                         //MVP: If BTLockdown disabled & BTCount > 200
-                        if (healthCheck.NumBTs > 200 && healthCheck.BTLockdownEnabled == false)
+                       /* if (healthCheck.NumBTs > 200 && healthCheck.BTLockdownEnabled == false)
                             healthCheck.BTOverflow = "FAIL";
-                        else healthCheck.BTOverflow = "PASS";
+                        else healthCheck.BTOverflow = "PASS";*/
+
+
                         
-                        /*
-                        // If Count of BTs in overflow table is greater than zero: Fail
-                        List<APMBusinessTransaction> btOverflowThisAppList = null;
-                        if (btOverflowList != null) btOverflowThisAppList = btOverflowList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
-                        //if (btOverflowThisAppList != null)
-                        {
-                            if (btOverflowThisAppList.Count() > 0 && healthCheck.BTLockdownEnabled == false)
-                                healthCheck.BTOverflow = "FAIL";
-                            else healthCheck.BTOverflow = "PASS";
-                        }*/
-                        /*
-                        // If Count of BTs in overflow table is greater than zero: Fail
-                        List<APMBusinessTransaction> btThisAppList = null;
-                        if (btList != null) btThisAppList = btList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
-                        if (btThisAppList != null)
-                        {
-                            if ((btThisAppList.Where(b => b.BTType.Contains("OVERFLOW") == true).Count() > 0) && healthCheck.BTLockdownEnabled == false)
-                                healthCheck.BTOverflow = "FAIL";
-                            else healthCheck.BTOverflow = "PASS";
-                        }*/
+
+
 
                         //Add properties to HealthCheckList
                         healthChecksList.Add(healthCheck);
