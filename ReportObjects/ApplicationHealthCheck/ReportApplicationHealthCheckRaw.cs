@@ -92,6 +92,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<APMNode> apmNodeList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesReportFilePath(), new APMNodeReportMap());
                 List<APMBackend> backendList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBackendsReportFilePath(), new APMBackendReportMap());
                 List<APMBusinessTransaction> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
+                List<ApplicationEventSummary> appEventsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationEventsSummaryReportFilePath(), new ApplicationEventSummaryReportMap());
 
 
                 #endregion
@@ -179,7 +180,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             var getBackendOverflow = backendThisAppList.FirstOrDefault(o => o.Prop1Name.Contains("Backend limit reached"));
                             if (getBackendOverflow != null)
-                            //if (backendThisAppList.Count(b => b.BackendName.StartsWith("All other traffic")) > 0)
+                                //if (backendThisAppList.Count(b => b.BackendName.StartsWith("All other traffic")) > 0)
                                 healthCheck.BackendOverflow = "FAIL";
                             else healthCheck.BackendOverflow = "PASS";
                         }
@@ -189,7 +190,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int ActiveMachineAgentPercent = 0;
                         List<APMNode> apmNodesThisAppList = null;
 
-                        if(apmNodeList !=null) apmNodesThisAppList = apmNodeList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMNode>();
+                        if (apmNodeList != null) apmNodesThisAppList = apmNodeList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMNode>();
                         int NodeActiveCount = apmNodesThisAppList.Count(n => n.AgentPresent == true && n.IsDisabled == false);
                         int MachineAgentPresentCount = apmNodesThisAppList.Count(n => n.MachineAgentPresent == true && n.IsDisabled == false);
 
@@ -236,7 +237,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentVersion = "FAIL";
                         }
 
-                        //Console.WriteLine("{0} - Total Nodes: {1} - LatestMACount: {2} - AcceptableMA({4}) Count: {3} /", apmAppConfig.ApplicationName, apmNodesThisAppList.Count(), LatestMachineAgentCount, AcceptableMachineAgentCount, (Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10);
 
                         //Add BTErrorRateHigh & BTOverflow to HealthCheckList
 
@@ -276,15 +276,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         }
 
-                        /*This calcuation for MVP. More logic needed for robustness*/
-                        //Add BTOverflow to HealthCheckList
-                        //MVP: If BTLockdown disabled & BTCount > 200
-                       /* if (healthCheck.NumBTs > 200 && healthCheck.BTLockdownEnabled == false)
-                            healthCheck.BTOverflow = "FAIL";
-                        else healthCheck.BTOverflow = "PASS";*/
+                        //Add HRViolationHigh to HealthCheckList
+                        int HRViolationCount = 0;
+                        ApplicationEventSummary appEventThisApp = null;
 
+                        if (appEventsList != null) appEventThisApp = appEventsList.SingleOrDefault(a => a.Controller.StartsWith(apmAppConfig.Controller) == true && a.ApplicationName == apmAppConfig.ApplicationName);
 
+                        if(appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
                         
+                        if (HRViolationCount > HRViolationUpper)
+                            healthCheck.HRViolationsHigh = "FAIL";
+                        else if (HRViolationCount < HRViolationLower)
+                            healthCheck.HRViolationsHigh = "PASS";
+                        else healthCheck.HRViolationsHigh = "WARN";
+
+                        Console.WriteLine("{0} - HRViolations: {1}", apmAppConfig.ApplicationName, HRViolationCount);
 
 
 
