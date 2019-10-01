@@ -155,6 +155,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BackendOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BackendOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTErrorRateHigh"].Position + 1, sheet.Dimension.Rows, table.Columns["BTErrorRateHigh"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
 
 
                     //Advanced APM Configurations
