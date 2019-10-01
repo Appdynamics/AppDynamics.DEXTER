@@ -94,10 +94,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<APMBusinessTransaction> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
                 List<ApplicationEventSummary> appEventsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationEventsSummaryReportFilePath(), new ApplicationEventSummaryReportMap());
 
-
                 #endregion
 
-                #region Add APMConfigurations into HealthCheckList
+                #region Fill HealthCheckList
 
                 List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(APMApplicationConfigurationsList.Count);
 
@@ -113,12 +112,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.NumTiers = apmAppConfig.NumTiers;
                         healthCheck.NumBTs = apmAppConfig.NumBTs;
 
+                        //Add BTLockdownOn to Health Check
                         healthCheck.BTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
+                        //Add DevModeEnabled to Health Check
                         if (apmAppConfig.IsDeveloperModeEnabled == false)
                             healthCheck.DeveloperModeOff = "PASS";
                         else healthCheck.DeveloperModeOff = "FAIL";
-
 
                         //Add InfoPoints score to Health Check
                         if (apmAppConfig.NumInfoPointRules > InfoPointUpper)
@@ -144,7 +144,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.NumDataCollectorsEnabled = "FAIL";
                         else healthCheck.NumDataCollectorsEnabled = "WARN";
 
-                        //Add Policy To Action into HealthCheckList
+                        //Add Policy To Action into Health Check
                         //If (policy active & has associated actions): Add count of policies to healthcheck list
                         List<Policy> policiesThisAppList = null;
 
@@ -157,7 +157,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.PoliciesActionsEnabled = "FAIL";
                         else healthCheck.PoliciesActionsEnabled = "WARN";
 
-                        //Add TiersActivePercent to HealthCheckList
+                        //Add TiersActivePercent to Health Check
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
                         int ActiveTierPercent = 0;
                         List<APMTier> apmTierThisAppList = null;
@@ -172,7 +172,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.TiersActivePercent = "FAIL";
                         else healthCheck.TiersActivePercent = "WARN";
 
-                        //Add BackendOverflow to HealthCheckList
+                        //Add BackendOverflow to Health Check
                         //If BackendOverflow contains "All Other Traffic": Fail
                         List<APMBackend> backendThisAppList = null;
                         if (backendList != null) backendThisAppList = backendList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBackend>();
@@ -185,7 +185,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             else healthCheck.BackendOverflow = "PASS";
                         }
 
-                        //Add NodesActivePercent & MachineAgentEnabledPercent to HealthCheckList
+                        //Add NodesActivePercent & MachineAgentEnabledPercent to Health Check
                         int ActiveNodePercent = 0;
                         int ActiveMachineAgentPercent = 0;
                         List<APMNode> apmNodesThisAppList = null;
@@ -210,7 +210,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentEnabledPercent = "FAIL";
                         else healthCheck.MachineAgentEnabledPercent = "WARN";
 
-                        //Add AppAgentVersion & MachineAgentVersion to HealthCheckList
+                        //Add AppAgentVersion & MachineAgentVersion to Health Check
                         //Count Active Agents with versions older than 2. Compare with total agent count as percent
                         int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(LatestAppAgentVersion) && c.IsDisabled == false);
                         int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
@@ -237,14 +237,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.MachineAgentVersion = "FAIL";
                         }
 
-
-                        //Add BTErrorRateHigh & BTOverflow to HealthCheckList
+                        //Add BTErrorRateHigh & BTOverflow to Health Check
 
                         List<APMBusinessTransaction> apmEntitiesThisAppList = null;
                         if (apmEntitiesList != null) apmEntitiesThisAppList = apmEntitiesList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
                         if (apmEntitiesThisAppList != null)
                         {
-                            //Add BTErrorRateHigh to HealthCheckList
+                            //Add BTErrorRateHigh to Health Check
                             //If ErrorPercentage < 60%: Pass, Else if > 80%: Fail, Else: Warning
 
                             foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
@@ -263,7 +262,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             }
 
-                            //Add BTOverflow to HealthCheckList
+                            //Add BTOverflow to Health Check
                             //If BT Type is Overflow & BT Lockdown is disabled: Fail
                             foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
                             {
@@ -276,7 +275,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         }
 
-                        //Add HRViolationHigh to HealthCheckList
+                        //Add HRViolationHigh to Health Check
                         int HRViolationCount = 0;
                         ApplicationEventSummary appEventThisApp = null;
 
@@ -290,9 +289,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.HRViolationsHigh = "PASS";
                         else healthCheck.HRViolationsHigh = "WARN";
 
-                        Console.WriteLine("{0} - HRViolations: {1}", apmAppConfig.ApplicationName, HRViolationCount);
-
-
+                        //Console.WriteLine("{0} - HRViolations: {1}", apmAppConfig.ApplicationName, HRViolationCount);
 
                         //Add properties to HealthCheckList
                         healthChecksList.Add(healthCheck);
@@ -341,13 +338,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             logger.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             loggerConsole.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
+            logger.Trace("Input.DetectedEntities={0}", jobConfiguration.Input.DetectedEntities);
+            loggerConsole.Trace("Input.DetectedEntities={0}", jobConfiguration.Input.DetectedEntities);
+            logger.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
+            loggerConsole.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
+            logger.Trace("Input.Events={0}", jobConfiguration.Input.Events);
+            loggerConsole.Trace("Input.Events={0}", jobConfiguration.Input.Events);
+
             logger.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
             loggerConsole.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);
-            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Output.HealthCheck == false)
+
+            if (jobConfiguration.Input.Configuration == false || jobConfiguration.Input.DetectedEntities == false || jobConfiguration.Input.Metrics == false || jobConfiguration.Input.Events == false || jobConfiguration.Output.HealthCheck == false)
             {
                 loggerConsole.Trace("Skipping building Health Check Summary File");
             }
-            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Output.HealthCheck == true);
+            return (jobConfiguration.Input.Configuration == true && jobConfiguration.Input.DetectedEntities == true && jobConfiguration.Input.Metrics == true && jobConfiguration.Input.Events == true && jobConfiguration.Output.HealthCheck == true);
         }
     }
 }
