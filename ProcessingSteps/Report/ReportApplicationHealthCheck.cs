@@ -261,23 +261,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             //Color Green if True or "Pass"
             var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Green;
+            cfUserExperience.Style.Font.Color.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Formula = @"=TRUE";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Green;
+            cfUserExperience.Style.Font.Color.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
             cfUserExperience.Formula = @"=""PASS""";
 
             //Color Red if False or "Fail" or 0
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Red;
+            cfUserExperience.Style.Font.Color.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Formula = @"=FALSE";
 
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Red;
+            cfUserExperience.Style.Font.Color.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
             cfUserExperience.Formula = @"=""FAIL""";
 
@@ -288,7 +288,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             //Color Yellow if "Warning" or 2
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Yellow;
+            cfUserExperience.Style.Font.Color.Color = Color.FromArgb(253, 235, 156);
             cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253,235,156);
             cfUserExperience.Formula = @"=""WARN""";
 

@@ -14,12 +14,12 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.NumTiers).Index(i); i++;
             Map(m => m.NumBTs).Index(i); i++;
 
-            Map(m => m.CustomBTRules).Index(i); i++;
+            //Map(m => m.CustomBTRules).Index(i); i++;
             Map(m => m.BTOverflow).Index(i); i++;
             Map(m => m.BTLockdownEnabled).Index(i); i++;
             Map(m => m.DeveloperModeOff).Index(i); i++;
             Map(m => m.BTErrorRateHigh).Index(i); i++;
-            Map(m => m.CustomSEPRules).Index(i); i++;
+            //Map(m => m.CustomSEPRules).Index(i); i++;
             Map(m => m.BackendOverflow).Index(i); i++;
 
             Map(m => m.NumDataCollectorsEnabled).Index(i); i++;

@@ -263,10 +263,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
 
                             //Add BTOverflow to Health Check
-                            //If BT Type is Overflow & BT Lockdown is disabled: Fail
+                            //If Overflow BT Type has activity & BT Lockdown is disabled: Fail
                             foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
                             {
-                                if (BTEntity.BTType == "OVERFLOW" && healthCheck.BTLockdownEnabled == false)
+                                if (BTEntity.BTType == "OVERFLOW" && BTEntity.HasActivity == true && healthCheck.BTLockdownEnabled == false)
                                 {
                                     healthCheck.BTOverflow = "FAIL";
                                     break;
