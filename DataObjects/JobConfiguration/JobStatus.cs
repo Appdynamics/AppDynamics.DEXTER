@@ -87,7 +87,6 @@
         ReportAPMEntityDetails = 133,
 
         ApplicationHealthCheckComparison = 200,
-        ReportApplicationHealthCheckRaw = 201,
         ReportApplicationHealthCheck = 202,
 
         // The rest
