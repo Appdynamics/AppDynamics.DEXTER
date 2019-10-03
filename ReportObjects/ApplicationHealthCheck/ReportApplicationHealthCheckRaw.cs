@@ -48,6 +48,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
+                #region HARDCODED Variables
                 /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
                 /**********************************************/
                 int BTErrorRateUpper = 80;
@@ -73,11 +74,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int TierActivePercentLower = 70;
                 int NodeActivePercentUpper = 90;
                 int NodeActivePercentLower = 70;
-                
+
                 /**********************************************/
+                #endregion
 
                 loggerConsole.Info("Prepare Application Health Check Summary File");
-  
+
                 loggerConsole.Info("Building Health Check List");
 
                 #region Preload Entity Lists
@@ -85,7 +87,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 //Read List of Configurations from CSV files
                 List<APMApplicationConfiguration> APMApplicationConfigurationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
-                List <HTTPDataCollector> httpDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHttpDataCollectorsReportFilePath(), new HTTPDataCollectorReportMap());
+                List<HTTPDataCollector> httpDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHttpDataCollectorsReportFilePath(), new HTTPDataCollectorReportMap());
                 List<MethodInvocationDataCollector> methodInvocationDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMMethodInvocationDataCollectorsReportFilePath(), new MethodInvocationDataCollectorReportMap());
                 List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesReportFilePath(), new PolicyReportMap());
                 List<APMTier> apmTierList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
@@ -116,16 +118,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.BTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
 
                         //Add DevModeEnabled to Health Check
-                        if (apmAppConfig.IsDeveloperModeEnabled == false)
-                            healthCheck.DeveloperModeOff = "PASS";
-                        else healthCheck.DeveloperModeOff = "FAIL";
+                        healthCheck.DeveloperModeOff = GetHealthCheckScore(apmAppConfig.IsDeveloperModeEnabled == false, apmAppConfig.IsDeveloperModeEnabled == true);
 
                         //Add InfoPoints score to Health Check
-                        if (apmAppConfig.NumInfoPointRules > InfoPointUpper)
-                            healthCheck.NumInfoPoints = "PASS";
-                        else if (apmAppConfig.NumInfoPointRules < InfoPointLower)
-                            healthCheck.NumInfoPoints = "FAIL";
-                        else healthCheck.NumInfoPoints = "WARN";
+                        healthCheck.NumInfoPoints = GetHealthCheckScore(apmAppConfig.NumInfoPointRules > InfoPointUpper, apmAppConfig.NumInfoPointRules < InfoPointLower);
 
                         //Add Data collector score to Health Check
                         //Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true
@@ -138,11 +134,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<MethodInvocationDataCollector>();
                         int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
-                        if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) > DataCollectorUpper)
-                            healthCheck.NumDataCollectorsEnabled = "PASS";
-                        else if ((HTTPDataCollectorCount + MethodInvocationDataCollectorCount) < DataCollectorLower)
-                            healthCheck.NumDataCollectorsEnabled = "FAIL";
-                        else healthCheck.NumDataCollectorsEnabled = "WARN";
+                        int CombinedDataCollectorCount = HTTPDataCollectorCount + MethodInvocationDataCollectorCount;
+                        healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore(CombinedDataCollectorCount > DataCollectorUpper, CombinedDataCollectorCount < DataCollectorLower);
 
                         //Add Policy To Action into Health Check
                         //If (policy active & has associated actions): Add count of policies to healthcheck list
@@ -150,12 +143,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<Policy>();
                         int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
-
-                        if (PolicyCount > PolicyUpper)
-                            healthCheck.PoliciesActionsEnabled = "PASS";
-                        else if (PolicyCount < PolicyLower)
-                            healthCheck.PoliciesActionsEnabled = "FAIL";
-                        else healthCheck.PoliciesActionsEnabled = "WARN";
+                        healthCheck.PoliciesActionsEnabled = GetHealthCheckScore(PolicyCount > PolicyUpper, PolicyCount < PolicyLower);
 
                         //Add TiersActivePercent to Health Check
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
@@ -166,11 +154,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (apmTierThisAppList.Count(t => t.NumNodes > 0) > 0)
                             ActiveTierPercent = (int)Math.Round((double)(apmTierThisAppList.Count(t => t.NumNodes > 0) * 100) / apmTierThisAppList.Count());
 
-                        if (ActiveTierPercent > TierActivePercentUpper)
-                            healthCheck.TiersActivePercent = "PASS";
-                        else if (ActiveTierPercent < TierActivePercentLower)
-                            healthCheck.TiersActivePercent = "FAIL";
-                        else healthCheck.TiersActivePercent = "WARN";
+                        healthCheck.TiersActivePercent = GetHealthCheckScore(ActiveTierPercent > TierActivePercentUpper, ActiveTierPercent < TierActivePercentLower);
 
                         //Add BackendOverflow to Health Check
                         //If BackendOverflow contains "All Other Traffic": Fail
@@ -179,10 +163,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (backendThisAppList != null)
                         {
                             var getBackendOverflow = backendThisAppList.FirstOrDefault(o => o.Prop1Name.Contains("Backend limit reached"));
-                            if (getBackendOverflow != null)
-                                //if (backendThisAppList.Count(b => b.BackendName.StartsWith("All other traffic")) > 0)
-                                healthCheck.BackendOverflow = "FAIL";
-                            else healthCheck.BackendOverflow = "PASS";
+                            healthCheck.BackendOverflow = GetHealthCheckScore(getBackendOverflow == null, getBackendOverflow != null);
                         }
 
                         //Add NodesActivePercent & MachineAgentEnabledPercent to Health Check
@@ -196,19 +177,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (NodeActiveCount > 0)
                             ActiveNodePercent = (int)Math.Round((double)(NodeActiveCount * 100) / apmNodesThisAppList.Count());
-                        if (ActiveNodePercent > NodeActivePercentUpper)
-                            healthCheck.NodesActivePercent = "PASS";
-                        else if (ActiveNodePercent < NodeActivePercentLower)
-                            healthCheck.NodesActivePercent = "FAIL";
-                        else healthCheck.NodesActivePercent = "WARN";
+                        healthCheck.NodesActivePercent = GetHealthCheckScore(ActiveNodePercent > NodeActivePercentUpper, ActiveNodePercent < NodeActivePercentLower);
 
                         if (MachineAgentPresentCount > 0)
                             ActiveMachineAgentPercent = (int)Math.Round((double)(MachineAgentPresentCount * 100) / apmNodesThisAppList.Count());
-                        if (ActiveNodePercent > MachineAgentEnabledUpper)
-                            healthCheck.MachineAgentEnabledPercent = "PASS";
-                        else if (ActiveNodePercent < MachineAgentEnabledLower)
-                            healthCheck.MachineAgentEnabledPercent = "FAIL";
-                        else healthCheck.MachineAgentEnabledPercent = "WARN";
+                        healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore(ActiveNodePercent > MachineAgentEnabledUpper, ActiveNodePercent < MachineAgentEnabledLower);
 
                         //Add AppAgentVersion & MachineAgentVersion to Health Check
                         //Count Active Agents with versions older than 2. Compare with total agent count as percent
@@ -281,13 +254,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (appEventsList != null) appEventThisApp = appEventsList.SingleOrDefault(a => a.Controller.StartsWith(apmAppConfig.Controller) == true && a.ApplicationName == apmAppConfig.ApplicationName);
 
-                        if(appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
-                        
-                        if (HRViolationCount > HRViolationUpper)
-                            healthCheck.HRViolationsHigh = "FAIL";
-                        else if (HRViolationCount < HRViolationLower)
-                            healthCheck.HRViolationsHigh = "PASS";
-                        else healthCheck.HRViolationsHigh = "WARN";
+                        if (appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
+                        healthCheck.HRViolationsHigh = GetHealthCheckScore(HRViolationCount < HRViolationLower, HRViolationCount > HRViolationUpper);
 
                         //Console.WriteLine("{0} - HRViolations: {1}", apmAppConfig.ApplicationName, HRViolationCount);
 
@@ -296,7 +264,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
                 #endregion
-
 
                 #region Write HealthChecks to CSV
 
@@ -353,6 +320,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Trace("Skipping building Health Check Summary File");
             }
             return (jobConfiguration.Input.Configuration == true && jobConfiguration.Input.DetectedEntities == true && jobConfiguration.Input.Metrics == true && jobConfiguration.Input.Events == true && jobConfiguration.Output.HealthCheck == true);
+        }
+
+        internal string GetHealthCheckScore(bool PassCondition, bool FailCondition)
+        {
+            try
+            {
+            if (PassCondition)
+                return "PASS";
+            else if (FailCondition)
+                return "FAIL";
+            else return "WARN";
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex);
+                loggerConsole.Error(ex);
+
+                return null;
+            }
         }
     }
 }
