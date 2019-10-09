@@ -12,7 +12,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public int NumBTs { get; set; }
 
         public string DeveloperModeOff { get; set; }
-        public bool BTLockdownEnabled { get; set; }
+        public string BTLockdownEnabled { get; set; }
         
         #endregion
 
