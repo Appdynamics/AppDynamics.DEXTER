@@ -104,45 +104,59 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<APMTier> apmTierList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersReportFilePath(), new APMTierReportMap());
                 List<APMNode> apmNodeList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesReportFilePath(), new APMNodeReportMap());
                 List<APMBackend> backendList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBackendsReportFilePath(), new APMBackendReportMap());
-                List<APMBusinessTransaction> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
+                List<APMBusinessTransaction> btEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
                 List<ApplicationEventSummary> appEventsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationEventsSummaryReportFilePath(), new ApplicationEventSummaryReportMap());
+                List<APMApplication> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationsReportFilePath(), new APMApplicationReportMap());
 
                 #endregion
 
                 #region Fill HealthCheckList
 
-                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(APMApplicationConfigurationsList.Count);
+                //List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(APMApplicationConfigurationsList.Count);
+                List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(apmEntitiesList.Count);
 
-                if (APMApplicationConfigurationsList != null)
+                //if (APMApplicationConfigurationsList != null)
+                if (apmEntitiesList != null)
                 {
-                    foreach (APMApplicationConfiguration apmAppConfig in APMApplicationConfigurationsList)
+                    //foreach (APMApplicationConfiguration apmApp in APMApplicationConfigurationsList)
+                    foreach (APMApplication apmApp in apmEntitiesList)
                     {
                         ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
 
-                        healthCheck.Controller = apmAppConfig.Controller;
-                        healthCheck.ApplicationName = apmAppConfig.ApplicationName;
-                        healthCheck.ApplicationID = apmAppConfig.ApplicationID;
-                        healthCheck.NumTiers = apmAppConfig.NumTiers;
-                        healthCheck.NumBTs = apmAppConfig.NumBTs;
+                        healthCheck.Controller = apmApp.Controller;
+                        healthCheck.ApplicationName = apmApp.ApplicationName;
+                        healthCheck.ApplicationID = apmApp.ApplicationID;
+                        healthCheck.NumTiers = apmApp.NumTiers;
+                        healthCheck.NumBTs = apmApp.NumBTs;
 
-                        //Add BTLockdownOn to Health Check
-                        healthCheck.BTLockdownEnabled = apmAppConfig.IsBTLockdownEnabled;
+                        //Add BTLockdownOn, DevModeEnabled, InfoPoints to Health Check
+                        APMApplicationConfiguration APMConfigurationsThisAppList = null;
+                        if(APMApplicationConfigurationsList != null) APMConfigurationsThisAppList = APMApplicationConfigurationsList.SingleOrDefault(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName);
+                        if(APMConfigurationsThisAppList != null)
+                        {
+                            healthCheck.BTLockdownEnabled = GetHealthCheckScore(APMConfigurationsThisAppList.IsBTLockdownEnabled == true, APMConfigurationsThisAppList.IsBTLockdownEnabled == false);
+                            healthCheck.DeveloperModeOff = GetHealthCheckScore(APMConfigurationsThisAppList.IsDeveloperModeEnabled == false, APMConfigurationsThisAppList.IsDeveloperModeEnabled == true);
+                            healthCheck.NumInfoPoints = GetHealthCheckScore(APMConfigurationsThisAppList.NumInfoPointRules > InfoPointUpper, APMConfigurationsThisAppList.NumInfoPointRules < InfoPointLower);
+
+                        }
+
+                        //healthCheck.BTLockdownEnabled = AppConfig.IsBTLockdownEnabled;
 
                         //Add DevModeEnabled to Health Check
-                        healthCheck.DeveloperModeOff = GetHealthCheckScore(apmAppConfig.IsDeveloperModeEnabled == false, apmAppConfig.IsDeveloperModeEnabled == true);
+                        //healthCheck.DeveloperModeOff = GetHealthCheckScore(AppConfig.IsDeveloperModeEnabled == false, AppConfig.IsDeveloperModeEnabled == true);
 
                         //Add InfoPoints score to Health Check
-                        healthCheck.NumInfoPoints = GetHealthCheckScore(apmAppConfig.NumInfoPointRules > InfoPointUpper, apmAppConfig.NumInfoPointRules < InfoPointLower);
+                        //healthCheck.NumInfoPoints = GetHealthCheckScore(AppConfig.NumInfoPointRules > InfoPointUpper, AppConfig.NumInfoPointRules < InfoPointLower);
 
                         //Add Data collector score to Health Check
                         //Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true
                         List<HTTPDataCollector> httpDataCollectorThisAppList = null;
                         List<MethodInvocationDataCollector> methodInvocationDataCollectorThisAppList = null;
 
-                        if (httpDataCollectorsList != null) httpDataCollectorThisAppList = httpDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<HTTPDataCollector>();
+                        if (httpDataCollectorsList != null) httpDataCollectorThisAppList = httpDataCollectorsList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<HTTPDataCollector>();
                         int HTTPDataCollectorCount = httpDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
-                        if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<MethodInvocationDataCollector>();
+                        if (methodInvocationDataCollectorsList != null) methodInvocationDataCollectorThisAppList = methodInvocationDataCollectorsList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<MethodInvocationDataCollector>();
                         int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
                         int CombinedDataCollectorCount = HTTPDataCollectorCount + MethodInvocationDataCollectorCount;
@@ -152,7 +166,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         //If (policy active & has associated actions): Add count of policies to healthcheck list
                         List<Policy> policiesThisAppList = null;
 
-                        if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<Policy>();
+                        if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<Policy>();
                         int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
                         healthCheck.PoliciesActionsEnabled = GetHealthCheckScore(PolicyCount > PolicyUpper, PolicyCount < PolicyLower);
 
@@ -161,7 +175,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int ActiveTierPercent = 0;
                         List<APMTier> apmTierThisAppList = null;
 
-                        if (apmTierList != null) apmTierThisAppList = apmTierList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMTier>();
+                        if (apmTierList != null) apmTierThisAppList = apmTierList.Where(t => t.Controller.StartsWith(apmApp.Controller) == true && t.ApplicationName == apmApp.ApplicationName).ToList<APMTier>();
                         if (apmTierThisAppList.Count(t => t.NumNodes > 0) > 0)
                             ActiveTierPercent = (int)Math.Round((double)(apmTierThisAppList.Count(t => t.NumNodes > 0) * 100) / apmTierThisAppList.Count());
 
@@ -170,7 +184,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         //Add BackendOverflow to Health Check
                         //If BackendOverflow contains "All Other Traffic": Fail
                         List<APMBackend> backendThisAppList = null;
-                        if (backendList != null) backendThisAppList = backendList.Where(c => c.Controller.StartsWith(apmAppConfig.Controller) == true && c.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBackend>();
+                        if (backendList != null) backendThisAppList = backendList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<APMBackend>();
                         if (backendThisAppList != null)
                         {
                             var getBackendOverflow = backendThisAppList.FirstOrDefault(o => o.Prop1Name.Contains("Backend limit reached"));
@@ -182,7 +196,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int ActiveMachineAgentPercent = 0;
                         List<APMNode> apmNodesThisAppList = null;
 
-                        if (apmNodeList != null) apmNodesThisAppList = apmNodeList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMNode>();
+                        if (apmNodeList != null) apmNodesThisAppList = apmNodeList.Where(t => t.Controller.StartsWith(apmApp.Controller) == true && t.ApplicationName == apmApp.ApplicationName).ToList<APMNode>();
                         int NodeActiveCount = apmNodesThisAppList.Count(n => n.AgentPresent == true && n.IsDisabled == false);
                         int MachineAgentPresentCount = apmNodesThisAppList.Count(n => n.MachineAgentPresent == true && n.IsDisabled == false);
 
@@ -224,7 +238,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         //Add BTErrorRateHigh & BTOverflow to Health Check
 
                         List<APMBusinessTransaction> apmEntitiesThisAppList = null;
-                        if (apmEntitiesList != null) apmEntitiesThisAppList = apmEntitiesList.Where(t => t.Controller.StartsWith(apmAppConfig.Controller) == true && t.ApplicationName == apmAppConfig.ApplicationName).ToList<APMBusinessTransaction>();
+                        if (btEntitiesList != null) apmEntitiesThisAppList = btEntitiesList.Where(t => t.Controller.StartsWith(apmApp.Controller) == true && t.ApplicationName == apmApp.ApplicationName).ToList<APMBusinessTransaction>();
                         if (apmEntitiesThisAppList != null)
                         {
                             //Add BTErrorRateHigh to Health Check
@@ -250,7 +264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             //If Overflow BT Type has activity & BT Lockdown is disabled: Fail
                             foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
                             {
-                                if (BTEntity.BTType == "OVERFLOW" && BTEntity.HasActivity == true && healthCheck.BTLockdownEnabled == false)
+                                if (BTEntity.BTType == "OVERFLOW" && BTEntity.HasActivity == true && healthCheck.BTLockdownEnabled == "FAIL")
                                 {
                                     healthCheck.BTOverflow = "FAIL";
                                     break;
@@ -263,12 +277,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int HRViolationCount = 0;
                         ApplicationEventSummary appEventThisApp = null;
 
-                        if (appEventsList != null) appEventThisApp = appEventsList.SingleOrDefault(a => a.Controller.StartsWith(apmAppConfig.Controller) == true && a.ApplicationName == apmAppConfig.ApplicationName);
+                        if (appEventsList != null) appEventThisApp = appEventsList.SingleOrDefault(a => a.Controller.StartsWith(apmApp.Controller) == true && a.ApplicationName == apmApp.ApplicationName);
 
                         if (appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
                         healthCheck.HRViolationsHigh = GetHealthCheckScore(HRViolationCount < HRViolationLower, HRViolationCount > HRViolationUpper);
 
-                        //Console.WriteLine("{0} - HRViolations: {1}", apmAppConfig.ApplicationName, HRViolationCount);
+                        //Console.WriteLine("{0} - HRViolations: {1}", apmApp.ApplicationName, HRViolationCount);
 
                         //Add properties to HealthCheckList
                         healthChecksList.Add(healthCheck);
