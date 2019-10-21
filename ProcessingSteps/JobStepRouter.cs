@@ -41,6 +41,7 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ExtractAPMMetrics,
                 JobStatus.ExtractAPMFlowmaps,
+                JobStatus.ExtractAPMEntityDashboardScreenshots,
                 JobStatus.ExtractAPMSnapshots,
 
                 // Index data
@@ -98,6 +99,8 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportAPMFlameGraphs,
 
                 JobStatus.ReportAPMEntityDetails,
+
+                JobStatus.ReportAPMEntityDashboardScreenshots,
 
                 // Done 
                 JobStatus.Done,
@@ -184,7 +187,7 @@ namespace AppDynamics.Dexter
                 {
                     if (jobStep.Execute(programOptions, jobConfiguration) == false)
                     {
-                        loggerConsole.Warn("If you need support, please check how to get it at https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support");
+                        loggerConsole.Warn("If you need support, please review https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support and send the logs");
 
                         jobConfiguration.Status = JobStatus.Error;
                     }
@@ -260,6 +263,8 @@ namespace AppDynamics.Dexter
                     return new ExtractAPMMetrics();
                 case JobStatus.ExtractAPMFlowmaps:
                     return new ExtractAPMFlowmaps();
+                case JobStatus.ExtractAPMEntityDashboardScreenshots:
+                    return new ExtractAPMEntityDashboardScreenshots();
                 case JobStatus.ExtractAPMSnapshots:
                     return new ExtractAPMSnapshots();
 
@@ -361,6 +366,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
 
+                case JobStatus.ReportAPMEntityDashboardScreenshots:
+                    return new ReportAPMEntityDashboardScreenshots();
 
                 default:
                     break;

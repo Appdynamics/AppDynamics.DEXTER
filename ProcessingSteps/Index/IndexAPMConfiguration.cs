@@ -365,7 +365,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         }
 
-                        applicationConfiguration.NumBTEntryRules = businessTransactionEntryRulesList.Where(b => b.IsExclusion == false).Count();
+                        applicationConfiguration.NumBTEntryRules = businessTransactionEntryRulesList.Count(b => b.IsExclusion == false);
+
                         applicationConfiguration.NumBTExcludeRules = businessTransactionEntryRulesList.Count - applicationConfiguration.NumBTEntryRules;
 
                         businessTransactionEntryRulesList = businessTransactionEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
@@ -530,7 +531,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                             }
 
-                            applicationConfiguration.NumBT20EntryRules = businessTransactionEntryRules20List.Where(b => b.IsExclusion == false).Count();
+                            applicationConfiguration.NumBT20EntryRules = businessTransactionEntryRules20List.Count(b => b.IsExclusion == false);
                             applicationConfiguration.NumBT20ExcludeRules = businessTransactionEntryRules20List.Count - applicationConfiguration.NumBT20EntryRules;
 
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
@@ -1642,6 +1643,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 businessTransactionEntryRule.TierName = applicationComponentNode.SelectSingleNode("name").InnerText;
             }
 
+            businessTransactionEntryRule.IsBuiltIn = BUILTIN_BT_MATCH_RULES.Contains(businessTransactionEntryRule.RuleName);
+
             return businessTransactionEntryRule;
         }
 
@@ -1700,6 +1703,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
             }
+
+            businessTransactionEntryRule.IsBuiltIn = BUILTIN_BT_MATCH_RULES.Contains(businessTransactionEntryRule.RuleName);
 
             return businessTransactionEntryRule;
         }
@@ -1870,6 +1875,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
 
             businessTransactionEntryRule.RuleRawValue = makeXMLFormattedAndIndented(ruleConfigurationNode);
+
+            businessTransactionEntryRule.IsBuiltIn = BUILTIN_BT_MATCH_RULES.Contains(businessTransactionEntryRule.RuleName);
 
             return businessTransactionEntryRule;
         }

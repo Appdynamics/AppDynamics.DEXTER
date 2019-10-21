@@ -85,20 +85,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
-                                if (applicationList != null && applicationList.Count > 0)
+                                List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
+                                if (applicationsList != null && applicationsList.Count > 0)
                                 {
                                     loggerConsole.Info("Flame Graphs for Application");
 
                                     stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                                    APMApplication application = applicationList[0];
+                                    APMApplication application = applicationsList[0];
 
                                     if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget)) == true)
                                     {
                                         createFlameGraph(
                                             FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget),
-                                            FilePathMap.FlameGraphReportFilePath(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
+                                            FilePathMap.FlameGraphReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
                                             methodCallLineClassToFrameworkTypeMappingDictionary,
@@ -109,14 +109,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         createFlameGraph(
                                             FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(jobTarget),
-                                            FilePathMap.FlameChartReportFilePath(applicationList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
+                                            FilePathMap.FlameChartReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
                                             methodCallLineClassToFrameworkTypeMappingDictionary,
                                             true);
                                     }
 
-                                    Interlocked.Add(ref numEntitiesTotal, applicationList.Count);
+                                    Interlocked.Add(ref numEntitiesTotal, applicationsList.Count);
                                 }
 
                                 #endregion
@@ -557,7 +557,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             xmlReaderSettings.DtdProcessing = DtdProcessing.Parse;
             xmlReaderSettings.IgnoreComments = false;
 
-            FileIOHelper.CreateFolder(Path.GetDirectoryName(flameGraphFilePath));
+            FileIOHelper.CreateFolderForFile(flameGraphFilePath);
 
             using (StringReader stringReader = new StringReader(flameGraphTemplate))
             {

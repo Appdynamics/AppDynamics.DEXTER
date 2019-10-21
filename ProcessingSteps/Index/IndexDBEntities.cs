@@ -180,13 +180,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 application.NumCollectors = dbCollectorsList.Count;
 
-                                application.NumOracle = dbCollectorsList.Where(d => d.CollectorType == "ORACLE").Count();
-                                application.NumSQLServer = dbCollectorsList.Where(d => d.CollectorType == "MSSQL").Count();
-                                application.NumMySQL = dbCollectorsList.Where(d => d.CollectorType == "MYSQL").Count();
-                                application.NumMongo = dbCollectorsList.Where(d => d.CollectorType == "MONGO").Count();
-                                application.NumPostgres = dbCollectorsList.Where(d => d.CollectorType == "POSTGRESQL").Count();
-                                application.NumDB2 = dbCollectorsList.Where(d => d.CollectorType == "DB2").Count();
-                                application.NumSybase = dbCollectorsList.Where(d => d.CollectorType == "SYBASE").Count();
+                                application.NumOracle = dbCollectorsList.Count(d => d.CollectorType == "ORACLE");
+                                application.NumSQLServer = dbCollectorsList.Count(d => d.CollectorType == "MSSQL");
+                                application.NumMySQL = dbCollectorsList.Count(d => d.CollectorType == "MYSQL");
+                                application.NumMongo = dbCollectorsList.Count(d => d.CollectorType == "MONGO");
+                                application.NumPostgres = dbCollectorsList.Count(d => d.CollectorType == "POSTGRESQL");
+                                application.NumDB2 = dbCollectorsList.Count(d => d.CollectorType == "DB2");
+                                application.NumSybase = dbCollectorsList.Count(d => d.CollectorType == "SYBASE");
                                 application.NumOther = dbCollectorsList.Count - (application.NumOracle + application.NumSQLServer + application.NumMySQL + application.NumMongo + application.NumPostgres + application.NumDB2 + application.NumSybase);
 
                             }

@@ -217,11 +217,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
-            if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
-            {
-                return true;
-            }
-
             try
             {
                 loggerConsole.Info("Prepare Controller and Application Configuration Report File");
@@ -388,7 +383,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -397,7 +392,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_BUSINESS_TRANSACTION_SCOPES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -430,7 +425,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -439,7 +434,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_BACKEND_DISCOVERY_RULES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -1458,10 +1453,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_TYPE];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsExclusion");
                     addFilterFieldToPivot(pivot, "IsEnabled");
+                    addFilterFieldToPivot(pivot, "IsBuiltIn");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "AgentType");
@@ -1481,10 +1477,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(5).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_PIVOT_LOCATION];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_LOCATION);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsExclusion");
                     addFilterFieldToPivot(pivot, "IsEnabled");
+                    addFilterFieldToPivot(pivot, "IsBuiltIn");
                     addRowFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "EntryPointType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "TierName");
@@ -1608,10 +1605,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_TYPE];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsExclusion");
                     addFilterFieldToPivot(pivot, "IsEnabled");
+                    addFilterFieldToPivot(pivot, "IsBuiltIn");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "AgentType");
@@ -1631,10 +1629,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(5).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_PIVOT_LOCATION];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_LOCATION);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsExclusion");
                     addFilterFieldToPivot(pivot, "IsEnabled");
+                    addFilterFieldToPivot(pivot, "IsBuiltIn");
                     addRowFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "EntryPointType", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "ScopeName");

@@ -137,6 +137,9 @@ Users, Groups, Roles and Permissions report shows information about each and eve
 ## Dashboards Report
 Dashboards report shows information about all Dashboards, Widgets and Time Series and their relationship to other Entities in Controller is available in [Dashboards](../../wiki/Dashboards-Report) report.
 
+## APM Entity Dashboards Report
+See Flowmap dashboard screenshot about each and every detected Entity in APM applications in [Entity Dashboards](../../wiki/APM-Entity-Dashboards-Report) report.
+
 # Get Started
 ## Documentation 
 If you are new to AppDynamics DEXTER and want an introduction, read through 3 part [Walkthrough](../../wiki/Home#walkthrough).
@@ -158,10 +161,10 @@ If you need help with issues and/or intepretation of results, read [Getting Supp
 AppDynamics DEXTER is also hosted on AppDynamics Exchange in [Extensions](https://www.appdynamics.com/community/exchange/extension/appdynamics-dexter-data-extraction-enhanced-reporting/) area.
 
 # Acknowledgements
-* Microsoft - Thanks for Visual Studio and .NET Core https://github.com/dotnet/core team for letting us all write code in C# on any platform
-* Command Line Parser - Simple and fast https://github.com/gsscoder/commandline 
-* CSV File Creation and Parsing - An excellent utility https://github.com/JoshClose/CsvHelper 
+* Microsoft - Thanks for Visual Studio and .NET Core team for letting us all write code in C# on any platform https://github.com/dotnet/core
+* Command Line Parser - Simple and fast https://github.com/gsscoder/commandline
+* CSV File Creation and Parsing - An excellent utility https://github.com/JoshClose/CsvHelper
 * JSON Parsing - NewtonSoft JSON is awesome https://www.newtonsoft.com/json
 * Logging - NLog is also awesome http://nlog-project.org/ 
 * Excel Report Creation - Jan Kallman's excellent helper class is a lifesaver https://github.com/JanKallman/EPPlus 
-* Flame Graphs - Brendan Gregg’s Flame Graph generator https://github.com/brendangregg/FlameGraph was used to both inspiration and as reference to build code to generate Flame Graph reports
+* Flame Graphs - Brendan Gregg’s Flame Graph generator was used to both inspiration and as reference to build code to generate Flame Graph reports https://github.com/brendangregg/FlameGraph

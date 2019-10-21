@@ -22,6 +22,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsEnabled).Index(i); i++;
             Map(m => m.IsBackground).Index(i); i++;
             Map(m => m.IsExclusion).Index(i); i++;
+            Map(m => m.IsBuiltIn).Index(i); i++;
 
             Map(m => m.MatchConditions).Index(i); i++;
             Map(m => m.Actions).Index(i); i++;

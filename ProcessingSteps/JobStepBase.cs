@@ -161,8 +161,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "AGENT_EVENT" },
             { "APPDYNAMICS_DATA" },
             { "APPDYNAMICS_INTERNAL_DIAGNOSTICS" },
-            { "WARROOM_NOTE" },
-            { "SYSTEM_EVENT" }
+            { "WARROOM_NOTE" }
         };
 
         #endregion
@@ -180,6 +179,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
         public const string DIFFERENCE_MISSING = "MISSING";
         public const string DIFFERENCE_EXTRA = "EXTRA";
         public const string DIFFERENCE_DIFFERENT = "DIFFERENT";
+
+        internal static List<string> BUILTIN_BT_MATCH_RULES = new List<string>
+        {
+            { "Cron4J" },
+            { "JavaTimer" },
+            { "JCronTab" },
+            { "Quartz" },
+            { "Apache Axis Servlet" },
+            { "Apache Axis2 Admin Servlet" },
+            { "Apache Axis2 Servlet" },
+            { "CometD Annotation Servlet" },
+            { "CometD Servlet" },
+            { "JAX WS RI Dispatcher Servlet" },
+            { "JBoss 6.x web-services Servlet" },
+            { "JBoss web-services servlet" },
+            { "Jersey 2.x Servlet" },
+            { "Jersey Servlet" },
+            { "Spring WS - Base servlet for Spring's web framework" },
+            { "Spring WS - dispatching of Web service messages" },
+            { "Struts Action Servlet" },
+            { "Weblogic JAX RPC Servlets" },
+            { "Weblogic JAX WS Servlet" },
+            { "Weblogic JAX WS Webservice Servlet" },
+            { "Websphere web-services axis Servlet" },
+            { "Websphere web-services Servlet" },
+            { "XFire web-services servlet" },
+            { "ASP.NET MVC5 Resource Handler" },
+            { "ASP.NET WCF Activation Handler" },
+            { "ASP.NET WebService Script Handler" },
+            { "ASP.NET WebService Session Handler" },
+            { "NodeJS Static Content Filter" },
+            { "Python Static Content Filter" }
+        };
 
         #endregion
 

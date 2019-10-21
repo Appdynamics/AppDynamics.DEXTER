@@ -28,7 +28,8 @@
 
         ExtractAPMMetrics = 30,
         ExtractAPMFlowmaps = 31,
-        ExtractAPMSnapshots = 32,
+        ExtractAPMEntityDashboardScreenshots = 32,
+        ExtractAPMSnapshots = 33,
 
         // Index steps
         IndexControllerVersionAndApplications = 50,
@@ -85,6 +86,8 @@
         ReportAPMFlameGraphs = 132,
 
         ReportAPMEntityDetails = 133,
+
+        ReportAPMEntityDashboardScreenshots = 140,
 
         // The rest
         Done = 500,

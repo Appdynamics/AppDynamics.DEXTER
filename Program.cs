@@ -109,18 +109,7 @@ namespace AppDynamics.Dexter
                                     try
                                     {
                                         Version latestReleaseVersion = new Version(latestReleaseVersionString);
-
-                                        int versionCheckResult = latestReleaseVersion.CompareTo(Assembly.GetEntryAssembly().GetName().Version);
-
-                                        if (versionCheckResult == 0)
-                                        {
-                                            // Same version, do nothing
-                                        }
-                                        else if (versionCheckResult < 0)
-                                        {
-                                            // This version is newer than what is listed on Github
-                                        }
-                                        else if (versionCheckResult > 0)
+                                        if (latestReleaseVersion > Assembly.GetEntryAssembly().GetName().Version)
                                         {
                                             // This version is older than what is listed on Github
                                             loggerConsole.Warn("Latest released version is {0}, and yours is {1}. Would you like to upgrade (y/n)?", latestReleaseVersion, Assembly.GetEntryAssembly().GetName().Version);
@@ -290,9 +279,10 @@ namespace AppDynamics.Dexter
                 if (jobConfiguration.Input.MetricsSelectionCriteria == null)
                 {
                     jobConfiguration.Input.MetricsSelectionCriteria = new string[0];
+                    jobConfiguration.Input.MetricsSelectionCriteria[0] = "TransactionApplication";
                 }
 
-                // Validate Snapshot selection
+                // Validate Snapshot selection criteria
                 if (jobConfiguration.Input.SnapshotSelectionCriteria == null)
                 {
                     jobConfiguration.Input.SnapshotSelectionCriteria = new JobSnapshotSelectionCriteria();
@@ -338,6 +328,46 @@ namespace AppDynamics.Dexter
                     jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None = true;
                 }
 
+                // Validate Entity Dashboard Screenshot selection criteria
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria = new JobEntityDashboardSelectionCriteria();
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.Tiers == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.Tiers = new string[0];
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactions == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactions = new string[0];
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType = new JobTierType();
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType.All = true;
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType = new JobTierType();
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType.All = true;
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType = new JobBusinessTransactionType();
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType.All = true;
+                }
+
+                if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType == null)
+                {
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType = new JobBackendType();
+                    jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType.All = true;
+                }
+
                 // Validate Configuration Comparison selection
                 if (jobConfiguration.Input.ConfigurationComparisonReferenceAPM == null ||
                     jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.Length == 0 ||
@@ -350,7 +380,7 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.TrimEnd('/');
+                    jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller;
                     jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Type = JobStepBase.APPLICATION_TYPE_APM;
                 }
 
@@ -365,7 +395,7 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller.TrimEnd('/');
+                    jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Controller;
                     jobConfiguration.Input.ConfigurationComparisonReferenceWEB.Type = JobStepBase.APPLICATION_TYPE_WEB;
                 }
 
@@ -380,13 +410,13 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller.TrimEnd('/');
+                    jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Controller;
                     jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE.Type = JobStepBase.APPLICATION_TYPE_MOBILE;
                 }
 
                 if (jobConfiguration.Input.ConfigurationComparisonReferenceDB == null ||
-                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Controller.Length == 0 ||
-                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceAPM.Application.Length == 0)
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller == null || jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller.Length == 0 ||
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application == null || jobConfiguration.Input.ConfigurationComparisonReferenceDB.Application.Length == 0)
                 {
                     jobConfiguration.Input.ConfigurationComparisonReferenceDB = new JobTarget();
                     jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = JobStepBase.BLANK_APPLICATION_CONTROLLER;
@@ -395,7 +425,7 @@ namespace AppDynamics.Dexter
                 }
                 else
                 {
-                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller.TrimEnd('/');
+                    jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller = jobConfiguration.Input.ConfigurationComparisonReferenceDB.Controller;
                     jobConfiguration.Input.ConfigurationComparisonReferenceDB.Type = JobStepBase.APPLICATION_TYPE_DB;
                 }
 
@@ -631,7 +661,7 @@ namespace AppDynamics.Dexter
                                     {
                                         // Create a copy of target application for each individual application
                                         JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                        jobTargetExpanded.Controller = jobTarget.Controller;
 
                                         jobTargetExpanded.UserName = jobTarget.UserName;
                                         jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -695,7 +725,7 @@ namespace AppDynamics.Dexter
                                         {
                                             // Create a copy of target application for each individual application
                                             JobTarget jobTargetExpanded = new JobTarget();
-                                            jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                            jobTargetExpanded.Controller = jobTarget.Controller;
 
                                             jobTargetExpanded.UserName = jobTarget.UserName;
                                             jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -762,7 +792,7 @@ namespace AppDynamics.Dexter
                                             {
                                                 // Create a copy of target application for each individual application
                                                 JobTarget jobTargetExpanded = new JobTarget();
-                                                jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                                jobTargetExpanded.Controller = jobTarget.Controller;
 
                                                 jobTargetExpanded.UserName = jobTarget.UserName;
                                                 jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -798,7 +828,7 @@ namespace AppDynamics.Dexter
                                     {
                                         // Create a copy of target application for each individual application
                                         JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                        jobTargetExpanded.Controller = jobTarget.Controller;
 
                                         jobTargetExpanded.UserName = jobTarget.UserName;
                                         jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -876,7 +906,7 @@ namespace AppDynamics.Dexter
                                                 {
                                                     // Create a copy of target application for each individual application
                                                     JobTarget jobTargetExpanded = new JobTarget();
-                                                    jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                                    jobTargetExpanded.Controller = jobTarget.Controller;
 
                                                     jobTargetExpanded.UserName = jobTarget.UserName;
                                                     jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -915,7 +945,7 @@ namespace AppDynamics.Dexter
                                         JobStepBase.getStringValueFromJToken(applicationsAll["analyticsApplication"], "name").StartsWith("AppDynamics Analytics", StringComparison.CurrentCultureIgnoreCase))
                                     {
                                         JobTarget jobTargetExpanded = new JobTarget();
-                                        jobTargetExpanded.Controller = jobTarget.Controller.TrimEnd('/');
+                                        jobTargetExpanded.Controller = jobTarget.Controller;
 
                                         jobTargetExpanded.UserName = jobTarget.UserName;
                                         jobTargetExpanded.UserPassword = AESEncryptionHelper.Encrypt(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
@@ -947,9 +977,12 @@ namespace AppDynamics.Dexter
                 {
                     logger.Error("Job File Problem: Expanded targets but not a single valid target to work on");
                     loggerConsole.Error("Job File Problem: Expanded targets but not a single valid target to work on");
-                    loggerConsole.Error("This is most likely caused by either incorrect password or incorrectly specified user name.");
+                    loggerConsole.Error("This is most likely caused by either incorrect password or incorrectly specified user name (see https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Job-File#username-string).");
                     loggerConsole.Error("Only AppDynamics-internal authentication is supported in username@tenant format");
                     loggerConsole.Error("If you are using SAML or LDAP account, please change to AppDynamics-internal account");
+                    loggerConsole.Error("If you have proxy, consult https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Proxy-Settings to configure access");
+                    loggerConsole.Error("Check Controller Log Files (https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Log-Files) for more detail");
+                    loggerConsole.Warn("If you need support, please review https://github.com/Appdynamics/AppDynamics.DEXTER/wiki#getting-support and send the logs");
 
                     return;
                 }
