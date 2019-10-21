@@ -1,0 +1,73 @@
+﻿<?xml version="1.0"?>
+<html>
+    <head>
+        <title>AppDynamics DEXTER Application Dashboard Screenshots Report</title>
+        <style>
+            body
+            {
+                font-size: 12pt;
+                font-family: Arial;
+            }
+            thead
+            {
+                display: table-header-group;
+                font-weight: bold;
+                vertical-align: middle;
+                border-color: inherit;
+                background: LightGray;
+            }
+            td
+            {
+                vertical-align: top;
+                border-color: inherit;
+            }
+            tr:nth-child(odd)
+                {
+                background: LightGray;
+            }
+            tr:nth-child(even)
+            {
+                background: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>AppDynamics DEXTER Applications Dashboard Screenshots Report</h1>
+        <p>
+            <table>
+                <tr>
+                    <td>Version</td>
+                    <td id="tdVersion">AppDynamics DEXTER v{0}</td>
+                </tr>
+                <tr>
+                    <td>From</td>
+                    <td id="tdFromDateTime">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>To</td>
+                    <td id="tdToDateTime">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>Timezone</td>
+                    <td id="tdTimezone">[TO BE FILLED]</td>
+                </tr>
+            </table>
+        </p>
+        <h1 id="Applications">Applications</h1>
+        <p>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Application</td>
+                        <td>ID</td>
+                        <td>Picture</td>
+                        <td>Dashboards</td>
+                        <td>Link</td>
+                    </tr>
+                </thead>
+                <tr id="trApplicationsPlaceholder"></tr>
+            </table>
+        </p>
+    </body>
+</html>

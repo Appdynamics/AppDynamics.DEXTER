@@ -44,6 +44,11 @@ namespace AppDynamics.Dexter
             }
         }
 
+        public static bool CreateFolderForFile(string filePath)
+        {
+            return CreateFolder(Path.GetDirectoryName(filePath));
+        }
+
         public static bool DeleteFolder(string folderPath)
         {
             int tryNumber = 1;
@@ -135,6 +140,27 @@ namespace AppDynamics.Dexter
             {
                 string dest = Path.Combine(folderPathTarget, Path.GetFileName(folder));
                 CopyFolder(folder, dest);
+            }
+
+            return true;
+        }
+
+        public static bool CopyFile(string filePathSource, string filePathDestination)
+        {
+            CreateFolderForFile(filePathDestination);
+
+            try
+            {
+                logger.Trace("Copying file {0} to {1}", filePathSource, filePathDestination);
+
+                File.Copy(filePathSource, filePathDestination, true);
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Unable to copy file {0} to {1}", filePathSource, filePathDestination);
+                logger.Error(ex);
+
+                return false;
             }
 
             return true;
@@ -545,7 +571,7 @@ namespace AppDynamics.Dexter
             {
                 try
                 {
-                    logger.Trace("Appending CSV file {0} and file {1}", csvToAppendToFilePath, csvFromWhichToAppendFilePath);
+                    logger.Trace("Adding to to CSV file {0} this CSV file {1}", csvToAppendToFilePath, csvFromWhichToAppendFilePath);
 
                     if (File.Exists(csvFromWhichToAppendFilePath) == true)
                     {
@@ -650,6 +676,5 @@ namespace AppDynamics.Dexter
         }
 
         #endregion
-
     }
 }

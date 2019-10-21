@@ -22,6 +22,8 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsExclusion { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
+        public bool IsBuiltIn { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Priority { get; set; }
 
         [FieldComparison(FieldComparisonType.JSONValueComparison)]

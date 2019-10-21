@@ -40,6 +40,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string APM_ACTIVITYGRID_FOLDER_NAME = "FLOW";
         private const string APM_METRICS_FOLDER_NAME = "METR";
         private const string APM_SNAPSHOTS_FOLDER_NAME = "SNAP";
+        private const string APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME = "SCRN";
 
         private const string SIM_PROCESSES_FOLDER_NAME = "PROC";
 
@@ -206,6 +207,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Flowmap file names
         private const string EXTRACT_ENTITY_FLOWMAP_FILE_NAME = "flowmap.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
 
+        // Entity dashboard screenshot file names
+        private const string EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME = "dashboard.png";
+        private const string EXTRACT_DASHBOARD_SCREENSHOT_THUMB_FILE_NAME = "dashboard_thumb.png";
+
+
         #endregion
 
         #region Constants for the folder and file names of data index
@@ -263,7 +269,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_DB_USERS_FILE_NAME = "users.csv";
         private const string CONVERT_DB_MODULES_FILE_NAME = "modules.csv";
         private const string CONVERT_DB_PROGRAMS_FILE_NAME = "programs.csv";
-        private const string CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME = "businesstransactions.csv";
+        private const string CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME = "related.businesstransactions.csv";
 
         // Detected WEB entity report conversion file names
         private const string CONVERT_WEB_APPLICATIONS_FILE_NAME = "applications.web.csv";
@@ -429,6 +435,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.html";
+        private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -468,6 +476,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Template controller export of an empty applications
         private const string TEMPLATE_CONTROLLER_AND_APPLICATIONS_FOLDER_NAME = "EmptyConfig";
+
+        // Application Dashboard screenshots templates
+        private const string LINKS_TO_APPLICATION_DASHBOARDS_TEMPLATE_FILE_NAME = "LinksToApplicationDashboardsTemplate.html";
+        private const string LINKS_TO_APPLICATIONS_TEMPLATE_FILE_NAME = "LinksToApplicationsDashboardsTemplate.html";
+
 
         #endregion
 
@@ -6069,6 +6082,230 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 reportFileName);
+        }
+
+        #endregion
+
+
+        #region Entity Dashboard Screenshots Data
+
+        public string ApplicationDashboardScreenshotDataFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                APMApplication.ENTITY_FOLDER,
+                EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME);
+        }
+
+        public string TierDashboardScreenshotDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            return TierDashboardScreenshotDataFilePath(jobTarget, tier.name, tier.id);
+        }
+
+        public string TierDashboardScreenshotDataFilePath(JobTarget jobTarget, string tierName, long tierID)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                APMTier.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(tierName, tierID),
+                EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME);
+        }
+
+        public string NodeDashboardScreenshotDataFilePath(JobTarget jobTarget, AppDRESTNode node)
+        {
+            return NodeDashboardScreenshotDataFilePath(jobTarget, node.tierName, node.tierId, node.name, node.id);
+        }
+
+        public string NodeDashboardScreenshotDataFilePath(JobTarget jobTarget, string tierName, long tierID, string nodeName, long nodeID)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                APMNode.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(tierName, tierID),
+                getShortenedEntityNameForFileSystem(nodeName, nodeID),
+                EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME);
+        }
+
+        public string BackendDashboardScreenshotDataFilePath(JobTarget jobTarget, AppDRESTBackend backend)
+        {
+            return BackendDashboardScreenshotDataFilePath(jobTarget, backend.name, backend.id);
+        }
+
+        public string BackendDashboardScreenshotDataFilePath(JobTarget jobTarget, string backendName, long backendID)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                APMBackend.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(backendName, backendID),
+                EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME);
+        }
+
+        public string BusinessTransactionDashboardScreenshotDataFilePath(JobTarget jobTarget, AppDRESTBusinessTransaction businessTransaction)
+        {
+            return BusinessTransactionDashboardScreenshotDataFilePath(jobTarget, businessTransaction.tierName, businessTransaction.tierId, businessTransaction.name, businessTransaction.id);
+        }
+
+        public string BusinessTransactionDashboardScreenshotDataFilePath(JobTarget jobTarget, string tierName, long tierID, string businessTransactionName, long businessTransactionID)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                APMBusinessTransaction.ENTITY_FOLDER,
+                getShortenedEntityNameForFileSystem(tierName, tierID),
+                getShortenedEntityNameForFileSystem(businessTransactionName, businessTransactionID),
+                EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME);
+        }
+
+        #endregion
+
+        #region Entity Dashboard Screenshots Report
+
+        public string ApplicationsLinksTemplateFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                LINKS_TO_APPLICATIONS_TEMPLATE_FILE_NAME);
+        }
+
+        public string ApplicationDashboardsLinksTemplateFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                LINKS_TO_APPLICATION_DASHBOARDS_TEMPLATE_FILE_NAME);
+        }
+
+        public string ApplicationsLinksReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string ApplicationDashboardLinksReportFilePath(APMApplication application, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    REPORT_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(application.Controller)),
+                    getShortenedEntityNameForFileSystem(application.ApplicationName, application.ApplicationID),
+                    REPORT_APPLICATION_DASHBOARDS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(application.Controller)),
+                    getShortenedEntityNameForFileSystem(application.ApplicationName, application.ApplicationID),
+                    REPORT_APPLICATION_DASHBOARDS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string EntityDashboardScreenshotReportFilePath(APMEntityBase entity, bool returnAbsolutePath, bool returnThumb)
+        {
+            string reportFileName = EXTRACT_DASHBOARD_SCREENSHOT_FILE_NAME;
+            if (returnThumb == true) reportFileName = EXTRACT_DASHBOARD_SCREENSHOT_THUMB_FILE_NAME;
+
+            string reportFilePath = String.Empty;
+            string reportRelativeFilePath = String.Empty;
+
+            if (entity is APMApplication)
+            {
+                reportRelativeFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
+                    getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
+                    APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                    entity.FolderName,
+                    reportFileName);
+            }
+            else if (entity is APMTier)
+            {
+                reportRelativeFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
+                    getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
+                    APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                    entity.FolderName,
+                    getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
+                    reportFileName);
+            }
+            else if (entity is APMNode)
+            {
+                reportRelativeFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
+                    getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
+                    APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                    entity.FolderName,
+                    getShortenedEntityNameForFileSystem(((APMNode)entity).TierName, ((APMNode)entity).TierID),
+                    getShortenedEntityNameForFileSystem(((APMNode)entity).NodeName, ((APMNode)entity).NodeID),
+                    reportFileName);
+            }
+            else if (entity is APMBusinessTransaction)
+            {
+                reportRelativeFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
+                    getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
+                    APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                    entity.FolderName,
+                    getShortenedEntityNameForFileSystem(((APMBusinessTransaction)entity).TierName, ((APMBusinessTransaction)entity).TierID),
+                    getShortenedEntityNameForFileSystem(((APMBusinessTransaction)entity).BTName, ((APMBusinessTransaction)entity).BTID),
+                    reportFileName);
+            }
+            else if (entity is APMBackend)
+            {
+                reportRelativeFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(entity.Controller)),
+                    getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
+                    APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME,
+                    entity.FolderName,
+                    getShortenedEntityNameForFileSystem(entity.EntityName, entity.EntityID),
+                    reportFileName);
+            }
+
+            if (reportRelativeFilePath.Length > 0)
+            {
+                if (returnAbsolutePath == true)
+                {
+                    reportFilePath = Path.Combine(
+                        this.ProgramOptions.OutputJobFolderPath,
+                        REPORT_FOLDER_NAME,
+                        reportRelativeFilePath);
+                }
+                else
+                {
+                    reportFilePath = reportRelativeFilePath;
+                }
+            }
+
+            return reportFilePath;
         }
 
         #endregion

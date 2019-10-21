@@ -62,6 +62,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
 
+                        #region Target step variables
+
+                        Version version4_5_13 = new Version(4, 5, 13);
+                        Version versionThisController = new Version(jobTarget.ControllerVersion);
+
+                        #endregion
+
                         // Set up controller access
                         using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                         {
@@ -131,8 +138,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Synthetic Jobs");
 
-                            string syntheticJobsJSON = controllerApi.GetWEBSyntheticJobs(jobTarget.ApplicationID);
-                            if (syntheticJobsJSON != String.Empty) FileIOHelper.SaveFileToPath(syntheticJobsJSON, FilePathMap.WEBSyntheticJobsDataFilePath(jobTarget));
+                            if (versionThisController >= version4_5_13)
+                            {
+                                string syntheticJobsJSON = controllerApi.GetWEBSyntheticJobs(jobTarget.ApplicationID);
+                                if (syntheticJobsJSON != String.Empty) FileIOHelper.SaveFileToPath(syntheticJobsJSON, FilePathMap.WEBSyntheticJobsDataFilePath(jobTarget));
+                            }
+                            else
+                            {
+                                string syntheticJobsJSON = controllerApi.GetWEBSyntheticJobs_Before_4_5_13(jobTarget.ApplicationID);
+                                if (syntheticJobsJSON != String.Empty) FileIOHelper.SaveFileToPath(syntheticJobsJSON, FilePathMap.WEBSyntheticJobsDataFilePath(jobTarget));
+                            }
 
                             #endregion
                         }

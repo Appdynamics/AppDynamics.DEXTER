@@ -2166,8 +2166,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 segment.NumSEPs = serviceEndpointCallsListInThisSegment.Count();
 
-                                segment.NumHTTPDCs = businessDataListInThisSegment.Where(d => d.DataType == "HTTP").Count();
-                                segment.NumMIDCs = businessDataListInThisSegment.Where(d => d.DataType == "Code").Count();
+                                segment.NumHTTPDCs = businessDataListInThisSegment.Count(d => d.DataType == "HTTP");
+                                segment.NumMIDCs = businessDataListInThisSegment.Count(d => d.DataType == "Code");
 
                                 #endregion
 

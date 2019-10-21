@@ -555,14 +555,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 schema.IsCustom = (BIQ_SCHEMA_TYPES.Contains(schemaName) == false);
 
                                 schema.NumFields = schemaFieldsInThisSchemaList.Count;
-                                schema.NumStringFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "STRING").Count();
-                                schema.NumIntegerFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "INTEGER").Count();
-                                schema.NumLongFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "LONG").Count();
-                                schema.NumFloatFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "FLOAT").Count();
-                                schema.NumDoubleFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "DOUBLE").Count();
-                                schema.NumBooleanFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "BOOLEAN").Count();
-                                schema.NumDateFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "DATE").Count();
-                                schema.NumObjectFields = schemaFieldsInThisSchemaList.Where(s => s.FieldType == "OBJECT").Count();
+                                schema.NumStringFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "STRING");
+                                schema.NumIntegerFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "INTEGER");
+                                schema.NumLongFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "LONG");
+                                schema.NumFloatFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "FLOAT");
+                                schema.NumDoubleFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "DOUBLE");
+                                schema.NumBooleanFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "BOOLEAN");
+                                schema.NumDateFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "DATE");
+                                schema.NumObjectFields = schemaFieldsInThisSchemaList.Count(s => s.FieldType == "OBJECT");
 
                                 schemaFieldsList.AddRange(schemaFieldsInThisSchemaList);
                                 schemasList.Add(schema);
