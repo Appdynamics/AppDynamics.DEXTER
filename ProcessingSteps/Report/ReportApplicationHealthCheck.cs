@@ -127,6 +127,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.ApplicationName = apmApp.ApplicationName;
                         healthCheck.ApplicationID = apmApp.ApplicationID;
                         healthCheck.NumTiers = apmApp.NumTiers;
+                        healthCheck.NumNodes = apmApp.NumNodes;
                         healthCheck.NumBTs = apmApp.NumBTs;
 
                         //Add BTLockdownOn, DevModeEnabled, InfoPoints to Health Check
@@ -389,6 +390,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["DeveloperModeOff"].Position + 1, sheet.Dimension.Rows, table.Columns["DeveloperModeOff"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumTiers"].Position + 1, sheet.Dimension.Rows, table.Columns["NumTiers"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumNodes"].Position + 1, sheet.Dimension.Rows, table.Columns["NumNodes"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
