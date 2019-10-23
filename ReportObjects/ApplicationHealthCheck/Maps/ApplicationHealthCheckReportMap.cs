@@ -12,6 +12,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.ApplicationName).Index(i); i++;
         
             Map(m => m.NumTiers).Index(i); i++;
+            Map(m => m.NumNodes).Index(i); i++;
             Map(m => m.NumBTs).Index(i); i++;
 
             //Map(m => m.CustomBTRules).Index(i); i++;

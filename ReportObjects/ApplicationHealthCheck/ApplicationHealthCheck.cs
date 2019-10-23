@@ -9,6 +9,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string ApplicationName { get; set; }
         public long ApplicationID { get; set; }
         public int NumTiers { get; set; }
+        public int NumNodes { get; set; }
         public int NumBTs { get; set; }
 
         public string DeveloperModeOff { get; set; }
