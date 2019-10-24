@@ -80,7 +80,7 @@ namespace AppDynamics.Dexter
             };
 
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
-#if (NETCOREAPP2_2)
+#if (NETCOREAPP3_0)
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 #else
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
@@ -889,6 +889,7 @@ namespace AppDynamics.Dexter
     ""addId"": {1},
     ""applicationId"": {0},
     ""timeRangeString"": ""Custom_Time_Range|BETWEEN_TIMES|{3}|{2}|{4}"",
+    ""maxDataPointsForMetricTrends"": 1440,
     ""fetchSyntheticData"": false
 }}";
 
@@ -970,7 +971,7 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/restui/browserRUMConfig/getSettingsConfig/{0}", applicationID), "application/json", true);
         }
 
-        public string GetWEBSyntheticJobs(long applicationID)
+        public string GetWEBSyntheticJobs_Before_4_5_13(long applicationID)
         {
             string requestJSONTemplate =
 @"{{
@@ -982,6 +983,13 @@ namespace AppDynamics.Dexter
                 applicationID);
 
             return this.apiPOST("controller/restui/synthetic/schedule/getJobList", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetWEBSyntheticJobs(long applicationID)
+        {
+            string requestBody = String.Empty;
+
+            return this.apiPOST(String.Format("controller/restui/synthetic/schedule/getJobList/{0}", applicationID), "application/json", requestBody, "application/json", true);
         }
 
         #endregion
