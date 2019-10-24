@@ -576,6 +576,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
 
                 #endregion
+
                 #region TOC sheet
 
                 // TOC sheet again

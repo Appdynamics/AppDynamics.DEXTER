@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -67,6 +68,48 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             string controllerVersionXML = controllerApi.GetControllerVersion();
                             if (controllerVersionXML != String.Empty) FileIOHelper.SaveFileToPath(controllerVersionXML, FilePathMap.ControllerVersionDataFilePath(jobTarget));
+
+                            if (controllerVersionXML != String.Empty)
+                            {
+                                XmlDocument configXml = new XmlDocument();
+                                configXml.LoadXml(controllerVersionXML);
+
+                                if (configXml != null)
+                                {
+                                    //<serverstatus version="1" vendorid="">
+                                    //    <available>true</available>
+                                    //    <serverid/>
+                                    //    <serverinfo>
+                                    //        <vendorname>AppDynamics</vendorname>
+                                    //        <productname>AppDynamics Application Performance Management</productname>
+                                    //        <serverversion>004-004-001-000</serverversion>
+                                    //        <implementationVersion>Controller v4.4.1.0 Build 164 Commit 6e1fd94d18dc87c1ecab2da573f98cea49d31c3a</implementationVersion>
+                                    //    </serverinfo>
+                                    //    <startupTimeInSeconds>19</startupTimeInSeconds>
+                                    //</serverstatus>
+                                    string controllerVersion = configXml.SelectSingleNode("serverstatus/serverinfo/serverversion").InnerText;
+                                    string[] controllerVersionArray = controllerVersion.Split('-');
+                                    int[] controllerVersionArrayNum = new int[controllerVersionArray.Length];
+                                    for (int j = 0; j < controllerVersionArray.Length; j++)
+                                    {
+                                        controllerVersionArrayNum[j] = Convert.ToInt32(controllerVersionArray[j]);
+                                    }
+                                    controllerVersion = String.Join(".", controllerVersionArrayNum);
+
+                                    jobTarget.ControllerVersion = controllerVersion;
+
+                                    loggerConsole.Info("Controller {0} version is {1}", jobTarget.Controller, jobTarget.ControllerVersion);
+
+                                    foreach (JobTarget jobTargetOthers in controllerGroup)
+                                    {
+                                        jobTargetOthers.ControllerVersion = controllerVersion;
+                                    }
+                                }
+                                else
+                                {
+                                    jobTarget.ControllerVersion = "0.0.0.0";
+                                }
+                            }
 
                             #endregion
 

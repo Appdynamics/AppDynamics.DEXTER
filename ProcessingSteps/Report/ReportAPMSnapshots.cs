@@ -538,6 +538,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["UserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["UserExperience"].Position + 1);
@@ -666,6 +668,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     // Make timeline fixed width
@@ -801,6 +805,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
@@ -934,6 +940,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
@@ -1022,6 +1030,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
@@ -1114,6 +1124,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     catch (OutOfMemoryException ex)
                     {
                         // Do nothing, we must have a lot of cells
+                        logger.Warn("Ran out of memory due to too many rows/cells");
+                        logger.Warn(ex);
                     }
 
                     ExcelAddress cfAddressUserExperience = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["SegmentUserExperience"].Position + 1, sheet.Dimension.Rows, table.Columns["SegmentUserExperience"].Position + 1);
