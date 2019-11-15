@@ -49,7 +49,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string CONTROLLER_RBAC_FOLDER_NAME = "RBAC";
 
-        private const string APPLICATION_HEALTHCHECK_FOLDER_NAME = "AHC";
+        private const string APPLICATION_HEALTHCHECK_FOLDER_NAME = "ACDC";
 
         #endregion
 
@@ -458,8 +458,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
 
         //Application HealthCheck Report file names
-        private const string REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME = "application.healthcheck.csv";
-        private const string REPORT_HEALTHCHECK_FILE_NAME = "HealthCheck.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_APPLICATION_HEALTHCHECK_CSV_FILE_NAME = "application.configcheck.csv";
+        private const string REPORT_HEALTHCHECK_FILE_NAME = "AppConfigCheck.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         #endregion
 

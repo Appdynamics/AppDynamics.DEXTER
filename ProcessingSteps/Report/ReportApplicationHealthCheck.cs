@@ -20,11 +20,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Constants for report contents
         // --------------------------------------------------
         // Sheets
-        private const string SHEET_APP_HEALTHCHECK = "3.Health Check";
+        private const string SHEET_APP_HEALTHCHECK = "3.Config Check";
 
         // --------------------------------------------------
         // Tables
-        private const string TABLE_APP_HEALTH_CHECK = "t_APP_HealthCheck";
+        private const string TABLE_APP_HEALTH_CHECK = "t_APP_ConfigDiagCheck";
 
 
         private const int LIST_SHEET_START_TABLE_AT = 4;
@@ -89,9 +89,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 /**********************************************/
                 #endregion
 
-                loggerConsole.Info("Prepare Application Health Check Summary File");
+                loggerConsole.Info("Prepare Application Configuration Diagnostic Check Summary File");
 
-                loggerConsole.Info("Building Health Check List");
+                loggerConsole.Info("Building Configuration Check List");
 
                 #region Preload Entity Lists
                 List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
@@ -302,7 +302,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
-                loggerConsole.Info("Prepare Application Health Check Report File");
+                loggerConsole.Info("Prepare Application Configuration Diagnostic Check Report File");
 
                 #region Prepare the report package
 
@@ -325,7 +325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 hyperLinkStyle.Style.Font.UnderLineType = ExcelUnderLineType.Single;
                 hyperLinkStyle.Style.Font.Color.SetColor(colorBlueForHyperlinks);
 
-                fillReportParametersSheet(sheet, jobConfiguration, "AppDynamics DEXTER Application Health Check Report");
+                fillReportParametersSheet(sheet, jobConfiguration, "AppDynamics DEXTER Application Configuration Diagnostic Check Report");
 
                 #endregion
 
@@ -355,14 +355,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Load Health Check to Sheet
 
-                loggerConsole.Info("Fill Application Health Check Report File");
+                loggerConsole.Info("Fill Application Configuration Diagnostic Check Report File");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTHCHECK];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthCheckCSVFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
-                loggerConsole.Info("Finalize Application Health Check Report File");
+                loggerConsole.Info("Finalize Application Configuration Diagnostic Check Report File");
 
                 #region Format Health Check Sheet
 
