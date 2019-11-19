@@ -142,7 +142,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             string machinesJSON = controllerApi.GetSIMListOfMachines();
                             if (machinesJSON != String.Empty) FileIOHelper.SaveFileToPath(machinesJSON, FilePathMap.SIMMachinesDataFilePath(jobTarget));
 
-                            JArray machinesArray = JArray.Parse(machinesJSON);
+                             JArray machinesArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.SIMMachinesDataFilePath(jobTarget));
                             if (machinesArray != null)
                             {
                                 loggerConsole.Info("Machine, Container Details and Processes ({0} entities)", machinesArray.Count);

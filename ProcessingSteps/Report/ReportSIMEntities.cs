@@ -889,10 +889,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Save file 
 
-                if (Directory.Exists(FilePathMap.ReportFolderPath()) == false)
-                {
-                    Directory.CreateDirectory(FilePathMap.ReportFolderPath());
-                }
+                FileIOHelper.CreateFolder(FilePathMap.ReportFolderPath());
 
                 string reportFilePath = FilePathMap.SIMEntitiesExcelReportFilePath(jobConfiguration.Input.TimeRange);
                 logger.Info("Saving Excel report {0}", reportFilePath);

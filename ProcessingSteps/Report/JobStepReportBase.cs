@@ -294,7 +294,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
-        #region Helper function for various entity naming
+        #region Helper function for various entity naming in Excel
 
         internal static string getShortenedEntityNameForExcelTable(string entityName, long entityID)
         {
@@ -336,6 +336,50 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             char[] excelTableInvalidChars = { ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', ',', '/', '\\', '[', ']', ':', '?', '|', '"', '<', '>' };
             foreach (var c in excelTableInvalidChars)
+            {
+                stringToClear = stringToClear.Replace(c, '-');
+            }
+            // Apparently it is possible to have a NUL character as a BT name courtesy of penetration testing somehow
+            stringToClear = stringToClear.Replace("\u0000", "NULL");
+
+            return stringToClear;
+        }
+
+        #endregion
+
+        #region Helper function for various entity naming in Word
+
+        internal static string getShortenedEntityNameForWordBookmark(string entityType, string entityName, long entityID)
+        {
+            // First, strip out unsafe characters
+            entityName = getWordBookmarkSafeString(entityName);
+
+            // Second, measure the unique ID length and shorten the name of string down
+            int maxLength = 40;
+            maxLength = maxLength - 1 - entityType.Length - 1 - entityID.ToString().Length;
+
+            // Third, shorten the string 
+            if (entityName.Length > maxLength) entityName = entityName.Substring(0, maxLength);
+
+            // Can't have first character be number
+            if (entityName.Length > 0)
+            {
+                string firstCharacter = entityName.Substring(0, 1);
+                int firstCharacterNumber = -1;
+                if (Int32.TryParse(firstCharacter, out firstCharacterNumber) == true)
+                { 
+                    entityName = String.Format("{0}{1}", "A", entityName.Substring(1));
+                }
+            }
+
+
+            return String.Format("{0}.{1}.{2}", entityType, entityName, entityID);
+        }
+
+        internal static string getWordBookmarkSafeString(string stringToClear)
+        {
+            char[] wordBookmarkInvalidChars = { ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', ',', '/', '\\', '[', ']', ':', '?', '|', '"', '<', '>' };
+            foreach (var c in wordBookmarkInvalidChars)
             {
                 stringToClear = stringToClear.Replace(c, '-');
             }

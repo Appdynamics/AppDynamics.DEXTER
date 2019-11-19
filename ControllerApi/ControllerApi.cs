@@ -769,6 +769,19 @@ namespace AppDynamics.Dexter
                 false);
         }
 
+        public string GetApplicationEventDetails(long eventID, long eventDateTimeInUnixEpochFormat)
+        {
+
+            return this.apiGET(
+                String.Format("controller/restui/events/eventDetails/{0}?timeRangeString=Custom_Time_Range.BETWEEN_TIMES.{2}.{1}.{3}",
+                    eventID,
+                    eventDateTimeInUnixEpochFormat - 900000,  // time - 15 minutes
+                    eventDateTimeInUnixEpochFormat + 900000,  // time + 15 minutes
+                    30),                                      // 15 minutes + 15 minutes is 30, duration of this. Weird stuff!
+                "application/json",
+                true);
+        }
+
         public string GetControllerNotifications()
         {
             return this.apiGET("controller/restui/notificationUiService/notifications", "application/json", true);

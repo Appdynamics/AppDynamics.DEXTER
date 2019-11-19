@@ -192,6 +192,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Events data file names
         private const string EXTRACT_HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_EVENTS_FILE_NAME = "{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
+        private const string EXTRACT_EVENTS_WITH_DETAILS_FILE_NAME = "{0}.details.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.json";
         private const string EXTRACT_AUDIT_EVENTS_FILE_NAME = "auditevents.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_NOTIFICATIONS_FILE_NAME = "notifications.json";
 
@@ -376,6 +377,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Events list conversion file names
         private const string CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME = "application.events.csv";
         private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "events.csv";
+        private const string CONVERT_APPLICATION_EVENTS_DETAILS_FILE_NAME = "event.details.csv";
         private const string CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME = "hrviolationevents.csv";
         private const string CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME = "auditevents.csv";
         private const string CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME = "notifications.csv";
@@ -454,6 +456,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_CHART_TIER_FILE_NAME = "FlameChart.Tier.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
         private const string REPORT_FLAME_CHART_NODE_FILE_NAME = "FlameChart.Node.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
         private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
+
+        // Per Application
+        private const string REPORT_APPLICATION_SUMMARY_FILE_NAME = "ApplicationSummary.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.docx";
 
         #endregion
 
@@ -5225,6 +5230,35 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     reportFileName);
             }
         }
+        public string ApplicationEventsWithDetailsDataFilePath(JobTarget jobTarget, string eventType)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_EVENTS_WITH_DETAILS_FILE_NAME,
+                eventType,
+                this.JobConfiguration.Input.TimeRange.From,
+                this.JobConfiguration.Input.TimeRange.To);
+
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    reportFileName);
+            }
+        }
 
         public string AuditEventsDataFilePath(JobTarget jobTarget)
         {
@@ -5328,6 +5362,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
+        public string ApplicationEventDetailsIndexFilePath(JobTarget jobTarget)
+        {
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(DBMON_APPLICATION_NAME, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_DETAILS_FILE_NAME);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    EVENTS_FOLDER_NAME,
+                    CONVERT_APPLICATION_EVENTS_DETAILS_FILE_NAME);
+            }
+        }
+
         public string AuditEventsIndexFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
@@ -5384,6 +5442,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_EVENTS_FILE_NAME);
+        }
+
+        public string ApplicationEventDetailsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                EVENTS_APPS_FOLDER_NAME,
+                CONVERT_APPLICATION_EVENTS_DETAILS_FILE_NAME);
         }
 
         public string AuditEventsReportFilePath()
@@ -6558,6 +6625,46 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
+                        reportFileName);
+                }
+            }
+
+            return reportFilePath;
+        }
+
+        #endregion
+
+
+        #region Application Summary Report
+
+        public string ApplicationSummaryWordReportFilePath(JobTarget jobTarget, JobTimeRange jobTimeRange, bool absolutePath)
+        {
+            string reportFileName = String.Empty;
+            string reportFilePath = String.Empty;
+
+            reportFileName = String.Format(
+                REPORT_APPLICATION_SUMMARY_FILE_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                jobTimeRange.From,
+                jobTimeRange.To);
+
+            if (reportFileName.Length > 0)
+            {
+                if (absolutePath == true)
+                {
+                    reportFilePath = Path.Combine(
+                        this.ProgramOptions.OutputJobFolderPath,
+                        REPORT_FOLDER_NAME,
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                        getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                        reportFileName);
+                }
+                else
+                {
+                    reportFilePath = Path.Combine(
+                        getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                        getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                         reportFileName);
                 }
             }

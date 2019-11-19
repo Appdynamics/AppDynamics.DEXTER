@@ -14,6 +14,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class IndexAPMEntities : JobStepIndexBase
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding IndexOutOfRangeException that may occur when parsing an array delimited by |")]
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             Stopwatch stopWatch = new Stopwatch();

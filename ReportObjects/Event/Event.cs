@@ -34,6 +34,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public DateTime Occurred { get; set; }
         public DateTime OccurredUtc { get; set; }
         public string Summary { get; set; }
+        public int NumDetails { get; set; }
         public string Type { get; set; }
         public string SubType { get; set; }
         public string Severity { get; set; }

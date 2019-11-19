@@ -15,6 +15,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Occurred).Index(i); i++;
             Map(m => m.OccurredUtc).Index(i); i++;
             Map(m => m.Summary).Index(i); i++;
+            Map(m => m.NumDetails).Index(i); i++;
             Map(m => m.Type).Index(i); i++;
             Map(m => m.SubType).Index(i); i++;
             Map(m => m.Severity).Index(i); i++;

@@ -67,6 +67,20 @@ namespace AppDynamics.Dexter
 
         public static void RunProgram(ProgramOptions programOptions)
         {
+            // Choose type of program to run, ETL or Compare
+
+            if (programOptions.InputJobFilePath != null && programOptions.InputJobFilePath.Length > 0)
+            {
+                RunProgramETL(programOptions);
+            }
+            else if (programOptions.CompareFilePath != null && programOptions.CompareFilePath.Length > 0)
+            {
+                RunProgramCompare(programOptions);
+            }
+        }
+
+        public static void RunProgramETL(ProgramOptions programOptions)
+        {
             #region Validate job file exists
 
             programOptions.InputJobFilePath = Path.GetFullPath(programOptions.InputJobFilePath);
@@ -280,6 +294,13 @@ namespace AppDynamics.Dexter
                 {
                     jobConfiguration.Input.MetricsSelectionCriteria = new string[0];
                     jobConfiguration.Input.MetricsSelectionCriteria[0] = "TransactionApplication";
+                }
+
+                // Validate Events selection
+                if (jobConfiguration.Input.EventsSelectionCriteria == null || jobConfiguration.Input.EventsSelectionCriteria.Length == 0)
+                {
+                    jobConfiguration.Input.EventsSelectionCriteria = new string[0];
+                    jobConfiguration.Input.EventsSelectionCriteria[0] = "None";
                 }
 
                 // Validate Snapshot selection criteria
@@ -1009,11 +1030,19 @@ namespace AppDynamics.Dexter
 
             #endregion
 
-            logger.Trace("Executing ProgramOptions:\r\n{0}", programOptions);
-            loggerConsole.Trace("Executing ProgramOptions:\r\n{0}", programOptions);
+            logger.Trace("Executing:\r\n{0}", programOptions);
+            loggerConsole.Trace("Executing:\r\n{0}", programOptions);
 
             // Go to work on the expanded and validated job file
             JobStepRouter.ExecuteJobThroughSteps(programOptions);
+        }
+
+        public static void RunProgramCompare(ProgramOptions programOptions)
+        {
+            logger.Trace("Executing:\r\n{0}", programOptions);
+            loggerConsole.Trace("Executing:\r\n{0}", programOptions);
+
+            loggerConsole.Warn("RunProgramCompare");
         }
 
         public static string ReadPassword(char mask)

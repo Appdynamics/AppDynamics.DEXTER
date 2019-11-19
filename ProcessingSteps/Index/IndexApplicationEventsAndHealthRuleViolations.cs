@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace AppDynamics.Dexter.ProcessingSteps
@@ -197,12 +198,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Events
 
                         List<Event> eventsList = new List<Event>();
+                        List<EventDetail> eventDetailsList = new List<EventDetail>();
 
                         loggerConsole.Info("Index Events");
 
                         foreach (string eventType in EVENT_TYPES)
                         {
-                            JArray eventsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType));
+                            JArray eventsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.ApplicationEventsWithDetailsDataFilePath(jobTarget, eventType));
+                            if (eventsArray == null) eventsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType));
                             if (eventsArray != null)
                             {
                                 loggerConsole.Info("{0} Events", eventType);
@@ -294,6 +297,180 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         @event.BTLink = String.Format(DEEPLINK_BUSINESS_TRANSACTION, @event.Controller, @event.ApplicationID, @event.BTID, DEEPLINK_THIS_TIMERANGE);
                                     }
 
+                                    if (isTokenPropertyNull(interestingEventObject, "details") == false &&
+                                        isTokenPropertyNull(interestingEventObject["details"], "eventDetails") == false)
+                                    {
+                                        JArray eventDetailsArray = (JArray)interestingEventObject["details"]["eventDetails"];
+                                        if (eventDetailsArray != null)
+                                        {
+                                            List<EventDetail> eventDetailsForThisEventList = new List<EventDetail>(eventDetailsArray.Count);
+
+                                            foreach (JObject eventDetailObject in eventDetailsArray)
+                                            {
+                                                EventDetail eventDetail = new EventDetail();
+
+                                                eventDetail.Controller = @event.Controller;
+                                                eventDetail.ApplicationName = @event.ApplicationName;
+                                                eventDetail.ApplicationID = @event.ApplicationID;
+                                                eventDetail.TierName = @event.TierName;
+                                                eventDetail.TierID = @event.TierID;
+                                                eventDetail.NodeName = @event.NodeName;
+                                                eventDetail.NodeID = @event.NodeID;
+                                                eventDetail.MachineName = @event.MachineName;
+                                                eventDetail.MachineID = @event.MachineID;
+                                                eventDetail.BTName = @event.BTName;
+                                                eventDetail.BTID = @event.BTID ;
+
+                                                eventDetail.EventID = @event.EventID;
+                                                eventDetail.OccurredUtc = @event.OccurredUtc;
+                                                eventDetail.Occurred = @event.Occurred;
+                                                eventDetail.Type = @event.Type;
+                                                eventDetail.SubType = @event.SubType;
+                                                eventDetail.Severity = @event.Severity;
+                                                eventDetail.Summary = @event.Summary;
+
+                                                eventDetail.DetailName = getStringValueFromJToken(eventDetailObject, "name");
+                                                eventDetail.DetailValue = getStringValueFromJToken(eventDetailObject, "value");
+
+                                                // Parse the special types of the event types, such as options and envinronment variable changes
+                                                bool shouldContinue = true;   
+                                                switch (@event.Type)
+                                                {
+                                                    #region APPLICATION_CONFIG_CHANGE
+
+                                                    case "APPLICATION_CONFIG_CHANGE":
+                                                        if (shouldContinue == true)
+                                                        {
+                                                            // Added Option 1
+                                                            // Removed Option 1
+                                                            Regex regex = new Regex(@"(.*\sOption)\s\d+", RegexOptions.IgnoreCase);
+                                                            Match match = regex.Match(eventDetail.DetailName);
+                                                            if (match != null && match.Groups.Count == 2)
+                                                            {
+                                                                eventDetail.DetailAction = match.Groups[1].Value;
+                                                                //-Dgw.cc.full.upgrade.intended.date=20191112
+                                                                //-XX:+UseGCLogFileRotation 
+                                                                //-XX:NumberOfGCLogFiles=< number of log files > 
+                                                                //-XX:GCLogFileSize=< file size >[ unit ]
+                                                                //-Xloggc:/path/to/gc.log                
+                                                                parseJavaStartupOptionIntoEventDetail(eventDetail);
+                                                                shouldContinue = false;
+                                                            }
+                                                        }
+
+                                                        if (shouldContinue == true)
+                                                        {
+                                                            // Added Variable 1:
+                                                            // Removed Variable 1:
+                                                            Regex regex = new Regex(@"((Added|Removed) Variable)\s\d+", RegexOptions.IgnoreCase);
+                                                            Match match = regex.Match(eventDetail.DetailName);
+                                                            if (match != null && match.Groups.Count == 3)
+                                                            {
+                                                                eventDetail.DetailAction = match.Groups[1].Value;
+                                                                // SSH_TTY=/dev/pts/0
+                                                                // HOSTNAME=felvqcap1174.farmersinsurance.com
+                                                                parseEnvironmentVariableIntoEventDetail(eventDetail);
+                                                                shouldContinue = false;
+                                                            }
+                                                        }
+
+                                                        if (shouldContinue == true)
+                                                        {
+                                                            // Modified Variable 1:
+                                                            Regex regex = new Regex(@"(Modified Variable)\s\d+", RegexOptions.IgnoreCase);
+                                                            Match match = regex.Match(eventDetail.DetailName);
+                                                            if (match != null && match.Groups.Count == 2)
+                                                            {
+                                                                eventDetail.DetailAction = match.Groups[1].Value;
+                                                                // MAIL=/var/mail/jbossapp (changed to) MAIL=/var/spool/mail/jbossapp
+                                                                // SHLVL=5 (changed to) SHLVL=3
+                                                                parseModifiedEnvironmentVariableIntoEventDetail(eventDetail);
+                                                                shouldContinue = false;
+                                                            }
+                                                        }
+
+                                                        if (shouldContinue == true)
+                                                        {
+                                                            // Modified Property 2:
+                                                            Regex regex = new Regex(@"(Modified Property)\s\d+", RegexOptions.IgnoreCase);
+                                                            Match match = regex.Match(eventDetail.DetailName);
+                                                            if (match != null && match.Groups.Count == 2)
+                                                            {
+                                                                eventDetail.DetailAction = match.Groups[1].Value;
+                                                                // gw.cc.full.upgrade.intended.date=20191112 (changed to) gw.cc.full.upgrade.intended.date=20191113
+                                                                // user.dir=/jboss/scripts/jenkins/28/slave/workspace/ClaimsCenter/GWCC_GW_DB_APP_DP/perfcc06post (changed to) user.dir=/jboss/scripts/ccperf06
+                                                                parseModifiedPropertyIntoEventDetail(eventDetail);
+                                                                shouldContinue = false;
+                                                            }
+                                                        }
+
+                                                        break;
+
+                                                    #endregion
+
+                                                    #region POLICY_***
+
+                                                    case "POLICY_OPEN_WARNING":
+                                                    case "POLICY_OPEN_CRITICAL":
+                                                    case "POLICY_CLOSE_WARNING":
+                                                    case "POLICY_CLOSE_CRITICAL":
+                                                    case "POLICY_UPGRADED":
+                                                    case "POLICY_DOWNGRADED":
+                                                    case "POLICY_CANCELED_WARNING":
+                                                    case "POLICY_CANCELED_CRITICAL":
+                                                    case "POLICY_CONTINUES_CRITICAL":
+                                                    case "POLICY_CONTINUES_WARNING":
+                                                        if (eventDetail.DetailName == "Evaluation End Time" ||
+                                                            eventDetail.DetailName == "Evaluation Start Time")
+                                                        {
+                                                            // These are a unix datetime value
+                                                            DateTime dateTimeVal1 = UnixTimeHelper.ConvertFromUnixTimestamp(Convert.ToInt64(eventDetail.DetailValue));
+                                                            eventDetail.DataType = "DateTime";
+                                                            eventDetail.DetailValue = dateTimeVal1.ToLocalTime().ToString("G");
+                                                        }
+                                                        break;
+
+                                                    #endregion
+
+                                                    default:
+                                                        break;
+                                                }
+
+                                                if (eventDetail.DataType == null || eventDetail.DataType.Length == 0)
+                                                {
+                                                    // Get datatype of value
+                                                    long longVal = 0;
+                                                    double doubleVal = 0;
+                                                    DateTime dateTimeVal = DateTime.MinValue;
+                                                    if (Int64.TryParse(eventDetail.DetailValue, out longVal) == true)
+                                                    {
+                                                        eventDetail.DataType = "Integer";
+                                                    }
+                                                    else if (Double.TryParse(eventDetail.DetailValue, out doubleVal) == true)
+                                                    {
+                                                        eventDetail.DataType = "Double";
+                                                    }
+                                                    else if (DateTime.TryParse(eventDetail.DetailValue, out dateTimeVal) == true)
+                                                    {
+                                                        eventDetail.DataType = "DateTime";
+                                                    }
+                                                    else
+                                                    {
+                                                        eventDetail.DataType = "String";
+                                                    }
+                                                }
+
+                                                eventDetailsForThisEventList.Add(eventDetail);
+                                            }
+                                            @event.NumDetails = eventDetailsForThisEventList.Count;
+
+                                            // Sort them
+                                            eventDetailsForThisEventList = eventDetailsForThisEventList.OrderBy(o => o.DetailName).ToList();
+
+                                            eventDetailsList.AddRange(eventDetailsForThisEventList);
+                                        }
+                                    }
+
                                     eventsList.Add(@event);
                                 }
                             }
@@ -306,6 +483,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Sort them
                         eventsList = eventsList.OrderBy(o => o.Type).ThenBy(o => o.Occurred).ThenBy(o => o.Severity).ToList();
                         FileIOHelper.WriteListToCSVFile<Event>(eventsList, new EventReportMap(), FilePathMap.ApplicationEventsIndexFilePath(jobTarget));
+
+                        FileIOHelper.WriteListToCSVFile<EventDetail>(eventDetailsList, new EventDetailReportMap(), FilePathMap.ApplicationEventDetailsIndexFilePath(jobTarget));
 
                         #endregion
 
@@ -367,6 +546,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.ApplicationEventsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ApplicationEventsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationEventsReportFilePath(), FilePathMap.ApplicationEventsIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.ApplicationEventDetailsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ApplicationEventDetailsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.ApplicationEventDetailsReportFilePath(), FilePathMap.ApplicationEventDetailsIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.ApplicationEventsSummaryIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.ApplicationEventsSummaryIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -432,6 +615,90 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Trace("Skipping index of events");
             }
             return (jobConfiguration.Input.Events == true);
+        }
+
+        private void parseJavaStartupOptionIntoEventDetail(EventDetail eventDetail)
+        {
+            //-Dgw.cc.full.upgrade.intended.date=20191112
+            //-XX:+UseGCLogFileRotation 
+            //-XX:NumberOfGCLogFiles=< number of log files > 
+            //-XX:GCLogFileSize=< file size >[ unit ]
+            //-Xloggc:/path/to/gc.log                
+            Regex regexOptionValue = new Regex(@"-(.*)(:|=)(.*)", RegexOptions.IgnoreCase);
+            Match match = regexOptionValue.Match(eventDetail.DetailValue);
+            if (match != null && match.Groups.Count == 4)
+            {
+                eventDetail.DetailName = match.Groups[1].Value;
+                eventDetail.DetailValue = match.Groups[3].Value;
+            }
+            else
+            {
+                // -Xmx<heap size>[unit]
+                eventDetail.DetailName = eventDetail.DetailValue.TrimStart('-');
+                eventDetail.DetailValue = "";
+            }
+        }
+
+        private void parseEnvironmentVariableIntoEventDetail(EventDetail eventDetail)
+        {
+            // SSH_TTY=/dev/pts/0
+            // HOSTNAME=felvqcap1174.farmersinsurance.com
+            int indexOfEqualSign = eventDetail.DetailValue.IndexOf('=');
+            if (indexOfEqualSign >= 0)
+            {
+                eventDetail.DetailName = eventDetail.DetailValue.Substring(0, indexOfEqualSign);
+                eventDetail.DetailValue = eventDetail.DetailValue.Substring(indexOfEqualSign).TrimStart('=');
+            }
+        }
+
+        private void parseModifiedEnvironmentVariableIntoEventDetail(EventDetail eventDetail)
+        {
+            // MAIL=/var/mail/jbossapp (changed to) MAIL=/var/spool/mail/jbossapp
+            // SHLVL=5 (changed to) SHLVL=3
+            Regex regexOptionValue = new Regex(@"(.*)(\s\(changed to\)\s)(.*)", RegexOptions.IgnoreCase);
+            Match match = regexOptionValue.Match(eventDetail.DetailValue);
+            if (match != null && match.Groups.Count == 4)
+            {
+                string envVariableBefore = match.Groups[1].Value;
+                int indexOfEqualSign = envVariableBefore.IndexOf('=');
+                if (indexOfEqualSign >= 0)
+                {
+                    eventDetail.DetailName = envVariableBefore.Substring(0, indexOfEqualSign);
+                    eventDetail.DetailValueOld = envVariableBefore.Substring(indexOfEqualSign).TrimStart('=');
+                }
+
+                string envVariableAfter = match.Groups[3].Value;
+                indexOfEqualSign = envVariableAfter.IndexOf('=');
+                if (indexOfEqualSign >= 0)
+                {
+                    eventDetail.DetailValue = envVariableAfter.Substring(indexOfEqualSign).TrimStart('=');
+                }
+            }
+        }
+
+        private void parseModifiedPropertyIntoEventDetail(EventDetail eventDetail)
+        {
+            // gw.cc.full.upgrade.intended.date=20191112 (changed to) gw.cc.full.upgrade.intended.date=20191113
+            // user.dir=/jboss/scripts/jenkins/28/slave/workspace/ClaimsCenter/GWCC_GW_DB_APP_DP/perfcc06post (changed to) user.dir=/jboss/scripts/ccperf06
+            Regex regexOptionValue = new Regex(@"(.*)(\s\(changed to\)\s)(.*)", RegexOptions.IgnoreCase);
+            Match match = regexOptionValue.Match(eventDetail.DetailValue);
+            if (match != null && match.Groups.Count == 4)
+            {
+                string envVariableBefore = match.Groups[1].Value;
+                int indexOfEqualSign = envVariableBefore.IndexOf('=');
+                if (indexOfEqualSign >= 0)
+                {
+                    eventDetail.DetailName = envVariableBefore.Substring(0, indexOfEqualSign);
+                    eventDetail.DetailValueOld = envVariableBefore.Substring(indexOfEqualSign).TrimStart('=');
+                }
+
+                string envVariableAfter = match.Groups[3].Value;
+                indexOfEqualSign = envVariableAfter.IndexOf('=');
+                if (indexOfEqualSign >= 0)
+                {
+                    eventDetail.DetailValue = envVariableAfter.Substring(indexOfEqualSign).TrimStart('=');
+                }
+            }
         }
     }
 }

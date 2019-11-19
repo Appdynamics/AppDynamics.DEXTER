@@ -33,6 +33,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         internal const string DEEPLINK_TIMERANGE_BETWEEN_TIMES = "Custom_Time_Range.BETWEEN_TIMES.{0}.{1}.{2}";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0618", Justification = "Selenium driver obsolete warning is nice but I am not upgrading")]
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             Stopwatch stopWatch = new Stopwatch();
@@ -121,7 +122,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         ChromeOptions options = new ChromeOptions();
                         options.AcceptInsecureCertificates = true;
-                        options.AddArgument("--headless");
+                        //options.AddArgument("--headless");
                         options.AddArgument("--guest");
                         options.AddArgument("--disable-extensions");
 
@@ -262,7 +263,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             string addressURL = String.Format(URL_CONTROLLER_LOCAL_LOGIN, jobTarget.Controller);
 
                             loggerWebDriver.Info("Navigating to {0}", addressURL);
-                            loggerConsole.Info("Logging into {0} with {1}", jobTarget.Controller, jobTarget.UserName);
+                            loggerConsole.Info("Logging into {0}({1}) with {2}", jobTarget.Controller, jobTarget.ControllerVersion, jobTarget.UserName);
 
                             // https://soandso.saas.appdynamics.com/controller/#/localLogin=true
                             chromeDriver.Url = addressURL;
@@ -272,7 +273,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             RemoteWebElement accountTextBox = null;
                             RemoteWebElement userNameTextBox = null;
                             RemoteWebElement userPasswordTextBox = null;
-                            RemoteWebElement loginButtonElement = null;
+                            RemoteWebElement loginButton = null;
+                            RemoteWebElement useLocalLoginHref= null;
+
                             try
                             {
                                 accountTextBox = wait.Until<RemoteWebElement>(d => (RemoteWebElement)d.FindElement(By.Id("accountNameInput")));
@@ -290,7 +293,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             catch { }
                             try
                             {
-                                loginButtonElement = wait.Until<RemoteWebElement>(d => (RemoteWebElement)d.FindElement(By.Id("submitInput")));
+                                loginButton = wait.Until<RemoteWebElement>(d => (RemoteWebElement)d.FindElement(By.Id("submitInput")));
                             }
                             catch { }
 
@@ -312,6 +315,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 loggerWebDriver.Trace("Setting account={0}", accountName);
                                 accountTextBox.SendKeys(accountName);
                             }
+
+                            Thread.Sleep(1000);
+
+                            if (userPasswordTextBox != null && userPasswordTextBox.Displayed == false)
+                            {
+                                loggerWebDriver.Warn("SAML must be configured, Password got hidden. Trying to click on Use Local Login");
+
+                                // Check if Use Local Login is turned on
+                                // In 4.5.13 or later the URL does not seem to take effect
+                                try
+                                {
+                                    useLocalLoginHref = wait.Until<RemoteWebElement>(d => (RemoteWebElement)d.FindElement(By.ClassName("adsLink")));
+
+                                    useLocalLoginHref.Click();
+                                }
+                                catch { }
+                            }
+
                             if (userNameTextBox != null && userNameTextBox.Displayed == true)
                             {
                                 loggerWebDriver.Trace("Setting user={0}", userName);
@@ -322,17 +343,46 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     loggerWebDriver.Trace("Sending password");
                                     userPasswordTextBox.SendKeys(AESEncryptionHelper.Decrypt(jobTarget.UserPassword));
 
-                                    if (loginButtonElement != null && loginButtonElement.Displayed == true)
+                                    if (loginButton != null && loginButton.Displayed == true)
                                     {
                                         loggerWebDriver.Trace("Clicking login button");
-                                        loginButtonElement.Click();
+                                        loginButton.Click();
 
                                         loggerWebDriver.Trace("Waiting for home page to appear");
-                                        wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("ads-home-view-card-container")));
+                                        try
+                                        {
+                                            wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("ads-home-view-card-container")));
+                                        }
+                                        catch (WebDriverTimeoutException ex)
+                                        { 
+                                            if (ex.InnerException is OpenQA.Selenium.NoSuchElementException)
+                                            {
+                                                loggerWebDriver.Warn("Clicked Login button but homepage did not show up");
+                                                loggerWebDriver.Warn(ex);
+                                            }
+                                        }
 
-                                        isLogonSuccessful = true;
+                                        string currentBrowserURL = chromeDriver.Url.ToLower();
+                                        if (currentBrowserURL.Contains("locallogin"))
+                                        {
+                                            loggerWebDriver.Trace("Redirect after clicking Login was unsuccessful, but we are logged in");
+                                            isLogonSuccessful = true;
+                                        }
+                                        else if (currentBrowserURL.Contains("location=ad_home_overview"))
+                                        {
+                                            loggerWebDriver.Trace("Redirect after clicking Login was successful");
+                                            isLogonSuccessful = true;
+                                        }
+                                        else
+                                        {
+                                            isLogonSuccessful = false;
+                                        }
                                     }
                                 }
+                            }
+                            else
+                            {
+                                loggerWebDriver.Error("SAML must be configured, Password got hidden. Clicking on Login must not have worked");
                             }
 
                         }

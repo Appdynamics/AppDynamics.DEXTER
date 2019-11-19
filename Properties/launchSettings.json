@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "-j \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\comparerefactor.json\" -o C:\\AppD.Dexter.Out\\ -v "
+      "commandLineArgs": "-j D:\\AppD.Dexter.Out\\Farmers\\fig.ccperf.loadtest.json -o D:\\AppD.Dexter.Out\\Farmers -v"
     }
   }
 }
