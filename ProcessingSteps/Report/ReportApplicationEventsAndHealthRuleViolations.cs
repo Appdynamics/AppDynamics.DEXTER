@@ -24,30 +24,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_EVENTS_PIVOT = "5.Events.Type";
         private const string SHEET_EVENTS_TIMELINE_PIVOT = "5.Events.Timeline";
 
-        private const string SHEET_HEALTH_RULE_VIOLATIONS = "6.Health Rule Violations";
-        private const string SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "6.Health Rule Violations.Type";
+        private const string SHEET_EVENT_DETAILS = "6.Event Details";
+        private const string SHEET_EVENT_DETAILS_PIVOT = "6.Event Details.Type";
 
-        private const string SHEET_AUDIT_EVENTS = "7.Audit Events";
-        private const string SHEET_AUDIT_EVENTS_PIVOT = "7.Audit Events.Type";
-        private const string AUDIT_SHEET_EVENTS_TIMELINE_PIVOT = "7.Audit Events.Timeline";
+        private const string SHEET_HEALTH_RULE_VIOLATIONS = "7.Health Rule Violations";
+        private const string SHEET_HEALTH_RULE_VIOLATIONS_PIVOT = "7.Health Rule Violations.Type";
 
-        private const string SHEET_NOTIFICATIONS = "8.Notifications";
+        private const string SHEET_AUDIT_EVENTS = "8.Audit Events";
+        private const string SHEET_AUDIT_EVENTS_PIVOT = "8.Audit Events.Type";
+        private const string AUDIT_SHEET_EVENTS_TIMELINE_PIVOT = "8.Audit Events.Timeline";
+
+        private const string SHEET_NOTIFICATIONS = "9.Notifications";
 
         private const string TABLE_CONTROLLERS = "t_Controllers";
         private const string TABLE_APPLICATIONS = "t_Applications";
 
         private const string TABLE_EVENTS = "t_Events";
+        private const string TABLE_EVENT_DETAILS = "t_EventDetails";
         private const string TABLE_HEALTH_RULE_VIOLATION_EVENTS = "t_HealthRuleViolationEvents";
         private const string TABLE_AUDIT_EVENTS = "t_AuditEvents";
         private const string TABLE_NOTIFICATIONS = "t_Notifications";
 
         private const string PIVOT_EVENTS_TYPE = "p_EventsType";
+        private const string PIVOT_EVENT_DETAILS_TYPE = "p_EventDetailsType";
         private const string PIVOT_EVENTS_TIMELINE = "p_EventsTimeline";
         private const string PIVOT_HEALTH_RULE_VIOLATION_EVENTS_TYPE = "p_HealthRuleViolationEventsType";
         private const string PIVOT_AUDIT_EVENTS_TYPE = "p_AuditEventsType";
         private const string PIVOT_AUDIT_EVENTS_TIMELINE = "p_AuditEventsTimeline";
 
         private const string GRAPH_EVENTS_TYPE = "g_EventsType";
+        private const string GRAPH_EVENT_DETAILS_TYPE = "g_EventDetailsType";
         private const string GRAPH_EVENTS_TIMELINE = "g_EventsTimeline";
         private const string GRAPH_HEALTH_RULE_VIOLATION_EVENTS_TYPE = "g_HealthRuleViolationEventsType";
         private const string GRAPH_AUDIT_EVENTS_TYPE = "g_AuditEventsType";
@@ -161,6 +167,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 7, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_EVENT_DETAILS);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Pivot";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_EVENT_DETAILS_PIVOT);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_EVENT_DETAILS_PIVOT);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_EVENT_DETAILS);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_RULE_VIOLATIONS);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -250,6 +274,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_EVENTS];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Event Details
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_EVENT_DETAILS];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventDetailsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -426,6 +457,57 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region Event Details
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_EVENT_DETAILS];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_EVENT_DETAILS);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EventID"].Position + 1).Width = 10;
+                    sheet.Column(table.Columns["Occurred"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["OccurredUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Summary"].Position + 1).Width = 35;
+                    sheet.Column(table.Columns["Type"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["SubType"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["DetailAction"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["DetailName"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["DetailValue"].Position + 1).Width = 25;
+
+                    sheet = excelReport.Workbook.Worksheets[SHEET_EVENT_DETAILS_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_EVENT_DETAILS_TYPE);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "Severity");
+                    addFilterFieldToPivot(pivot, "DetailAction");
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "Type");
+                    addRowFieldToPivot(pivot, "DetailName");
+                    addColumnFieldToPivot(pivot, "DataType", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "EventID", DataFieldFunctions.Count);
+
+                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_EVENT_DETAILS_TYPE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                }
+
+                #endregion
+
                 #region Health Rule Violation Events
 
                 // Make table
@@ -587,10 +669,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Save file 
 
-                if (Directory.Exists(FilePathMap.ReportFolderPath()) == false)
-                {
-                    Directory.CreateDirectory(FilePathMap.ReportFolderPath());
-                }
+                FileIOHelper.CreateFolder(FilePathMap.ReportFolderPath());
 
                 string reportFilePath = FilePathMap.EventsAndHealthRuleViolationsExcelReportFilePath(jobConfiguration.Input.TimeRange);
                 logger.Info("Saving Excel report {0}", reportFilePath);

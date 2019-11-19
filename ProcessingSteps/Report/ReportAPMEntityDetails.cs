@@ -699,6 +699,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return excelEntityDetail;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding ArgumentNullException that may occur when reading non-existent indexed entities full and hourly files if there was no activity")]
         private void fillIndividualEntityMetricReportForEntity(
             ProgramOptions programOptions,
             JobConfiguration jobConfiguration,
@@ -2044,11 +2045,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             //loggerConsole.Info("Saving Excel report {0}", reportFilePath);
             Console.Write(".");
 
-            string folderPath = Path.GetDirectoryName(reportFilePath);
-            if (Directory.Exists(folderPath) == false)
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            FileIOHelper.CreateFolderForFile(reportFilePath);
 
             try
             {

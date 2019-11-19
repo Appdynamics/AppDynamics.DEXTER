@@ -99,6 +99,7 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportAPMFlameGraphs,
 
                 JobStatus.ReportAPMEntityDetails,
+                JobStatus.ReportAPMApplicationSummary,
 
                 JobStatus.ReportAPMEntityDashboardScreenshots,
 
@@ -365,6 +366,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
+
+                case JobStatus.ReportAPMApplicationSummary:
+                    return new ReportAPMApplicationSummary();
 
                 case JobStatus.ReportAPMEntityDashboardScreenshots:
                     return new ReportAPMEntityDashboardScreenshots();

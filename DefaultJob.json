@@ -51,12 +51,13 @@
     ],
     "Input": {
         "TimeRange": {
-            "From": "2019-10-21T09:00:00",
-            "To": "2019-10-21T10:00:00"
+            "From": "2019-11-191T09:00:00",
+            "To": "2019-11-19T10:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
         "Events": true,
+        "EventsSelectionCriteria": [ "All" ],
         "Configuration": true,
         "ConfigurationComparisonReferenceAPM": { "Controller": "", "Application": "" },
         "ConfigurationComparisonReferenceWEB": { "Controller": "", "Application": "" },
@@ -238,6 +239,7 @@
         "EntityDashboards": true,
         "EntityDetails": true,
         "Snapshots": true,
-        "FlameGraphs": true
+        "FlameGraphs": true,
+        "ApplicationSummary": true
     }
 }

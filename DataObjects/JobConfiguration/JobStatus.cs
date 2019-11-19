@@ -86,6 +86,7 @@
         ReportAPMFlameGraphs = 132,
 
         ReportAPMEntityDetails = 133,
+        ReportAPMApplicationSummary = 134,
 
         ReportAPMEntityDashboardScreenshots = 140,
 

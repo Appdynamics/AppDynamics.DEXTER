@@ -1,4 +1,5 @@
-﻿using AppDynamics.Dexter.ReportObjectMaps;
+﻿using AppDynamics.Dexter.Extensions;
+using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,6 +14,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     public class ExtractApplicationEventsAndHealthRuleViolations : JobStepBase
     {
         private const int EVENTS_EXTRACT_NUMBER_OF_THREADS = 5;
+        private const int EVENTS_EXTRACT_NUMBER_OF_EVENTS_TO_PROCESS_PER_THREAD = 200;
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -80,17 +82,75 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             loggerConsole.Info("Extract List of Health Rule Violations ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                            numEventsTotal = numEventsTotal + extractHealthRuleViolations(jobConfiguration, jobTarget, controllerApi);
+                            JArray listOfHealthRuleViolationsArray = new JArray();
+                            if (File.Exists(FilePathMap.ApplicationHealthRuleViolationsDataFilePath(jobTarget)) == false)
+                            {
+                                foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
+                                {
+                                    long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
+                                    long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.To);
+
+                                    string healthRuleViolationsJSON = controllerApi.GetApplicationHealthRuleViolations(jobTarget.ApplicationID, fromTimeUnix, toTimeUnix);
+                                    if (healthRuleViolationsJSON != String.Empty)
+                                    {
+                                        try
+                                        {
+                                            // Load health rule violations
+                                            JArray healthRuleViolationsInHourArray = JArray.Parse(healthRuleViolationsJSON);
+                                            foreach (JObject healthRuleViolationObject in healthRuleViolationsInHourArray)
+                                            {
+                                                listOfHealthRuleViolationsArray.Add(healthRuleViolationObject);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            logger.Warn(ex);
+                                            logger.Warn("Unable to parse JSON for HR Violations Application={0}, From={1}, To={2}", jobTarget.ApplicationID, fromTimeUnix, toTimeUnix);
+                                        }
+                                    }
+                                }
+
+                                if (listOfHealthRuleViolationsArray.Count > 0)
+                                {
+                                    FileIOHelper.WriteJArrayToFile(listOfHealthRuleViolationsArray, FilePathMap.ApplicationHealthRuleViolationsDataFilePath(jobTarget));
+
+                                    logger.Info("{0} health rule violations from {1:o} to {2:o}", listOfHealthRuleViolationsArray.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                                    loggerConsole.Info("{0} health rule violations", listOfHealthRuleViolationsArray.Count);
+                                }
+                            }
+
+                            numEventsTotal = numEventsTotal + listOfHealthRuleViolationsArray.Count;
                         }
 
                         #endregion
 
                         #region Events
 
-                        loggerConsole.Info("Extract {0} event types ({1} time ranges)", EVENT_TYPES.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
+                        // Filter Event Types
+                        List<string> eventTypesToRetrieve = new List<string>(EVENT_TYPES.Count);
+                        string allElement = Array.Find(jobConfiguration.Input.EventsSelectionCriteria, e => e.ToLower() == "all");
+                        if (allElement != null && allElement.ToLower() == "all")
+                        {
+                            // No need to filter list of events
+                            eventTypesToRetrieve = EVENT_TYPES;
+                        }
+                        else
+                        {
+                            // Filter events by the array
+                            foreach (string eventTypeInSelectionCriteria in jobConfiguration.Input.EventsSelectionCriteria)
+                            { 
+                                string eventTypeInSelectionCriteriaFound = EVENT_TYPES.Find(e => e.ToLower() == eventTypeInSelectionCriteria.ToLower());
+                                if (eventTypeInSelectionCriteriaFound != null && eventTypeInSelectionCriteriaFound.Length > 0)
+                                {
+                                    eventTypesToRetrieve.Add(eventTypeInSelectionCriteriaFound);
+                                }
+                            }
+                        }
+
+                        loggerConsole.Info("Extract {0} event types out of possible {1} ({2} time ranges)", eventTypesToRetrieve.Count, EVENT_TYPES.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
                         Parallel.ForEach(
-                            EVENT_TYPES,
+                            eventTypesToRetrieve,
                             new ParallelOptions { MaxDegreeOfParallelism = EVENTS_EXTRACT_NUMBER_OF_THREADS },
                             () => 0,
                             (eventType, loop, subtotal) =>
@@ -108,6 +168,86 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             }
                         );
                         loggerConsole.Info("{0} events total", numEventsTotal);
+
+                        
+                        // Extract event details
+                        foreach (String eventType in eventTypesToRetrieve)
+                        {
+                            if (File.Exists(FilePathMap.ApplicationEventsWithDetailsDataFilePath(jobTarget, eventType)) == false)
+                            {
+                                JArray listOfEventsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType));
+                                if (listOfEventsArray != null)
+                                {
+                                    loggerConsole.Info("Extract Details for {0} {1} events", listOfEventsArray.Count, eventType);
+
+                                    List<JToken> listOfEvents = listOfEventsArray.ToObject<List<JToken>>();
+                                    JArray listOfEventsWithDetailsArray = new JArray();
+                                    object localLockObject = new object();
+
+                                    int k = 0;
+                                    var listOfEventsInChunks = listOfEvents.BreakListIntoChunks(EVENTS_EXTRACT_NUMBER_OF_EVENTS_TO_PROCESS_PER_THREAD);
+
+                                    Parallel.ForEach<List<JToken>, int>(
+                                        listOfEventsInChunks,
+                                        new ParallelOptions { MaxDegreeOfParallelism = EVENTS_EXTRACT_NUMBER_OF_THREADS },
+                                        () => 0,
+                                        (listOfEventsChunk, loop, subtotal) =>
+                                        {
+                                            using (ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
+                                            {
+                                            // Login into private API
+                                            controllerApiParallel.PrivateApiLogin();
+
+                                                List<JToken> listOfEventsWithDetailsInChunk = new List<JToken>(listOfEventsChunk.Count);
+
+                                                foreach (JToken eventToken in listOfEventsChunk)
+                                                {
+                                                    JObject eventObject = (JObject)eventToken;
+
+                                                // Retrieve details
+                                                string eventDetailsJSON = controllerApiParallel.GetApplicationEventDetails(getLongValueFromJToken(eventObject, "id"), getLongValueFromJToken(eventObject, "eventTime"));
+                                                    if (eventDetailsJSON != String.Empty)
+                                                    {
+                                                        JObject eventDetails = JObject.Parse(eventDetailsJSON);
+
+                                                        eventObject.Add("details", eventDetails);
+                                                    }
+
+                                                    listOfEventsWithDetailsInChunk.Add(eventObject);
+                                                }
+
+                                                // Had to move this instead of into final result block, some items weren't getting returned there
+                                                lock (localLockObject)
+                                                {
+                                                    foreach (JObject eventObject in listOfEventsWithDetailsInChunk)
+                                                    {
+                                                        listOfEventsWithDetailsArray.Add(eventObject);
+                                                    }
+                                                }
+                                                Console.Write("[{0}].", listOfEventsWithDetailsArray.Count);
+
+                                                return listOfEventsWithDetailsInChunk.Count;
+                                            }
+                                        },
+                                        (finalResult) =>
+                                        {
+                                            Interlocked.Add(ref k, finalResult);
+                                            Console.Write("[{0}].", k);
+                                        }
+                                    );
+
+                                    loggerConsole.Info("{0} events total", listOfEventsWithDetailsArray.Count);
+
+                                    if (listOfEventsWithDetailsArray.Count > 0)
+                                    {
+                                        FileIOHelper.WriteJArrayToFile(listOfEventsWithDetailsArray, FilePathMap.ApplicationEventsWithDetailsDataFilePath(jobTarget, eventType));
+
+                                        logger.Info("{0} {1} events from {2:o} to {3:o}", eventType, listOfEventsWithDetailsArray.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                                        loggerConsole.Info("{0} {1} events", eventType, listOfEventsWithDetailsArray.Count);
+                                    }
+                                }
+                            }
+                        }
 
                         #endregion
 
@@ -161,50 +301,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        private int extractHealthRuleViolations(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi)
-        {
-            JArray listOfHealthRuleViolations = new JArray();
-            if (File.Exists(FilePathMap.ApplicationHealthRuleViolationsDataFilePath(jobTarget)) == false)
-            {
-                foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
-                {
-                    long fromTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From);
-                    long toTimeUnix = UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.To);
-
-                    string healthRuleViolationsJSON = controllerApi.GetApplicationHealthRuleViolations(jobTarget.ApplicationID, fromTimeUnix, toTimeUnix);
-                    if (healthRuleViolationsJSON != String.Empty)
-                    {
-                        try
-                        {
-                            // Load health rule violations
-                            JArray healthRuleViolationsInHourArray = JArray.Parse(healthRuleViolationsJSON);
-                            foreach (JObject healthRuleViolationObject in healthRuleViolationsInHourArray)
-                            {
-                                listOfHealthRuleViolations.Add(healthRuleViolationObject);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            logger.Warn("Unable to parse JSON for HR Violations Application={0}, From={1}, To={2}", jobTarget.ApplicationID, fromTimeUnix, toTimeUnix);
-                        }
-                    }
-                }
-
-                if (listOfHealthRuleViolations.Count > 0)
-                {
-                    FileIOHelper.WriteJArrayToFile(listOfHealthRuleViolations, FilePathMap.ApplicationHealthRuleViolationsDataFilePath(jobTarget));
-
-                    logger.Info("{0} health rule violations from {1:o} to {2:o}", listOfHealthRuleViolations.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
-                    loggerConsole.Info("{0} health rule violations", listOfHealthRuleViolations.Count);
-                }
-            }
-
-            return listOfHealthRuleViolations.Count;
-        }
-
         private int extractEvents(JobConfiguration jobConfiguration, JobTarget jobTarget, ControllerApi controllerApi, string eventType)
         {
-            JArray listOfEvents = new JArray();
+            loggerConsole.Info("Extract List of Events {0} ({1} time ranges)", eventType, jobConfiguration.Input.HourlyTimeRanges.Count);
+
+            JArray listOfEventsArray = new JArray();
             if (File.Exists(FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType)) == false)
             {
                 foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
@@ -219,29 +320,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             // Load events
                             JArray eventsInHourArray = JArray.Parse(eventsJSON);
+
                             foreach (JObject eventObject in eventsInHourArray)
                             {
-                                listOfEvents.Add(eventObject);
+                                listOfEventsArray.Add(eventObject);
                             }
-                        }
 
+                            Console.Write("[{0}]+", eventsInHourArray.Count);
+                        }
                     }
-                    catch (Exception)
+                    catch (Exception ex)
                     {
+                        logger.Warn(ex);
                         logger.Warn("Unable to parse JSON for Events Application={0}, EventType={1}, From={2}, To={3}", jobTarget.ApplicationID, eventType, fromTimeUnix, toTimeUnix);
                     }
                 }
 
-                if (listOfEvents.Count > 0)
+                if (listOfEventsArray.Count > 0)
                 {
-                    FileIOHelper.WriteJArrayToFile(listOfEvents, FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType));
+                    FileIOHelper.WriteJArrayToFile(listOfEventsArray, FilePathMap.ApplicationEventsDataFilePath(jobTarget, eventType));
 
-                    logger.Info("{0} {1} events from {2:o} to {3:o}", eventType, listOfEvents.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
-                    loggerConsole.Info("{0} {1} events", eventType, listOfEvents.Count);
+                    logger.Info("{0} {1} events from {2:o} to {3:o}", eventType, listOfEventsArray.Count, jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+                    loggerConsole.Info("{0} {1} events", eventType, listOfEventsArray.Count);
                 }
             }
 
-            return listOfEvents.Count;
+            return listOfEventsArray.Count;
         }
 
         public override bool ShouldExecute(JobConfiguration jobConfiguration)

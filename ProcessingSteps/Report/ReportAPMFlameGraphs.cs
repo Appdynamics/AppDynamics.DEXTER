@@ -321,6 +321,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         /// <param name="descriptionText"></param>
         /// <param name="flameGraphTemplate"></param>
         /// <returns></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding XmlException that is thrown by VerifyXmlChars method")]
         private bool createFlameGraph(
             string foldedStackFilePath,
             string flameGraphFilePath,

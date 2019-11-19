@@ -3,9 +3,9 @@ using CsvHelper.Configuration;
 
 namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class EventReportMap : ClassMap<Event>
+    public class EventDetailReportMap : ClassMap<EventDetail>
     {
-        public EventReportMap()
+        public EventDetailReportMap()
         {
             int i = 0;
             Map(m => m.Controller).Index(i); i++;
@@ -15,31 +15,26 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Occurred).Index(i); i++;
             Map(m => m.OccurredUtc).Index(i); i++;
             Map(m => m.Summary).Index(i); i++;
-            Map(m => m.NumDetails).Index(i); i++;
             Map(m => m.Type).Index(i); i++;
             Map(m => m.SubType).Index(i); i++;
             Map(m => m.Severity).Index(i); i++;
+
+            Map(m => m.DetailAction).Index(i); i++;
+            Map(m => m.DetailName).Index(i); i++;
+            Map(m => m.DetailValue).Index(i); i++;
+            Map(m => m.DetailValueOld).Index(i); i++;
+            Map(m => m.DataType).Index(i); i++;
 
             Map(m => m.TierName).Index(i); i++;
             Map(m => m.NodeName).Index(i); i++;
             Map(m => m.MachineName).Index(i); i++;
             Map(m => m.BTName).Index(i); i++;
 
-            Map(m => m.TriggeredEntityType).Index(i); i++;
-            Map(m => m.TriggeredEntityName).Index(i); i++;
-            Map(m => m.TriggeredEntityID).Index(i); i++;
-
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.TierID).Index(i); i++;
             Map(m => m.NodeID).Index(i); i++;
             Map(m => m.MachineID).Index(i); i++;
             Map(m => m.BTID).Index(i); i++;
-            Map(m => m.ControllerLink).Index(i); i++;
-            Map(m => m.ApplicationLink).Index(i); i++;
-            Map(m => m.TierLink).Index(i); i++;
-            Map(m => m.NodeLink).Index(i); i++;
-            Map(m => m.BTLink).Index(i); i++;
-            Map(m => m.EventLink).Index(i); i++;
         }
     }
 }

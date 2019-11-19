@@ -15,10 +15,10 @@ namespace AppDynamics.Dexter
         public string CompareFilePath { get; set; }
 
         [Option('l', "left-from-state-folder", Required = true, SetName = "compare", HelpText = "Folder of the ETL job to use as a left side/reference/from comparison.")]
-        public string FromJobFolderPath { get; set; }
+        public string ReferenceJobFolderPath { get; set; }
 
-        [Option('r', "right-to-state-folder", Required = true, SetName = "compare", HelpText = "Folder of the ETL job to use as a right side/target/to comparison.")]
-        public string ToJobFolderPath { get; set; }
+        [Option('r', "right-to-state-folder", Required = true, SetName = "compare", HelpText = "Folder of the ETL job to use as a right side/difference/to comparison.")]
+        public string DifferenceJobFolderPath { get; set; }
 
         [Option('d', "delete-previous-job-output", Required = false, HelpText = "If true, delete any results of previous processing.")]
         public bool RestartJobFromBeginning { get; set; }
@@ -39,7 +39,29 @@ namespace AppDynamics.Dexter
 
         public override string ToString()
         {
-            return String.Format("ProgramOptions:\r\nInputJobFilePath='{0}'\r\nRestartJobFromBeginning='{1}'\r\nOutputFolderPath='{2}'\r\nOutputJobFolderPath='{3}'\r\nOutputJobFilePath='{4}'\r\nProcessSequentially='{5}'\r\nProgramLocationFolderPath='{6}'", this.InputJobFilePath, this.RestartJobFromBeginning, this.OutputFolderPath, this.OutputJobFolderPath, this.OutputJobFilePath, this.ProcessSequentially, this.ProgramLocationFolderPath);
+            return String.Format(
+@"ProgramOptions:
+InputJobFilePath='{0}'
+RestartJobFromBeginning='{1}'
+OutputFolderPath='{2}'
+OutputJobFolderPath='{3}'
+OutputJobFilePath='{4}'
+ProcessSequentially='{5}'
+ProgramLocationFolderPath='{6}'
+CompareFilePath='{7}'
+ReferenceJobFolderPath='{8}'
+DifferenceJobFolderPath='{9}'
+",
+                this.InputJobFilePath, 
+                this.RestartJobFromBeginning, 
+                this.OutputFolderPath, 
+                this.OutputJobFolderPath, 
+                this.OutputJobFilePath,
+                this.ProcessSequentially, 
+                this.ProgramLocationFolderPath,
+                this.CompareFilePath, 
+                this.ReferenceJobFolderPath, 
+                this.DifferenceJobFolderPath);
         }
     }
 }

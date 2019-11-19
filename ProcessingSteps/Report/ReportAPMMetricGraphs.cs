@@ -497,11 +497,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             logger.Info("Saving Excel report {0}", reportFilePath);
             loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 
-            string folderPath = Path.GetDirectoryName(reportFilePath);
-            if (Directory.Exists(folderPath) == false)
-            {
-                Directory.CreateDirectory(folderPath);
-            }
+            FileIOHelper.CreateFolder(reportFilePath);
 
             try
             {

@@ -354,7 +354,7 @@
   <!-- Version string -->
   <text text-anchor="left" x="1400.00" y="1200" font-size="12" font-family="Verdana" fill="rgb(0,0,0)" id="version" style="opacity:0.5;cursor:pointer">AppDynamics DEXTER v{0}</text>
   <!-- Function textbox that shows when it mouses over -->
-  <text text-anchor="left" x="5" y="1200" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" id="details">Mouse over stack frames to see details</text>
+  <text text-anchor="left" x="5" y="1200" font-size="8" font-family="Verdana" fill="rgb(0, 0, 0)" id="details">Mouse over stack frames to see details</text>
   <!-- Flame Graph Boxes go here -->
   <g id="contentPlaceholder"></g>
   <!-- Legend Boxes go here -->  

@@ -477,7 +477,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         xmlWriter.WriteStartElement("td");
                                                         xmlWriter.WriteStartElement("a");
                                                         xmlWriter.WriteAttributeString("href", tier.TierLink);
-                                                        xmlWriter.WriteString("Application");
+                                                        xmlWriter.WriteString("Tier");
                                                         xmlWriter.WriteEndElement();
                                                         xmlWriter.WriteEndElement();
 
@@ -544,7 +544,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         xmlWriter.WriteStartElement("td");
                                                         xmlWriter.WriteStartElement("a");
                                                         xmlWriter.WriteAttributeString("href", node.NodeLink);
-                                                        xmlWriter.WriteString("Application");
+                                                        xmlWriter.WriteString("Node");
                                                         xmlWriter.WriteEndElement();
                                                         xmlWriter.WriteEndElement();
 
@@ -611,7 +611,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         xmlWriter.WriteStartElement("td");
                                                         xmlWriter.WriteStartElement("a");
                                                         xmlWriter.WriteAttributeString("href", businessTransaction.BTLink);
-                                                        xmlWriter.WriteString("Application");
+                                                        xmlWriter.WriteString("BT");
                                                         xmlWriter.WriteEndElement();
                                                         xmlWriter.WriteEndElement();
 
@@ -673,7 +673,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         xmlWriter.WriteStartElement("td");
                                                         xmlWriter.WriteStartElement("a");
                                                         xmlWriter.WriteAttributeString("href", backend.BackendLink);
-                                                        xmlWriter.WriteString("Application");
+                                                        xmlWriter.WriteString("Backend");
                                                         xmlWriter.WriteEndElement();
                                                         xmlWriter.WriteEndElement();
 

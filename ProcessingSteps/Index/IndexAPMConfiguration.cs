@@ -15,6 +15,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class IndexAPMConfiguration : JobStepIndexBase
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding JsonReaderException over reading potentially incorrect or empty JSON")]
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             Stopwatch stopWatch = new Stopwatch();
