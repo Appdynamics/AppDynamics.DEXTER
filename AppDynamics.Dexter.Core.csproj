@@ -65,6 +65,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="AppHealthCheckMapping.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="LinksToApplicationsDashboardsTemplate.html">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
