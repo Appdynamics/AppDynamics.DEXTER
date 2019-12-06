@@ -89,8 +89,7 @@
 
         ReportAPMEntityDashboardScreenshots = 140,
 
-        //ApplicationHealthCheckComparison = 200,
-        ReportApplicationHealthCheck = 202,
+        ReportApplicationHealthCheck = 200,
 
         // The rest
         Done = 500,
