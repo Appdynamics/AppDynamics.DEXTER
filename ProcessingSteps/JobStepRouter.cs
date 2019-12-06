@@ -102,7 +102,6 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMEntityDashboardScreenshots,
 
-                //JobStatus.ApplicationHealthCheckComparison,
                 JobStatus.ReportApplicationHealthCheck,
 
                 // Done 
