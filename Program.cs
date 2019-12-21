@@ -292,14 +292,14 @@ namespace AppDynamics.Dexter
                 // Validate Metrics selection
                 if (jobConfiguration.Input.MetricsSelectionCriteria == null)
                 {
-                    jobConfiguration.Input.MetricsSelectionCriteria = new string[0];
+                    jobConfiguration.Input.MetricsSelectionCriteria = new string[1];
                     jobConfiguration.Input.MetricsSelectionCriteria[0] = "TransactionApplication";
                 }
 
                 // Validate Events selection
                 if (jobConfiguration.Input.EventsSelectionCriteria == null || jobConfiguration.Input.EventsSelectionCriteria.Length == 0)
                 {
-                    jobConfiguration.Input.EventsSelectionCriteria = new string[0];
+                    jobConfiguration.Input.EventsSelectionCriteria = new string[1];
                     jobConfiguration.Input.EventsSelectionCriteria[0] = "None";
                 }
 

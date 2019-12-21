@@ -1,0 +1,158 @@
+﻿[ {
+  "id" : 43,
+  "version" : 0,
+  "name" : "SERVLET",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : true,
+  "discoveryConfig" : {
+    "namingSchemeType" : "URI",
+    "properties" : [ {
+      "id" : 0,
+      "version" : 0,
+      "name" : "uri-length",
+      "value" : "first-n-segments"
+    }, {
+      "id" : 0,
+      "version" : 0,
+      "name" : "segment-length",
+      "value" : "2"
+    } ]
+  },
+  "entryPointType" : "SERVLET",
+  "entryPointTypeString" : "SERVLET",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 44,
+  "version" : 0,
+  "name" : "STRUTS_ACTION",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : true,
+  "discoveryConfig" : {
+    "namingSchemeType" : "ACTION_NAME_AND_METHOD_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "STRUTS_ACTION",
+  "entryPointTypeString" : "STRUTS_ACTION",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 46,
+  "version" : 0,
+  "name" : "WEB_SERVICE",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : true,
+  "discoveryConfig" : {
+    "namingSchemeType" : "SERVICE_NAME_AND_OPERATION_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "WEB_SERVICE",
+  "entryPointTypeString" : "WEB_SERVICE",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 48,
+  "version" : 0,
+  "name" : "POJO",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : true,
+  "discoveryConfig" : {
+    "namingSchemeType" : "FULLY_QUALIFIED_CLASS_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "POJO",
+  "entryPointTypeString" : "POJO",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 47,
+  "version" : 0,
+  "name" : "SPRING_BEAN",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : false,
+  "discoveryConfig" : {
+    "namingSchemeType" : "BEAN_ID_AND_METHOD_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "SPRING_BEAN",
+  "entryPointTypeString" : "SPRING_BEAN",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 49,
+  "version" : 0,
+  "name" : "EJB",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : false,
+  "discoveryConfig" : {
+    "namingSchemeType" : "EJB_NAME_AND_METHOD_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "EJB",
+  "entryPointTypeString" : "EJB",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+}, {
+  "id" : 45,
+  "version" : 0,
+  "name" : "JMS",
+  "nameUnique" : true,
+  "applicationComponentId" : 0,
+  "enabled" : true,
+  "discoveryConfig" : {
+    "namingSchemeType" : "DESTINATION_NAME",
+    "properties" : [ ]
+  },
+  "entryPointType" : "JMS",
+  "entryPointTypeString" : "JMS",
+  "attachedEntity" : {
+    "id" : 0,
+    "version" : 0,
+    "entityType" : "APPLICATION",
+    "entityId" : 7,
+    "prettyToString" : null
+  },
+  "agentType" : "APP_AGENT"
+} ]

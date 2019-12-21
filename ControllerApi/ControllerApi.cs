@@ -222,9 +222,75 @@ namespace AppDynamics.Dexter
             return this.apiGET(String.Format("controller/ConfigObjectImportExportServlet?applicationId={0}", applicationID), "text/xml", false);
         }
 
-        public string GetAPMSEPConfiguration(long accountID, long applicationID)
+        public string GetAPMSEPAutodetectionConfiguration(long applicationID)
         {
-            return this.apiGET(String.Format("api/accounts/{0}/applications/{1}/sep", accountID, applicationID), "application/vnd.appd.cntrl+json", false);
+            string requestJSONTemplate =
+@"{{
+    ""agentType"": ""APP_AGENT"",
+    ""attachedEntity"": {{
+        ""entityId"": {0},
+        ""entityType"": ""APPLICATION""
+    }}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                applicationID);
+
+            return this.apiPOST("controller/restui/serviceEndpoint/getServiceEndpointMatchConfigs", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetAPMSEPTierConfigurationOverride(long tierID, string agentType)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""agentType"": ""{1}"",
+    ""attachedEntity"": {{
+        ""entityId"": {0},
+        ""entityType"": ""APPLICATION_COMPONENT""
+    }}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                tierID,
+                agentType);
+
+            return this.apiPOST("controller/restui/serviceEndpoint/getServiceEndpointDefContainer", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetAPMSEPTierAutodetectionConfiguration(long tierID, string agentType)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""agentType"": ""{1}"",
+    ""attachedEntity"": {{
+        ""entityId"": {0},
+        ""entityType"": ""APPLICATION_COMPONENT""
+    }}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                tierID,
+                agentType);
+
+            return this.apiPOST("controller/restui/serviceEndpoint/getServiceEndpointMatchConfigs", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetAPMSEPTierRules(long tierID, string agentType)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""agentType"": ""{1}"",
+    ""attachedEntity"": {{
+        ""entityId"": {0},
+        ""entityType"": ""APPLICATION_COMPONENT""
+    }}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                tierID,
+                agentType);
+
+            return this.apiPOST("controller/restui/serviceEndpoint/getAll", "application/json", requestBody, "application/json", true);
         }
 
         public string GetAPMDeveloperModeConfiguration(long applicationID)

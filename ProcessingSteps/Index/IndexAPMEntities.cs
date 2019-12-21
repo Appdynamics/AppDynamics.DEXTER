@@ -770,7 +770,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             loggerConsole.Info("Index List of Tiers ({0} entities)", tiersRESTList.Count);
 
-
                             tiersList = new List<APMTier>(tiersRESTList.Count);
                             resolvedBackendsList = new List<APMResolvedBackend>(tiersRESTList.Count * 10);
 

@@ -259,7 +259,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #endregion
 
-                                #region Service Endpoint Rules
+                                #region Service Endpoint Discovery Rules
+
+                                loggerConsole.Info("Service Endpoint Discovery Rules");
+
+                                List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryRulesListReference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointDiscoveryRule>(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(referenceTarget), new ServiceEndpointDiscoveryRuleReportMap());
+                                List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryRulesListDifference = FileIOHelper.ReadListFromCSVFile<ServiceEndpointDiscoveryRule>(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget), new ServiceEndpointDiscoveryRuleReportMap());
+
+                                configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, serviceEndpointDiscoveryRulesListReference, serviceEndpointDiscoveryRulesListDifference));
+
+                                #endregion
+
+                                #region Service Endpoint Entry Rules
 
                                 loggerConsole.Info("Service Endpoint Entry Rules");
 

@@ -337,7 +337,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             char[] excelTableInvalidChars = { ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', ',', '/', '\\', '[', ']', ':', '?', '|', '"', '<', '>' };
             foreach (var c in excelTableInvalidChars)
             {
-                stringToClear = stringToClear.Replace(c, '-');
+                stringToClear = stringToClear.Replace(c, '_');
             }
             // Apparently it is possible to have a NUL character as a BT name courtesy of penetration testing somehow
             stringToClear = stringToClear.Replace("\u0000", "NULL");

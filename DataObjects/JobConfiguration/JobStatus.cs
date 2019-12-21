@@ -61,6 +61,8 @@
         IndexAPMMetrics = 80,
         IndexAPMFlowmaps = 81,
         IndexAPMSnapshots = 82,
+        
+        IndexAPMHealthCheck = 90,
 
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,
@@ -86,9 +88,11 @@
         ReportAPMFlameGraphs = 132,
 
         ReportAPMEntityDetails = 133,
-        ReportAPMApplicationSummary = 134,
+        
+        ReportHealthCheck = 140,
+        ReportAPMApplicationSummary = 141,
 
-        ReportAPMEntityDashboardScreenshots = 140,
+        ReportAPMEntityDashboardScreenshots = 150,
 
         // The rest
         Done = 500,

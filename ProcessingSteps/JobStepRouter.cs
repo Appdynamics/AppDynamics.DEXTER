@@ -75,6 +75,8 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexAPMFlowmaps,
                 JobStatus.IndexAPMSnapshots,
 
+                JobStatus.IndexAPMHealthCheck,
+
                 // Report data
                 JobStatus.ReportControllerAndApplicationConfiguration,
                 JobStatus.ReportControllerUsersGroupsRolesAndPermissions,
@@ -99,6 +101,8 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportAPMFlameGraphs,
 
                 JobStatus.ReportAPMEntityDetails,
+
+                JobStatus.ReportHealthCheck,
                 JobStatus.ReportAPMApplicationSummary,
 
                 JobStatus.ReportAPMEntityDashboardScreenshots,
@@ -324,6 +328,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.IndexAPMSnapshots:
                     return new IndexAPMSnapshots();
 
+                case JobStatus.IndexAPMHealthCheck:
+                    return new IndexAPMHealthCheck();
 
                 // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:
@@ -367,6 +373,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();
 
+                case JobStatus.ReportHealthCheck:
+                    return new ReportHealthCheck();
                 case JobStatus.ReportAPMApplicationSummary:
                     return new ReportAPMApplicationSummary();
 

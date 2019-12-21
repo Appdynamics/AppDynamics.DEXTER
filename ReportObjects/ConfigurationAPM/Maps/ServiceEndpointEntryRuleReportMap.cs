@@ -15,15 +15,17 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.AgentType).Index(i); i++;
             Map(m => m.RuleName).Index(i); i++;
             Map(m => m.EntryPointType).Index(i); i++;
-            Map(m => m.NamingConfigType).Index(i); i++;
-            Map(m => m.IsMonitoringEnabled).Index(i); i++;
-            Map(m => m.DiscoveryType).Index(i); i++;
-            Map(m => m.IsOverride).Index(i); i++;
+            Map(m => m.Version).Index(i); i++;
+            
+            Map(m => m.IsEnabled).Index(i); i++;
+            Map(m => m.IsExclusion).Index(i); i++;
+            Map(m => m.Priority).Index(i); i++;
+            
+            Map(m => m.MatchConditions).Index(i); i++;
+            Map(m => m.Actions).Index(i); i++;
 
             Map(m => m.NumDetectedSEPs).Index(i); i++;
             Map(m => m.DetectedSEPs).Index(i); i++;
-
-            Map(m => m.RuleRawValue).Index(i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
