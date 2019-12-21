@@ -49,6 +49,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string CONTROLLER_RBAC_FOLDER_NAME = "RBAC";
 
+        private const string HEALTHCHECK_FOLDER_NAME = "HEALTH";
+        private const string HEALTHCHECK_APM_FOLDER_NAME = "HEALTHAPM";
+
         #endregion
 
         #region Constants for the folder and file names of data extract
@@ -60,7 +63,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Controller wide settings file names
         private const string EXTRACT_CONFIGURATION_APPLICATION_FILE_NAME = "configuration.xml";
         private const string EXTRACT_CONFIGURATION_APPLICATION_DETAILS_FILE_NAME = "configuration.json";
-        private const string EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME = "seps.json";
+        private const string EXTRACT_CONFIGURATION_APPLICATION_SEP_DETECTION_FILE_NAME = "seps.detection.json";
+        private const string EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_DETECTION_FILE_NAME = "seps.detection.{0}.json";
+        private const string EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_EXPLICIT_FILE_NAME = "seps.rules.{0}.json";
 
         private const string EXTRACT_CONTROLLER_VERSION_FILE_NAME = "controllerversion.xml";
         private const string EXTRACT_HTTP_TEMPLATES_FILE_NAME = "templateshttp.json";
@@ -314,7 +319,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME = "btentry.rules.csv";
         private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME = "btentry.rules.2.0.csv";
         private const string CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME = "btentry.scopes.csv";
-        private const string CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME = "sep.rules.csv";
+        private const string CONVERT_CONFIG_SERVICE_ENDPOINT_DISCOVERY_RULES_FILE_NAME = "sep.discovery.csv";
+        private const string CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME = "sep.entry.csv";
         private const string CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME = "backend.rules.csv";
         private const string CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME = "customexit.rules.csv";
         private const string CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME = "infopoints.csv";
@@ -415,6 +421,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME = "activitygrids.perminute.full.csv";
         private const string CONVERT_ALL_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME = "{0}.activitygrids.perminute.full.csv";
 
+        // Health check conversion file names
+        private const string CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.rule.results.csv";
+
         #endregion
 
         #region Constants for the folder and file names of data reports
@@ -439,6 +448,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.html";
         private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
+        private const string REPORT_HEALTH_CHECK_RESULTS_APM_FILE_NAME = "HealthCheck.APM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -475,6 +485,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Settings for the metric extracts
         private const string ENTITY_METRICS_EXTRACT_MAPPING_FILE_NAME = "EntityMetricsExtractMapping.csv";
+
+        // Settings for the metric extracts
+        private const string HEALTH_CHECK_SETTING_MAPPING_FILE_NAME = "HealthCheckSettingMapping.csv";
 
         // Flame graph template SVG XML file
         private const string FLAME_GRAPH_TEMPLATE_FILE_NAME = "FlameGraphTemplate.svg";
@@ -3723,7 +3736,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         }
 
 
-        public string APMApplicationConfigurationSEPDataFilePath(JobTarget jobTarget)
+        public string APMApplicationConfigurationSEPDetectionRulesDataFilePath(JobTarget jobTarget)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
@@ -3731,7 +3744,67 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
-                EXTRACT_CONFIGURATION_APPLICATION_SEP_FILE_NAME);
+                EXTRACT_CONFIGURATION_APPLICATION_SEP_DETECTION_FILE_NAME);
+        }
+
+        public string APMApplicationConfigurationSEPTierDetectionRulesDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_DETECTION_FILE_NAME,
+                getShortenedEntityNameForFileSystem(tier.name, tier.id));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string APMApplicationConfigurationSEPTierDetectionRulesDataFilePath(JobTarget jobTarget, APMTier tier)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_DETECTION_FILE_NAME,
+                getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string APMApplicationConfigurationSEPTierExplicitRulesDataFilePath(JobTarget jobTarget, AppDRESTTier tier)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_EXPLICIT_FILE_NAME,
+                getShortenedEntityNameForFileSystem(tier.name, tier.id));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string APMApplicationConfigurationSEPTierExplicitRulesDataFilePath(JobTarget jobTarget, APMTier tier)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_CONFIGURATION_APPLICATION_TIER_SEP_EXPLICIT_FILE_NAME,
+                getShortenedEntityNameForFileSystem(tier.TierName, tier.TierID));
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                reportFileName);
         }
 
         public string APMApplicationDeveloperModeNodesDataFilePath(JobTarget jobTarget)
@@ -3780,6 +3853,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
+        }
+
+        public string APMServiceEndpointDiscoveryRulesIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                CONFIGURATION_FOLDER_NAME,
+                CONVERT_CONFIG_SERVICE_ENDPOINT_DISCOVERY_RULES_FILE_NAME);
         }
 
         public string APMServiceEndpointEntryRulesIndexFilePath(JobTarget jobTarget)
@@ -4041,6 +4125,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
         }
 
+        public string APMServiceEndpointDiscoveryRulesReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                CONFIGURATION_APM_FOLDER_NAME,
+                CONVERT_CONFIG_SERVICE_ENDPOINT_DISCOVERY_RULES_FILE_NAME);
+        }
+
         public string APMServiceEndpointEntryRulesReportFilePath()
         {
             return Path.Combine(
@@ -4300,6 +4393,63 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 REPORT_FOLDER_NAME,
                 CONFIGURATION_COMPARISON_FOLDER_NAME,
                 CONFIGURATION_DIFFERENCES_FILE_NAME);
+        }
+
+        #endregion
+
+
+        #region APM Health Check Index
+
+        public string APMHealthCheckRuleResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                HEALTHCHECK_FOLDER_NAME,
+                CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+        }
+
+        #endregion
+
+        #region APM Health Check Report
+
+        public string HealthCheckSettingMappingFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                HEALTH_CHECK_SETTING_MAPPING_FILE_NAME);
+        }
+
+        public string APMHealthCheckReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                HEALTHCHECK_APM_FOLDER_NAME);
+        }
+
+        public string APMHealthCheckRuleResultsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                HEALTHCHECK_APM_FOLDER_NAME,
+                CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+        }
+
+        public string APMHealthCheckResultsExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_HEALTH_CHECK_RESULTS_APM_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                reportFileName);
         }
 
         #endregion
@@ -6679,6 +6829,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public static string getFileSystemSafeString(string fileOrFolderNameToClear)
         {
+            if (fileOrFolderNameToClear == null) fileOrFolderNameToClear = String.Empty;
+
             foreach (var c in Path.GetInvalidFileNameChars())
             {
                 fileOrFolderNameToClear = fileOrFolderNameToClear.Replace(c, '-');

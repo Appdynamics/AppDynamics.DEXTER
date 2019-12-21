@@ -128,6 +128,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (configXml == null)
                         {
                             logger.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                            loggerConsole.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
                             continue;
                         }
 
@@ -377,118 +378,69 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Service Endpoint Rules
+                        #region Service Endpoint Discovery and Entry Rules
 
-                        loggerConsole.Info("Service Endpoint Rules");
+                        loggerConsole.Info("Service Endpoint Discovery Rules");
 
-                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesList = new List<ServiceEndpointEntryRule>();
+                        List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryRulesList = new List<ServiceEndpointDiscoveryRule>();
 
-                        JObject serviceEndpointsContainer = FileIOHelper.LoadJObjectFromFile(FilePathMap.APMApplicationConfigurationSEPDataFilePath(jobTarget));
-                        if (serviceEndpointsContainer != null && isTokenPropertyNull(serviceEndpointsContainer, "sepContainer") == false)
+                        // SEP Autodetection Rules for App
+                        JArray serviceEndpointsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMApplicationConfigurationSEPDetectionRulesDataFilePath(jobTarget));
+                        if (serviceEndpointsArray != null)
                         {
-                            foreach (JObject serviceEndpointContainer in serviceEndpointsContainer["sepContainer"])
+                            foreach (JObject serviceEndpointObject in serviceEndpointsArray)
                             {
-                                // SEP Autodetection Rules
-                                if (getStringValueFromJToken(serviceEndpointContainer, "entityType") == "APPLICATION")
-                                {
-                                    if (isTokenPropertyNull(serviceEndpointContainer, "sEPMatchPointConfigs") == false)
-                                    {
-                                        foreach (JObject serviceEndpoint in serviceEndpointContainer["sEPMatchPointConfigs"])
-                                        {
-                                            ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
-
-                                            serviceEndpointEntryRule.Controller = applicationConfiguration.Controller;
-                                            serviceEndpointEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
-                                            serviceEndpointEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
-                                            serviceEndpointEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
-                                            serviceEndpointEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
-
-                                            serviceEndpointEntryRule.AgentType = getStringValueFromJToken(serviceEndpointContainer, "agentType");
-                                            serviceEndpointEntryRule.RuleName = getStringValueFromJToken(serviceEndpoint, "name");
-                                            serviceEndpointEntryRule.EntryPointType = getStringValueFromJToken(serviceEndpoint, "entryPointType");
-                                            serviceEndpointEntryRule.IsOverride = getBoolValueFromJToken(serviceEndpointContainer, "override");
-                                            serviceEndpointEntryRule.IsMonitoringEnabled = getBoolValueFromJToken(serviceEndpoint, "enabled");
-                                            serviceEndpointEntryRule.NamingConfigType = getStringValueFromJToken(serviceEndpoint, "namingSchemeType");
-
-                                            serviceEndpointEntryRule.DiscoveryType = getStringValueFromJToken(serviceEndpoint, "namingSchemeProperties");
-
-                                            serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
-                                        }
-                                    }
-                                }
+                                ServiceEndpointDiscoveryRule serviceEndpointDiscoveryRule = fillServiceEnpointDiscoveryRule(serviceEndpointObject, null, applicationConfiguration);
+                                serviceEndpointDiscoveryRulesList.Add(serviceEndpointDiscoveryRule);
                             }
+                        }
 
-                            foreach (JObject serviceEndpointContainer in serviceEndpointsContainer["sepContainer"])
+                        // SEP Autodetection Rules for Tiers overrides
+                        if (tiersThisAppList != null)
+                        {
+                            foreach (APMTier tier in tiersThisAppList)
                             {
-                                // Explicit SEP rule
-                                if (getStringValueFromJToken(serviceEndpointContainer, "entityType") == "APPLICATION_COMPONENT")
+                                JArray serviceEndpointsTierArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMApplicationConfigurationSEPTierDetectionRulesDataFilePath(jobTarget, tier));
+                                if (serviceEndpointsTierArray != null)
                                 {
-                                    if (isTokenPropertyNull(serviceEndpointContainer, "sEPDefinitions") == false)
+                                    foreach (JObject serviceEndpointRuleObject in serviceEndpointsTierArray)
                                     {
-                                        foreach (JObject serviceEndpointObject in serviceEndpointContainer["sEPDefinitions"])
-                                        {
-                                            ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
-
-                                            serviceEndpointEntryRule.Controller = applicationConfiguration.Controller;
-                                            serviceEndpointEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
-                                            serviceEndpointEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
-                                            serviceEndpointEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
-                                            serviceEndpointEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
-
-                                            if (tiersThisAppList != null)
-                                            {
-                                                APMTier tier = tiersThisAppList.Where(t => t.EntityID == getLongValueFromJToken(serviceEndpointContainer, "entityId")).FirstOrDefault();
-                                                if (tier != null)
-                                                {
-                                                    serviceEndpointEntryRule.TierName = tier.TierName;
-                                                }
-                                            }
-
-                                            serviceEndpointEntryRule.AgentType = getStringValueFromJToken(serviceEndpointContainer, "agentType");
-                                            serviceEndpointEntryRule.RuleName = getStringValueFromJToken(serviceEndpointObject, "definitionName");
-                                            serviceEndpointEntryRule.EntryPointType = getStringValueFromJToken(serviceEndpointObject, "entryPointType");
-                                            serviceEndpointEntryRule.IsOverride = getBoolValueFromJToken(serviceEndpointContainer, "override");
-                                            serviceEndpointEntryRule.IsMonitoringEnabled = true;
-
-                                            serviceEndpointEntryRule.RuleRawValue = makeXMLFormattedAndIndented(serviceEndpointObject["MatchPointRuleXml"].ToString());
-
-                                            if (serviceEndpointsThisAppList != null)
-                                            {
-                                                List<APMServiceEndpoint> serviceEndpointsForThisRule = new List<APMServiceEndpoint>();
-
-                                                serviceEndpointsForThisRule.AddRange(serviceEndpointsThisAppList.Where(s => s.SEPName == serviceEndpointEntryRule.RuleName).ToList());
-                                                serviceEndpointsForThisRule.AddRange(serviceEndpointsThisAppList.Where(s => s.SEPName.StartsWith(String.Format("{0}.", serviceEndpointEntryRule.RuleName))).ToList());
-                                                serviceEndpointsForThisRule = serviceEndpointsForThisRule.Distinct().ToList();
-                                                serviceEndpointEntryRule.NumDetectedSEPs = serviceEndpointsForThisRule.Count;
-                                                if (serviceEndpointsForThisRule.Count > 0)
-                                                {
-                                                    StringBuilder sb = new StringBuilder(32 * serviceEndpointsForThisRule.Count);
-                                                    foreach (APMServiceEndpoint sep in serviceEndpointsForThisRule)
-                                                    {
-                                                        sb.AppendFormat("{0}/{1};\n", sep.TierName, sep.SEPName);
-                                                    }
-                                                    sb.Remove(sb.Length - 1, 1);
-
-                                                    serviceEndpointEntryRule.DetectedSEPs = sb.ToString();
-
-                                                    // Now update the list of Entities to map which rule we are in
-                                                    foreach (APMServiceEndpoint serviceEndpoint in serviceEndpointsForThisRule)
-                                                    {
-                                                        serviceEndpoint.IsExplicitRule = true;
-                                                        serviceEndpoint.RuleName = String.Format("{0}/{1} [{2}]", serviceEndpointEntryRule.TierName, serviceEndpointEntryRule.RuleName, serviceEndpointEntryRule.EntryPointType);
-                                                        serviceEndpoint.RuleName = serviceEndpoint.RuleName.TrimStart('/');
-                                                    }
-                                                }
-                                            }
-
-                                            serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
-                                        }
+                                        ServiceEndpointDiscoveryRule serviceEndpointDiscoveryRule = fillServiceEnpointDiscoveryRule(serviceEndpointRuleObject, tier, applicationConfiguration);
+                                        serviceEndpointDiscoveryRulesList.Add(serviceEndpointDiscoveryRule);
                                     }
                                 }
                             }
                         }
 
-                        applicationConfiguration.NumSEPRules = serviceEndpointEntryRulesList.Count;
+                        applicationConfiguration.NumSEPDiscoveryRules = serviceEndpointDiscoveryRulesList.Count;
+
+                        serviceEndpointDiscoveryRulesList = serviceEndpointDiscoveryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
+                        FileIOHelper.WriteListToCSVFile(serviceEndpointDiscoveryRulesList, new ServiceEndpointDiscoveryRuleReportMap(), FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget));
+
+                        stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + serviceEndpointDiscoveryRulesList.Count;
+
+
+                        loggerConsole.Info("Custom Service Endpoint Entry Rules");
+
+                        List<ServiceEndpointEntryRule> serviceEndpointEntryRulesList = new List<ServiceEndpointEntryRule>();
+
+                        if (tiersThisAppList != null)
+                        {
+                            foreach (APMTier tier in tiersThisAppList)
+                            {
+                                JArray serviceEndpointRulesInTierArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.APMApplicationConfigurationSEPTierExplicitRulesDataFilePath(jobTarget, tier));
+                                if (serviceEndpointRulesInTierArray != null)
+                                {
+                                    foreach (JObject serviceEndpointRuleObject in serviceEndpointRulesInTierArray)
+                                    {
+                                        ServiceEndpointEntryRule serviceEndpointEntryRule = fillServiceEnpointEntryRule(serviceEndpointRuleObject, tier, applicationConfiguration, serviceEndpointsThisAppList);
+                                        serviceEndpointEntryRulesList.Add(serviceEndpointEntryRule);
+                                    }
+                                }
+                            }
+                        }
+
+                        applicationConfiguration.NumSEPEntryRules = serviceEndpointEntryRulesList.Count;
 
                         serviceEndpointEntryRulesList = serviceEndpointEntryRulesList.OrderBy(b => b.TierName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ToList();
                         FileIOHelper.WriteListToCSVFile(serviceEndpointEntryRulesList, new ServiceEndpointEntryRuleReportMap(), FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget));
@@ -1386,8 +1338,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Save the updated Backends, Business Transactions and Service Endpoints
 
                         FileIOHelper.WriteListToCSVFile(backendsList, new APMBackendReportMap(), FilePathMap.APMBackendsReportFilePath());
+                        FileIOHelper.WriteListToCSVFile(backendsThisAppList, new APMBackendReportMap(), FilePathMap.APMBackendsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(businessTransactionsList, new APMBusinessTransactionReportMap(), FilePathMap.APMBusinessTransactionsReportFilePath());
+                        FileIOHelper.WriteListToCSVFile(businessTransactionsThisAppList, new APMBusinessTransactionReportMap(), FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(serviceEndpointsList, new APMServiceEndpointReportMap(), FilePathMap.APMServiceEndpointsReportFilePath());
+                        FileIOHelper.WriteListToCSVFile(serviceEndpointsThisAppList, new APMServiceEndpointReportMap(), FilePathMap.APMServiceEndpointsIndexFilePath(jobTarget));
 
                         #endregion
 
@@ -1414,6 +1369,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMBusinessTransactionEntryRulesReportFilePath(), FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget));
+                        }
+                        if (File.Exists(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMServiceEndpointDiscoveryRulesReportFilePath(), FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -2022,6 +1981,105 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return backendDiscoveryRule;
         }
 
+        private static ServiceEndpointDiscoveryRule fillServiceEnpointDiscoveryRule(JObject serviceEndpointRuleObject, APMTier tier, APMApplicationConfiguration applicationConfiguration)
+        {
+            ServiceEndpointDiscoveryRule serviceEndpointDiscoveryRule = new ServiceEndpointDiscoveryRule();
+
+            serviceEndpointDiscoveryRule.Controller = applicationConfiguration.Controller;
+            serviceEndpointDiscoveryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            serviceEndpointDiscoveryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            serviceEndpointDiscoveryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            serviceEndpointDiscoveryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            serviceEndpointDiscoveryRule.AgentType = getStringValueFromJToken(serviceEndpointRuleObject, "agentType");
+            serviceEndpointDiscoveryRule.RuleName = getStringValueFromJToken(serviceEndpointRuleObject, "name");
+            serviceEndpointDiscoveryRule.EntryPointType = getStringValueFromJToken(serviceEndpointRuleObject, "entryPointType");
+            serviceEndpointDiscoveryRule.Version = getIntValueFromJToken(serviceEndpointRuleObject, "version");
+            serviceEndpointDiscoveryRule.IsEnabled = getBoolValueFromJToken(serviceEndpointRuleObject, "enabled");
+            if (isTokenPropertyNull(serviceEndpointRuleObject, "discoveryConfig") == false)
+            {
+                JObject discoveryConfigObject = (JObject)serviceEndpointRuleObject["discoveryConfig"];
+                serviceEndpointDiscoveryRule.NamingConfigType = getStringValueFromJToken(discoveryConfigObject, "namingSchemeType");
+
+                if (isTokenPropertyNull(discoveryConfigObject, "properties") == false)
+                {
+                    string[] nameValues = discoveryConfigObject["properties"].Select(s => String.Format("{0}={1}", getStringValueFromJToken(s, "name"), getStringValueFromJToken(s, "value"))).ToArray();
+                    serviceEndpointDiscoveryRule.DiscoveryType = String.Join(";", nameValues);
+                }
+            }
+
+            if (tier != null) serviceEndpointDiscoveryRule.TierName = tier.TierName;
+
+            return serviceEndpointDiscoveryRule;
+        }
+
+        private static ServiceEndpointEntryRule fillServiceEnpointEntryRule(JObject serviceEndpointRuleObject, APMTier tier, APMApplicationConfiguration applicationConfiguration, List<APMServiceEndpoint> serviceEndpointsList)
+        {
+            ServiceEndpointEntryRule serviceEndpointEntryRule = new ServiceEndpointEntryRule();
+
+            serviceEndpointEntryRule.Controller = applicationConfiguration.Controller;
+            serviceEndpointEntryRule.ControllerLink = applicationConfiguration.ControllerLink;
+            serviceEndpointEntryRule.ApplicationName = applicationConfiguration.ApplicationName;
+            serviceEndpointEntryRule.ApplicationID = applicationConfiguration.ApplicationID;
+            serviceEndpointEntryRule.ApplicationLink = applicationConfiguration.ApplicationLink;
+
+            serviceEndpointEntryRule.AgentType = getStringValueFromJToken(serviceEndpointRuleObject, "agentType");
+            serviceEndpointEntryRule.RuleName = getStringValueFromJToken(serviceEndpointRuleObject, "name");
+            serviceEndpointEntryRule.EntryPointType = getStringValueFromJToken(serviceEndpointRuleObject, "entryPointType");
+            serviceEndpointEntryRule.Version = getIntValueFromJToken(serviceEndpointRuleObject, "version");
+            if (isTokenPropertyNull(serviceEndpointRuleObject, "matchPointRule") == false)
+            {
+                JObject discoveryConfigObject = (JObject)serviceEndpointRuleObject["matchPointRule"];
+
+                serviceEndpointEntryRule.Priority = getIntValueFromJToken(discoveryConfigObject, "priority");
+                serviceEndpointEntryRule.IsEnabled = getBoolValueFromJToken(discoveryConfigObject, "enabled");
+                serviceEndpointEntryRule.IsExclusion = getBoolValueFromJToken(discoveryConfigObject, "excluded");
+
+                serviceEndpointEntryRule.MatchConditions = getStringValueOfObjectFromJToken(serviceEndpointRuleObject, "matchPointRule", false);
+                
+                // This is for POCO/POJOs
+                serviceEndpointEntryRule.Actions = getStringValueOfObjectFromJToken(discoveryConfigObject, "splitConfig", false);
+                
+                // This is for ASP.NET/Servlet
+                if (serviceEndpointEntryRule.Actions.Length == 0)
+                {
+                    serviceEndpointEntryRule.Actions = getStringValueOfObjectFromJToken(discoveryConfigObject, "ruleProperties", false);
+                }
+            }
+
+            serviceEndpointEntryRule.TierName = tier.TierName;
+
+            if (serviceEndpointsList != null)
+            {
+                List<APMServiceEndpoint> serviceEndpointsForThisRule = new List<APMServiceEndpoint>();
+
+                serviceEndpointsForThisRule.AddRange(serviceEndpointsList.Where(s => s.SEPName == serviceEndpointEntryRule.RuleName).ToList());
+                serviceEndpointsForThisRule.AddRange(serviceEndpointsList.Where(s => s.SEPName.StartsWith(String.Format("{0}.", serviceEndpointEntryRule.RuleName))).ToList());
+                serviceEndpointsForThisRule = serviceEndpointsForThisRule.Distinct().ToList();
+                serviceEndpointEntryRule.NumDetectedSEPs = serviceEndpointsForThisRule.Count;
+                if (serviceEndpointsForThisRule.Count > 0)
+                {
+                    StringBuilder sb = new StringBuilder(32 * serviceEndpointsForThisRule.Count);
+                    foreach (APMServiceEndpoint sep in serviceEndpointsForThisRule)
+                    {
+                        sb.AppendFormat("{0}/{1};\n", sep.TierName, sep.SEPName);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+
+                    serviceEndpointEntryRule.DetectedSEPs = sb.ToString();
+
+                    // Now update the list of Entities to map which rule we are in
+                    foreach (APMServiceEndpoint serviceEndpoint in serviceEndpointsForThisRule)
+                    {
+                        serviceEndpoint.IsExplicitRule = true;
+                        serviceEndpoint.RuleName = String.Format("{0}/{1} [{2}]", serviceEndpointEntryRule.TierName, serviceEndpointEntryRule.RuleName, serviceEndpointEntryRule.EntryPointType);
+                        serviceEndpoint.RuleName = serviceEndpoint.RuleName.TrimStart('/');
+                    }
+                }
+            }
+            return serviceEndpointEntryRule;
+        }
+
         private static CustomExitRule fillCustomExitRule(XmlNode backendDiscoveryMatchPointConfigurationNode, XmlNode customExitConfigurationNode, APMApplicationConfiguration applicationConfiguration, XmlNode applicationComponentNode, List<APMBackend> backendsList)
         {
             CustomExitRule customExitRule = new CustomExitRule();
@@ -2172,6 +2230,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 agentConfigurationProperty.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
             }
+
+            agentConfigurationProperty.IsBuiltIn = AGENT_PROPERTIES_BUILTIN.Contains(agentConfigurationProperty.PropertyName);
 
             return agentConfigurationProperty;
         }

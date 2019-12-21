@@ -1,6 +1,8 @@
 ﻿using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
 using Aspose.Words;
+using Aspose.Words.Drawing;
+using Aspose.Words.Drawing.Charts;
 using Aspose.Words.Lists;
 using Aspose.Words.Saving;
 using Aspose.Words.Tables;
@@ -22,7 +24,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
 
         #endregion
-
 
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -50,9 +51,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 return true;
             }
 
-            logger.Info("Setting Aspose License");
-            Aspose.Words.License license = new Aspose.Words.License();
-            license.SetLicense("Aspose.Words.lic");
+            try
+            {
+                logger.Info("Setting Aspose License");
+                Aspose.Words.License license = new Aspose.Words.License();
+                license.SetLicense("Aspose.Words.lic");
+            }
+            catch (Exception ex)
+            {
+                logger.Error("No Aspose license");
+                logger.Error(ex);
+                loggerConsole.Warn("No Aspose license, will not generate document");
+
+                return true;
+            }
 
             try
             {
@@ -116,8 +128,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<APMResolvedBackend> resolvedBackendsList = FileIOHelper.ReadListFromCSVFile<APMResolvedBackend>(FilePathMap.APMMappedBackendsIndexFilePath(jobTarget), new APMResolvedBackendReportMap());
 
-                        //List<Event> eventsAllList = FileIOHelper.ReadListFromCSVFile<Event>(FilePathMap.ApplicationEventsIndexFilePath(jobTarget), new EventReportMap());
-                        //List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile<HealthRuleViolationEvent>(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
+                        List<APMBusinessTransaction> businessTransactionsOverflowList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget), new APMOverflowBusinessTransactionReportMap());
+
+                        //List<Event> eventsList = FileIOHelper.ReadListFromCSVFile<Event>(FilePathMap.ApplicationEventsIndexFilePath(jobTarget), new EventReportMap());
+                        //List<HealthRuleViolationEvent> healthRuleViolationEventsList = FileIOHelper.ReadListFromCSVFile<HealthRuleViolationEvent>(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
+
                         //List<Snapshot> snapshotsAllList = FileIOHelper.ReadListFromCSVFile<Snapshot>(FilePathMap.SnapshotsIndexFilePath(jobTarget), new SnapshotReportMap());
                         //List<Segment> segmentsAllList = FileIOHelper.ReadListFromCSVFile<Segment>(FilePathMap.SnapshotsSegmentsIndexFilePath(jobTarget), new SegmentReportMap());
                         //List<ExitCall> exitCallsAllList = FileIOHelper.ReadListFromCSVFile<ExitCall>(FilePathMap.SnapshotsExitCallsIndexFilePath(jobTarget), new ExitCallReportMap());
@@ -125,6 +140,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         //List<DetectedError> detectedErrorsAllList = FileIOHelper.ReadListFromCSVFile<DetectedError>(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget), new DetectedErrorReportMap());
                         //List<BusinessData> businessDataAllList = FileIOHelper.ReadListFromCSVFile<BusinessData>(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget), new BusinessDataReportMap());
 
+                        List<ActivityFlow> applicationActivityFlowsList = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
+                        List<ActivityFlow> tiersActivityFlowsList = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap());
+                        List<ActivityFlow> nodesActivityFlowsList = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap());
+                        List<ActivityFlow> businessTransactionsActivityFlowsList = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap());
+                        List<ActivityFlow> backendsActivityFlowsList = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap());
+
+                        List<HealthRule> healthRulesList = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
+                        List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile<Policy>(FilePathMap.ApplicationPoliciesIndexFilePath(jobTarget), new PolicyReportMap());
+                        List<ReportObjects.Action> actionsList = FileIOHelper.ReadListFromCSVFile<ReportObjects.Action>(FilePathMap.ApplicationActionsIndexFilePath(jobTarget), new ActionReportMap());
+                        List<PolicyActionMapping> policyActionMappingList = FileIOHelper.ReadListFromCSVFile<PolicyActionMapping>(FilePathMap.ApplicationPolicyActionMappingsIndexFilePath(jobTarget), new PolicyActionMappingReportMap());
+
+                        List<AgentConfigurationProperty> agentPropertiesList = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
 
                         #endregion
 
@@ -158,185 +185,495 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             APMApplication application = applicationsList[0];
                             ControllerSummary controllerSummary = controllerSummariesList[0];
-                            Table table = insertNameValueTable(builder);
-                            
-                            insertNameValueRow(builder, table, "Controller", String.Format("{0}, Version {1} ({2})", application.Controller, controllerSummary.Version, controllerSummary.VersionDetail));
-                            insertNameValueRow(builder, table, "Saas or OnPrem", application.Controller.ToLower().Contains("saas.appdynamics") ? "SaaS" : "OnPrem");
-                            insertNameValueRow(builder, table, "Application", String.Format("{0} ({1}) {2}", application.ApplicationName, application.ApplicationID, application.Description));
-                            
-                            StringBuilder sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumTiers);
-                            if (tiersList != null && tiersList.Count > 0)
-                            {
-                                var groupTypes = tiersList.GroupBy(t => t.AgentType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (tiersMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", tiersMetricsList.Count(t => t.HasActivity == true), tiersMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Tiers", sb.ToString());
 
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumNodes);
-                            if (nodesList != null && nodesList.Count > 0)
-                            {
-                                var groupTypes = nodesList.GroupBy(n => n.AgentType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (nodesMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", nodesMetricsList.Count(t => t.HasActivity == true), nodesMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Nodes", sb.ToString());
+                            Table tableApplicationSummary = insertTableApplicationSummary(builder);
 
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumBTs);
-                            if (businessTransactionsList != null && businessTransactionsList.Count > 0)
-                            {
-                                var groupTypes = businessTransactionsList.GroupBy(b => b.BTType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (businessTransactionsMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", businessTransactionsMetricsList.Count(t => t.HasActivity == true), businessTransactionsMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Business Transactions", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            if (businessTransactionsMetricsList != null && businessTransactionsMetricsList.Count > 0)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", businessTransactionsMetricsList.Count(t => t.BTType == "OVERFLOW" && t.HasActivity == true), businessTransactionsMetricsList.Count(t => t.BTType == "OVERFLOW" && t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Overflow BTs", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumBackends);
-                            if (backendsList != null && backendsList.Count > 0)
-                            {
-                                var groupTypes = backendsList.GroupBy(b => b.BackendType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (backendsMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", backendsMetricsList.Count(t => t.HasActivity == true), backendsMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Backends", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumSEPs);
-                            if (serviceEndpointsList != null && serviceEndpointsList.Count > 0)
-                            {
-                                var groupTypes = serviceEndpointsList.GroupBy(b => b.SEPType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (serviceEndpointsMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", serviceEndpointsMetricsList.Count(t => t.HasActivity == true), serviceEndpointsMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Service Endpoints", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumErrors);
-                            if (errorsList != null && errorsList.Count > 0)
-                            {
-                                var groupTypes = errorsList.GroupBy(e => e.ErrorType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (errorsMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", errorsMetricsList.Count(t => t.HasActivity == true), errorsMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Errors", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            sb.AppendFormat("{0} total ", application.NumIPs);
-                            if (informationPointsList != null && informationPointsList.Count > 0)
-                            {
-                                var groupTypes = informationPointsList.GroupBy(p => p.IPType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append("), ");
-                            }
-                            if (informationPointsMetricsList != null)
-                            {
-                                sb.AppendFormat("{0} active/{1} inactive", informationPointsMetricsList.Count(t => t.HasActivity == true), informationPointsMetricsList.Count(t => t.HasActivity == false));
-                            }
-                            insertNameValueRow(builder, table, "Information Points", sb.ToString());
-
-                            sb = new StringBuilder(200);
-                            if (resolvedBackendsList != null && resolvedBackendsList.Count > 0)
-                            {
-                                sb.AppendFormat("{0} total ", resolvedBackendsList.Count);
-
-                                var groupTypes = resolvedBackendsList.GroupBy(b => b.BackendType);
-                                sb.Append("(");
-                                foreach (var groupType in groupTypes)
-                                {
-                                    sb.AppendFormat("{0} {1}", groupType.Count(), groupType.Key);
-                                    sb.Append(", ");
-                                }
-                                if (sb.Length > 2) sb.Remove(sb.Length - 2, 2);
-                                sb.Append(")");
-
-                            }
-                            insertNameValueRow(builder, table, "Mapped Backends", sb.ToString());
-
-                            insertCellWithContent(builder, table, "Links");
-                            Cell cell = builder.InsertCell();
-                            insertLinkToURL(builder, hyperLinkStyle, "Controller", application.ControllerLink);
-                            builder.Write(", ");
-                            insertLinkToURL(builder, hyperLinkStyle, "Controller", application.ControllerLink);
+                            insertCellStringValue(builder, "Controller");
+                            insertCellStringValue(builder, application.Controller);
+                            insertCellStringValue(builder, application.Controller.ToLower().Contains("saas.appdynamics") ? "SaaS" : "On Premises");
                             builder.EndRow();
 
-                            finalizeNameValueTable(builder, table);
+                            insertCellStringValue(builder, "Version");
+                            insertCellStringValue(builder, controllerSummary.Version);
+                            insertCellStringValue(builder, controllerSummary.VersionDetail);
+                            builder.EndRow();
+
+                            insertCellStringValue(builder, "Application");
+                            insertCellStringValue(builder, String.Format("{0} ({1}) {2} [{3}]", application.ApplicationName, application.ApplicationID, application.Description, jobTarget.Type));
+                            insertCellNoValue(builder);
+                            builder.Write("Navigate to: ");
+                            if (applicationsMetricsList != null && applicationsMetricsList.Count > 0)
+                            {
+                                APMApplication applicationWithMetrics = applicationsMetricsList[0];
+                                insertLinkToURL(builder, hyperLinkStyle, "Controller", applicationWithMetrics.ControllerLink);
+                                builder.Write(", ");
+                                insertLinkToURL(builder, hyperLinkStyle, "Application", applicationWithMetrics.ApplicationLink);
+                            }
+                            else
+                            {
+                                insertLinkToURL(builder, hyperLinkStyle, "Controller", application.ControllerLink);
+                                builder.Write(", ");
+                                insertLinkToURL(builder, hyperLinkStyle, "Application", application.ApplicationLink);
+                            }
+                            builder.EndRow();
+
+                            finalizeTableApplicationSummary(builder, tableApplicationSummary);
+
+                            #endregion
+
+                            #region Entity Types Table
+
+                            insertHeading(builder, StyleIdentifier.Heading2, "Entity Types and Activity", String.Empty, listHeadingsOutline, 1);
+
+                            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                            Table tableApplicationEntitySummary = insertTableApplicationEntityTypes(builder);
+
+                            #region Tiers
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Tiers", "Tiers");
+                            if (tiersList != null && tiersList.Count > 0)
+                            {
+                                List<string> tierTypesList = new List<string>(100);
+                                List<double> tierTypesCountsList = new List<double>(100);
+                                List<string> tierTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = tiersList.GroupBy(t => t.AgentType);
+                                measureTypesOfItemsInGroupBy(groupTypes, tierTypeAndCountsList, tierTypesList, tierTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", tiersList.Count, String.Join("\n", tierTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Tier Types", tierTypesList.ToArray(), tierTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No tier list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (tiersMetricsList != null && tiersMetricsList.Count > 0)
+                            {
+                                string[] tierActivityArray = new string[2];
+                                tierActivityArray[0] = "Has Activity";
+                                tierActivityArray[1] = "No Activity";
+                                double[] tierActivityCountsArray = new double[2];
+
+                                tierActivityCountsArray[0] = tiersMetricsList.Count(t => t.HasActivity == true);
+                                tierActivityCountsArray[1] = tiersMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", tierActivityCountsArray[0], tierActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Tier Activity", tierActivityArray, tierActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Nodes
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Nodes", "Nodes");
+                            if (nodesList != null && nodesList.Count > 0)
+                            {
+                                List<string> nodeTypesList = new List<string>(100);
+                                List<double> nodeTypesCountsList = new List<double>(100);
+                                List<string> nodeTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = nodesList.GroupBy(t => t.AgentType);
+                                measureTypesOfItemsInGroupBy(groupTypes, nodeTypeAndCountsList, nodeTypesList, nodeTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", nodesList.Count, String.Join("\n", nodeTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Node Types", nodeTypesList.ToArray(), nodeTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No node list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (nodesMetricsList != null && nodesMetricsList.Count > 0)
+                            {
+                                string[] nodeActivityArray = new string[2];
+                                nodeActivityArray[0] = "Has Activity";
+                                nodeActivityArray[1] = "No Activity";
+                                double[] nodeActivityCountsArray = new double[2];
+
+                                nodeActivityCountsArray[0] = nodesMetricsList.Count(t => t.HasActivity == true);
+                                nodeActivityCountsArray[1] = nodesMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", nodeActivityCountsArray[0], nodeActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Node Activity", nodeActivityArray, nodeActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Business Transactions
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Business Transactions", "Business_Transactions");
+                            if (businessTransactionsList != null && businessTransactionsList.Count > 0)
+                            {
+                                List<string> businessTransactionTypesList = new List<string>(100);
+                                List<double> businessTransactionTypesCountsList = new List<double>(100);
+                                List<string> businessTransactionTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = businessTransactionsList.GroupBy(t => t.BTType);
+                                measureTypesOfItemsInGroupBy(groupTypes, businessTransactionTypeAndCountsList, businessTransactionTypesList, businessTransactionTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", businessTransactionsList.Count, String.Join("\n", businessTransactionTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Business Transaction Types", businessTransactionTypesList.ToArray(), businessTransactionTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No business transaction list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (businessTransactionsMetricsList != null && businessTransactionsMetricsList.Count > 0)
+                            {
+                                string[] businessTransactionActivityArray = new string[2];
+                                businessTransactionActivityArray[0] = "Has Activity";
+                                businessTransactionActivityArray[1] = "No Activity";
+                                double[] businessTransactionActivityCountsArray = new double[2];
+
+                                businessTransactionActivityCountsArray[0] = businessTransactionsMetricsList.Count(t => t.HasActivity == true);
+                                businessTransactionActivityCountsArray[1] = businessTransactionsMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", businessTransactionActivityCountsArray[0], businessTransactionActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Business Transaction Activity", businessTransactionActivityArray, businessTransactionActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Business Transactions - Overflow
+
+                            insertCellStringValue(builder, "Overflow Business Transactions");
+                            if (businessTransactionsList != null && businessTransactionsList.Count > 0 &&
+                                businessTransactionsOverflowList != null && businessTransactionsOverflowList.Count > 0)
+                            {
+                                List<string> businessTransactionTypesList = new List<string>(100);
+                                List<double> businessTransactionTypesCountsList = new List<double>(100);
+                                List<string> businessTransactionTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = businessTransactionsOverflowList.GroupBy(t => t.BTType);
+                                measureTypesOfItemsInGroupBy(groupTypes, businessTransactionTypeAndCountsList, businessTransactionTypesList, businessTransactionTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1} unregistered\n{2}", businessTransactionsList.Where(b => b.BTType == "OVERFLOW").Count(), businessTransactionsOverflowList.Count, String.Join("\n", businessTransactionTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Overflow Business Transaction Types", businessTransactionTypesList.ToArray(), businessTransactionTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No business transaction list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (businessTransactionsMetricsList != null && businessTransactionsMetricsList.Count > 0)
+                            {
+                                string[] businessTransactionActivityArray = new string[2];
+                                businessTransactionActivityArray[0] = "Has Activity";
+                                businessTransactionActivityArray[1] = "No Activity";
+                                double[] businessTransactionActivityCountsArray = new double[2];
+
+                                businessTransactionActivityCountsArray[0] = businessTransactionsMetricsList.Where(b => b.BTType == "OVERFLOW").Count(t => t.HasActivity == true);
+                                businessTransactionActivityCountsArray[1] = businessTransactionsMetricsList.Where(b => b.BTType == "OVERFLOW").Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", businessTransactionActivityCountsArray[0], businessTransactionActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Business Transaction Activity", businessTransactionActivityArray, businessTransactionActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+                            #endregion
+
+                            #region Backends
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Backends", "Backends");
+                            if (backendsList != null && backendsList.Count > 0)
+                            {
+                                List<string> backendTypesList = new List<string>(100);
+                                List<double> backendTypesCountsList = new List<double>(100);
+                                List<string> backendTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = backendsList.GroupBy(t => t.BackendType);
+                                measureTypesOfItemsInGroupBy(groupTypes, backendTypeAndCountsList, backendTypesList, backendTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", backendsList.Count, String.Join("\n", backendTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Backend Types", backendTypesList.ToArray(), backendTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No backend list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (backendsMetricsList != null && backendsMetricsList.Count > 0)
+                            {
+                                string[] backendActivityArray = new string[2];
+                                backendActivityArray[0] = "Has Activity";
+                                backendActivityArray[1] = "No Activity";
+                                double[] backendActivityCountsArray = new double[2];
+
+                                backendActivityCountsArray[0] = backendsMetricsList.Count(t => t.HasActivity == true);
+                                backendActivityCountsArray[1] = backendsMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", backendActivityCountsArray[0], backendActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Backend Activity", backendActivityArray, backendActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Service Endpoints
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Service Endpoints", "Service_Endpoints");
+                            if (serviceEndpointsList != null && serviceEndpointsList.Count > 0)
+                            {
+                                List<string> serviceEndpointTypesList = new List<string>(100);
+                                List<double> serviceEndpointTypesCountsList = new List<double>(100);
+                                List<string> serviceEndpointTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = serviceEndpointsList.GroupBy(t => t.SEPType);
+                                measureTypesOfItemsInGroupBy(groupTypes, serviceEndpointTypeAndCountsList, serviceEndpointTypesList, serviceEndpointTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", serviceEndpointsList.Count, String.Join("\n", serviceEndpointTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Service Endpoint Types", serviceEndpointTypesList.ToArray(), serviceEndpointTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No service endpoint list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (serviceEndpointsMetricsList != null && serviceEndpointsMetricsList.Count > 0)
+                            {
+                                string[] serviceEndpointActivityArray = new string[2];
+                                serviceEndpointActivityArray[0] = "Has Activity";
+                                serviceEndpointActivityArray[1] = "No Activity";
+                                double[] serviceEndpointActivityCountsArray = new double[2];
+
+                                serviceEndpointActivityCountsArray[0] = serviceEndpointsMetricsList.Count(t => t.HasActivity == true);
+                                serviceEndpointActivityCountsArray[1] = serviceEndpointsMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", serviceEndpointActivityCountsArray[0], serviceEndpointActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Service Endpoint Activity", serviceEndpointActivityArray, serviceEndpointActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Errors
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Errors", "Errors");
+                            if (errorsList != null && errorsList.Count > 0)
+                            {
+                                List<string> errorTypesList = new List<string>(100);
+                                List<double> errorTypesCountsList = new List<double>(100);
+                                List<string> errorTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = errorsList.GroupBy(t => t.ErrorType);
+                                measureTypesOfItemsInGroupBy(groupTypes, errorTypeAndCountsList, errorTypesList, errorTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", errorsList.Count, String.Join("\n", errorTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Error Types", errorTypesList.ToArray(), errorTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No error list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (errorsMetricsList != null && errorsMetricsList.Count > 0)
+                            {
+                                string[] errorActivityArray = new string[2];
+                                errorActivityArray[0] = "Has Activity";
+                                errorActivityArray[1] = "No Activity";
+                                double[] errorActivityCountsArray = new double[2];
+
+                                errorActivityCountsArray[0] = errorsMetricsList.Count(t => t.HasActivity == true);
+                                errorActivityCountsArray[1] = errorsMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", errorActivityCountsArray[0], errorActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Error Activity", errorActivityArray, errorActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Information Points
+
+                            insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, "Information Points", "Information_Points");
+                            if (informationPointsList != null && informationPointsList.Count > 0)
+                            {
+                                List<string> informationPointTypesList = new List<string>(100);
+                                List<double> informationPointTypesCountsList = new List<double>(100);
+                                List<string> informationPointTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = informationPointsList.GroupBy(t => t.IPType);
+                                measureTypesOfItemsInGroupBy(groupTypes, informationPointTypeAndCountsList, informationPointTypesList, informationPointTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", informationPointsList.Count, String.Join("\n", informationPointTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Information Point Types", informationPointTypesList.ToArray(), informationPointTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No information point list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            if (informationPointsMetricsList != null && informationPointsMetricsList.Count > 0)
+                            {
+                                string[] informationPointActivityArray = new string[2];
+                                informationPointActivityArray[0] = "Has Activity";
+                                informationPointActivityArray[1] = "No Activity";
+                                double[] informationPointActivityCountsArray = new double[2];
+
+                                informationPointActivityCountsArray[0] = informationPointsMetricsList.Count(t => t.HasActivity == true);
+                                informationPointActivityCountsArray[1] = informationPointsMetricsList.Count(t => t.HasActivity == false);
+
+                                insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", informationPointActivityCountsArray[0], informationPointActivityCountsArray[1]));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Information Point Activity", informationPointActivityArray, informationPointActivityCountsArray);
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No metrics available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            builder.EndRow();
+
+                            #endregion
+
+                            finalizeTableApplicationEntityTypes(builder, tableApplicationEntitySummary);
+
+                            #endregion
+
+                            #region Detected Entity Dependencies
+
+                            insertHeading(builder, StyleIdentifier.Heading2, "Detected Entity Dependencies", String.Empty, listHeadingsOutline, 1);
+
+                            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                            Table tableApplicationEntityMapped = insertTableApplicationEntityMapped(builder);
+
+                            #region Explicitly Registered Business Transactions
+
+                            insertCellStringValue(builder, "Business Transaction Source");
+                            if (businessTransactionsList != null && businessTransactionsList.Count > 0)
+                            {
+                                List<string> businessTransactionTypesList = new List<string>(100);
+                                List<double> businessTransactionTypesCountsList = new List<double>(100);
+                                List<string> businessTransactionTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = businessTransactionsList.Where(t => t.IsExplicitRule == true).GroupBy(t => t.BTType);
+                                measureTypesOfItemsInGroupBy(groupTypes, businessTransactionTypeAndCountsList, businessTransactionTypesList, businessTransactionTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("Explicitly registered\n{0} total\n{1}", businessTransactionsList.Where(t => t.IsExplicitRule == true).Count(), String.Join("\n", businessTransactionTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Explicit Business Transaction", businessTransactionTypesList.ToArray(), businessTransactionTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No business transaction list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            if (businessTransactionsList != null && businessTransactionsList.Count > 0)
+                            {
+                                List<string> businessTransactionTypesList = new List<string>(100);
+                                List<double> businessTransactionTypesCountsList = new List<double>(100);
+                                List<string> businessTransactionTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = businessTransactionsList.Where(t => t.IsExplicitRule == false).GroupBy(t => t.BTType);
+                                measureTypesOfItemsInGroupBy(groupTypes, businessTransactionTypeAndCountsList, businessTransactionTypesList, businessTransactionTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("Automatically registered\n{0} total\n{1}", businessTransactionsList.Where(t => t.IsExplicitRule == false).Count(), String.Join("\n", businessTransactionTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Automatic Business Transaction", businessTransactionTypesList.ToArray(), businessTransactionTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No business transaction list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+
+                            builder.EndRow();
+
+                            #endregion
+
+                            #region Mapped Backends
+
+                            insertCellStringValue(builder, "Mapped Backends");
+                            if (resolvedBackendsList != null && resolvedBackendsList.Count > 0)
+                            {
+                                List<string> backendTypesList = new List<string>(100);
+                                List<double> backendTypesCountsList = new List<double>(100);
+                                List<string> backendTypeAndCountsList = new List<string>(100);
+
+                                var groupTypes = resolvedBackendsList.GroupBy(t => t.BackendType);
+                                measureTypesOfItemsInGroupBy(groupTypes, backendTypeAndCountsList, backendTypesList, backendTypesCountsList);
+
+                                insertCellStringValue(builder, String.Format("{0} total\n{1}", resolvedBackendsList.Count, String.Join("\n", backendTypeAndCountsList.ToArray())));
+                                insertCellNoValue(builder);
+                                insertPieChart(builder, "Mapped Backend Types", backendTypesList.ToArray(), backendTypesCountsList.ToArray());
+                            }
+                            else
+                            {
+                                insertCellStringValue(builder, "No mapped backend list available");
+                                insertCellStringValue(builder, String.Empty);
+                            }
+                            insertCellNoValue(builder);
+                            insertCellNoValue(builder);
+
+                            builder.EndRow();
+
+                            #endregion
+
+                            finalizeTableApplicationEntityMapped(builder, tableApplicationEntityMapped);
 
                             #endregion
 
@@ -360,11 +697,66 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             #region Flowmap
 
-                            insertHeading(builder, StyleIdentifier.Heading2, "Flowmap", String.Empty, listHeadingsOutline, 1);
-
+                            insertHeading(builder, StyleIdentifier.Heading2, "Flowmap in Grid Form", String.Empty, listHeadingsOutline, 1);
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
-                            builder.Writeln("TODO");
+
+                            Table tableApplicationActivityGrid = insertTableActivityGrid(builder);
+
+                            if (applicationActivityFlowsList != null && applicationActivityFlowsList.Count > 0)
+                            {
+                                foreach (ActivityFlow activityFlow in applicationActivityFlowsList)
+                                {
+                                    insertRowActivityGrid(builder, activityFlow);
+                                }
+                            }
+
+                            finalizeTableActivityGrid(builder, tableApplicationActivityGrid);
+
+                            #endregion
+
+                            #region Agent Properties
+
+                            if (agentPropertiesList != null && agentPropertiesList.Count > 0 && agentPropertiesList.Where(p => p.IsDefault == false).Count() > 0)
+                            {
+                                insertHeading(builder, StyleIdentifier.Heading2, "Agent Properties", "Application_Properties", listHeadingsOutline, 1);
+
+                                builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                Table tableApplicationAgentProperties = insertTableApplicationAgentProperties(builder);
+
+                                foreach (AgentConfigurationProperty agentProperty in agentPropertiesList.Where(p => p.IsDefault == false))
+                                {
+                                    insertCellStringValue(builder, agentProperty.TierName.Length == 0 ? "Application" : agentProperty.TierName);
+                                    insertCellStringValue(builder, agentProperty.AgentType);
+                                    insertCellStringValue(builder, agentProperty.PropertyName);
+                                    insertCellStringValue(builder, agentProperty.PropertyType);
+                                    switch (agentProperty.PropertyType)
+                                    {
+                                        case "BOOLEAN":
+                                            insertCellStringValue(builder, agentProperty.BooleanValue);
+                                            insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.BooleanDefaultValue.ToString());
+                                            break;
+
+                                        case "INTEGER":
+                                            insertCellStringValue(builder, agentProperty.IntegerValue);
+                                            insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.IntegerDefaultValue.ToString());
+                                            break;
+
+                                        case "STRING":
+                                            insertCellStringValue(builder, agentProperty.StringValue);
+                                            insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.StringDefaultValue);
+                                            break;
+
+                                        default:
+                                            break;
+                                    }
+                                    insertCellNoValue(builder); insertTextWithSize(builder, agentProperty.Description, 8);
+                                    builder.EndRow();
+                                }
+
+                                finalizeApplicationAgentProperties(builder, tableApplicationAgentProperties);
+                            }
 
                             #endregion
                         }
@@ -387,18 +779,40 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             #region Summary Table
 
-                            insertHeading(
-                                builder,
-                                StyleIdentifier.Heading2,
-                                "Summary",
-                                String.Empty,
-                                listHeadingsOutline,
-                                1);
+                            insertHeading(builder, StyleIdentifier.Heading2, "Summary", String.Empty, listHeadingsOutline, 1);
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableTiersSummary(builder);
+
+                            foreach (APMTier tier in tiersList)
+                            {
+                                APMTier tierWithMetric = tier;
+                                if (tiersMetricsList != null) tierWithMetric = tiersMetricsList.Where(t => t.TierID == tier.TierID).FirstOrDefault();
+
+                                insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, tier.TierName, getShortenedEntityNameForWordBookmark("tier", tier.TierName, tier.TierID));
+                                insertCellStringValue(builder, tier.AgentType);
+                                insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, tier.NumNodes.ToString(), getShortenedEntityNameForWordBookmark("tiernode", tier.TierName, tier.TierID));
+                                if (nodesList != null)
+                                {
+                                    insertCellStringValue(builder, nodesList.Where(n => n.TierID == tier.TierID && n.MachineAgentPresent == true).Count());
+                                }
+                                else
+                                {
+                                    insertCellStringValue(builder, 0);
+                                }
+                                insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, tier.NumBTs.ToString(), getShortenedEntityNameForWordBookmark("tierbt", tier.TierName, tier.TierID));
+                                insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, tier.NumSEPs.ToString(), getShortenedEntityNameForWordBookmark("tiersep", tier.TierName, tier.TierID));
+                                insertCellNoValue(builder); insertLinkToBookmark(builder, hyperLinkStyle, tier.NumErrors.ToString(), getShortenedEntityNameForWordBookmark("tiererr", tier.TierName, tier.TierID));
+                                insertCellStringValue(builder, tierWithMetric.AvailAgent);
+                                insertCellStringValue(builder, tierWithMetric.AvailMachine);
+                                insertCellStringValue(builder, tierWithMetric.HasActivity);
+                                insertCellStringValue(builder, -123);
+                                insertCellStringValue(builder, -321);
+                                builder.EndRow();
+                            }
+
+                            finalizeTableTiersSummary(builder, table);
 
                             #endregion
 
@@ -406,6 +820,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (APMTier tier in tiersList)
                             {
+                                APMTier tierWithMetric = tier;
+                                if (tiersMetricsList != null) tierWithMetric = tiersMetricsList.Where(t => t.TierID == tier.TierID).FirstOrDefault();
+
                                 insertHeading(builder, StyleIdentifier.Heading2, String.Format("{0} [{1}] ({2})", tier.TierName, tier.AgentType, tier.TierID), getShortenedEntityNameForWordBookmark("tier", tier.TierName, tier.TierID), listHeadingsOutline, 1);
 
                                 insertLinksToEntityTypeSections(builder);
@@ -416,13 +833,94 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                table = insertNameValueTable(builder);
-                                finalizeNameValueTable(builder, table);
+                                table = insertTableTierEntityTypes(builder);
+
+                                // APM Node versions
+                                insertCellStringValue(builder, "Node APM");
+                                if (nodesList != null && nodesList.Count > 0)
+                                {
+                                    List<string> nodeTypesList = new List<string>(100);
+                                    List<double> nodeTypesCountsList = new List<double>(100);
+                                    List<string> nodeTypeAndCountsList = new List<string>(100);
+
+                                    var groupTypes = nodesList.Where(n => n.TierID == tier.TierID && n.AgentPresent == true).GroupBy(t => t.AgentVersion);
+                                    measureTypesOfItemsInGroupBy(groupTypes, nodeTypeAndCountsList, nodeTypesList, nodeTypesCountsList);
+
+                                    insertCellStringValue(builder, String.Format("{0} total\n{1}", nodesList.Where(n => n.TierID == tier.TierID && n.AgentPresent == true).Count(), String.Join("\n", nodeTypeAndCountsList.ToArray())));
+                                    insertCellNoValue(builder);
+                                    insertPieChart(builder, "Node Versions", nodeTypesList.ToArray(), nodeTypesCountsList.ToArray());
+                                }
+                                else
+                                {
+                                    insertCellStringValue(builder, "No node list available");
+                                    insertCellStringValue(builder, String.Empty);
+                                }
+
+                                if (nodesMetricsList != null && nodesMetricsList.Count > 0)
+                                {
+                                    string[] nodeActivityArray = new string[2];
+                                    nodeActivityArray[0] = "Has Activity";
+                                    nodeActivityArray[1] = "No Activity";
+                                    double[] nodeActivityCountsArray = new double[2];
+
+                                    nodeActivityCountsArray[0] = nodesMetricsList.Where(n => n.TierID == tier.TierID && n.IsAPMAgentUsed == true).Count(t => t.HasActivity == true);
+                                    nodeActivityCountsArray[1] = nodesMetricsList.Where(n => n.TierID == tier.TierID && n.IsAPMAgentUsed == true).Count(t => t.HasActivity == false);
+
+                                    insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", nodeActivityCountsArray[0], nodeActivityCountsArray[1]));
+                                    insertCellNoValue(builder);
+                                    insertPieChart(builder, "Node Activity", nodeActivityArray, nodeActivityCountsArray);
+                                }
+                                else
+                                {
+                                    insertCellStringValue(builder, "No metrics available");
+                                    insertCellStringValue(builder, String.Empty);
+                                }
+                                builder.EndRow();
+
+                                // Machine Agent
+                                insertCellStringValue(builder, "Node MA");
+                                if (nodesList != null && nodesList.Count > 0)
+                                {
+                                    List<string> nodeTypesList = new List<string>(100);
+                                    List<double> nodeTypesCountsList = new List<double>(100);
+                                    List<string> nodeTypeAndCountsList = new List<string>(100);
+
+                                    var groupTypes = nodesList.Where(n => n.TierID == tier.TierID && n.MachineAgentPresent == true).GroupBy(t => t.MachineAgentVersion);
+                                    measureTypesOfItemsInGroupBy(groupTypes, nodeTypeAndCountsList, nodeTypesList, nodeTypesCountsList);
+
+                                    insertCellStringValue(builder, String.Format("{0} total\n{1}", nodesList.Where(n => n.TierID == tier.TierID && n.MachineAgentPresent == true).Count(), String.Join("\n", nodeTypeAndCountsList.ToArray())));
+                                    insertCellNoValue(builder);
+                                    insertPieChart(builder, "Node Versions", nodeTypesList.ToArray(), nodeTypesCountsList.ToArray());
+                                }
+                                else
+                                {
+                                    insertCellStringValue(builder, "No node list available");
+                                    insertCellStringValue(builder, String.Empty);
+                                }
+
+                                if (nodesMetricsList != null && nodesMetricsList.Count > 0)
+                                {
+                                    string[] nodeActivityArray = new string[2];
+                                    nodeActivityArray[0] = "Has Activity";
+                                    nodeActivityArray[1] = "No Activity";
+                                    double[] nodeActivityCountsArray = new double[2];
+
+                                    nodeActivityCountsArray[0] = nodesMetricsList.Where(n => n.TierID == tier.TierID && n.IsMachineAgentUsed == true).Count(t => t.HasActivity == true);
+                                    nodeActivityCountsArray[1] = nodesMetricsList.Where(n => n.TierID == tier.TierID && n.IsMachineAgentUsed == true).Count(t => t.HasActivity == false);
+
+                                    insertCellStringValue(builder, String.Format("{0} active\n{1} inactive", nodeActivityCountsArray[0], nodeActivityCountsArray[1]));
+                                    insertCellNoValue(builder);
+                                    insertPieChart(builder, "Node Activity", nodeActivityArray, nodeActivityCountsArray);
+                                }
+                                else
+                                {
+                                    insertCellStringValue(builder, "No metrics available");
+                                    insertCellStringValue(builder, String.Empty);
+                                }
+                                builder.EndRow();
+                                finalizeTableTierEntityTypes(builder, table);
 
                                 #endregion
-
-                                builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
-                                builder.Writeln(tier.ToString());
 
                                 #region Dashboard
 
@@ -442,7 +940,69 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #endregion
 
-                                builder.InsertBreak(BreakType.PageBreak);
+                                #region Flowmap
+
+                                insertHeading(builder, StyleIdentifier.Heading3, "Flowmap in Grid Form", String.Empty, listHeadingsOutline, 2);
+
+                                builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                Table tableApplicationActivityGrid = insertTableActivityGrid(builder);
+
+                                if (tiersActivityFlowsList != null && tiersActivityFlowsList.Count > 0)
+                                {
+                                    List<ActivityFlow> thisTierAcvitityFlowsList = tiersActivityFlowsList.Where(a => a.TierID == tier.TierID).ToList();
+                                    foreach (ActivityFlow activityFlow in thisTierAcvitityFlowsList)
+                                    {
+                                        insertRowActivityGrid(builder, activityFlow);
+                                    }
+                                }
+
+                                finalizeTableActivityGrid(builder, tableApplicationActivityGrid);
+
+                                #endregion
+
+                                #region Agent Properties
+
+                                if (agentPropertiesList != null && agentPropertiesList.Count > 0 && agentPropertiesList.Where(p => p.TierName == tier.TierName && p.IsDefault == false).Count() > 0)
+                                {
+                                    insertHeading(builder, StyleIdentifier.Heading3, "Agent Properties", getShortenedEntityNameForWordBookmark("tierprop", tier.TierName, tier.TierID), listHeadingsOutline, 2);
+
+                                    builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                    Table tableTierAgentProperties = insertTableTierAgentProperties(builder);
+
+                                    foreach (AgentConfigurationProperty agentProperty in agentPropertiesList.Where(p => p.TierName == tier.TierName && p.IsDefault == false))
+                                    {
+                                        insertCellStringValue(builder, agentProperty.PropertyName);
+                                        insertCellStringValue(builder, agentProperty.PropertyType);
+                                        switch (agentProperty.PropertyType)
+                                        {
+                                            case "BOOLEAN":
+                                                insertCellStringValue(builder, agentProperty.BooleanValue);
+                                                insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.BooleanDefaultValue.ToString());
+                                                break;
+
+                                            case "INTEGER":
+                                                insertCellStringValue(builder, agentProperty.IntegerValue);
+                                                insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.IntegerDefaultValue.ToString());
+                                                break;
+
+                                            case "STRING":
+                                                insertCellStringValue(builder, agentProperty.StringValue);
+                                                insertCellNoValue(builder); insertStrikethroughText(builder, agentProperty.StringDefaultValue);
+                                                break;
+
+                                            default:
+                                                break;
+                                        }
+                                        insertCellNoValue(builder); insertTextWithSize(builder, agentProperty.Description, 8);
+                                        builder.EndRow();
+                                    }
+
+                                    finalizeTierAgentProperties(builder, tableTierAgentProperties);
+                                }
+
+                                #endregion
 
                                 if (j % 10 == 0)
                                 {
@@ -472,11 +1032,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             #region Summary Table
 
                             insertHeading(builder, StyleIdentifier.Heading2, "Summary", String.Empty, listHeadingsOutline, 1);
-                            
+
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -510,8 +1070,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                            table = insertNameValueTable(builder);
-                                            finalizeNameValueTable(builder, table);
+                                            table = insertTableApplicationSummary(builder);
+                                            finalizeTableApplicationSummary(builder, table);
 
                                             #endregion
 
@@ -536,7 +1096,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             #endregion
 
-                                            builder.InsertBreak(BreakType.PageBreak);
+                                            #region Flowmap
+
+                                            insertHeading(builder, StyleIdentifier.Heading4, "Flowmap in Grid Form", String.Empty, listHeadingsOutline, 3);
+
+                                            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                            Table tableNodeActivityGrid = insertTableActivityGrid(builder);
+
+                                            if (nodesActivityFlowsList != null && nodesActivityFlowsList.Count > 0)
+                                            {
+                                                List<ActivityFlow> thisNodeAcvitityFlowsList = nodesActivityFlowsList.Where(a => a.NodeID == node.NodeID).ToList();
+                                                foreach (ActivityFlow activityFlow in thisNodeAcvitityFlowsList)
+                                                {
+                                                    insertRowActivityGrid(builder, activityFlow);
+                                                }
+                                            }
+
+                                            finalizeTableActivityGrid(builder, tableNodeActivityGrid);
+
+                                            #endregion
 
                                             if (j % 10 == 0)
                                             {
@@ -558,7 +1137,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Business Transactions
 
-                        insertHeading(builder, StyleIdentifier.Heading1, "Business Transactions", "BTs", listHeadingsOutline, 0);
+                        insertHeading(builder, StyleIdentifier.Heading1, "Business Transactions", "Business_Transactions", listHeadingsOutline, 0);
 
                         insertLinksToEntityTypeSections(builder);
 
@@ -572,8 +1151,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -585,7 +1164,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 foreach (APMTier tier in tiersList)
                                 {
-                                    insertHeading( builder, StyleIdentifier.Heading2, String.Format("{0} [{1}] ({2})", tier.TierName, tier.AgentType, tier.TierID), getShortenedEntityNameForWordBookmark("tierbt", tier.TierName, tier.TierID), listHeadingsOutline, 1);
+                                    insertHeading(builder, StyleIdentifier.Heading2, String.Format("{0} [{1}] ({2})", tier.TierName, tier.AgentType, tier.TierID), getShortenedEntityNameForWordBookmark("tierbt", tier.TierName, tier.TierID), listHeadingsOutline, 1);
 
                                     insertLinksToEntityTypeSections(builder);
 
@@ -607,8 +1186,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                            table = insertNameValueTable(builder);
-                                            finalizeNameValueTable(builder, table);
+                                            table = insertTableApplicationSummary(builder);
+                                            finalizeTableApplicationSummary(builder, table);
 
                                             #endregion
 
@@ -633,7 +1212,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             #endregion
 
-                                            builder.InsertBreak(BreakType.PageBreak);
+                                            #region Flowmap
+
+                                            insertHeading(builder, StyleIdentifier.Heading4, "Flowmap in Grid Form", String.Empty, listHeadingsOutline, 3);
+
+                                            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                            Table tableBusinessTransactionActivityGrid = insertTableActivityGrid(builder);
+
+                                            if (businessTransactionsActivityFlowsList != null && businessTransactionsActivityFlowsList.Count > 0)
+                                            {
+                                                List<ActivityFlow> thisBusinessTransactionAcvitityFlowsList = businessTransactionsActivityFlowsList.Where(a => a.BTID == businessTransaction.BTID).ToList();
+                                                foreach (ActivityFlow activityFlow in thisBusinessTransactionAcvitityFlowsList)
+                                                {
+                                                    insertRowActivityGrid(builder, activityFlow);
+                                                }
+                                            }
+
+                                            finalizeTableActivityGrid(builder, tableBusinessTransactionActivityGrid);
+
+                                            #endregion
 
                                             if (j % 10 == 0)
                                             {
@@ -667,12 +1265,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             #region Summary Table
 
-                            insertHeading( builder, StyleIdentifier.Heading2, "Summary", String.Empty, listHeadingsOutline, 1);
+                            insertHeading(builder, StyleIdentifier.Heading2, "Summary", String.Empty, listHeadingsOutline, 1);
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -690,8 +1288,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                table = insertNameValueTable(builder);
-                                finalizeNameValueTable(builder, table);
+                                table = insertTableApplicationSummary(builder);
+                                finalizeTableApplicationSummary(builder, table);
 
                                 #endregion
 
@@ -716,7 +1314,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 #endregion
 
-                                builder.InsertBreak(BreakType.PageBreak);
+                                #region Flowmap
+
+                                insertHeading(builder, StyleIdentifier.Heading3, "Flowmap in Grid Form", String.Empty, listHeadingsOutline, 2);
+
+                                builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+                                Table tableBackendActivityGrid = insertTableActivityGrid(builder);
+
+                                if (backendsActivityFlowsList != null && backendsActivityFlowsList.Count > 0)
+                                {
+                                    List<ActivityFlow> thisBackendAcvitityFlowsList = backendsActivityFlowsList.Where(a => a.BackendID == backend.BackendID).ToList();
+                                    foreach (ActivityFlow activityFlow in thisBackendAcvitityFlowsList)
+                                    {
+                                        insertRowActivityGrid(builder, activityFlow);
+                                    }
+                                }
+
+                                finalizeTableActivityGrid(builder, tableBackendActivityGrid);
+
+                                #endregion
 
                                 if (j % 10 == 0)
                                 {
@@ -735,7 +1352,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Service Endpoints
 
-                        insertHeading(builder, StyleIdentifier.Heading1, "Service Endpoints", "SEPs", listHeadingsOutline, 0);
+                        insertHeading(builder, StyleIdentifier.Heading1, "Service Endpoints", "Service_Endpoints", listHeadingsOutline, 0);
 
                         insertLinksToEntityTypeSections(builder);
 
@@ -749,8 +1366,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -784,15 +1401,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                            table = insertNameValueTable(builder);
-                                            finalizeNameValueTable(builder, table);
+                                            table = insertTableApplicationSummary(builder);
+                                            finalizeTableApplicationSummary(builder, table);
 
                                             #endregion
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
                                             builder.Writeln(serviceEndpoint.ToString());
-
-                                            builder.InsertBreak(BreakType.PageBreak);
 
                                             if (j % 10 == 0)
                                             {
@@ -828,8 +1443,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -863,15 +1478,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                            table = insertNameValueTable(builder);
-                                            finalizeNameValueTable(builder, table);
+                                            table = insertTableApplicationSummary(builder);
+                                            finalizeTableApplicationSummary(builder, table);
 
                                             #endregion
 
                                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
                                             builder.Writeln(error.ToString());
-
-                                            builder.InsertBreak(BreakType.PageBreak);
 
                                             if (j % 10 == 0)
                                             {
@@ -893,7 +1506,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Information Points
 
-                        insertHeading(builder, StyleIdentifier.Heading1, "Information Points", "IPs", listHeadingsOutline, 0);
+                        insertHeading(builder, StyleIdentifier.Heading1, "Information Points", "Information_Points", listHeadingsOutline, 0);
 
                         insertLinksToEntityTypeSections(builder);
 
@@ -909,8 +1522,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                            Table table = insertNameValueTable(builder);
-                            finalizeNameValueTable(builder, table);
+                            Table table = insertTableApplicationSummary(builder);
+                            finalizeTableApplicationSummary(builder, table);
 
                             #endregion
 
@@ -928,15 +1541,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
 
-                                table = insertNameValueTable(builder);
-                                finalizeNameValueTable(builder, table);
+                                table = insertTableApplicationSummary(builder);
+                                finalizeTableApplicationSummary(builder, table);
 
                                 #endregion
 
                                 builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
                                 builder.Writeln(informationPoint.ToString());
-
-                                builder.InsertBreak(BreakType.PageBreak);
 
                                 if (j % 10 == 0)
                                 {
@@ -953,6 +1564,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        // Save the final document
                         finalizeAndSaveApplicationSummaryReport(applicationSummaryDocument, FilePathMap.ApplicationSummaryWordReportFilePath(jobTarget, jobConfiguration.Input.TimeRange, true));
 
                         #endregion
@@ -1016,8 +1628,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return (jobConfiguration.Output.ApplicationSummary == true);
         }
 
+        #region Document prep and saving
+
         private Document createApplicationSummaryDocument(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget)
-        { 
+        {
             Document doc = new Document();
             DocumentBuilder builder = new DocumentBuilder(doc);
 
@@ -1153,7 +1767,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Title;
             builder.Writeln("AppDynamics DEXTER Application Summary Report");
-            
+
             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
             builder.Writeln("");
             builder.Writeln("");
@@ -1190,19 +1804,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             builder.InsertBreak(BreakType.PageBreak);
 
             #endregion
-
-            //#region Top
-
-            //builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Heading1;
-            //builder.StartBookmark("Top");
-            //builder.Writeln("Top");
-            //builder.EndBookmark("Top");
-
-            //builder.Writeln(String.Format("TODO fill out some summary about {0}/{1} ({2})", jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID));
-
-            // builder.InsertBreak(BreakType.PageBreak);
-
-            //#endregion
 
             return doc;
         }
@@ -1278,68 +1879,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return true;
         }
 
-        private static void insertLinksToEntityTypeSections(DocumentBuilder builder)
-        {
-            Style hyperLinkStyle = builder.Document.Styles["HyperLinkStyle"];
-
-            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
-
-            builder.Write("Jump to: ");
-
-            //builder.Font.Style = hyperLinkStyle;
-            //builder.InsertHyperlink("Top", "Top", true);
-            //builder.Font.ClearFormatting();
-
-            //builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Application", "Application", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Tiers", "Tiers", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Nodes", "Nodes", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("BTs", "BTs", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Backends", "Backends", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Service Endpoints", "SEPs", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Errors", "Errors", true);
-            builder.Font.ClearFormatting();
-
-            builder.Write(", ");
-
-            builder.Font.Style = hyperLinkStyle;
-            builder.InsertHyperlink("Information Points", "IPs", true);
-            builder.Font.ClearFormatting();
-
-            builder.Writeln("");
-        }
+        #endregion
 
         private static void insertHeading(DocumentBuilder builder, StyleIdentifier headingStyle, string headingName, string headingBookmarkName, List listHeadingsOutline, int listNumberingOutlineLevel)
         {
@@ -1378,6 +1918,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
             builder.Font.ClearFormatting();
         }
 
+        #region Insertion of links to various entities
+
+        private static void insertLinksToEntityTypeSections(DocumentBuilder builder)
+        {
+            Style hyperLinkStyle = builder.Document.Styles["HyperLinkStyle"];
+
+            builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
+
+            builder.Write("Jump to: ");
+
+            insertLinkToBookmark(builder, hyperLinkStyle, "Application", "Application"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Tiers", "Tiers"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Nodes", "Nodes"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Business Transactions", "Business_Transactions"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Backends", "Backends"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Service Endpoints", "Service_Endpoints"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Errors", "Errors"); builder.Write(", ");
+            insertLinkToBookmark(builder, hyperLinkStyle, "Information Points", "Information_Points");
+
+            builder.Writeln("");
+        }
+
         private static void insertLinksToTiers(List<APMTier> tiersList, DocumentBuilder builder, Style hyperLinkStyle, string bookmarkPrefix)
         {
             builder.ParagraphFormat.StyleIdentifier = StyleIdentifier.Normal;
@@ -1394,13 +1956,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToTiers(List<APMTier> tiersList, DocumentBuilder builder, Style hyperLinkStyle)
         {
             insertLinksToTiers(tiersList, builder, hyperLinkStyle, "tier");
         }
+
         private static void insertLinksToTiersInNodes(List<APMTier> tiersList, DocumentBuilder builder, Style hyperLinkStyle)
         {
             insertLinksToTiers(tiersList, builder, hyperLinkStyle, "tiernode");
@@ -1429,9 +1991,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMNode node = nodesList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(node.NodeName, getShortenedEntityNameForWordBookmark("node", node.NodeName, node.NodeID), true);
-                builder.Font.ClearFormatting();
+                insertLinkToBookmark(builder, hyperLinkStyle, node.NodeName, getShortenedEntityNameForWordBookmark("node", node.NodeName, node.NodeID));
 
                 if (i < nodesList.Count - 1)
                 {
@@ -1439,7 +1999,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToBusinessTransactions(List<APMBusinessTransaction> businessTransactionsList, DocumentBuilder builder, Style hyperLinkStyle)
@@ -1450,9 +2009,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMBusinessTransaction businessTransaction = businessTransactionsList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(businessTransaction.BTName, getShortenedEntityNameForWordBookmark("bt", businessTransaction.BTName, businessTransaction.BTID), true);
-                builder.Font.ClearFormatting();
+                insertLinkToBookmark(builder, hyperLinkStyle, businessTransaction.BTName, getShortenedEntityNameForWordBookmark("bt", businessTransaction.BTName, businessTransaction.BTID));
 
                 if (i < businessTransactionsList.Count - 1)
                 {
@@ -1460,7 +2017,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToBackends(List<APMBackend> backendsList, DocumentBuilder builder, Style hyperLinkStyle)
@@ -1471,9 +2027,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMBackend backend = backendsList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(backend.BackendName, getShortenedEntityNameForWordBookmark("back", backend.BackendName, backend.BackendID), true);
-                builder.Font.ClearFormatting();
+                insertLinkToBookmark(builder, hyperLinkStyle, backend.BackendName, getShortenedEntityNameForWordBookmark("back", backend.BackendName, backend.BackendID));
 
                 if (i < backendsList.Count - 1)
                 {
@@ -1481,7 +2035,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToServiceEndpoints(List<APMServiceEndpoint> serviceEndpointsList, DocumentBuilder builder, Style hyperLinkStyle)
@@ -1492,9 +2045,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMServiceEndpoint serviceEndpoint = serviceEndpointsList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(serviceEndpoint.SEPName, getShortenedEntityNameForWordBookmark("sep", serviceEndpoint.SEPName, serviceEndpoint.SEPID), true);
-                builder.Font.ClearFormatting();
+                insertLinkToBookmark(builder, hyperLinkStyle, serviceEndpoint.SEPName, getShortenedEntityNameForWordBookmark("sep", serviceEndpoint.SEPName, serviceEndpoint.SEPID));
 
                 if (i < serviceEndpointsList.Count - 1)
                 {
@@ -1502,7 +2053,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToErrors(List<APMError> errorsList, DocumentBuilder builder, Style hyperLinkStyle)
@@ -1513,9 +2063,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMError error = errorsList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(error.ErrorName, getShortenedEntityNameForWordBookmark("error", error.ErrorName, error.ErrorID), true);
-                builder.Font.ClearFormatting();
+                insertLinkToBookmark(builder, hyperLinkStyle, error.ErrorName, getShortenedEntityNameForWordBookmark("error", error.ErrorName, error.ErrorID));
 
                 if (i < errorsList.Count - 1)
                 {
@@ -1523,7 +2071,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
         private static void insertLinksToInformationPoints(List<APMInformationPoint> informationPointsList, DocumentBuilder builder, Style hyperLinkStyle)
@@ -1534,33 +2081,231 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 APMInformationPoint informationPoint = informationPointsList[i];
 
-                builder.Font.Style = hyperLinkStyle;
-                builder.InsertHyperlink(informationPoint.IPName, getShortenedEntityNameForWordBookmark("ip", informationPoint.IPName, informationPoint.IPID), true);
-                builder.Font.ClearFormatting();
-
+                insertLinkToBookmark(builder, hyperLinkStyle, informationPoint.IPName, getShortenedEntityNameForWordBookmark("ip", informationPoint.IPName, informationPoint.IPID));
                 if (i < informationPointsList.Count - 1)
                 {
                     builder.Write(", ");
                 }
             }
             builder.Writeln("");
-            builder.InsertBreak(BreakType.PageBreak);
         }
 
-        internal static Table insertNameValueTable(DocumentBuilder builder)
-        { 
+        #endregion
+
+        #region Helper functions for creation of various tables
+
+        internal static Table insertTableApplicationSummary(DocumentBuilder builder)
+        {
             Table table = builder.StartTable();
-            Cell cell = insertCellWithContent(builder, table, "Property");
+
+            Cell cell = insertCellStringValue(builder, "Property");
             cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(100);
-            cell = insertCellWithContent(builder, table, "Value");
-            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(600);
+            cell = insertCellStringValue(builder, "Value");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Detail");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
 
             builder.EndRow();
 
             return table;
         }
 
-        internal static void finalizeNameValueTable(DocumentBuilder builder, Table table)
+        internal static void finalizeTableApplicationSummary(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableApplicationEntityTypes(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Property");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(100);
+            cell = insertCellStringValue(builder, "Types");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Types Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+            cell = insertCellStringValue(builder, "Activity");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Activity Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeTableApplicationEntityTypes(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableApplicationEntityMapped(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Property");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(100);
+            cell = insertCellStringValue(builder, "Value");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+            cell = insertCellStringValue(builder, "Value");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeTableApplicationEntityMapped(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableActivityGrid(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Type");
+            cell = insertCellStringValue(builder, "Direction");
+            cell = insertCellStringValue(builder, "From");
+            cell = insertCellStringValue(builder, "From Type");
+            cell = insertCellStringValue(builder, "To");
+            cell = insertCellStringValue(builder, "To Type");
+
+            cell = insertCellStringValue(builder, "ART");
+            cell = insertCellStringValue(builder, "Calls");
+            cell = insertCellStringValue(builder, "CPM");
+            cell = insertCellStringValue(builder, "Errors");
+            cell = insertCellStringValue(builder, "EPM");
+            cell = insertCellStringValue(builder, "Errors %");
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static Row insertRowActivityGrid(DocumentBuilder builder, ActivityFlow activityFlow)
+        {
+            insertCellStringValue(builder, activityFlow.CallType);
+            insertCellStringValue(builder, activityFlow.CallDirection);
+            insertCellStringValue(builder, activityFlow.FromName);
+            insertCellStringValue(builder, activityFlow.FromType);
+            insertCellStringValue(builder, activityFlow.ToName);
+            insertCellStringValue(builder, activityFlow.ToType);
+            insertCellStringValue(builder, activityFlow.ART);
+            insertCellStringValue(builder, activityFlow.Calls);
+            insertCellStringValue(builder, activityFlow.CPM);
+            insertCellStringValue(builder, activityFlow.Errors);
+            insertCellStringValue(builder, activityFlow.EPM);
+            insertCellStringValue(builder, activityFlow.ErrorsPercentage);
+            Row row = builder.EndRow();
+            return row;
+        }
+
+        internal static void finalizeTableActivityGrid(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableTiersSummary(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Tier");
+            cell = insertCellStringValue(builder, "Type");
+            cell = insertCellStringValue(builder, "# APM Nodes");
+            cell = insertCellStringValue(builder, "# Machine Nodes");
+            cell = insertCellStringValue(builder, "# BTs");
+            cell = insertCellStringValue(builder, "# SEPs");
+            cell = insertCellStringValue(builder, "# Errors");
+            cell = insertCellStringValue(builder, "Agent Avail");
+            cell = insertCellStringValue(builder, "Machine Avail");
+            cell = insertCellStringValue(builder, "TX Activity");
+            cell = insertCellStringValue(builder, "# Custom Props");
+            cell = insertCellStringValue(builder, "# Events");
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeTableTiersSummary(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableTierEntityTypes(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Property");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(100);
+            cell = insertCellStringValue(builder, "Types");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Types Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+            cell = insertCellStringValue(builder, "Activity");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(400);
+            cell = insertCellStringValue(builder, "Activity Chart");
+            cell.CellFormat.PreferredWidth = PreferredWidth.FromPoints(300);
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeTableTierEntityTypes(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableApplicationAgentProperties(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Scope");
+            cell = insertCellStringValue(builder, "Agent Type");
+            cell = insertCellStringValue(builder, "Name");
+            cell = insertCellStringValue(builder, "Type");
+            cell = insertCellStringValue(builder, "Value");
+            cell = insertCellStringValue(builder, "Old Value");
+            cell = insertCellStringValue(builder, "Description");
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeApplicationAgentProperties(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static Table insertTableTierAgentProperties(DocumentBuilder builder)
+        {
+            Table table = builder.StartTable();
+
+            Cell cell = insertCellStringValue(builder, "Name");
+            cell = insertCellStringValue(builder, "Type");
+            cell = insertCellStringValue(builder, "Value");
+            cell = insertCellStringValue(builder, "Old Value");
+            cell = insertCellStringValue(builder, "Description");
+
+            builder.EndRow();
+
+            return table;
+        }
+
+        internal static void finalizeTierAgentProperties(DocumentBuilder builder, Table table)
+        {
+            finalizeTableStyleAndResize(builder, table);
+        }
+
+        internal static void finalizeTableStyleAndResize(DocumentBuilder builder, Table table)
         {
             table.StyleIdentifier = StyleIdentifier.ListTable1Light;
             table.AutoFit(AutoFitBehavior.AutoFitToContents);
@@ -1568,24 +2313,94 @@ namespace AppDynamics.Dexter.ProcessingSteps
             builder.EndTable();
         }
 
-        internal static void insertNameValueRow(DocumentBuilder builder, Table table, string propertyName, object propertyValue)
-        {
-            insertNameValueRow(builder, table, propertyName, propertyValue.ToString());
-        }
+        #endregion
 
-        internal static void insertNameValueRow(DocumentBuilder builder, Table table, string propertyName, string propertyValue)
-        {
-            insertCellWithContent(builder, table, propertyName);
-            insertCellWithContent(builder, table, propertyValue);
-            builder.EndRow();
-        }
-
-        internal static Cell insertCellWithContent(DocumentBuilder builder, Table table, string cellContent)
+        internal static Cell insertCellNoValue(DocumentBuilder builder)
         {
             Cell cell = builder.InsertCell();
+            return cell;
+        }
+
+        internal static Cell insertCellStringValue(DocumentBuilder builder, string cellContent)
+        {
+            Cell cell = insertCellNoValue(builder);
             builder.Write(cellContent);
             return cell;
         }
 
+        internal static Cell insertCellStringValue(DocumentBuilder builder, object cellContent)
+        {
+            Cell cell = insertCellNoValue(builder);
+            builder.Write(cellContent.ToString());
+            return cell;
+        }
+
+        private static void insertStrikethroughText(DocumentBuilder builder, String textContent)
+        {
+            builder.Font.StrikeThrough = true;
+            builder.Write(textContent);
+            builder.Font.ClearFormatting();
+        }
+
+        private static void insertTextWithSize(DocumentBuilder builder, String textContent, int fontSize)
+        {
+            builder.Font.Size = fontSize;
+            builder.Write(textContent);
+            builder.Font.ClearFormatting();
+        }
+
+        internal static Shape insertPieChart(DocumentBuilder builder, string chartTitle, string[] categories, double[] values)
+        {
+            // If no data is passed, Aspose acts very cute and adds a mock Sales pie chart out of thin air. I'd rather have a blank one
+            if (categories.Length == 0)
+            {
+                categories = new string[1];
+                categories[0] = "";
+                values = new double[1];
+                values[0] = 0;
+            }
+            if (categories.Length > 0 && values.Length > 0)
+            {
+                Shape shape = builder.InsertChart(ChartType.Pie, 300, 130);
+                Chart chart = shape.Chart;
+                chart.Series.Clear();
+                ChartSeries series = chart.Series.Add(chartTitle, categories, values);
+                chart.Legend.Position = LegendPosition.Right;
+                chart.Title.Overlay = true;
+                chart.Title.Show = false;
+
+                ChartDataLabelCollection labels = series.DataLabels;
+                labels.ShowPercentage = true;
+                labels.ShowValue = true;
+                labels.ShowLeaderLines = false;
+                labels.Separator = "-";
+
+                return shape;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        internal void measureTypesOfItemsInGroupBy(IEnumerable<IGrouping<string, APMEntityBase>> groupTypesToMeasure, List<string> prettyFormatList, List<string> typesList, List<double> countsList)
+        {
+            foreach (var groupType in groupTypesToMeasure)
+            {
+                prettyFormatList.Add(String.Format("{0} {1}", groupType.Count(), groupType.Key));
+                typesList.Add(groupType.Key);
+                countsList.Add(groupType.Count());
+            }
+        }
+
+        internal void measureTypesOfItemsInGroupBy(IEnumerable<IGrouping<string, object>> groupTypesToMeasure, List<string> prettyFormatList, List<string> typesList, List<double> countsList)
+        {
+            foreach (var groupType in groupTypesToMeasure)
+            {
+                prettyFormatList.Add(String.Format("{0} {1}", groupType.Count(), groupType.Key));
+                typesList.Add(groupType.Key);
+                countsList.Add(groupType.Count());
+            }
+        }
     }
 }

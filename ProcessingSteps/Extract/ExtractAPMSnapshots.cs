@@ -215,7 +215,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                             else
                                             {
-                                                logger.Warn("Snapshot list retrival call unexpectedly did not have any evidence of continuation CursorId");
+                                                logger.Warn("Snapshot list retrieval call unexpectedly did not have any evidence of continuation CursorId");
                                             }
 
                                             logger.Info("Retrieved snapshots from Controller {0}, Application {1}, From {2:o}, To {3:o}', number of snapshots {4}, continuation type {5}, continuation CursorId {6}", jobTarget.Controller, jobTarget.Application, jobTimeRange.From, jobTimeRange.To, retrievedSnapshotsArray.Count, serverCursorIdType, serverCursorId);

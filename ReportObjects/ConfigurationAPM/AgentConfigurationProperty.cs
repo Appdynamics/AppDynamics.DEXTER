@@ -39,6 +39,8 @@ namespace AppDynamics.Dexter.ReportObjects
 
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsDefault { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
+        public bool IsBuiltIn { get; set; }
 
         public override string EntityIdentifier
         {

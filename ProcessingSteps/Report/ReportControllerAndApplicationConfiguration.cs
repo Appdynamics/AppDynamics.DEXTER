@@ -62,14 +62,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APM_METHOD_INVOCATION_DATA_COLLECTORS = "32.APM MIDCs";
         private const string SHEET_APM_HTTP_DATA_COLLECTORS = "33.APM HTTP DCs";
         private const string SHEET_APM_AGENT_CALL_GRAPH_SETTINGS = "34.APM Call Graph Settings";
-        private const string SHEET_APM_SERVICE_ENDPOINT_RULES_SETTINGS = "35.APM Service Endpoint Rules";
-        private const string SHEET_APM_DEVELOPER_MODE_NODES = "36.APM Developer Mode Nodes";
-        private const string SHEET_APM_ERROR_DETECTION_RULES = "37.APM Error Detection Rules";
-        private const string SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES = "38.APM Error Ignore Messages";
-        private const string SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS = "39.APM Error Ignore Loggers";
-        private const string SHEET_APM_ERROR_DETECTION_LOGGERS = "40.APM Error Loggers";
-        private const string SHEET_APM_ERROR_DETECTION_HTTP_CODES = "41.APM Error HTTP Codes";
-        private const string SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES = "42.APM Error Redired Pages";
+        private const string SHEET_APM_SERVICE_ENDPOINT_DISCOVERY_RULES = "35.APM SEP Discovery Rules";
+        private const string SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES = "36.APM SEP Entry Rules";
+        private const string SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES_PIVOT_TYPE = "36.APM SEP Entry Rules.Type";
+        private const string SHEET_APM_DEVELOPER_MODE_NODES = "37.APM Developer Mode Nodes";
+        private const string SHEET_APM_ERROR_DETECTION_RULES = "38.APM Error Detection Rules";
+        private const string SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES = "39.APM Error Ignore Messages";
+        private const string SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS = "40.APM Error Ignore Loggers";
+        private const string SHEET_APM_ERROR_DETECTION_LOGGERS = "41.APM Error Loggers";
+        private const string SHEET_APM_ERROR_DETECTION_HTTP_CODES = "42.APM Error HTTP Codes";
+        private const string SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES = "43.APM Error Redired Pages";
 
         // DB Configuration
         private const string SHEET_DB_APPLICATION_CONFIGURATION = "50.DB Application Config";
@@ -102,7 +104,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_CONTROLLER_EMAIL_ALERT_TEMPLATES = "t_ALERT_EmailAlertTemplates";
         private const string TABLE_CONTROLLER_HTTP_ALERT_TEMPLATES = "t_ALERT_HttpAlertTemplates";
         private const string TABLE_APP_HEALTH_RULES_SUMMARY = "t_ALERT_HealthRulesSummary";
-        private const string TABLE_APP_HEALTH_RULES = "t_ALERT_HealthRules";
         private const string TABLE_APP_POLICIES = "t_ALERT_Policies";
         private const string TABLE_APP_ACTIONS = "t_ALERT_Actions";
         private const string TABLE_APP_POLICIES_TO_ACTIONS_MAPPING = "t_ALERT_PolicyToActionsMapping";
@@ -124,6 +125,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_APM_TIER_SETTINGS = "t_APM_Tiers";
         private const string TABLE_APM_BUSINESS_TRANSACTION_SETTINGS = "t_APM_BusinessTransactions";
         private const string TABLE_APM_AGENT_CALL_GRAPH_SETTINGS = "t_APM_AgentCallGraphSettings";
+        private const string TABLE_APM_SERVICE_ENDPOINT_DISCOVERY_RULES = "t_APM_SEPDiscoveryRules";
         private const string TABLE_APM_SERVICE_ENDPOINT_ENTRY_RULES = "t_APM_SEPEntryRules";
         private const string TABLE_APM_DEVELOPER_MODE_NODES = "t_APM_DevModeNodes";
         private const string TABLE_APM_ERROR_DETECTION_RULES = "t_APM_ErrorDetectionRules";
@@ -132,6 +134,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_APM_ERROR_DETECTION_LOGGERS = "t_APM_ErrorLoggers";
         private const string TABLE_APM_ERROR_DETECTION_HTTP_CODES = "t_APM_ErrorHTTPCodes";
         private const string TABLE_APM_ERROR_DETECTION_REDIRECT_PAGES = "t_APM_ErrorRediredPages";
+        
         // DB Configuration
         private const string TABLE_DB_APPLICATION_CONFIGURATION = "t_DB_ApplicationConfiguration";
         private const string TABLE_DB_COLLECTOR_DEFINITIONS = "t_DB_CollectorDefinitions";
@@ -162,6 +165,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_LOCATION = "p_APM_BTEntryRulesLocation";
         private const string PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_TYPE = "p_APM_BTEntryRules20Type";
         private const string PIVOT_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_LOCATION = "p_APM_BTEntryRules20Location";
+        private const string PIVOT_APM_SERVICE_ENDPOINT_ENTRY_RULES_TYPE = "p_APM_SEPEntryRulesType";
         private const string PIVOT_APM_BACKEND_DISCOVERY_RULES_TYPE = "p_APM_BackendDiscoveryRulesType";
         private const string PIVOT_APM_CUSTOM_EXIT_RULES_TYPE = "p_APM_CustomExitRulesType";
         private const string PIVOT_APM_AGENT_CONFIGURATION_PROPERTIES_TYPE = "p_APM_AgentPropertiesType";
@@ -182,6 +186,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string GRAPH_APM_BUSINESS_TRANSACTION_ENTRY_RULES_LOCATION = "g_APM_BTEntryRulesLocation";
         private const string GRAPH_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_TYPE = "g_APM_BTEntryRules20Type";
         private const string GRAPH_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20_LOCATION = "g_APM_BTEntryRules20Location";
+        private const string GRAPH_APM_SERVICE_ENDPOINT_ENTRY_RULES_TYPE = "g_APM_SEPEntryRulesType";
         private const string GRAPH_APM_BACKEND_DISCOVERY_RULES_TYPE = "g_APM_BackendDiscoveryRulesType";
         private const string GRAPH_APM_CUSTOM_EXIT_RULES_TYPE = "g_APM_CustomExitRulesType";
         private const string GRAPH_APM_AGENT_CONFIGURATION_PROPERTIES_TYPE = "g_APM_AgentPropertiesType";
@@ -526,11 +531,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_SERVICE_ENDPOINT_RULES_SETTINGS);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_SERVICE_ENDPOINT_DISCOVERY_RULES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "Types of Rules";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES_PIVOT_TYPE);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES_PIVOT_TYPE);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APM_DEVELOPER_MODE_NODES);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -768,11 +791,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region APM Service Endpoint Discovery Rules
+
+                loggerConsole.Info("List of APM Service Endpoint Discovery Rules");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_DISCOVERY_RULES];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointDiscoveryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
                 #region APM Service Endpoint Entry Rules
 
                 loggerConsole.Info("List of APM Service Endpoint Entry Rules");
 
-                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_RULES_SETTINGS];
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointEntryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
@@ -1505,10 +1537,35 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #endregion
 
+                #region APM Service Endpoint Discovery Rules
+
+                // Make table
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_DISCOVERY_RULES];
+                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    table = sheet.Tables.Add(range, TABLE_APM_SERVICE_ENDPOINT_DISCOVERY_RULES);
+                    table.ShowHeader = true;
+                    table.TableStyle = TableStyles.Medium2;
+                    table.ShowFilter = true;
+                    table.ShowTotal = false;
+
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
+                    sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 15;
+                }
+
+                #endregion
+
                 #region APM Service Endpoint Entry Rules
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_RULES_SETTINGS];
+                sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
@@ -1525,8 +1582,31 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["TierName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["AgentType"].Position + 1).Width = 25;
                     sheet.Column(table.Columns["RuleName"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 20;
-                    sheet.Column(table.Columns["RuleRawValue"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["EntryPointType"].Position + 1).Width = 15;
+
+                    // Make pivot
+                    sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES_PIVOT_TYPE];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_APM_SERVICE_ENDPOINT_ENTRY_RULES_TYPE);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "IsExclusion");
+                    addFilterFieldToPivot(pivot, "IsEnabled");
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "AgentType");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "RuleName");
+                    addColumnFieldToPivot(pivot, "EntryPointType", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "RuleName", DataFieldFunctions.Count);
+
+                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_APM_SERVICE_ENDPOINT_ENTRY_RULES_TYPE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 20;
                 }
 
                 #endregion
@@ -1808,6 +1888,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_APM_AGENT_CONFIGURATION_PROPERTIES_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsDefault");
+                    addFilterFieldToPivot(pivot, "IsBuiltIn");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "AgentType");

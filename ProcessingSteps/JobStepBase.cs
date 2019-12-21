@@ -24,6 +24,60 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
+        #region Agent Properties
+
+        internal static List<string> AGENT_PROPERTIES_BUILTIN = new List<string>
+        {
+            { "adaptive-callgraph-granularity" },
+            { "api-thread-activity-timeout-in-seconds" },
+            { "api-transaction-timeout-in-seconds" },
+            { "async-transaction-demarcator" },
+            { "callgraph-granularity-in-ms" },
+            { "capture-error-urls" },
+            { "capture-raw-sql" },
+            { "collection-capture-period-in-minutes" },
+            { "collect-user-data-sync" },
+            { "disable-custom-exit-points-for" },
+            { "disable-exit-call-correlation-for" },
+            { "disable-exit-call-metrics-for" },
+            { "dont-show-packages" },
+            { "downstream-tx-detection-enabled" },
+            { "enable-collection-monitoring" },
+            { "enable-default-http-error-code-reporter" },
+            { "enable-instance-monitoring" },
+            { "enable-json-bci-rules" },
+            { "enable-object-size-monitoring" },
+            { "enable-soap-header-correlation" },
+            { "enable-startup-snapshot-policy" },
+            { "enable-transaction-correlation" },
+            { "enable-xml-bci-rules" },
+            { "end-to-end-message-latency-threshold-millis" },
+            { "find-entry-points" },
+            { "jdbc-callable-statements" },
+            { "jdbc-connections" },
+            { "jdbc-prepared-statements" },
+            { "jdbc-statements" },
+            { "leak-diagnostic-interval-in-minutes" },
+            { "log-request-payload" },
+            { "max-business-transactions" },
+            { "max-jdbc-calls-per-callgraph" },
+            { "max-jdbc-calls-per-snapshot" },
+            { "min-duration-for-jdbc-call-in-ms" },
+            { "minimum-age-for-evaluation-in-minutes" },
+            { "minimum-size-for-evaluation-in-mb" },
+            { "min-load-per-minute-diagnostic-session-trigger" },
+            { "on-demand-snapshots" },
+            { "rest-num-segments" },
+            { "rest-transaction-naming" },
+            { "rest-uri-segment-scheme" },
+            { "show-packages" },
+            { "slow-request-deviation" },
+            { "slow-request-monitor-interval" },
+            { "slow-request-threshold" }
+        };
+
+        #endregion
+
         #region Event types
 
         // There are a bazillion types of events
@@ -116,9 +170,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "HTTP_REQUEST_ACTION_STARTED" },
             { "HTTP_REQUEST_ACTION_FAILED" },
             { "HTTP_REQUEST_ACTION_END" },
-            { "RUNBOOK_DIAGNOSTIC SESSION_STARTED" },
-            { "RUNBOOK_DIAGNOSTIC SESSION_FAILED" },
-            { "RUNBOOK_DIAGNOSTIC SESSION_END" },
+            { "RUNBOOK_DIAGNOSTIC_SESSION_STARTED" },
+            { "RUNBOOK_DIAGNOSTIC_SESSION_FAILED" },
+            { "RUNBOOK_DIAGNOSTIC_SESSION_END" },
             { "RUN_LOCAL_SCRIPT_ACTION_STARTED" },
             { "RUN_LOCAL_SCRIPT_ACTION_FAILED" },
             { "RUN_LOCAL_SCRIPT_ACTION_END" },

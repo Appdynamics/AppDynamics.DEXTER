@@ -9,27 +9,29 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public string EntryPointType { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public bool IsOverride { get; set; }
+        public int Version { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public bool IsMonitoringEnabled { get; set; }
+        public bool IsEnabled { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public string DiscoveryType { get; set; }
+        public bool IsExclusion { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
-        public string NamingConfigType { get; set; }
+        public int Priority { get; set; }
+
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
+        public string MatchConditions { get; set; }
+        [FieldComparison(FieldComparisonType.JSONValueComparison)]
+        public string Actions { get; set; }
 
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumDetectedSEPs { get; set; }
         [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
         public string DetectedSEPs { get; set; }
 
-        [FieldComparison(FieldComparisonType.XmlValueComparison)]
-        public string RuleRawValue { get; set; }
-
         public override string EntityIdentifier
         {
             get
             {
-                return String.Format("{0}/{1}/{2}", this.EntryPointType, this.AgentType, this.TierName);
+                return String.Format("{0}/{1}/{2}/{3}", this.RuleName, this.EntryPointType, this.AgentType, this.TierName);
             }
         }
 

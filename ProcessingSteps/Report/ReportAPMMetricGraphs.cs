@@ -1290,7 +1290,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             if (rangeARTValues != null && rangeCPMValues != null)
                             {
-                                ExcelChartSerie series = chart.Series.Add(rangeCPMValues, rangeARTValues);
+                                ExcelChartSerie series = chart.Series.Add(rangeARTValues, rangeCPMValues);
                                 ExcelScatterChartSerie series1 = (ExcelScatterChartSerie)series;
                                 series.Header = String.Format("{0} vs {1}", memART.MetricName, memCPM.MetricName);
                                 series1.DataLabel.ShowValue = true;
@@ -1307,7 +1307,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             if (rangeARTValues != null && rangeEPMValues != null)
                             {
-                                ExcelChartSerie series = chart.Series.Add(rangeEPMValues, rangeARTValues);
+                                ExcelChartSerie series = chart.Series.Add(rangeARTValues, rangeEPMValues);
                                 ExcelScatterChartSerie series1 = (ExcelScatterChartSerie)series;
                                 series.Header = String.Format("{0} vs {1}", memART.MetricName, memEPM.MetricName);
                                 series1.DataLabel.ShowValue = true;

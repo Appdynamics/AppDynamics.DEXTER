@@ -17,6 +17,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.PropertyType).Index(i); i++;
             Map(m => m.Description).Index(i); i++;
             Map(m => m.IsDefault).Index(i); i++;
+            Map(m => m.IsBuiltIn).Index(i); i++;
 
             Map(m => m.StringValue).Index(i); i++;
             Map(m => m.IntegerValue).Index(i); i++;

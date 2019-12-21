@@ -122,7 +122,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         ChromeOptions options = new ChromeOptions();
                         options.AcceptInsecureCertificates = true;
-                        //options.AddArgument("--headless");
+                        options.AddArgument("--headless");
                         options.AddArgument("--guest");
                         options.AddArgument("--disable-extensions");
 

@@ -1,5 +1,7 @@
-﻿using AppDynamics.Dexter.ReportObjectMaps;
+﻿using AppDynamics.Dexter.DataObjects;
+using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -93,26 +95,62 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             #region Service Endpoints
 
                             // SEPs are not included in the extracted XML
-                            // There is Flash/Flex API but I am not going to call it
-                            // Otherwise there is accounts API https://docs.appdynamics.com/display/PRO45/Access+Swagger+and+Accounts+API
-                            // This includes this one:
-                            // GET /accounts/{acctId}/applications/{appId}/sep      Get all ServiceEndPointConfigs for application
-                            // It requires pretty high admin level access but hey, it's not Flash
+                            // 2018:
+                            //  There is Flash/Flex API but I am not going to call it
+                            //  Otherwise there is accounts API https://docs.appdynamics.com/display/PRO45/Access+Swagger+and+Accounts+API
+                            //  This includes this one:
+                            //  GET /accounts/{acctId}/applications/{appId}/sep      Get all ServiceEndPointConfigs for application
+                            //  It requires pretty high admin level access but hey, it's not Flash
+                            // 12/19/2019:
+                            //  Previous API is removed, so we're going to call the RESTUI API
 
-                            loggerConsole.Info("Service Endpoint Configuration");
+                            loggerConsole.Info("Service Endpoint Detection");
 
-                            if (File.Exists(FilePathMap.APMApplicationConfigurationSEPDataFilePath(jobTarget)) == false)
+                            if (File.Exists(FilePathMap.APMApplicationConfigurationSEPDetectionRulesDataFilePath(jobTarget)) == false)
                             {
-                                string myAccountJSON = controllerApi.GetAccountsMyAccount();
-                                if (myAccountJSON != String.Empty)
-                                {
-                                    JObject myAccount = JObject.Parse(myAccountJSON);
-                                    if (myAccount != null)
-                                    {
-                                        long accountID = getLongValueFromJToken(myAccount, "id");
+                                string applicationConfigSEPJSON = controllerApi.GetAPMSEPAutodetectionConfiguration(jobTarget.ApplicationID);
+                                if (applicationConfigSEPJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPDetectionRulesDataFilePath(jobTarget));
+                            }
 
-                                        string applicationConfigSEPJSON = controllerApi.GetAPMSEPConfiguration(accountID, jobTarget.ApplicationID);
-                                        if (applicationConfigSEPJSON != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPDataFilePath(jobTarget));
+                            string tiersJSON = controllerApi.GetAPMTiers(jobTarget.ApplicationID);
+                            if (tiersJSON != String.Empty)
+                            {
+                                List<AppDRESTTier> tiersRESTList = JsonConvert.DeserializeObject<List<AppDRESTTier>>(tiersJSON);
+                                if (tiersRESTList != null)
+                                {
+                                    loggerConsole.Info("Service Endpoint Detection for Tiers");
+                                    foreach (AppDRESTTier tier in tiersRESTList)
+                                    {
+                                        string tierConfigOverrideJSON = controllerApi.GetAPMSEPTierConfigurationOverride(tier.id, tier.agentType);
+                                        if (tierConfigOverrideJSON != String.Empty)
+                                        {
+                                            JObject tierOverrideObject = JObject.Parse(tierConfigOverrideJSON);
+                                            if (tierOverrideObject != null)
+                                            {
+                                                if (getBoolValueFromJToken(tierOverrideObject, "override") == true)
+                                                {
+                                                    loggerConsole.Info("Service Endpoint Detection for Tier {0}", tier.name);
+
+                                                    string tierConfigSEPJSON = controllerApi.GetAPMSEPTierAutodetectionConfiguration(tier.id, tier.agentType);
+                                                    if (tierConfigSEPJSON != String.Empty && tierConfigSEPJSON != "[]" && tierConfigSEPJSON != "[ ]")
+                                                    {
+                                                        FileIOHelper.SaveFileToPath(tierConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPTierDetectionRulesDataFilePath(jobTarget, tier));
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    loggerConsole.Info("Explicit Service Endpoint Rules for Tiers");
+                                    foreach (AppDRESTTier tier in tiersRESTList)
+                                    {
+                                        string tierConfigSEPJSON = controllerApi.GetAPMSEPTierRules(tier.id, tier.agentType);
+                                        if (tierConfigSEPJSON != String.Empty && tierConfigSEPJSON != "[]" && tierConfigSEPJSON != "[ ]")
+                                        {
+                                            loggerConsole.Info("Service Endpoint Rule for Tier {0}", tier.name);
+
+                                            FileIOHelper.SaveFileToPath(tierConfigSEPJSON, FilePathMap.APMApplicationConfigurationSEPTierExplicitRulesDataFilePath(jobTarget, tier));
+                                        }
                                     }
                                 }
                             }
