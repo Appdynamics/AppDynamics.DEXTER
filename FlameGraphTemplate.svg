@@ -12,10 +12,12 @@
       xrect[rx]:hover { stroke:#7f17ff; stroke-width:4; }
       xtext:hover { font-weight:bold; }
   </style>
-  <script type="text/ecmascript"><![CDATA[
-    var details, searchbtn, matchedtxt, svg, legendbtn;
+  <script type="text/ecmascript">
+        <![CDATA[
+    var details, detailsForCopy, searchbtn, matchedtxt, svg, legendbtn;
     function init(evt) {
         details = document.getElementById("details").firstChild;
+        detailsForCopy = document.getElementById("detailsForCopy").firstChild;
         searchbtn = document.getElementById("search");
         matchedtxt = document.getElementById("matched");
         legendbtn = document.getElementById("legend");
@@ -26,10 +28,16 @@
     // mouse-over for info
     function s(node) { // show
         info = g_to_text(node);
-        details.nodeValue = "Function: " + info;
+        if (details != null) 
+        {
+            details.nodeValue = "Function: " + info;
+        }
     }
     function c() { // clear
-        details.nodeValue = ' ';
+        if (details != null) 
+        {
+            details.nodeValue = ' ';
+        }
     }
 
     // ctrl-F for search
@@ -209,6 +217,13 @@
         }
     }
 
+    // Right click
+    function rightClick(event, node) {
+        event.stopPropagation();
+        info = g_to_text(node);
+        detailsForCopy.nodeValue = info;
+    }
+
     // search
     function reset_search() {
         var el = document.getElementsByTagName("rect");
@@ -355,6 +370,8 @@
   <text text-anchor="left" x="1400.00" y="1200" font-size="12" font-family="Verdana" fill="rgb(0,0,0)" id="version" style="opacity:0.5;cursor:pointer">AppDynamics DEXTER v{0}</text>
   <!-- Function textbox that shows when it mouses over -->
   <text text-anchor="left" x="5" y="1200" font-size="8" font-family="Verdana" fill="rgb(0, 0, 0)" id="details">Mouse over stack frames to see details</text>
+  <!-- Function textbox that shows when it right clicks -->
+  <text text-anchor="left" x="5" y="30" font-size="12" font-family="Verdana" fill="rgb(0, 0, 0)" id="detailsForCopy">.</text>
   <!-- Flame Graph Boxes go here -->
   <g id="contentPlaceholder"></g>
   <!-- Legend Boxes go here -->  

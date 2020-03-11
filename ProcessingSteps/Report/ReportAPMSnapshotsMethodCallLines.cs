@@ -316,7 +316,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "NumChildren", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "NumExits", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "Depth", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "ExecRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "ExecRange", eSortType.Ascending, true);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "TierName");
@@ -376,7 +376,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "Method", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "FullName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "BTName", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "ExecRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "ExecRange", eSortType.Ascending, true);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;

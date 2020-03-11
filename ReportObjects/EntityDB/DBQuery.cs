@@ -15,6 +15,10 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool SQLHaving { get; set; }
         public bool SQLUnion { get; set; }
 
+        public string SQLTable { get; set; }
+        public string SQLTables { get; set; }
+        public int NumSQLTables { get; set; }
+        
         public string Name { get; set; }
         public string Namespace { get; set; }
         public string Client { get; set; }

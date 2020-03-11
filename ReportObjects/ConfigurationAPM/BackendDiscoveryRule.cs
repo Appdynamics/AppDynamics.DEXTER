@@ -14,6 +14,8 @@ namespace AppDynamics.Dexter.ReportObjects
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public bool IsEnabled { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
+        public bool IsBuiltIn { get; set; }
+        [FieldComparison(FieldComparisonType.ValueComparison)]
         public int Priority { get; set; }
         [FieldComparison(FieldComparisonType.XmlValueComparison)]
         public string IdentityOptions { get; set; }

@@ -384,6 +384,228 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
+        internal Tuple<string, string, int> parseSQLTablesFromSELECT(string sqlStatement)
+        {
+            string table = String.Empty;
+            string tables = String.Empty;
+            int numTables = 0;
+
+            // (?i)FROM\s*((\w|\.|\[|\]|\"|#)*)
+            // OR
+            // (?i)FROM\s*((\[|")?\w*(\]|")?\.?(\[|")?\w*(\]|"|#)?)
+            Regex regexTables = new Regex(@"FROM\s*((\w|\.|\[|\]|\""|#|'|`)*)", RegexOptions.IgnoreCase);
+            MatchCollection matchCollection = regexTables.Matches(sqlStatement);
+            if (matchCollection != null && matchCollection.Count > 0)
+            {
+                string[] sqlTables = new string[matchCollection.Count];
+
+                int i = 0;
+                foreach (Match match in matchCollection)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        if (match.Groups[1].Value.Length > 0)
+                        {
+                            sqlTables[i] = match.Groups[1].Value;
+                            i++;
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder(128);
+                for (int j = 0; j < sqlTables.Length; j++)
+                {
+                    if (sqlTables[j] != null && sqlTables[j].Length > 0)
+                    {
+                        numTables++;
+                        sb.AppendFormat("{0};", sqlTables[j]);
+                        if (table.Length == 0) table = sqlTables[j];
+                    }
+                }
+                if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
+                tables = sb.ToString();
+            }
+            
+            return new Tuple<string, string, int>(table, tables, numTables);
+        }
+
+        internal Tuple<string, string, int> parseSQLTablesFromUPDATE(string sqlStatement)
+        {
+            string table = String.Empty;
+            string tables = String.Empty;
+            int numTables = 0;
+
+            // (?i)UPDATE\s*((\w|\.|\[|\]|\"|#)*)
+            Regex regexTables = new Regex(@"UPDATE\s*((\w|\.|\[|\]|\""|#|'|`)*)", RegexOptions.IgnoreCase);
+            MatchCollection matchCollection = regexTables.Matches(sqlStatement);
+            if (matchCollection != null && matchCollection.Count > 0)
+            {
+                string[] sqlTables = new string[matchCollection.Count];
+
+                int i = 0;
+                foreach (Match match in matchCollection)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        if (match.Groups[1].Value.Length > 0)
+                        {
+                            sqlTables[i] = match.Groups[1].Value;
+                            i++;
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder(128);
+                for (int j = 0; j < sqlTables.Length; j++)
+                {
+                    if (sqlTables[j] != null && sqlTables[j].Length > 0)
+                    {
+                        numTables++;
+                        sb.AppendFormat("{0};", sqlTables[j]);
+                        if (table.Length == 0) table = sqlTables[j];
+                    }
+                }
+                if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
+                tables = sb.ToString();
+            }
+
+            return new Tuple<string, string, int>(table, tables, numTables);
+        }
+
+        internal Tuple<string, string, int> parseSQLTablesFromINSERT(string sqlStatement)
+        {
+            string table = String.Empty;
+            string tables = String.Empty;
+            int numTables = 0;
+            
+            // (?i)INSERT\s*INTO\s*((\w|\.|\[|\]|\"|#)*)
+            Regex regexTables = new Regex(@"INSERT\s*INTO\s*((\w|\.|\[|\]|\""|#|'|`)*)", RegexOptions.IgnoreCase);
+            MatchCollection matchCollection = regexTables.Matches(sqlStatement);
+            if (matchCollection != null && matchCollection.Count > 0)
+            {
+                string[] sqlTables = new string[matchCollection.Count];
+
+                int i = 0;
+                foreach (Match match in matchCollection)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        if (match.Groups[1].Value.Length > 0)
+                        {
+                            sqlTables[i] = match.Groups[1].Value;
+                            i++;
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder(128);
+                for (int j = 0; j < sqlTables.Length; j++)
+                {
+                    if (sqlTables[j] != null && sqlTables[j].Length > 0)
+                    {
+                        numTables++;
+                        sb.AppendFormat("{0};", sqlTables[j]);
+                        if (table.Length == 0) table = sqlTables[j];
+                    }
+                }
+                if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
+                tables = sb.ToString();
+            }
+
+            return new Tuple<string, string, int>(table, tables, numTables);
+        }
+
+        internal Tuple<string, string, int> parseSQLTablesFromDELETE(string sqlStatement)
+        {
+            return parseSQLTablesFromSELECT(sqlStatement);
+        }
+
+        internal Tuple<string, string, int> parseSQLTablesFromTRUNCATE(string sqlStatement)
+        {
+            string table = String.Empty;
+            string tables = String.Empty;
+            int numTables = 0;
+            
+            // (?i)TRUNCATE\s*TABLE\s*((\w|\.|\[|\]|\"|#)*)
+            Regex regexTables = new Regex(@"TRUNCATE\s*TABLE\s*((\w|\.|\[|\]|\""|#|'|`)*)", RegexOptions.IgnoreCase);
+            MatchCollection matchCollection = regexTables.Matches(sqlStatement);
+            if (matchCollection != null && matchCollection.Count > 0)
+            {
+                string[] sqlTables = new string[matchCollection.Count];
+
+                int i = 0;
+                foreach (Match match in matchCollection)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        if (match.Groups[1].Value.Length > 0)
+                        {
+                            sqlTables[i] = match.Groups[1].Value;
+                            i++;
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder(128);
+                for (int j = 0; j < sqlTables.Length; j++)
+                {
+                    if (sqlTables[j] != null && sqlTables[j].Length > 0)
+                    {
+                        numTables++;
+                        sb.AppendFormat("{0};", sqlTables[j]);
+                        if (table.Length == 0) table = sqlTables[j];
+                    }
+                }
+                if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
+                tables = sb.ToString();
+            }
+
+            return new Tuple<string, string, int>(table, tables, numTables);
+        }
+
+        internal Tuple<string, string, int> parseSQLTablesFromDROP(string sqlStatement)
+        {
+            string table = String.Empty;
+            string tables = String.Empty;
+            int numTables = 0;
+            
+            // (?i)TRUNCATE\s*TABLE\s*((\w|\.|\[|\]|\"|#)*)
+            Regex regexTables = new Regex(@"DROP\s*TABLE\s*((\w|\.|\[|\]|\""|#|'|`)*)", RegexOptions.IgnoreCase);
+            MatchCollection matchCollection = regexTables.Matches(sqlStatement);
+            if (matchCollection != null && matchCollection.Count > 0)
+            {
+                string[] sqlTables = new string[matchCollection.Count];
+
+                int i = 0;
+                foreach (Match match in matchCollection)
+                {
+                    if (match.Groups.Count > 1)
+                    {
+                        if (match.Groups[1].Value.Length > 0)
+                        {
+                            sqlTables[i] = match.Groups[1].Value;
+                            i++;
+                        }
+                    }
+                }
+
+                StringBuilder sb = new StringBuilder(128);
+                for (int j = 0; j < sqlTables.Length; j++)
+                {
+                    if (sqlTables[j] != null && sqlTables[j].Length > 0)
+                    {
+                        numTables++;
+                        sb.AppendFormat("{0};", sqlTables[j]);
+                        if (table.Length == 0) table = sqlTables[j];
+                    }
+                }
+                if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
+                tables = sb.ToString();
+            }
+
+            return new Tuple<string, string, int>(table, tables, numTables);
+        }
+
         internal static int getIntegerValueFromXmlNode(XmlNode xmlNode)
         {
             if (xmlNode == null)
@@ -564,6 +786,91 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 return String.Empty;
             }
+        }
+
+        #region Healthcheck settings helper methods
+
+        internal Version getVersionSetting(Dictionary<string, HealthCheckSettingMapping> healthCheckSettingsDictionary, string settingName, string valueIfNotThere)
+        {
+            if (healthCheckSettingsDictionary.ContainsKey(settingName) == true)
+            {
+                string versionString = healthCheckSettingsDictionary[settingName].Value;
+                Version version = new Version();
+                if (Version.TryParse(versionString, out version) == true)
+                {
+                    return version;
+                }
+                else
+                {
+                    return new Version(valueIfNotThere);
+                }
+            }
+            else
+            {
+                return new Version(valueIfNotThere);
+            }
+        }
+
+        internal int getIntegerSetting(Dictionary<string, HealthCheckSettingMapping> healthCheckSettingsDictionary, string settingName, int valueIfNotThere)
+        {
+            if (healthCheckSettingsDictionary.ContainsKey(settingName) == true)
+            {
+                string numberString = healthCheckSettingsDictionary[settingName].Value;
+                int number = 0;
+                if (Int32.TryParse(numberString, out number) == true)
+                {
+                    return number;
+                }
+                else
+                {
+                    return valueIfNotThere;
+                }
+            }
+            else
+            {
+                return valueIfNotThere;
+            }
+        }
+
+        internal string getStringSetting(Dictionary<string, HealthCheckSettingMapping> healthCheckSettingsDictionary, string settingName, string valueIfNotThere)
+        {
+            if (healthCheckSettingsDictionary.ContainsKey(settingName) == true)
+            {
+                return healthCheckSettingsDictionary[settingName].Value;
+            }
+            else
+            {
+                return valueIfNotThere;
+            }
+        }
+
+        #endregion
+
+        internal HealthCheckRuleResult createHealthCheckRuleResult(
+            JobTarget jobTarget,
+            string entityType,
+            string entityName,
+            long entityID,
+            HealthCheckRuleDescription hcrd)
+        {
+            HealthCheckRuleResult healthCheckRuleResult = new HealthCheckRuleResult();
+            healthCheckRuleResult.Controller = jobTarget.Controller;
+            healthCheckRuleResult.Application = jobTarget.Application;
+            healthCheckRuleResult.ApplicationID = jobTarget.ApplicationID;
+
+            healthCheckRuleResult.EntityType = entityType;
+            healthCheckRuleResult.EntityName = entityName;
+            healthCheckRuleResult.EntityID = entityID;
+
+            healthCheckRuleResult.Category = hcrd.Category;
+            healthCheckRuleResult.Code = hcrd.Code;
+            healthCheckRuleResult.Name = hcrd.Name;
+
+            healthCheckRuleResult.Grade = 0;
+
+            healthCheckRuleResult.EvaluationTime = DateTime.Now;
+
+            return healthCheckRuleResult;
         }
     }
 }

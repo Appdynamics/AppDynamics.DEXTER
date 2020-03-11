@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "-j \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\demo.sep.refactor.json\" -o D:\\AppD.Dexter.Out\\demo -v"
+      "commandLineArgs": "-j \"C:\\appdynamics\\AppDynamics.DEXTER\\JobFiles\\demodev.all.json\" -o D:\\AppD.Dexter.Out\\Demo\\ -v"
     }
   }
 }

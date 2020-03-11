@@ -98,11 +98,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         Version version4_5 = new Version(4, 5);
                         Version versionThisController = new Version(jobTarget.ControllerVersion);
-
-                        #endregion
-
-                        #region Target step variables
-
                         int numEntitiesTotal = 0;
 
                         #endregion
@@ -169,7 +164,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     chromeDriverFolderPath = Path.Combine(chromeDriverVersionFolderPath, "mac64");
                                     loggerWebDriver.Info("Trying Chrome Web Driver {0} on OSX", chromeDriverFolderPath);
                                 }
-
 
                                 if (chromeDriverFolderPath.Length > 0)
                                 {
@@ -249,7 +243,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         chromeDriver.Manage().Window.Size = new System.Drawing.Size(1920, 1200);
-                        chromeDriver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 10);
+                        chromeDriver.Manage().Timeouts().ImplicitWait = new TimeSpan(0, 0, 7);
 
                         #endregion
 
@@ -413,7 +407,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Now we have a copy of Web Driver, it's running and authenticated
                         try
                         {
-                            WebDriverWait wait = new WebDriverWait(chromeDriver, new TimeSpan(0, 0, 20));
+                            WebDriverWait wait = new WebDriverWait(chromeDriver, new TimeSpan(0, 0, 7));
 
                             #region Application
 

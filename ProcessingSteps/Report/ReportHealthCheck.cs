@@ -20,22 +20,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Constants for report contents
 
         private const string SHEET_CONTROLLERS = "3.Controllers";
-        private const string SHEET_APPLICATIONS = "4.Applications";
+        private const string SHEET_APPLICATIONS_ALL_LIST = "4.Applications.All";
 
         private const string SHEET_HEALTH_CHECK_RULE_RESULTS = "5.Health Check Results";
-        private const string SHEET_HEALTH_CHECK_RULE_RESULTS_PIVOT = "5.Health Check Results.Rating";
+        private const string SHEET_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_PIVOT = "5.Health Check Results.Desc";
         private const string SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY = "5.Health Check Results.Display";
         private const string SHEET_HEALTH_CHECK_RULE_CATEGORY_RESULTS_DISPLAY = "6.{0}";
 
         private const string TABLE_CONTROLLERS = "t_Controllers";
-        private const string TABLE_APPLICATIONS = "t_Applications";
+        private const string TABLE_APPLICATIONS_ALL = "t_Applications_All";
 
         private const string TABLE_HEALTH_CHECK_RULE_RESULTS = "t_HealthCheckRuleResults";
         private const string TABLE_HEALTH_CHECK_RULE_APPLICATIONS = "t_HealthCheckRuleApplications";
 
         private const string TABLE_HEALTH_CHECK_RULE_CATEGORY_RESULTS = "t_H_{0}";
 
-        private const string PIVOT_HEALTH_CHECK_RULE_RESULTS_TYPE = "p_HealthCheckRuleResults";
+        private const string PIVOT_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_TYPE = "p_HealthCheckRuleDescription";
 
         private const int LIST_SHEET_START_TABLE_AT = 4;
         private const int PIVOT_SHEET_START_PIVOT_AT = 8;
@@ -60,11 +60,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
             if (this.ShouldExecute(jobConfiguration) == false)
-            {
-                return true;
-            }
-
-            if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
                 return true;
             }
@@ -118,7 +113,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS_ALL_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -128,22 +123,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Pivot";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS_PIVOT);
+                sheet.Cells[2, 1].Value = "See Rating";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Report";
+                sheet.Cells[3, 1].Value = "See Summary";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS_PIVOT);
+                
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT - 4 + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -176,10 +171,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Applications
 
-                loggerConsole.Info("List of Applications");
+                loggerConsole.Info("List of Applications - All");
 
-                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationSnapshotsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -189,6 +184,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_CHECK_RULE_RESULTS];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMHealthCheckRuleResultsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
+                {
+                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 1, sheet, sheet.Dimension.Rows + 1, 1);
+                }
+                else
+                { 
+                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                }
 
                 #endregion
 
@@ -218,37 +221,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Applications
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS];
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
                     range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_APPLICATIONS);
+                    table = sheet.Tables.Add(range, TABLE_APPLICATIONS_ALL);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
                     table.ShowFilter = true;
                     table.ShowTotal = false;
 
-                    //adjustColumnsOfEntityRowTableInMetricReport(HealthCheckRuleResult.ENTITY_TYPE, sheet, table);
+                    sheet.Column(table.Columns["Controller"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["Description"].Position + 1).Width = 15;
 
-                    ExcelAddress cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshots"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshots"].Position + 1);
-                    var cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+                    sheet.Column(table.Columns["CreatedBy"].Position + 1).Width = 15;
+                    sheet.Column(table.Columns["UpdatedBy"].Position + 1).Width = 15;
 
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsNormal"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsNormal"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsVerySlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsVerySlow"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsStall"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsStall"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsSlow"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsSlow"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
-
-                    cfAddressNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSnapshotsError"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSnapshotsError"].Position + 1);
-                    cfNum = sheet.ConditionalFormatting.AddDatabar(cfAddressNum, colorLightBlueForDatabars);
+                    sheet.Column(table.Columns["CreatedOn"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["UpdatedOn"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["CreatedOnUtc"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["UpdatedOnUtc"].Position + 1).Width = 20;
                 }
 
                 #endregion
@@ -274,7 +269,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["Category"].Position + 1).Width = 30;
                     sheet.Column(table.Columns["Code"].Position + 1).Width = 15;
                     sheet.Column(table.Columns["Name"].Position + 1).Width = 50;
-                    sheet.Column(table.Columns["Description"].Position + 1).Width = 30;
+                    sheet.Column(table.Columns["Description"].Position + 1).Width = 40;
 
                     ExcelAddress cfAddressGrade = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["Grade"].Position + 1, sheet.Dimension.Rows, table.Columns["Grade"].Position + 1);
                     var cfGrade = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressGrade);
@@ -288,20 +283,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfGrade.HighValue.Color = colorGreenFor3ColorScales;
                     cfGrade.HighValue.Value = 5;
 
-                    sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_CHECK_RULE_RESULTS_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_HEALTH_CHECK_RULE_RESULTS_TYPE);
+                    sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_PIVOT];
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT - 4, 1], range, PIVOT_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_TYPE);
                     setDefaultPivotTableSettings(pivot);
-                    addFilterFieldToPivot(pivot, "EntityType");
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "Application");
-                    addRowFieldToPivot(pivot, "EntityName");
-                    addColumnFieldToPivot(pivot, "Category", eSortType.Ascending);
-                    addColumnFieldToPivot(pivot, "Name", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "Grade", DataFieldFunctions.Average);
+                    addRowFieldToPivot(pivot, "Category");
+                    addRowFieldToPivot(pivot, "EntityType");
+                    addRowFieldToPivot(pivot, "Name");
+                    addRowFieldToPivot(pivot, "Description");
+                    addColumnFieldToPivot(pivot, "Grade", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "Name", DataFieldFunctions.Count, "Rating");
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
                     sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 30;
+                    sheet.Column(6).Width = 30;
                 }
 
                 #endregion
@@ -310,7 +309,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY];
 
-                List<HealthCheckRuleResult> healthCheckRuleResults = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHealthCheckRuleResultsReportFilePath(), new HealthCheckRuleResultReportMap());
+                List<HealthCheckRuleResult> healthCheckRuleResults = new List<HealthCheckRuleResult>();
+                
+                List<HealthCheckRuleResult> healthCheckRuleResultsController = FileIOHelper.ReadListFromCSVFile(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), new HealthCheckRuleResultReportMap());
+                if (healthCheckRuleResultsController != null) healthCheckRuleResults.AddRange(healthCheckRuleResultsController);
+                
+                List<HealthCheckRuleResult> healthCheckRuleResultsAPM = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHealthCheckRuleResultsReportFilePath(), new HealthCheckRuleResultReportMap());
+                if (healthCheckRuleResultsAPM != null) healthCheckRuleResults.AddRange(healthCheckRuleResultsAPM);
+
                 if (healthCheckRuleResults != null)
                 {
                     #region Output summary of Applications by Category table
@@ -428,7 +434,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
 
                     // Make header row taller
-                    sheet.Row(rowTableStart).Height = 30;
+                    sheet.Row(rowTableStart).Height = 40;
 
                     // Color code it
                     ExcelAddress cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 4, sheet.Dimension.Rows, 4 + numColumns);
@@ -586,6 +592,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         sheet.Column(table.Columns["Controller"].Position + 1).Width = 20;
                         sheet.Column(table.Columns["Application"].Position + 1).Width = 25;
                         sheet.Column(table.Columns["EntityName"].Position + 1).Width = 25;
+                        sheet.Column(table.Columns["EntityType"].Position + 1).Width = 25;
                         for (int columnIndex = 0; columnIndex < numColumns; columnIndex++)
                         {
                             sheet.Column(gradeColumnStart + columnIndex).Width = 15;
@@ -594,7 +601,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         // Make header row taller
-                        sheet.Row(rowTableStart).Height = 90;
+                        sheet.Row(rowTableStart).Height = 50;
 
                         // Color code it
                         cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 5, sheet.Dimension.Rows, 5 + numColumns);
@@ -627,7 +634,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 FileIOHelper.CreateFolder(FilePathMap.ReportFolderPath());
 
-                string reportFilePath = FilePathMap.APMHealthCheckResultsExcelReportFilePath(jobConfiguration.Input.TimeRange);
+                string reportFilePath = FilePathMap.HealthCheckResultsExcelReportFilePath(jobConfiguration.Input.TimeRange);
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 

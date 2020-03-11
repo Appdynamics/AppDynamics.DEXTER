@@ -19,6 +19,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsCorrelationSupported).Index(i); i++;
             Map(m => m.IsCorrelationEnabled).Index(i); i++;
             Map(m => m.IsEnabled).Index(i); i++;
+            Map(m => m.IsBuiltIn).Index(i); i++;
 
             Map(m => m.IdentityOptions).Index(i); i++;
             Map(m => m.DiscoveryConditions).Index(i); i++;

@@ -8,6 +8,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string RuleType { get; set; }
         public string RuleSubType { get; set; }
         public string TierName { get; set; }
+        public string EntityIdentifier { get; set; }
 
         public string ReferenceConroller { get; set; }
         public string ReferenceApp { get; set; }

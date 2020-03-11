@@ -61,8 +61,9 @@
         IndexAPMMetrics = 80,
         IndexAPMFlowmaps = 81,
         IndexAPMSnapshots = 82,
-        
-        IndexAPMHealthCheck = 90,
+
+        IndexControllerHealthCheck = 90,
+        IndexAPMHealthCheck = 91,
 
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,

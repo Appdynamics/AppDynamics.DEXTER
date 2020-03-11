@@ -683,7 +683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
 
                                 // Output each flame graph element one by one
-                                //<g onmouseover="s(this)" onmouseout="c()" onclick="zoom(this)">
+                                //<g onmouseover="s(this)" onmouseout="c()" onclick="zoom(this)" oncontextmenu="rightClick(event, this)">
                                 //  <title>AALevel4 (4 samples, 22.22%)</title>
                                 //  <rect x="403.3" y="69" width="262.3" height="15.0" fill="rgb(237,67,16)" rx="2" ry="2" />
                                 //  <text text-anchor="" x="406.33" y="79.5" font-size="12" font-family="Verdana" fill="rgb(0,0,0)">AALevel4</text>
@@ -714,6 +714,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     xmlWriter.WriteAttributeString("onmouseover", "s(this)");
                                     xmlWriter.WriteAttributeString("onmouseout", "c()");
                                     xmlWriter.WriteAttributeString("onclick", "zoom(this)");
+                                    xmlWriter.WriteAttributeString("oncontextmenu", "rightClick(event, this)");
 
                                     // Output mouseover hint
                                     xmlWriter.WriteStartElement("title");
@@ -784,7 +785,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         methodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(unknownFrameworkName, methodCallLineClassTypeMapping);
 
                                                         // Add to list of used frameworks
-                                                        usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(unknownFrameworkName, methodCallLineClassTypeMapping);
+                                                        if (usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.ContainsKey(unknownFrameworkName) == false)
+                                                        {
+                                                            usedMethodCallLineClassToFrameworkTypeCustomMappingsDictionary.Add(unknownFrameworkName, methodCallLineClassTypeMapping);
+                                                        }
                                                     }
                                                 }
                                             }

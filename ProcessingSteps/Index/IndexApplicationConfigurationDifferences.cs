@@ -285,8 +285,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 loggerConsole.Info("Business Transaction Include and Exclude Rules - MDS 2.0");
 
-                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(referenceTarget), new BusinessTransactionEntryRuleScopeReportMap());
-                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleScopeReportMap());
+                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListReference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(referenceTarget), new BusinessTransactionEntryScopeReportMap());
+                                List<BusinessTransactionEntryScope> businessTransactionEntryScopeListDifference = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryScopeReportMap());
 
                                 configurationDifferencesList.AddRange(compareListOfEntities(referenceTarget, jobTarget, businessTransactionEntryScopeListReference, businessTransactionEntryScopeListDifference));
 
@@ -1497,6 +1497,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             configDifference.RuleType = configEntityBeingCompared.RuleType;
             configDifference.RuleSubType = configEntityBeingCompared.RuleSubType;
             configDifference.TierName = configEntityBeingCompared.TierName;
+            configDifference.EntityIdentifier = configEntityBeingCompared.EntityIdentifier;
 
             configDifference.Property = propertyName;
             configDifference.ReferenceValue = referenceValue;
