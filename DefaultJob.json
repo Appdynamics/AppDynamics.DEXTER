@@ -51,8 +51,8 @@
     ],
     "Input": {
         "TimeRange": {
-            "From": "2019-12-17T09:00:00",
-            "To": "2019-12-17T10:00:00"
+            "From": "2020-03-09T09:00:00",
+            "To": "2020-03-09T10:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
@@ -67,7 +67,7 @@
         "Metrics": true,
         "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "BusinessTransactionPercentiles" ],
         "Flowmaps": true,
-        "EntityDashboards": true,
+        "EntityDashboards": false,
         "EntityDashboardSelectionCriteria": {
             "Tiers": [],
             "TierType": {

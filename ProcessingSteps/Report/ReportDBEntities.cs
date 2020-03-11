@@ -681,7 +681,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 6, 1], range, PIVOT_QUERIES_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "AgentName", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "AvgExecRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "AvgExecRange", eSortType.Ascending, true);
                     addFilterFieldToPivot(pivot, "SQLJoinType");
                     addFilterFieldToPivot(pivot, "SQLGroupBy");
                     addFilterFieldToPivot(pivot, "SQLHaving");

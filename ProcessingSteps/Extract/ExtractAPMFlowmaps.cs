@@ -100,51 +100,52 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     loggerConsole.Info("Completed Application");
                                 }
 
-                                JobTimeRange jobTimeRangeLast = jobConfiguration.Input.HourlyTimeRanges[jobConfiguration.Input.HourlyTimeRanges.Count - 1];
+                                // Removing as this doesn't seem to be a helpful report
+                                //JobTimeRange jobTimeRangeLast = jobConfiguration.Input.HourlyTimeRanges[jobConfiguration.Input.HourlyTimeRanges.Count - 1];
 
-                                int differenceInMinutesForLastTimeRange = (int)((jobTimeRangeLast.To - jobTimeRangeLast.From).TotalMinutes);
+                                //int differenceInMinutesForLastTimeRange = (int)((jobTimeRangeLast.To - jobTimeRangeLast.From).TotalMinutes);
 
-                                loggerConsole.Info("Extract Flowmap for Application in each minute in in last timerange ({0} minutes)", differenceInMinutesForLastTimeRange);
+                                //loggerConsole.Info("Extract Flowmap for Application in each minute in in last timerange ({0} minutes)", differenceInMinutesForLastTimeRange);
 
-                                int j = 0;
+                                //int j = 0;
 
-                                Parallel.For(0,
-                                    differenceInMinutesForLastTimeRange,
-                                    new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
-                                    () => 0,
-                                    (minute, loop, subtotal) =>
-                                    {
-                                        using (ControllerApi controllerApiLocal = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
-                                        {
-                                            controllerApiLocal.PrivateApiLogin();
+                                //Parallel.For(0,
+                                //    differenceInMinutesForLastTimeRange,
+                                //    new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                //    () => 0,
+                                //    (minute, loop, subtotal) =>
+                                //    {
+                                //        using (ControllerApi controllerApiLocal = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
+                                //        {
+                                //            controllerApiLocal.PrivateApiLogin();
 
-                                            JobTimeRange thisMinuteJobTimeRange = new JobTimeRange();
-                                            thisMinuteJobTimeRange.From = jobTimeRangeLast.From.AddMinutes(minute);
-                                            thisMinuteJobTimeRange.To = jobTimeRangeLast.From.AddMinutes(minute + 1);
+                                //            JobTimeRange thisMinuteJobTimeRange = new JobTimeRange();
+                                //            thisMinuteJobTimeRange.From = jobTimeRangeLast.From.AddMinutes(minute);
+                                //            thisMinuteJobTimeRange.To = jobTimeRangeLast.From.AddMinutes(minute + 1);
 
-                                            long fromTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.From);
-                                            long toTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.To);
-                                            long differenceInMinutesLocal = 1;
+                                //            long fromTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.From);
+                                //            long toTimeUnixLocal = UnixTimeHelper.ConvertToUnixTimestamp(thisMinuteJobTimeRange.To);
+                                //            long differenceInMinutesLocal = 1;
 
-                                            if (File.Exists(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange)) == false)
-                                            {
-                                                string flowmapJson = controllerApiLocal.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnixLocal, toTimeUnixLocal, differenceInMinutesLocal);
-                                                if (flowmapJson != String.Empty) FileIOHelper.SaveFileToPath(flowmapJson, FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange));
-                                            }
-                                            return 1;
-                                        }
-                                    },
-                                    (finalResult) =>
-                                    {
-                                        Interlocked.Add(ref j, finalResult);
-                                        if (j % 10 == 0)
-                                        {
-                                            Console.Write("[{0}].", j);
-                                        }
-                                    }
-                                );
+                                //            if (File.Exists(FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange)) == false)
+                                //            {
+                                //                string flowmapJson = controllerApiLocal.GetFlowmapApplication(jobTarget.ApplicationID, fromTimeUnixLocal, toTimeUnixLocal, differenceInMinutesLocal);
+                                //                if (flowmapJson != String.Empty) FileIOHelper.SaveFileToPath(flowmapJson, FilePathMap.ApplicationFlowmapDataFilePath(jobTarget, thisMinuteJobTimeRange));
+                                //            }
+                                //            return 1;
+                                //        }
+                                //    },
+                                //    (finalResult) =>
+                                //    {
+                                //        Interlocked.Add(ref j, finalResult);
+                                //        if (j % 10 == 0)
+                                //        {
+                                //            Console.Write("[{0}].", j);
+                                //        }
+                                //    }
+                                //);
 
-                                loggerConsole.Info("Completed Application in each minute {0} minutes", differenceInMinutesForLastTimeRange);
+                                //loggerConsole.Info("Completed Application in each minute {0} minutes", differenceInMinutesForLastTimeRange);
 
                                 Interlocked.Add(ref numEntitiesTotal, 1);
 

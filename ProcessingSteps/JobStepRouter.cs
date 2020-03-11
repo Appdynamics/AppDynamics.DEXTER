@@ -75,6 +75,7 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexAPMFlowmaps,
                 JobStatus.IndexAPMSnapshots,
 
+                JobStatus.IndexControllerHealthCheck,
                 JobStatus.IndexAPMHealthCheck,
 
                 // Report data
@@ -328,6 +329,8 @@ namespace AppDynamics.Dexter
                 case JobStatus.IndexAPMSnapshots:
                     return new IndexAPMSnapshots();
 
+                case JobStatus.IndexControllerHealthCheck:
+                    return new IndexControllerHealthCheck();
                 case JobStatus.IndexAPMHealthCheck:
                     return new IndexAPMHealthCheck();
 

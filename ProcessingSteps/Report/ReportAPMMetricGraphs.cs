@@ -497,7 +497,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             logger.Info("Saving Excel report {0}", reportFilePath);
             loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 
-            FileIOHelper.CreateFolder(reportFilePath);
+            FileIOHelper.CreateFolderForFile(reportFilePath);
 
             try
             {
@@ -1478,7 +1478,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 EntityHourlyMetricValueLocation entityHourlyMetricValueLocation = entityHourlyMetricValueLocationsForThisEntityAndMetric[indexOfMetricValueLocation];
 
                                 if (entityHourlyMetricValueLocation.FromUtc >= jobTimeRange.From &&
-                                    entityHourlyMetricValueLocation.ToUtc < jobTimeRange.To)
+                                    entityHourlyMetricValueLocation.ToUtc <= jobTimeRange.To)
                                 {
                                     // Found metric values for this entity for this metric in this time range
                                     entityHourlyMetricValueLocationsForThisEntityAndMetricArray[indexOfTimeRange] = entityHourlyMetricValueLocation;

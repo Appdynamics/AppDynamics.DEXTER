@@ -12,6 +12,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.RuleType).Index(i); i++;
             Map(m => m.RuleSubType).Index(i); i++;
             Map(m => m.TierName).Index(i); i++;
+            
+            Map(m => m.EntityIdentifier).Index(i); i++;
 
             Map(m => m.ReferenceConroller).Index(i); i++;
             Map(m => m.ReferenceApp).Index(i); i++;

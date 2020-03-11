@@ -31,6 +31,10 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.SQLUnion).Index(i); i++;
             Map(m => m.SQLWhere).Index(i); i++;
 
+            Map(m => m.SQLTable).Index(i); i++;
+            Map(m => m.SQLTables).Index(i); i++;
+            Map(m => m.NumSQLTables).Index(i); i++;
+
             Map(m => m.Name).Index(i); i++;
             Map(m => m.Namespace).Index(i); i++;
             Map(m => m.Client).Index(i); i++;

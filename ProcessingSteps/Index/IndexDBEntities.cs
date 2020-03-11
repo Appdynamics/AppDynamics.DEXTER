@@ -330,6 +330,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     // Get join type if present
                                     dbQuery.SQLJoinType = getSQLJoinType(dbQuery.Query);
 
+                                    // Now parse the tables from SQL statement
+                                    Tuple<string, string, int> parsedTables = null;
+                                    switch (dbQuery.SQLClauseType)
+                                    {
+                                        case "SELECT":
+                                            parsedTables = parseSQLTablesFromSELECT(dbQuery.Query);
+
+                                            break;
+
+                                        case "INSERT":
+                                            parsedTables = parseSQLTablesFromINSERT(dbQuery.Query);
+                                            break;
+
+                                        case "UPDATE":
+                                            parsedTables = parseSQLTablesFromUPDATE(dbQuery.Query);
+                                            break;
+
+                                        case "DELETE":
+                                            parsedTables = parseSQLTablesFromDELETE(dbQuery.Query);
+                                            break;
+
+                                        case "DROP":
+                                            parsedTables = parseSQLTablesFromDROP(dbQuery.Query);
+                                            break;
+
+                                        case "TRUNCATE":
+                                            parsedTables = parseSQLTablesFromTRUNCATE(dbQuery.Query);
+                                            break;
+
+                                        default:
+                                            break;
+                                    }
+                                    if (parsedTables != null)
+                                    {
+                                        dbQuery.SQLTable = parsedTables.Item1;
+                                        dbQuery.SQLTables = parsedTables.Item2;
+                                        dbQuery.NumSQLTables = parsedTables.Item3;
+                                    }
+
                                     dbQuery.Duration = differenceInMinutes;
                                     dbQuery.From = jobConfiguration.Input.TimeRange.From.ToLocalTime();
                                     dbQuery.To = jobConfiguration.Input.TimeRange.To.ToLocalTime();

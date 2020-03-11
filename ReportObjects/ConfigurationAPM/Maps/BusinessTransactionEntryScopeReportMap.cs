@@ -3,9 +3,9 @@ using CsvHelper.Configuration;
 
 namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class BusinessTransactionEntryRuleScopeReportMap : ClassMap<BusinessTransactionEntryScope>
+    public class BusinessTransactionEntryScopeReportMap : ClassMap<BusinessTransactionEntryScope>
     {
-        public BusinessTransactionEntryRuleScopeReportMap()
+        public BusinessTransactionEntryScopeReportMap()
         {
             int i = 0;
             Map(m => m.Controller).Index(i); i++;
@@ -16,7 +16,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Description).Index(i); i++;
             Map(m => m.Version).Index(i); i++;
 
-            Map(m => m.IncludedTiers).Index(i); i++;
+            Map(m => m.AffectedTiers).Index(i); i++;
             Map(m => m.NumTiers).Index(i); i++;
 
             Map(m => m.IncludedRules).Index(i); i++;

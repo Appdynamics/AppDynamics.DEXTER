@@ -591,7 +591,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "HasErrors");
                     addFilterFieldToPivot(pivot, "CallGraphType");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "TierName");
@@ -617,12 +617,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "BTName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "HasErrors");
                     addFilterFieldToPivot(pivot, "CallGraphType");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "UserExperience", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "RequestID", DataFieldFunctions.Count);
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
 
                     chart = sheet.Drawings.AddChart(GRAPH_SNAPSHOTS_TIMELINE, eChartType.Line, pivot);
@@ -725,7 +726,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "HasErrors");
                     addFilterFieldToPivot(pivot, "CallGraphType");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
                     addRowFieldToPivot(pivot, "TierName");
@@ -751,12 +752,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "BTName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "HasErrors");
                     addFilterFieldToPivot(pivot, "CallGraphType");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "UserExperience", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "SegmentID", DataFieldFunctions.Count);
                     addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
 
                     chart = sheet.Drawings.AddChart(GRAPH_SEGMENTS_TIMELINE, eChartType.Line, pivot);
@@ -829,7 +831,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "ToEntityType");
                     addFilterFieldToPivot(pivot, "ToEntityName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "RequestID");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     addRowFieldToPivot(pivot, "ExitType");
                     addRowFieldToPivot(pivot, "Detail");
                     addRowFieldToPivot(pivot, "Controller");
@@ -859,14 +861,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "BTName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "ToEntityType");
                     addFilterFieldToPivot(pivot, "ToEntityName", eSortType.Ascending);
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     addFilterFieldToPivot(pivot, "Detail", eSortType.Ascending);
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["Occurred"]);
                     fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "ExitType", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average);
+                    addDataFieldToPivot(pivot, "NumCalls", DataFieldFunctions.Sum, "Calls");
+                    addDataFieldToPivot(pivot, "Duration", DataFieldFunctions.Average, "Average");
 
                     chart = sheet.Drawings.AddChart(GRAPH_EXIT_CALLS_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
@@ -880,7 +883,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "ToEntityType");
                     addFilterFieldToPivot(pivot, "ToEntityName", eSortType.Ascending);
                     addFilterFieldToPivot(pivot, "RequestID");
-                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending);
+                    addFilterFieldToPivot(pivot, "DurationRange", eSortType.Ascending, true);
                     addFilterFieldToPivot(pivot, "HasErrors", eSortType.Ascending);
                     addRowFieldToPivot(pivot, "ExitType");
                     addRowFieldToPivot(pivot, "ErrorDetail");

@@ -1630,7 +1630,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ScopeName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ScopeType"].Position + 1).Width = 25;
-                    sheet.Column(table.Columns["IncludedTiers"].Position + 1).Width = 20;
+                    sheet.Column(table.Columns["AffectedTiers"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["IncludedRules"].Position + 1).Width = 20;
                 }
 

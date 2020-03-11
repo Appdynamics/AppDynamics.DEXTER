@@ -49,6 +49,10 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool SQLGroupBy { get; set; }
         public bool SQLHaving { get; set; }
         public bool SQLUnion { get; set; }
+        
+        public string SQLTable { get; set; }
+        public string SQLTables { get; set; }
+        public int NumSQLTables { get; set; }
 
         public string URLScheme { get; set; }
         public string URLHost { get; set; }

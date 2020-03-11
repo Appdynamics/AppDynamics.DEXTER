@@ -24,9 +24,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #endregion
 
-        #region Agent Properties
+        #region Lists of Default Activities
 
-        internal static List<string> AGENT_PROPERTIES_BUILTIN = new List<string>
+        internal static List<string> BUILTIN_AGENT_PROPERTIES = new List<string>
         {
             { "adaptive-callgraph-granularity" },
             { "api-thread-activity-timeout-in-seconds" },
@@ -74,6 +74,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "slow-request-deviation" },
             { "slow-request-monitor-interval" },
             { "slow-request-threshold" }
+        };
+
+        internal static List<string> BUILTIN_BT_MATCH_RULES = new List<string>
+        {
+            { "Cron4J" },
+            { "JavaTimer" },
+            { "JCronTab" },
+            { "Quartz" },
+            { "Apache Axis Servlet" },
+            { "Apache Axis2 Admin Servlet" },
+            { "Apache Axis2 Servlet" },
+            { "CometD Annotation Servlet" },
+            { "CometD Servlet" },
+            { "JAX WS RI Dispatcher Servlet" },
+            { "JBoss 6.x web-services Servlet" },
+            { "JBoss web-services servlet" },
+            { "Jersey 2.x Servlet" },
+            { "Jersey Servlet" },
+            { "Spring WS - Base servlet for Spring's web framework" },
+            { "Spring WS - dispatching of Web service messages" },
+            { "Struts Action Servlet" },
+            { "Weblogic JAX RPC Servlets" },
+            { "Weblogic JAX WS Servlet" },
+            { "Weblogic JAX WS Webservice Servlet" },
+            { "Websphere web-services axis Servlet" },
+            { "Websphere web-services Servlet" },
+            { "XFire web-services servlet" },
+            { "ASP.NET MVC5 Resource Handler" },
+            { "ASP.NET WCF Activation Handler" },
+            { "ASP.NET WebService Script Handler" },
+            { "ASP.NET WebService Session Handler" },
+            { "NodeJS Static Content Filter" },
+            { "Python Static Content Filter" }
         };
 
         #endregion
@@ -233,39 +266,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         public const string DIFFERENCE_MISSING = "MISSING";
         public const string DIFFERENCE_EXTRA = "EXTRA";
         public const string DIFFERENCE_DIFFERENT = "DIFFERENT";
-
-        internal static List<string> BUILTIN_BT_MATCH_RULES = new List<string>
-        {
-            { "Cron4J" },
-            { "JavaTimer" },
-            { "JCronTab" },
-            { "Quartz" },
-            { "Apache Axis Servlet" },
-            { "Apache Axis2 Admin Servlet" },
-            { "Apache Axis2 Servlet" },
-            { "CometD Annotation Servlet" },
-            { "CometD Servlet" },
-            { "JAX WS RI Dispatcher Servlet" },
-            { "JBoss 6.x web-services Servlet" },
-            { "JBoss web-services servlet" },
-            { "Jersey 2.x Servlet" },
-            { "Jersey Servlet" },
-            { "Spring WS - Base servlet for Spring's web framework" },
-            { "Spring WS - dispatching of Web service messages" },
-            { "Struts Action Servlet" },
-            { "Weblogic JAX RPC Servlets" },
-            { "Weblogic JAX WS Servlet" },
-            { "Weblogic JAX WS Webservice Servlet" },
-            { "Websphere web-services axis Servlet" },
-            { "Websphere web-services Servlet" },
-            { "XFire web-services servlet" },
-            { "ASP.NET MVC5 Resource Handler" },
-            { "ASP.NET WCF Activation Handler" },
-            { "ASP.NET WebService Script Handler" },
-            { "ASP.NET WebService Session Handler" },
-            { "NodeJS Static Content Filter" },
-            { "Python Static Content Filter" }
-        };
 
         #endregion
 
@@ -649,5 +649,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
             return result;
         }
+
+        #region Helper function for various entity naming in Word
+
+        internal static string getShortenedEntityNameForWordBookmark(string entityType, string entityName, long entityID)
+        {
+            // First, strip out unsafe characters
+            entityName = getWordBookmarkSafeString(entityName);
+
+            // Second, measure the unique ID length and shorten the name of string down
+            int maxLength = 40;
+            maxLength = maxLength - 1 - entityType.Length - 1 - entityID.ToString().Length;
+
+            // Third, shorten the string 
+            if (entityName.Length > maxLength) entityName = entityName.Substring(0, maxLength);
+
+            // Can't have first character be number
+            if (entityName.Length > 0)
+            {
+                string firstCharacter = entityName.Substring(0, 1);
+                int firstCharacterNumber = -1;
+                if (Int32.TryParse(firstCharacter, out firstCharacterNumber) == true)
+                {
+                    entityName = String.Format("{0}{1}", "A", entityName.Substring(1));
+                }
+            }
+
+
+            return String.Format("{0}.{1}.{2}", entityType, entityName, entityID);
+        }
+
+        internal static string getWordBookmarkSafeString(string stringToClear)
+        {
+            char[] wordBookmarkInvalidChars = { ' ', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '-', '=', ',', '/', '\\', '[', ']', ':', '?', '|', '"', '<', '>' };
+            foreach (var c in wordBookmarkInvalidChars)
+            {
+                stringToClear = stringToClear.Replace(c, '-');
+            }
+            // Apparently it is possible to have a NUL character as a BT name courtesy of penetration testing somehow
+            stringToClear = stringToClear.Replace("\u0000", "NULL");
+
+            return stringToClear;
+        }
+
+        #endregion
     }
 }

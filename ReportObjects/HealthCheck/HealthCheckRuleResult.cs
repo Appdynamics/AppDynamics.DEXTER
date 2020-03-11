@@ -16,7 +16,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string Category { get; set; }
         public string Code { get; set; }
         public string Name { get; set; }
-        public double Grade { get; set; }
+        public int Grade { get; set; }
         public string Description { get; set; }
 
         public DateTime EvaluationTime { get; set; }

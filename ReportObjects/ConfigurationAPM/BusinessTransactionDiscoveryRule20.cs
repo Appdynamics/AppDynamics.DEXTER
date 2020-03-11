@@ -32,7 +32,7 @@ namespace AppDynamics.Dexter.ReportObjects
         {
             get
             {
-                return String.Format("{0}/{1}/{2}", this.RuleName, this.AgentType, this.EntryPointType);
+                return String.Format("{0}/{1}/{2}/{3}", this.RuleName, this.AgentType, this.EntryPointType, this.ScopeName);
             }
         }
 

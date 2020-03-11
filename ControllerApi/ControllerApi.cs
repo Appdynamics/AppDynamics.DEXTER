@@ -1923,7 +1923,8 @@ namespace AppDynamics.Dexter
                         logger.Error("{0}/{1} GET as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }
 
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    if (response.StatusCode == HttpStatusCode.Unauthorized || 
+                        response.StatusCode == HttpStatusCode.Forbidden)
                     {
                         loggerConsole.Error("{0}/{1} GET as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }
@@ -1996,7 +1997,8 @@ namespace AppDynamics.Dexter
                         logger.Error("{0}/{1} POST as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }
 
-                    if (response.StatusCode == HttpStatusCode.Unauthorized)
+                    if (response.StatusCode == HttpStatusCode.Unauthorized ||
+                        response.StatusCode == HttpStatusCode.Forbidden)
                     {
                         loggerConsole.Error("{0}/{1} POST as {2} returned {3} ({4})", this.ControllerUrl, restAPIUrl, this.UserName, (int)response.StatusCode, response.ReasonPhrase);
                     }

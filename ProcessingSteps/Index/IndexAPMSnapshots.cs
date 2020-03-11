@@ -1413,8 +1413,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         exitCall.ExitType == "DB" ||
                                         exitCall.ExitType == "Cassandra CQL")
                                     {
-                                        if (exitCall.Detail != null && exitCall.Detail.Length > 0 && exitCall.PropQueryType != null && exitCall.PropQueryType.Length > 0)
+                                        if (exitCall.Detail != null && exitCall.Detail.Length > 0)
                                         {
+                                            // For Cassandra CQL, that property is null, so the query needs to be evaluated by default fall through
+                                            if (exitCall.PropQueryType == null) exitCall.PropQueryType = String.Empty;
+
+                                            // Parse types
                                             switch (exitCall.PropQueryType.ToLower())
                                             {
                                                 case "stored procedure":
@@ -1454,6 +1458,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     exitCall.SQLJoinType = getSQLJoinType(exitCall.Detail);
 
                                                     break;
+                                            }
+
+                                            // Now parse the tables from SQL statement
+                                            Tuple<string, string, int> parsedTables = null;
+                                            switch (exitCall.SQLClauseType)
+                                            {
+                                                case "SELECT":
+                                                    parsedTables = parseSQLTablesFromSELECT(exitCall.Detail);
+
+                                                    break;
+
+                                                case "INSERT":
+                                                    parsedTables = parseSQLTablesFromINSERT(exitCall.Detail);
+                                                    break;
+
+                                                case "UPDATE":
+                                                    parsedTables = parseSQLTablesFromUPDATE(exitCall.Detail);
+                                                    break;
+
+                                                case "DELETE":
+                                                    parsedTables = parseSQLTablesFromDELETE(exitCall.Detail);
+                                                    break;
+
+                                                case "DROP":
+                                                    parsedTables = parseSQLTablesFromDROP(exitCall.Detail);
+                                                    break;
+
+                                                case "TRUNCATE":
+                                                    parsedTables = parseSQLTablesFromTRUNCATE(exitCall.Detail);
+                                                    break;
+
+                                                default:
+                                                    break;
+                                            }
+                                            if (parsedTables != null)
+                                            {
+                                                exitCall.SQLTable = parsedTables.Item1;
+                                                exitCall.SQLTables = parsedTables.Item2;
+                                                exitCall.NumSQLTables = parsedTables.Item3;
                                             }
                                         }
                                     }
@@ -2077,7 +2120,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                         {
                                                             sb.AppendFormat("{0};\n", businessDataReference);
                                                         }
-                                                        sb.Remove(sb.Length - 1, 1);
+                                                        if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
                                                         methodCallLine.MIDCs = sb.ToString();
                                                     }
                                                 }
@@ -2536,7 +2579,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         sb.AppendFormat("{0};\n", serviceEndpointReference);
                     }
-                    sb.Remove(sb.Length - 1, 1);
+                    if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
                     methodCallLine.SEPs = sb.ToString();
                 }
             }
@@ -2752,7 +2795,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     {
                         sb.AppendFormat("{0};\n", exitCallsReference);
                     }
-                    sb.Remove(sb.Length - 1, 1);
+                    if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
                     methodCallLine.ExitCalls = sb.ToString();
                 }
             }
@@ -2897,7 +2940,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 sb.AppendFormat("{0};\n", serviceEndpointReference);
                             }
-                            sb.Remove(sb.Length - 1, 1);
+                            if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
                             methodCallLine.SEPs = sb.ToString();
                         }
                     }
@@ -3121,7 +3164,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             sb.AppendFormat("{0};\n", exitCallsReference);
                         }
-                        sb.Remove(sb.Length - 1, 1);
+                        if (sb.Length > 0) sb.Remove(sb.Length - 1, 1);
                         methodCallLine.ExitCalls = sb.ToString();
                     }
                 }

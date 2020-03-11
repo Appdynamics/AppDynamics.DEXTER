@@ -520,7 +520,7 @@ namespace AppDynamics.Dexter
                 {
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
-                    loggerConsole.Info("Target {0} {1}/{2} [{3}] as {4}", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type, jobTarget.UserName);
+                    loggerConsole.Info("Target {0} {1}/{2} [{3}] as {4} with Regex={5}", i + 1, jobTarget.Controller, jobTarget.Application, jobTarget.Type, jobTarget.UserName, jobTarget.NameRegex);
 
                     jobTarget.ApplicationID = -1;
 

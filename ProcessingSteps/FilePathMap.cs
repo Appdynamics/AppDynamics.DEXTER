@@ -370,6 +370,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Configuration comparison report list conversion file names
         private const string CONFIGURATION_DIFFERENCES_FILE_NAME = "configuration.differences.csv";
+        private const string CONFIGURATION_DIFFERENCES_WEB_FILE_NAME = "configuration.differences.web.csv";
 
         // Entity Metrics report conversion file names
         private const string CONVERT_ENTITIES_METRICS_SUMMARY_FULLRANGE_FILE_NAME = "entities.full.csv";
@@ -422,7 +423,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ALL_ACTIVITY_GRIDS_PERMINUTE_FILE_NAME = "{0}.activitygrids.perminute.full.csv";
 
         // Health check conversion file names
-        private const string CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.rule.results.csv";
+        private const string CONVERT_APM_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.APM.results.csv";
+        private const string CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.PLAT.results.csv";
 
         #endregion
 
@@ -448,7 +450,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
         private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.html";
         private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
-        private const string REPORT_HEALTH_CHECK_RESULTS_APM_FILE_NAME = "HealthCheck.APM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_HEALTH_CHECK_RESULTS_FILE_NAME = "HealthCheck.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
@@ -4362,6 +4364,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     CONFIGURATION_COMPARISON_FOLDER_NAME,
                     CONFIGURATION_DIFFERENCES_FILE_NAME);
             }
+            else if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_WEB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    CONFIGURATION_COMPARISON_FOLDER_NAME,
+                    CONFIGURATION_DIFFERENCES_WEB_FILE_NAME);
+            }
             else
             {
                 return Path.Combine(
@@ -4398,7 +4410,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #endregion
 
 
-        #region APM Health Check Index
+        #region Health Check Index
+
+        public string ControllerHealthCheckRuleResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                HEALTHCHECK_FOLDER_NAME,
+                CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+        }
 
         public string APMHealthCheckRuleResultsIndexFilePath(JobTarget jobTarget)
         {
@@ -4408,18 +4430,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 HEALTHCHECK_FOLDER_NAME,
-                CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+                CONVERT_APM_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
         }
 
         #endregion
 
-        #region APM Health Check Report
+        #region Health Check Report
 
         public string HealthCheckSettingMappingFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.ProgramLocationFolderPath,
                 HEALTH_CHECK_SETTING_MAPPING_FILE_NAME);
+        }
+
+        public string ControllerHealthCheckReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                HEALTHCHECK_FOLDER_NAME);
         }
 
         public string APMHealthCheckReportFolderPath()
@@ -4430,19 +4460,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 HEALTHCHECK_APM_FOLDER_NAME);
         }
 
+        public string ControllerHealthCheckRuleResultsReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
+                HEALTHCHECK_FOLDER_NAME,
+                CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+        }
+
         public string APMHealthCheckRuleResultsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 HEALTHCHECK_APM_FOLDER_NAME,
-                CONVERT_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
+                CONVERT_APM_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
         }
 
-        public string APMHealthCheckResultsExcelReportFilePath(JobTimeRange jobTimeRange)
+        public string HealthCheckResultsExcelReportFilePath(JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
-                REPORT_HEALTH_CHECK_RESULTS_APM_FILE_NAME,
+                REPORT_HEALTH_CHECK_RESULTS_FILE_NAME,
                 this.ProgramOptions.JobName,
                 jobTimeRange.From,
                 jobTimeRange.To);

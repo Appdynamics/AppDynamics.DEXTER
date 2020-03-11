@@ -468,7 +468,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             applicationConfiguration.NumBT20Scopes = businessTransactionEntryScopeList.Count;
 
                             businessTransactionEntryScopeList = businessTransactionEntryScopeList.OrderBy(b => b.ScopeType).ThenBy(b => b.ScopeName).ToList();
-                            FileIOHelper.WriteListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryRuleScopeReportMap(), FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(businessTransactionEntryScopeList, new BusinessTransactionEntryScopeReportMap(), FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget));
 
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + businessTransactionEntryScopeList.Count;
 
@@ -504,7 +504,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
                             }
 
-                            applicationConfiguration.NumBT20DiscoveryRules = businessTransactionEntryRules20List.Count;
+                            applicationConfiguration.NumBT20DiscoveryRules = businessTransactionDiscoveryRule20List.Count;
 
                             businessTransactionEntryRules20List = businessTransactionEntryRules20List.OrderBy(b => b.ScopeName).ThenBy(b => b.AgentType).ThenBy(b => b.EntryPointType).ThenBy(b => b.RuleName).ToList();
                             FileIOHelper.WriteListToCSVFile(businessTransactionDiscoveryRule20List, new BusinessTransactionDiscoveryRule20ReportMap(), FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobTarget));
@@ -1701,7 +1701,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sb.AppendFormat("{0};\n", includedTier);
                 }
                 sb.Remove(sb.Length - 1, 1);
-                businessTransactionEntryScope.IncludedTiers = sb.ToString();
+                businessTransactionEntryScope.AffectedTiers = sb.ToString();
+            }
+            else
+            {
+                XmlNodeList excludedTierNodeList = scopeConfigurationNode.SelectNodes("excluded-tiers/tier-name");
+                businessTransactionEntryScope.NumTiers = excludedTierNodeList.Count;
+                if (businessTransactionEntryScope.NumTiers > 0)
+                {
+                    List<string> excludedTiersList = new List<string>(businessTransactionEntryScope.NumTiers);
+                    foreach (XmlNode excludedTierNode in excludedTierNodeList)
+                    {
+                        excludedTiersList.Add(excludedTierNode.InnerText);
+                    }
+                    excludedTiersList.Sort();
+
+                    StringBuilder sb = new StringBuilder(32 * businessTransactionEntryScope.NumTiers);
+                    foreach (string excludedTier in excludedTiersList)
+                    {
+                        sb.AppendFormat("{0};\n", excludedTier);
+                    }
+                    sb.Remove(sb.Length - 1, 1);
+                    businessTransactionEntryScope.AffectedTiers = sb.ToString();
+                }
             }
 
             XmlNodeList ruleMappingNodeList = scopeToRuleMappingConfigurationNode.SelectNodes(String.Format("scope-rule-mapping[@scope-name='{0}']/rule", businessTransactionEntryScope.ScopeName));
@@ -1978,6 +2000,56 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 }
             }
 
+            //Default.NET Azure Service Fabric configuration
+            //Default.NET HTTP configuration
+            //Default.NET JMS configuration
+            //Default.NET Remoting configuration
+            //Default.NET WCF configuration
+            //Default.NET WebService configuration
+            //Default ADO.NET configuration
+            //Default Amazon S3 configuration
+            //Default Amazon SNS configuration
+            //Default Amazon SQS configuration
+            //Default AWS Configuration
+            //Default Axon configuration
+            //Default Cassandra CQL configuration
+            //Default Couchbase configuration
+            //Default Database configuration
+            //Default HTTP configuration
+            //Default JDBC configuration
+            //Default JMS configuration
+            //Default Jolt configuration
+            //Default Kafka configuration
+            //Default Module configuration
+            //Default MongoDB configuration
+            //Default MQ configuration
+            //Default NodeJS Cache configuration
+            //Default Nodejs Cassandra configuration
+            //Default Nodejs Couchbase configuration
+            //Default NodeJS DB configuration
+            //Default NodeJS HTTP configuration
+            //Default Nodejs MongoDB configuration
+            //Default PHP Cache configuration
+            //Default PHP DB configuration
+            //Default PHP HTTP configuration
+            //Default PHP RabbitMQ configuration
+            //Default PHP WebService configuration
+            //Default Python Cache configuration
+            //Default Python DB configuration
+            //Default Python HTTP configuration
+            //Default Python MongoDB configuration
+            //Default RabbitMQ configuration
+            //Default RMI configuration
+            //Default Ruby Cache configuration
+            //Default Ruby DB configuration
+            //Default Ruby HTTP configuration
+            //Default Thrift configuration
+            //Default Vertx Message configuration
+            //Default WebService configuration
+            //Default WebSocket configuration
+
+            backendDiscoveryRule.IsBuiltIn = backendDiscoveryRule.RuleName.ToLower().StartsWith("default") && backendDiscoveryRule.RuleName.ToLower().EndsWith("configuration");
+
             return backendDiscoveryRule;
         }
 
@@ -2231,7 +2303,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 agentConfigurationProperty.TierName = getStringValueFromXmlNode(applicationComponentNode.SelectSingleNode("name"));
             }
 
-            agentConfigurationProperty.IsBuiltIn = AGENT_PROPERTIES_BUILTIN.Contains(agentConfigurationProperty.PropertyName);
+            agentConfigurationProperty.IsBuiltIn = BUILTIN_AGENT_PROPERTIES.Contains(agentConfigurationProperty.PropertyName);
 
             return agentConfigurationProperty;
         }

@@ -14,7 +14,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public int Version { get; set; }
 
         [FieldComparison(FieldComparisonType.SemicolonMultiLineValueComparison)]
-        public string IncludedTiers { get; set; }
+        public string AffectedTiers { get; set; }
         [FieldComparison(FieldComparisonType.ValueComparison)]
         public int NumTiers { get; set; }
 
