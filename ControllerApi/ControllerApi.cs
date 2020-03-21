@@ -80,7 +80,7 @@ namespace AppDynamics.Dexter
             };
 
             // If customer controller is still leveraging old TLS or SSL3 protocols, enable that
-#if (NETCOREAPP3_0)
+#if (NETCOREAPP3_1)
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;
 #else
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls11;

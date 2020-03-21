@@ -1,5 +1,6 @@
 ﻿using AppDynamics.Dexter.ProcessingSteps;
 using CommandLine;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NLog;
 using System;
@@ -10,6 +11,9 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
@@ -1027,6 +1031,98 @@ namespace AppDynamics.Dexter
                     return;
                 }
             }
+            else
+            {
+                logger.Info("Resuming run from the job file {0}", programOptions.OutputJobFilePath);
+                loggerConsole.Info("Resuming run from the job file {0}", programOptions.OutputJobFilePath);
+            }
+
+            #endregion
+
+            #region Load and validate license
+
+            string programLicensePath = Path.Combine(
+                programOptions.ProgramLocationFolderPath,
+                "LicensedFeatures.json");
+
+            JObject licenseFile = FileIOHelper.LoadJObjectFromFile(programLicensePath);
+            JObject licensedFeatures = (JObject)licenseFile["LicensedFeatures"];
+
+            string dataSigned = licensedFeatures.ToString(Formatting.None);
+            var bytesSigned = Encoding.UTF8.GetBytes(dataSigned);
+
+            string dataSignature = licenseFile["Signature"].ToString();
+            byte[] bytesSignature = Convert.FromBase64String(dataSignature);
+
+            string licenseCertificatePath = Path.Combine(
+                programOptions.ProgramLocationFolderPath,
+                "AppDynamics.DEXTER.public.cer");
+
+            X509Certificate2 publicCert = new X509Certificate2(licenseCertificatePath);
+
+            var rsaPublicKey = publicCert.GetRSAPublicKey();
+
+            bool licenseValidationResult = rsaPublicKey.VerifyData(bytesSigned, bytesSignature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+            logger.Info("Validating license\n{0}\nwith signature {1}\nfrom {2} containing \n{3} returned {4}", dataSigned, dataSignature, licenseCertificatePath, publicCert, licenseValidationResult);
+
+            JobOutput licensedReports = new JobOutput();
+            licensedReports.ApplicationSummary = true;
+            licensedReports.Configuration = true;
+            licensedReports.Dashboards = true;
+            licensedReports.DetectedEntities = true;
+            licensedReports.EntityDashboards = true;
+            licensedReports.EntityDetails = true;
+            licensedReports.EntityMetricGraphs = true;
+            licensedReports.EntityMetrics = true;
+            licensedReports.Events = true;
+            licensedReports.FlameGraphs = true;
+            // Health check is not free
+            licensedReports.HealthCheck = false;
+            // Licenses are not free
+            licensedReports.Licenses = false;
+            licensedReports.Snapshots = true;
+            licensedReports.UsersGroupsRolesPermissions = true;
+            
+            if (licenseValidationResult == true)
+            {
+                logger.Info("License validation signature check succeeded");
+                loggerConsole.Info("License validation signature check succeeded");
+
+                DateTime dateTimeLicenseExpiration = (DateTime)licensedFeatures["ExpirationDateTime"];
+                if (dateTimeLicenseExpiration >= DateTime.Now)
+                {
+                    logger.Trace("License expires on {0:o}, valid", dateTimeLicenseExpiration);
+                    loggerConsole.Info("License expires on {0:o}, valid", dateTimeLicenseExpiration);
+
+                    licensedReports.ApplicationSummary = JobStepBase.getBoolValueFromJToken(licensedFeatures, "ApplicationSummary");
+                    licensedReports.Configuration = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Configuration");
+                    licensedReports.Dashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Dashboards");
+                    licensedReports.DetectedEntities = JobStepBase.getBoolValueFromJToken(licensedFeatures, "DetectedEntities");
+                    licensedReports.EntityDashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDashboards");
+                    licensedReports.EntityDetails = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDetails");
+                    licensedReports.EntityMetricGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetricGraphs");
+                    licensedReports.EntityMetrics = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetrics");
+                    licensedReports.Events = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Events");
+                    licensedReports.FlameGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "FlameGraphs");
+                    licensedReports.HealthCheck = JobStepBase.getBoolValueFromJToken(licensedFeatures, "HealthCheck");
+                    licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
+                    licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
+                    licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
+                }
+                else
+                {
+                    logger.Trace("License expires on {0:o}, expired", dateTimeLicenseExpiration);
+                    loggerConsole.Info("License expires on {0:o}, expired", dateTimeLicenseExpiration);
+                }
+            }
+            else
+            {
+                logger.Warn("License validation signature check failed");
+                loggerConsole.Warn("License validation signature check failed");
+            }
+
+            programOptions.LicensedReports = licensedReports;
 
             #endregion
 
@@ -1042,7 +1138,7 @@ namespace AppDynamics.Dexter
             logger.Trace("Executing:\r\n{0}", programOptions);
             loggerConsole.Trace("Executing:\r\n{0}", programOptions);
 
-            loggerConsole.Warn("RunProgramCompare");
+            loggerConsole.Warn("RunProgramCompare is not implemented yet");
         }
 
         public static string ReadPassword(char mask)

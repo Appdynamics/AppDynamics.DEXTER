@@ -29,7 +29,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -233,8 +233,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Licenses={0}", programOptions.LicensedReports.Licenses);
+            loggerConsole.Trace("LicensedReports.Licenses={0}", programOptions.LicensedReports.Licenses);
+            if (programOptions.LicensedReports.Licenses == false)
+            {
+                loggerConsole.Warn("Not licensed for licenses");
+                return false;
+            }
+
             logger.Trace("Input.Licenses={0}", jobConfiguration.Input.Licenses);
             loggerConsole.Trace("Input.Licenses={0}", jobConfiguration.Input.Licenses);
             if (jobConfiguration.Input.Licenses == false)

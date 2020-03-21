@@ -61,7 +61,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            if (this.ShouldExecute(jobConfiguration) == false)
+            if (this.ShouldExecute(programOptions, jobConfiguration) == false)
             {
                 return true;
             }
@@ -449,8 +449,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Snapshots={0}", programOptions.LicensedReports.Snapshots);
+            loggerConsole.Trace("LicensedReports.Snapshots={0}", programOptions.LicensedReports.Snapshots);
+            if (programOptions.LicensedReports.Snapshots == false)
+            {
+                loggerConsole.Warn("Not licensed for snapshots");
+                return false;
+            }
+
             logger.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             loggerConsole.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             logger.Trace("Output.Snapshots={0}", jobConfiguration.Output.Snapshots);

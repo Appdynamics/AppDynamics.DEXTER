@@ -61,6 +61,7 @@ com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,4FBAF0,000000
 com.mongodb,Mongo DB,633838,854949,FFFFFF
 com.mule,Mule ESB,e3b2ed,f4cafc,000000
 com.mysql,MySQL Driver,36ffc3,9ffce0,000000
+com.netflix.hystrix,Hystrix Fault Tolerance,633838,854949,FFFFFF
 com.newrelic,NewRelic,7668CF,978FCF,FFFFFF
 com.nimbusds,NimbusDS,fcf644,fcf760,000000
 com.opensymphony,OpenSymphony J2EE,558c07,6aa813,FFFFFF
@@ -116,6 +117,8 @@ Fiserv,FiServ Financial,993006,b5471b,FFFFFF
 freemarker,Apache FreeMarker,FD6DEE,F5CCE7,000000
 Glass.Mapper,Sitecore CMS,8abfb9,a7d6d1,000000
 gw.,Guidewire,BA90FC,C5A7FC,000000
+io.github.resilience4j,Resilience4j Fault Tolerance,8abfb9,a7d6d1,000000
+io.lettuce,Lettuce Redis Client,BA90FC,C5A7FC,000000
 io.netty,Netty NIO,993006,b5471b,FFFFFF
 io.prometheus,Prometheus,BA90FC,C5A7FC,000000
 io.undertow,JBoss Undertow,99a30d,acb52a,000000
@@ -162,7 +165,7 @@ Newtonsoft.Json,Newtonsoft JSON,a3f57f,bffca4,000000
 NHibernate,NHibernate ORM,a3f57f,bffca4,000000
 NLog,NLog Framework,a2d9f2,bfebff,000000
 Novell,Novell,ad5fc9,c169e0,000000
-OfficeOpenXml,Office XML,85375,11658c,FFFFFF
+OfficeOpenXml,Office XML,085375,11658c,FFFFFF
 ognl,Apache OGNL,FD6DEE,F5CCE7,000000
 okhttp3,OkHttp Square,FE5810,FF8754,000000
 okio,OkHttp Square NIO,8bc4af,9ad9c2,000000
@@ -192,6 +195,10 @@ redis,Redis Cache,ff4d4d,ff9696,FFFFFF
 redis.clients,Redis Cache Client,ff4d4d,ff9696,FFFFFF
 ReportExprHostImpl,Microsoft Reporting Services,00A1F1,4FBAF0,000000
 RestSharp,RestSharp HTTP Client,ff4d4d,ff9696,FFFFFF
+rx.internal,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
+rx.Observable,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
+rx.observables,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
+rx.Subscriber,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
 Sitecore,Sitecore CMS,8abfb9,a7d6d1,000000
 SNINativeMethodWrapper,.NET ADO.NET,6197FF,94C9FF,000000
 StackExchange.Redis,Redis StackExchange,ff4d4d,ff9696,FFFFFF

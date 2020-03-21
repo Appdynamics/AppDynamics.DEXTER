@@ -52,7 +52,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -148,6 +148,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             foreach (string chromeDriverVersionFolderPath in chromeDriverFolderPaths)
                             {
                                 string chromeDriverFolderPath = String.Empty;
+
                                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) == true)
                                 {
                                     chromeDriverFolderPath = Path.Combine(chromeDriverVersionFolderPath, "win32");
@@ -167,6 +168,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 if (chromeDriverFolderPath.Length > 0)
                                 {
+                                    // Get the permissions and set chmod 755 if they are not set
+                                    try
+                                    {
+                                        if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) == true || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) == true)
+                                        {
+                                            string chmodParams = String.Format(@"755 ""{0}/chromedriver""", chromeDriverFolderPath);
+                                            loggerWebDriver.Trace("Running chmod {0}", chmodParams);
+                                            Process processChMod = Process.Start("chmod", chmodParams);
+                                            processChMod.WaitForExit(1000 * 10);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        loggerWebDriver.Error("Unable to run chmod 755 command", chromeDriverFolderPath);
+                                        loggerWebDriver.Error(ex);
+                                    }
+
                                     try
                                     {
                                         loggerConsole.Info("Trying to open Chrome Web Driver from {0}", chromeDriverVersionFolderPath);
@@ -175,6 +193,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     catch (InvalidOperationException ex)
                                     {
                                         // This happens when the driver is for browser that is newer then what is installed
+                                        
                                         //System.InvalidOperationException
                                         //  HResult = 0x80131509
                                         //  Message = session not created: This version of ChromeDriver only supports Chrome version 78(SessionNotCreated)
@@ -188,6 +207,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         //   at AppDScreenShot.Program.Main(String[] args) in C:\appdynamics\AppDScreenShot\AppDScreenShot\Program.cs:line 22
 
                                         loggerConsole.Warn("Unable to create Web Driver from {0}", chromeDriverFolderPath);
+                                        loggerWebDriver.Error("Unable to create Web Driver from {0}", chromeDriverFolderPath);
+
+                                        loggerWebDriver.Error(ex);
+                                    }
+                                    catch (System.ComponentModel.Win32Exception ex)
+                                    {
+                                        // This happens when the driver is not chmod'ed to be executable on Mac and Linux
+                                        
+                                        //System.ComponentModel.Win32Exception(13): Permission denied
+                                        //   at System.Diagnostics.Process.ForkAndExecProcess(String filename, String[] argv, String[] envp, String cwd, Boolean redirectStdin, Boolean redirectStdout, Boolean redirectStderr, Boolean setCredentials, UInt32 userId, UInt32 groupId, UInt32[] groups, Int32 & stdinFd, Int32 & stdoutFd, Int32 & stderrFd, Boolean usesTerminal, Boolean throwOnNoExec)
+                                        //   at System.Diagnostics.Process.StartCore(ProcessStartInfo startInfo)
+                                        //   at System.Diagnostics.Process.Start()
+                                        //   at OpenQA.Selenium.DriverService.Start()
+                                        //   at OpenQA.Selenium.Remote.DriverServiceCommandExecutor.Execute(Command commandToExecute)
+                                        //   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+                                        //   at OpenQA.Selenium.Remote.RemoteWebDriver.StartSession(ICapabilities desiredCapabilities)
+                                        //   at OpenQA.Selenium.Remote.RemoteWebDriver..ctor(ICommandExecutor commandExecutor, ICapabilities desiredCapabilities)
+                                        //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(ChromeDriverService service, ChromeOptions options, TimeSpan commandTimeout)
+                                        //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(String chromeDriverDirectory, ChromeOptions options, TimeSpan commandTimeout)
+                                        //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(String chromeDriverDirectory, ChromeOptions options)
+                                        //   at AppDynamics.Dexter.ProcessingSteps.ExtractAPMEntityDashboardScreenshots.Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration) in C:\appdynamics\AppDynamics.DEXTER\src\ProcessingSteps\Extract\ExtractAPMEntityDashboardScreenshots.cs:line 195
+
+                                        loggerConsole.Warn("Unable to create Web Driver from {0} because it is not marked at executable", chromeDriverFolderPath);
                                         loggerWebDriver.Error("Unable to create Web Driver from {0}", chromeDriverFolderPath);
 
                                         loggerWebDriver.Error(ex);
@@ -216,6 +258,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             catch (InvalidOperationException ex)
                             {
                                 // This happens when the driver is for browser that is newer then what is installed
+                               
                                 //System.InvalidOperationException
                                 //  HResult = 0x80131509
                                 //  Message = session not created: This version of ChromeDriver only supports Chrome version 78(SessionNotCreated)
@@ -233,11 +276,35 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 loggerWebDriver.Error(ex);
                             }
+                            catch (System.ComponentModel.Win32Exception ex)
+                            {
+                                // This happens when the driver is not chmod'ed to be executable on Mac and Linux
+
+                                //System.ComponentModel.Win32Exception(13): Permission denied
+                                //   at System.Diagnostics.Process.ForkAndExecProcess(String filename, String[] argv, String[] envp, String cwd, Boolean redirectStdin, Boolean redirectStdout, Boolean redirectStderr, Boolean setCredentials, UInt32 userId, UInt32 groupId, UInt32[] groups, Int32 & stdinFd, Int32 & stdoutFd, Int32 & stderrFd, Boolean usesTerminal, Boolean throwOnNoExec)
+                                //   at System.Diagnostics.Process.StartCore(ProcessStartInfo startInfo)
+                                //   at System.Diagnostics.Process.Start()
+                                //   at OpenQA.Selenium.DriverService.Start()
+                                //   at OpenQA.Selenium.Remote.DriverServiceCommandExecutor.Execute(Command commandToExecute)
+                                //   at OpenQA.Selenium.Remote.RemoteWebDriver.Execute(String driverCommandToExecute, Dictionary`2 parameters)
+                                //   at OpenQA.Selenium.Remote.RemoteWebDriver.StartSession(ICapabilities desiredCapabilities)
+                                //   at OpenQA.Selenium.Remote.RemoteWebDriver..ctor(ICommandExecutor commandExecutor, ICapabilities desiredCapabilities)
+                                //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(ChromeDriverService service, ChromeOptions options, TimeSpan commandTimeout)
+                                //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(String chromeDriverDirectory, ChromeOptions options, TimeSpan commandTimeout)
+                                //   at OpenQA.Selenium.Chrome.ChromeDriver..ctor(String chromeDriverDirectory, ChromeOptions options)
+                                //   at AppDynamics.Dexter.ProcessingSteps.ExtractAPMEntityDashboardScreenshots.Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration) in C:\appdynamics\AppDynamics.DEXTER\src\ProcessingSteps\Extract\ExtractAPMEntityDashboardScreenshots.cs:line 195
+
+                                loggerConsole.Warn("Unable to create Web Driver from {0} because it is not marked at executable", validatedChromeDriverFolderPath);
+                                loggerWebDriver.Error("Unable to create Web Driver from {0}", validatedChromeDriverFolderPath);
+
+                                loggerWebDriver.Error(ex);
+                            }
                         }
 
                         if (chromeDriver == null)
                         {
                             loggerConsole.Warn("Do not have Chrome Web Driver Initialized");
+                            loggerWebDriver.Warn("Do not have Chrome Web Driver Initialized");
 
                             continue;
                         }
@@ -852,8 +919,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.EntityDashboards={0}", programOptions.LicensedReports.EntityDashboards);
+            loggerConsole.Trace("LicensedReports.EntityDashboards={0}", programOptions.LicensedReports.EntityDashboards);
+            if (programOptions.LicensedReports.EntityDashboards == false)
+            {
+                loggerConsole.Warn("Not licensed for entity dashboard/flowmap screenshots");
+                return false;
+            }
+
             logger.Trace("Input.EntityDashboards={0}", jobConfiguration.Input.EntityDashboards);
             loggerConsole.Trace("Input.EntityDashboards={0}", jobConfiguration.Input.EntityDashboards);
             if (jobConfiguration.Input.EntityDashboards == false)

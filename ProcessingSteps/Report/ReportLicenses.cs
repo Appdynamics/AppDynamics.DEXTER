@@ -74,7 +74,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            if (this.ShouldExecute(jobConfiguration) == false)
+            if (this.ShouldExecute(programOptions, jobConfiguration) == false)
             {
                 return true;
             }
@@ -666,8 +666,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Licenses={0}", programOptions.LicensedReports.Licenses);
+            loggerConsole.Trace("LicensedReports.Licenses={0}", programOptions.LicensedReports.Licenses);
+            if (programOptions.LicensedReports.Licenses == false)
+            {
+                loggerConsole.Warn("Not licensed for licenses");
+                return false;
+            }
+
             logger.Trace("Output.Licenses={0}", jobConfiguration.Output.Licenses);
             loggerConsole.Trace("Output.Licenses={0}", jobConfiguration.Output.Licenses);
             if (jobConfiguration.Output.Licenses == false)
