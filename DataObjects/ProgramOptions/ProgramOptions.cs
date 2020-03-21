@@ -37,6 +37,8 @@ namespace AppDynamics.Dexter
 
         public string JobName { get; set; }
 
+        public JobOutput LicensedReports { get; set; }
+
         public override string ToString()
         {
             return String.Format(

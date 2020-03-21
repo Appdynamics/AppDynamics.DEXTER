@@ -31,7 +31,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -559,8 +559,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Dashboards={0}", programOptions.LicensedReports.Dashboards);
+            loggerConsole.Trace("LicensedReports.Dashboards={0}", programOptions.LicensedReports.Dashboards);
+            if (programOptions.LicensedReports.Dashboards == false)
+            {
+                loggerConsole.Warn("Not licensed for dashboards");
+                return false;
+            }
+
             logger.Trace("Input.Dashboards={0}", jobConfiguration.Input.Dashboards);
             loggerConsole.Trace("Input.Dashboards={0}", jobConfiguration.Input.Dashboards);
             if (jobConfiguration.Input.Dashboards == false)

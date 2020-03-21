@@ -34,7 +34,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            if (this.ShouldExecute(jobConfiguration) == false)
+            if (this.ShouldExecute(programOptions, jobConfiguration) == false)
             {
                 return true;
             }
@@ -874,8 +874,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.EntityDashboards={0}", programOptions.LicensedReports.EntityDashboards);
+            loggerConsole.Trace("LicensedReports.EntityDashboards={0}", programOptions.LicensedReports.EntityDashboards);
+            if (programOptions.LicensedReports.EntityDashboards == false)
+            {
+                loggerConsole.Warn("Not licensed for entity dashboard/flowmap screenshots");
+                return false;
+            }
+
             logger.Trace("Input.EntityDashboards={0}", jobConfiguration.Input.EntityDashboards);
             loggerConsole.Trace("Input.EntityDashboards={0}", jobConfiguration.Input.EntityDashboards);
             logger.Trace("Output.EntityDashboards={0}", jobConfiguration.Output.EntityDashboards);

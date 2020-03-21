@@ -131,7 +131,17 @@ namespace AppDynamics.Dexter
 
             loggerConsole.Info("Starting job from status {0}({0:d})", jobConfiguration.Status);
             logger.Info("Starting job from status {0}({0:d})", jobConfiguration.Status);
-            logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', Time ranges='{2}', Flowmaps='{3}', Metrics='{4}', Snapshots='{5}', Configuration='{6}', Events='{7}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To, jobConfiguration.Input.HourlyTimeRanges.Count, jobConfiguration.Input.Flowmaps, jobConfiguration.Input.Metrics, jobConfiguration.Input.Snapshots, jobConfiguration.Input.Configuration, jobConfiguration.Input.Events);
+            logger.Info("Job input: TimeRange.From='{0:o}', TimeRange.To='{1:o}', Time ranges='{2}'", jobConfiguration.Input.TimeRange.From, jobConfiguration.Input.TimeRange.To);
+            logger.Info("DetectedEntities='{0}'", jobConfiguration.Input.DetectedEntities);
+            logger.Info("Flowmaps='{0}'", jobConfiguration.Input.Flowmaps);
+            logger.Info("Metrics='{0}'", jobConfiguration.Input.Metrics);
+            logger.Info("Snapshots='{0}'", jobConfiguration.Input.Snapshots);
+            logger.Info("Events='{0}'", jobConfiguration.Input.Events);
+            logger.Info("Licenses='{0}''", jobConfiguration.Input.Licenses);
+            logger.Info("Configuration='{0}'", jobConfiguration.Input.Configuration);
+            logger.Info("UsersGroupsRolesPermissions='{0}'", jobConfiguration.Input.UsersGroupsRolesPermissions);
+            logger.Info("EntityDashboards='{0}'", jobConfiguration.Input.EntityDashboards);
+
             if (jobConfiguration.Input.MetricsSelectionCriteria != null)
             {
                 logger.Info("Job input: MetricsSelectionCriteria='{0}'", String.Join(",", jobConfiguration.Input.MetricsSelectionCriteria));

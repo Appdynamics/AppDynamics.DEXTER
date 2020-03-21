@@ -41,7 +41,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            if (this.ShouldExecute(jobConfiguration) == false)
+            if (this.ShouldExecute(programOptions, jobConfiguration) == false)
             {
                 return true;
             }
@@ -1617,13 +1617,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.ApplicationSummary={0}", programOptions.LicensedReports.ApplicationSummary);
+            loggerConsole.Trace("LicensedReports.ApplicationSummary={0}", programOptions.LicensedReports.ApplicationSummary);
+            if (programOptions.LicensedReports.ApplicationSummary == false)
+            {
+                loggerConsole.Warn("Not licensed for application summary");
+                return false;
+            }
+
             logger.Trace("Output.ApplicationSummary={0}", jobConfiguration.Output.ApplicationSummary);
             loggerConsole.Trace("Output.ApplicationSummary={0}", jobConfiguration.Output.ApplicationSummary);
             if (jobConfiguration.Output.ApplicationSummary == false)
             {
-                loggerConsole.Trace("Skipping report of Application summary");
+                loggerConsole.Trace("Skipping report of application summary");
             }
             return (jobConfiguration.Output.ApplicationSummary == true);
         }

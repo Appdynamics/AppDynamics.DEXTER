@@ -27,7 +27,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -138,8 +138,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Configuration={0}", programOptions.LicensedReports.Configuration);
+            loggerConsole.Trace("LicensedReports.Configuration={0}", programOptions.LicensedReports.Configuration);
+            if (programOptions.LicensedReports.Configuration == false)
+            {
+                loggerConsole.Warn("Not licensed for configuration");
+                return false;
+            }
+
             logger.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             loggerConsole.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             if (jobConfiguration.Input.Configuration == false)

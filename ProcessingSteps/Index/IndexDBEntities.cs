@@ -30,7 +30,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -1004,8 +1004,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.DetectedEntities={0}", programOptions.LicensedReports.DetectedEntities);
+            loggerConsole.Trace("LicensedReports.DetectedEntities={0}", programOptions.LicensedReports.DetectedEntities);
+            if (programOptions.LicensedReports.DetectedEntities == false)
+            {
+                loggerConsole.Warn("Not licensed for detected entities");
+                return false;
+            }
+
             logger.Trace("Input.DetectedEntities={0}", jobConfiguration.Input.DetectedEntities);
             loggerConsole.Trace("Input.DetectedEntities={0}", jobConfiguration.Input.DetectedEntities);
             if (jobConfiguration.Input.DetectedEntities == false)

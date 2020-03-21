@@ -33,7 +33,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -384,8 +384,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.EntityMetrics={0}", programOptions.LicensedReports.EntityMetrics);
+            loggerConsole.Trace("LicensedReports.EntityMetrics={0}", programOptions.LicensedReports.EntityMetrics);
+            if (programOptions.LicensedReports.EntityMetrics == false)
+            {
+                loggerConsole.Warn("Not licensed for entity flowmaps");
+                return false;
+            }
+
             logger.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
             loggerConsole.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
             if (jobConfiguration.Input.Flowmaps == false)

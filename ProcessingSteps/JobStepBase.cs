@@ -334,7 +334,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return false;
         }
 
-        public virtual bool ShouldExecute(JobConfiguration jobConfiguration)
+        public virtual bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             return false;
         }
@@ -674,7 +674,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     entityName = String.Format("{0}{1}", "A", entityName.Substring(1));
                 }
             }
-
 
             return String.Format("{0}.{1}.{2}", entityType, entityName, entityID);
         }

@@ -34,7 +34,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             FilePathMap = new FilePathMap(programOptions, jobConfiguration);
 
-            if (this.ShouldExecute(jobConfiguration) == false)
+            if (this.ShouldExecute(programOptions, jobConfiguration) == false)
             {
                 return true;
             }
@@ -297,8 +297,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.FlameGraphs={0}", programOptions.LicensedReports.FlameGraphs);
+            loggerConsole.Trace("LicensedReports.FlameGraphs={0}", programOptions.LicensedReports.FlameGraphs);
+            if (programOptions.LicensedReports.FlameGraphs == false)
+            {
+                loggerConsole.Warn("Not licensed for flame graphs");
+                return false;
+            }
+
             logger.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             loggerConsole.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             logger.Trace("Output.FlameGraphs={0}", jobConfiguration.Output.FlameGraphs);

@@ -30,7 +30,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -210,8 +210,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.HealthCheck={0}", programOptions.LicensedReports.HealthCheck);
+            loggerConsole.Trace("LicensedReports.HealthCheck={0}", programOptions.LicensedReports.HealthCheck);
+            if (programOptions.LicensedReports.HealthCheck == false)
+            {
+                loggerConsole.Warn("Not licensed for health check");
+                return false;
+            }
+
             logger.Trace("Input.DetectedEntities={0}", jobConfiguration.Input.DetectedEntities);
             logger.Trace("Input.Configuration={0}", jobConfiguration.Input.Configuration);
             logger.Trace("Output.HealthCheck={0}", jobConfiguration.Output.HealthCheck);

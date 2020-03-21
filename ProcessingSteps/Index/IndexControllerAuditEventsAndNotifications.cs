@@ -31,7 +31,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -244,8 +244,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Events={0}", programOptions.LicensedReports.Events);
+            loggerConsole.Trace("LicensedReports.Events={0}", programOptions.LicensedReports.Events);
+            if (programOptions.LicensedReports.Events == false)
+            {
+                loggerConsole.Warn("Not licensed for events");
+                return false;
+            }
+
             logger.Trace("Input.Events={0}", jobConfiguration.Input.Events);
             loggerConsole.Trace("Input.Events={0}", jobConfiguration.Input.Events);
             if (jobConfiguration.Input.Events == false)

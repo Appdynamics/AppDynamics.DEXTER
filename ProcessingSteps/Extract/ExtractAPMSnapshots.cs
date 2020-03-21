@@ -42,7 +42,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -284,8 +284,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         snapshotToken["applicationComponentName"],
                                         snapshotToken["businessTransactionName"]);
 
+                                    // Assume we are keeping snapshot
+                                    bool keepSnapshot = true;
+
                                     // Only grab first in chain snapshots
-                                    if ((bool)snapshotToken["firstInChain"] == false) continue;
+                                    if ((bool)snapshotToken["firstInChain"] == false) keepSnapshot = false;
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because it is not first in chain",snapshotToken["requestGUID"]);
+                                        continue;
+                                    }
 
                                     // Filter user experience
                                     switch (snapshotToken["userExperience"].ToString())
@@ -307,21 +315,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             break;
                                         default:
                                             // Not sure what kind of beast it is
-                                            continue;
+                                            keepSnapshot = false;
+                                            break;
+                                    }
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because its user experience is unknown", snapshotToken["requestGUID"]);
+                                        continue;
                                     }
 
                                     // Filter call graph
                                     if ((bool)snapshotToken["fullCallgraph"] == true)
                                     {
-                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full != true) continue;
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Full != true) keepSnapshot = false;
                                     }
                                     else if ((bool)snapshotToken["delayedCallGraph"] == true)
                                     {
-                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial != true) continue;
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.Partial != true) keepSnapshot = false;
                                     }
                                     else
                                     {
-                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None != true) continue;
+                                        if (jobConfiguration.Input.SnapshotSelectionCriteria.SnapshotType.None != true) keepSnapshot = false;
+                                    }
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because its of call graph criteria didn't match", snapshotToken["requestGUID"]);
+                                        continue;
                                     }
 
                                     // Filter Tier type
@@ -335,10 +354,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperty(tier.agentType);
                                                 if (pi != null)
                                                 {
-                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType) == false) continue;
+                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType) == false) keepSnapshot = false;
                                                 }
                                             }
                                         }
+                                    }
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because its of tier type", snapshotToken["requestGUID"]);
+                                        continue;
                                     }
 
                                     // Filter BT type
@@ -352,10 +376,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.GetType().GetProperty(businessTransaction.entryPointType);
                                                 if (pi != null)
                                                 {
-                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType) == false) continue;
+                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType) == false) keepSnapshot = false;
                                                 }
                                             }
                                         }
+                                    }
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because its of business transaction type", snapshotToken["requestGUID"]);
+                                        continue;
                                     }
 
                                     // Filter Tier name
@@ -382,7 +411,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                     }
-                                    if (tierNameMatch == false) continue;
+                                    if (tierNameMatch == false) keepSnapshot = false;
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because tier name didn't match", snapshotToken["requestGUID"]);
+                                        continue;
+                                    }
 
                                     // Filter BT name
                                     bool businessTransactionNameMatch = false;
@@ -408,7 +442,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                     }
-                                    if (businessTransactionNameMatch == false) continue;
+                                    if (businessTransactionNameMatch == false) keepSnapshot = false;
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because business transaction name didn't match", snapshotToken["requestGUID"]);
+                                        continue;
+                                    }
 
                                     // If we got here, then the snapshot passed the filter
                                     logger.Trace("Keeping snapshot requestGUID={0}, firstInChain={1}, userExperience={2}, fullCallgraph={3}, delayedCallGraph={4}, applicationComponentName={5}, businessTransactionName={6}",
@@ -535,8 +574,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.Snapshots={0}", programOptions.LicensedReports.Snapshots);
+            loggerConsole.Trace("LicensedReports.Snapshots={0}", programOptions.LicensedReports.Snapshots);
+            if (programOptions.LicensedReports.Snapshots == false)
+            {
+                loggerConsole.Warn("Not licensed for snapshots");
+                return false;
+            }
+
             logger.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             loggerConsole.Trace("Input.Snapshots={0}", jobConfiguration.Input.Snapshots);
             if (jobConfiguration.Input.Snapshots == false)

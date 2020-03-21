@@ -1,0 +1,20 @@
+{
+  "Signature": "jeBQXY+Bum3Lt3hA5kuYfnff/NLQgRj6NwLbMphjU2Sr1Stz9RlR2U3Qy2DScXWNv4Li42VwhszJhKOdTKbHt3U9YtuavyW69wVSrExX9D67wJuuOi08cOVaCwuEiYJSiISUMCn7rZ9gjCy+2QBfAVkAFMpjSWx0YHDpKyMir5fVxO9Ulv3nCXmz0C/lMpiiOpUlWQfPV+B0agRpEtHvcEfg8zvpLW5Bhmbii0I+UqWn4rdcraG2aXFGKb5AsY47UxUjzI+ihuJQ+HzkI9Lo7CraBNiaRp/R5qfI57Q/9l5vOQPVZMhogSBjwgjzvuYh6hr443N6olHF/yjUY1RfxA==",
+  "LicensedFeatures": {
+    "ExpirationDateTime": "2031-01-01T00:00:00Z",
+    "ApplicationSummary": false,
+    "Configuration": true,
+    "Dashboards": true,
+    "DetectedEntities": true,
+    "EntityDashboards": true,
+    "EntityDetails": true,
+    "EntityMetricGraphs": true,
+    "EntityMetrics": true,
+    "Events": true,
+    "FlameGraphs": true,
+    "HealthCheck": false,
+    "Licenses": false,
+    "Snapshots": true,
+    "UsersGroupsRolesPermissions": true
+  }
+}

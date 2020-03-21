@@ -28,7 +28,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             try
             {
-                if (this.ShouldExecute(jobConfiguration) == false)
+                if (this.ShouldExecute(programOptions, jobConfiguration) == false)
                 {
                     return true;
                 }
@@ -243,8 +243,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
         }
 
-        public override bool ShouldExecute(JobConfiguration jobConfiguration)
+        public override bool ShouldExecute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
+            logger.Trace("LicensedReports.UsersGroupsRolesPermissions={0}", programOptions.LicensedReports.UsersGroupsRolesPermissions);
+            loggerConsole.Trace("LicensedReports.UsersGroupsRolesPermissions={0}", programOptions.LicensedReports.UsersGroupsRolesPermissions);
+            if (programOptions.LicensedReports.UsersGroupsRolesPermissions == false)
+            {
+                loggerConsole.Warn("Not licensed for users, groups, roles and permissions");
+                return false;
+            }
+
             logger.Trace("Input.UsersGroupsRolesPermissions={0}", jobConfiguration.Input.UsersGroupsRolesPermissions);
             loggerConsole.Trace("Input.UsersGroupsRolesPermissions={0}", jobConfiguration.Input.UsersGroupsRolesPermissions);
             if (jobConfiguration.Input.UsersGroupsRolesPermissions == false)
