@@ -489,7 +489,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
 
         //Settings for Health Check comparison
-        private const string APPLICATION_HEALTHCHECK_COMPARISON_MAPPING_FILE_NAME = "AppHealthCheckComparisonMapping.csv";
+        private const string APPLICATION_HEALTHCHECK_COMPARISON_MAPPING_FILE_NAME = "AppHealthCheckMapping.csv";
 
         #endregion
 
