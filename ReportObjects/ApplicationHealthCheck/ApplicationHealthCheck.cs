@@ -11,6 +11,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public int NumTiers { get; set; }
         public int NumNodes { get; set; }
         public int NumBTs { get; set; }
+        public int NumSEPs { get; set; }
 
         public string DeveloperModeOff { get; set; }
         public string BTLockdownEnabled { get; set; }

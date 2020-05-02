@@ -20,7 +20,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         #region Constants for report contents
         // --------------------------------------------------
         // Sheets
-        private const string SHEET_APP_HEALTHCHECK = "3.Config Check";
+        private const string SHEET_APP_HEALTHCHECK = "3.Health Check";
 
         // --------------------------------------------------
         // Tables
@@ -62,29 +62,33 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region HARDCODED Variables
                 /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
                 /**********************************************/
-                int BTErrorRateUpper = 80;
-                int BTErrorRateLower = 60;
 
-                int InfoPointUpper = 3;
-                int InfoPointLower = 1;
-                int DataCollectorUpper = 3;
-                int DataCollectorLower = 1;
+                int SEPCountPass = 100;
+                int SEPCountFail = 500;
 
-                int HRViolationUpper = 100;
-                int HRViolationLower = 50;
-                int PolicyUpper = 2;
-                int PolicyLower = 1;
+                int BTErrorRatePass = 60;
+                int BTErrorRateFail = 80;
+
+                int InfoPointPass = 3;
+                int InfoPointFail = 1;
+                int DataCollectorPass = 3;
+                int DataCollectorFail = 1;
+
+                int HRViolationsPass = 50;
+                int HRViolationsFail = 100;
+                int PoliciesActionPass = 2;
+                int PoliciesActionFail = 1;
 
                 string LatestAppAgentVersion = "4.5";
                 string LatestMachineAgentVersion = "4.5";
-                int AllowedVersionsBehind = 2;
-                int AgentOldPercent = 25;
-                int MachineAgentEnabledUpper = 80;
-                int MachineAgentEnabledLower = 60;
-                int TierActivePercentUpper = 90;
-                int TierActivePercentLower = 70;
-                int NodeActivePercentUpper = 90;
-                int NodeActivePercentLower = 70;
+                int AgentPriorSupportedVersions = 2;
+                int AgentOldPercent = 20;
+                int MachineAgentEnabledPass = 80;
+                int MachineAgentEnabledFail = 60;
+                int TierActivePercentPass = 90;
+                int TierActivePercentFail = 70;
+                int NodeActivePercentPass = 90;
+                int NodeActivePercentFail = 70;
 
                 /**********************************************/
                 #endregion
@@ -94,8 +98,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Building Configuration Check List");
 
                 #region Preload Entity Lists
-                List<ApplicationHealthCheckComparison> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
-
                 //Read List of Configurations from CSV files
                 List<APMApplicationConfiguration> APMApplicationConfigurationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationConfigurationReportFilePath(), new APMApplicationConfigurationReportMap());
                 List<HTTPDataCollector> httpDataCollectorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMHttpDataCollectorsReportFilePath(), new HTTPDataCollectorReportMap());
@@ -108,17 +110,39 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 List<ApplicationEventSummary> appEventsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationEventsSummaryReportFilePath(), new ApplicationEventSummaryReportMap());
                 List<APMApplication> apmEntitiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMApplicationsReportFilePath(), new APMApplicationReportMap());
 
+                //Create Dictionary of Pass/Fail conditions from CSV file
+                List<ApplicationHealthCheckComparisonMapping> AppHealthCheckComparisonList = FileIOHelper.ReadListFromCSVFile<ApplicationHealthCheckComparisonMapping>(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), new ApplicationHealthCheckComparisonMap());
+                var PassDictionary = AppHealthCheckComparisonList.Distinct().ToDictionary(key => key.Name + "Pass", value => decimal.Parse(value.Pass));
+                var FailDictionary = AppHealthCheckComparisonList.Distinct().ToDictionary(key => key.Name + "Fail", value => decimal.Parse(value.Fail));
+                var ACDCDictionary = PassDictionary.Concat(FailDictionary).GroupBy(d => d.Key).ToDictionary(d => d.Key, d => d.First().Value);
+
+                //WriteDictinary values to console
+                /*foreach (KeyValuePair<string, decimal> kvp in ACDCDictionary)
+                {
+                   
+                    Console.WriteLine("Key = {0}, Value = {1}", kvp.Key, kvp.Value);
+                }*/
+
                 #endregion
 
                 #region Fill HealthCheckList
 
-                //List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(APMApplicationConfigurationsList.Count);
                 List<ApplicationHealthCheck> healthChecksList = new List<ApplicationHealthCheck>(apmEntitiesList.Count);
 
-                //if (APMApplicationConfigurationsList != null)
+                if (AppHealthCheckComparisonList != null)
+                {
+                    foreach (ApplicationHealthCheckComparisonMapping healthCheckComp in AppHealthCheckComparisonList)
+                    {
+                        //recursively create variables based on AppHealthCheckMapping.csv Names & associate values
+                        //Name.Pass = Value of Pass (col B)
+                        //Name.Fail = Value of Fail (col C)
+                    }
+                }
+
                 if (apmEntitiesList != null)
                 {
-                    //foreach (APMApplicationConfiguration apmApp in APMApplicationConfigurationsList)
+
+
                     foreach (APMApplication apmApp in apmEntitiesList)
                     {
                         ApplicationHealthCheck healthCheck = new ApplicationHealthCheck();
@@ -129,25 +153,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthCheck.NumTiers = apmApp.NumTiers;
                         healthCheck.NumNodes = apmApp.NumNodes;
                         healthCheck.NumBTs = apmApp.NumBTs;
+                        healthCheck.NumSEPs = apmApp.NumSEPs;
 
                         //Add BTLockdownOn, DevModeEnabled, InfoPoints to Health Check
                         APMApplicationConfiguration APMConfigurationsThisAppList = null;
-                        if(APMApplicationConfigurationsList != null) APMConfigurationsThisAppList = APMApplicationConfigurationsList.SingleOrDefault(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName);
-                        if(APMConfigurationsThisAppList != null)
+                        if (APMApplicationConfigurationsList != null) APMConfigurationsThisAppList = APMApplicationConfigurationsList.SingleOrDefault(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName);
+                        if (APMConfigurationsThisAppList != null)
                         {
                             healthCheck.BTLockdownEnabled = GetHealthCheckScore(APMConfigurationsThisAppList.IsBTLockdownEnabled == true, APMConfigurationsThisAppList.IsBTLockdownEnabled == false);
                             healthCheck.DeveloperModeOff = GetHealthCheckScore(APMConfigurationsThisAppList.IsDeveloperModeEnabled == false, APMConfigurationsThisAppList.IsDeveloperModeEnabled == true);
-                            healthCheck.NumInfoPoints = GetHealthCheckScore(APMConfigurationsThisAppList.NumInfoPointRules > InfoPointUpper, APMConfigurationsThisAppList.NumInfoPointRules < InfoPointLower);
+                            healthCheck.NumInfoPoints = GetHealthCheckScore((decimal) APMConfigurationsThisAppList.NumInfoPointRules > ACDCDictionary["InfoPointPass"], (decimal) APMConfigurationsThisAppList.NumInfoPointRules < ACDCDictionary["InfoPointFail"]);
+                            //healthCheck.NumInfoPoints = GetHealthCheckScore(APMConfigurationsThisAppList.NumInfoPointRules > InfoPointPass, APMConfigurationsThisAppList.NumInfoPointRules < InfoPointFail);
 
+
+                            //Console.WriteLine("APMConfigurationsThisAppList.NumInfoPointRules:{0} - DictPass:{1} - DictFail:{2}", APMConfigurationsThisAppList.NumInfoPointRules, ACDCDictionary["InfoPointPass"], ACDCDictionary["InfoPointFail"]);
                         }
-
-                        //healthCheck.BTLockdownEnabled = AppConfig.IsBTLockdownEnabled;
-
-                        //Add DevModeEnabled to Health Check
-                        //healthCheck.DeveloperModeOff = GetHealthCheckScore(AppConfig.IsDeveloperModeEnabled == false, AppConfig.IsDeveloperModeEnabled == true);
-
-                        //Add InfoPoints score to Health Check
-                        //healthCheck.NumInfoPoints = GetHealthCheckScore(AppConfig.NumInfoPointRules > InfoPointUpper, AppConfig.NumInfoPointRules < InfoPointLower);
 
                         //Add Data collector score to Health Check
                         //Get count of HTTP & MIDC data collectors where IsAssignedToBTs is true
@@ -161,7 +181,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         int MethodInvocationDataCollectorCount = methodInvocationDataCollectorThisAppList.Count(b => b.IsAssignedToBTs == true);
 
                         int CombinedDataCollectorCount = HTTPDataCollectorCount + MethodInvocationDataCollectorCount;
-                        healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore(CombinedDataCollectorCount > DataCollectorUpper, CombinedDataCollectorCount < DataCollectorLower);
+                        healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore((decimal) CombinedDataCollectorCount > ACDCDictionary["DataCollectorPass"], (decimal) CombinedDataCollectorCount < ACDCDictionary["DataCollectorFail"]);
+                        //healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore(CombinedDataCollectorCount > DataCollectorPass, CombinedDataCollectorCount < DataCollectorFail);
 
                         //Add Policy To Action into Health Check
                         //If (policy active & has associated actions): Add count of policies to healthcheck list
@@ -169,7 +190,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<Policy>();
                         int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
-                        healthCheck.PoliciesActionsEnabled = GetHealthCheckScore(PolicyCount > PolicyUpper, PolicyCount < PolicyLower);
+                        healthCheck.PoliciesActionsEnabled = GetHealthCheckScore((decimal) PolicyCount > ACDCDictionary["PoliciesActionPass"], (decimal) PolicyCount < ACDCDictionary["PoliciesActionFail"]);
+                        //healthCheck.PoliciesActionsEnabled = GetHealthCheckScore(PolicyCount > PoliciesActionPass, PolicyCount < PoliciesActionFail);
 
                         //Add TiersActivePercent to Health Check
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
@@ -180,7 +202,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (apmTierThisAppList.Count(t => t.NumNodes > 0) > 0)
                             ActiveTierPercent = (int)Math.Round((double)(apmTierThisAppList.Count(t => t.NumNodes > 0) * 100) / apmTierThisAppList.Count());
 
-                        healthCheck.TiersActivePercent = GetHealthCheckScore(ActiveTierPercent > TierActivePercentUpper, ActiveTierPercent < TierActivePercentLower);
+                        healthCheck.TiersActivePercent = GetHealthCheckScore((decimal) ActiveTierPercent > ACDCDictionary["TierActivePercentPass"], (decimal) ActiveTierPercent < ACDCDictionary["TierActivePercentFail"]);
+                        //healthCheck.TiersActivePercent = GetHealthCheckScore(ActiveTierPercent > TierActivePercentPass, ActiveTierPercent < TierActivePercentFail);
 
                         //Add BackendOverflow to Health Check
                         //If BackendOverflow contains "All Other Traffic": Fail
@@ -203,18 +226,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (NodeActiveCount > 0)
                             ActiveNodePercent = (int)Math.Round((double)(NodeActiveCount * 100) / apmNodesThisAppList.Count());
-                        healthCheck.NodesActivePercent = GetHealthCheckScore(ActiveNodePercent > NodeActivePercentUpper, ActiveNodePercent < NodeActivePercentLower);
+                        healthCheck.NodesActivePercent = GetHealthCheckScore((decimal) ActiveNodePercent > ACDCDictionary["NodeActivePercentPass"], (decimal) ActiveNodePercent < ACDCDictionary["NodeActivePercentFail"]);
+                        //healthCheck.NodesActivePercent = GetHealthCheckScore(ActiveNodePercent > NodeActivePercentPass, ActiveNodePercent < NodeActivePercentFail);
 
                         if (MachineAgentPresentCount > 0)
                             ActiveMachineAgentPercent = (int)Math.Round((double)(MachineAgentPresentCount * 100) / apmNodesThisAppList.Count());
-                        healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore(ActiveNodePercent > MachineAgentEnabledUpper, ActiveNodePercent < MachineAgentEnabledLower);
+                        healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore((decimal) ActiveMachineAgentPercent > ACDCDictionary["MachineAgentEnabledPass"], (decimal) ActiveNodePercent < ACDCDictionary["MachineAgentEnabledFail"]);
+                        //healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore(ActiveMachineAgentPercent > MachineAgentEnabledPass, ActiveNodePercent < MachineAgentEnabledFail);
 
                         //Add AppAgentVersion & MachineAgentVersion to Health Check
                         //Count Active Agents with versions older than 2. Compare with total agent count as percent
-                        int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(LatestAppAgentVersion) && c.IsDisabled == false);
+                        int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(ACDCDictionary["AppAgentVersionPass"].ToString()) && c.IsDisabled == false);
+                        int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(ACDCDictionary["AppAgentVersionPass"].ToString()) * 10 - 1) / 10)) && c.IsDisabled == false);
+                        int LatestMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(ACDCDictionary["MachineAgentVersionPass"].ToString()) && c.IsDisabled == false);
+                        int AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(Convert.ToString((Convert.ToDecimal(ACDCDictionary["MachineAgentVersionPass"].ToString()) * 10 - 1) / 10)) && c.IsDisabled == false);
+                        /*int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(LatestAppAgentVersion) && c.IsDisabled == false);
                         int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
                         int LatestMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(LatestMachineAgentVersion) && c.IsDisabled == false);
                         int AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestMachineAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
+                        */
 
                         if (apmNodesThisAppList.Count() > 0)
                         {
@@ -247,17 +277,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             foreach (APMBusinessTransaction BTEntity in apmEntitiesThisAppList)
                             {
-                                if (BTEntity.ErrorsPercentage > BTErrorRateUpper)
+                                if ((decimal) BTEntity.ErrorsPercentage > ACDCDictionary["BTErrorRateFail"])
                                 {
                                     healthCheck.BTErrorRateHigh = "FAIL";
                                     break;
                                 }
-                                else if (BTEntity.ErrorsPercentage > BTErrorRateLower)
+                                else if ((decimal) BTEntity.ErrorsPercentage > ACDCDictionary["BTErrorRatePass"])
                                 {
                                     healthCheck.BTErrorRateHigh = "WARN";
                                     break;
                                 }
-                                healthCheck.BTErrorRateHigh = "PASS";
+                                else if ((decimal) BTEntity.ErrorsPercentage < ACDCDictionary["BTErrorRatePass"])
+                                {
+                                    healthCheck.BTErrorRateHigh = "PASS";
+                                    break;
+                                }
 
                             }
 
@@ -281,7 +315,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (appEventsList != null) appEventThisApp = appEventsList.SingleOrDefault(a => a.Controller.StartsWith(apmApp.Controller) == true && a.ApplicationName == apmApp.ApplicationName);
 
                         if (appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
-                        healthCheck.HRViolationsHigh = GetHealthCheckScore(HRViolationCount < HRViolationLower, HRViolationCount > HRViolationUpper);
+                        healthCheck.HRViolationsHigh = GetHealthCheckScore((decimal) HRViolationCount < ACDCDictionary["HRViolationsPass"], (decimal) HRViolationCount > ACDCDictionary["HRViolationsFail"]);
+                        //healthCheck.HRViolationsHigh = GetHealthCheckScore(HRViolationCount < HRViolationsPass, HRViolationCount > HRViolationsFail);
 
                         //Console.WriteLine("{0} - HRViolations: {1}", apmApp.ApplicationName, HRViolationCount);
 
@@ -327,6 +362,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 fillReportParametersSheet(sheet, jobConfiguration, "AppDynamics DEXTER Application Configuration Diagnostic Check Report");
 
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthCheckComparisonMappingFilePath(), 0, sheet, 5, 9);
+                sheet.Column(9).Width = 20;
+                sheet.Column(10).Width = 5;
+                sheet.Column(11).Width = 5;
+                sheet.Column(12).Width = 0;
+                sheet.Column(13).Width = 50;
+                
                 #endregion
 
                 #region TOC sheet
@@ -395,6 +437,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
+                    cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress, SEPCountPass.ToString(), SEPCountFail.ToString());
+                    //AddHealthCheckConditionalFormatting(sheet, cfAddress,"27","500");
 
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BTOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
@@ -561,7 +606,31 @@ namespace AppDynamics.Dexter.ProcessingSteps
             //Color Yellow if "Warning" or 2
             cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
             cfUserExperience.Style.Font.Color.Color = Color.FromArgb(253, 235, 156);
-            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253,235,156);
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253, 235, 156);
+            cfUserExperience.Formula = @"=""WARN""";
+
+        }
+
+        internal static void AddHealthCheckConditionalFormatting(ExcelWorksheet sheet, ExcelAddress cfAddressAHC, string PassCondition, string FailCondition)
+        {
+            //Color Green if PassCondition
+            var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
+            cfUserExperience.Formula = @"PassCondition";
+            cfUserExperience.Formula = String.Format(@"=({0})", PassCondition);
+            //cfUserExperience.Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+
+            //Color Red if FailCondition
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
+            cfUserExperience.Formula = String.Format(@"=({0})", FailCondition);
+
+            //Color Yellow if "Warning" or 2
+            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
+            cfUserExperience.Style.Font.Color.Color = Color.Black;
+            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253, 235, 156);
             cfUserExperience.Formula = @"=""WARN""";
 
         }
