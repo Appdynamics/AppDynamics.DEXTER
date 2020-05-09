@@ -95,7 +95,7 @@ An even better way to explore this data is by using Tableau or PowerBI visual an
 
 ![Snapshots in PowerBI](../master/docs/introduction/SnapshotsPowerBI.png?raw=true)
 
-![Snapshots in PowerBI](../master/docs/introduction/SnapshotsTableau.png?raw=true)
+![Snapshots in Tableau](../master/docs/introduction/SnapshotsTableau.png?raw=true)
 
 You can even explore your Call Graph data:
 ![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
