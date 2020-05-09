@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LicenseValidate": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\appdynamics\\AppDynamics.DEXTER\\LicenseSign\\LicenseFiles\\LicensedFeatures.standard.json\" \"C:\\appdynamics\\AppDynamics.DEXTER\\src\\AppDynamics.DEXTER.public.cer\""
+    }
+  }
+}

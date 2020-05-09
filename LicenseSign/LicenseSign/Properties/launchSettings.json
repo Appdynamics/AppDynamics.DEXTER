@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LicenseSign": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\appdynamics\\AppDynamics.DEXTER\\LicenseSign\\LicenseFiles\\LicensedFeatures.standard.json\" \"AppDynamics DEXTER Licensing\""
+    }
+  }
+}

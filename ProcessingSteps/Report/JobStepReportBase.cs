@@ -209,6 +209,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
             l++;
             sheet.Cells[l, 1].Value = "Export Dashboards";
             sheet.Cells[l, 2].Value = jobConfiguration.Input.Dashboards;
+            l++;
+            sheet.Cells[l, 1].Value = "Export Flowmaps";
+            sheet.Cells[l, 2].Value = jobConfiguration.Input.Flowmaps;
             l++; l++;
             sheet.Cells[l, 1].Value = "Targets:";
             l++; l++;

@@ -3,12 +3,14 @@ ActivityFeeds,Microsoft Dynamics CRM,ED5139,E8998D,000000
 Amazon.Runtime,Amazon Core,FF9900,FBBB5B,000000
 antlr,ANTLR Parser,a265b8,b47bc9,000000
 AngleSharp,AngleSharp DOM Parser,a265b8,b47bc9,000000
+ariba.ui.aribaweb,Ariba Web,a265b8,b47bc9,000000
 ASP,.NET ASP.NET,6197FF,94C9FF,000000
 Aspose.Pdf,Aspose Components,a16f6f,b87b7b,FFFFFF
 Asynchronous,.NET ASP.NET,6197FF,94C9FF,000000
 Autofac,Autofac IoC,140fb8,1c15d6,FFFFFF
 AutoMapper,AutoMapper,bba6bf,d7c3db,000000
 Castle,Castle Project,e09b9b,fab9b9,000000
+CrystalDecisions,Crystal Decisions,36ffc3,9ffce0,000000
 ch.qos.logback,Logback,ff875e,ff9a78,000000
 com.amazonaws,Amazon Core,FF9900,FBBB5B,000000
 com.amazonaws.AmazonWebServiceClient,Amazon Web Service Client,FF9900,FBBB5B,000000
@@ -53,13 +55,16 @@ com.ibm,IBM Core,00BFA9,35CCBA,000000
 com.inet.ora,Inet Oracle JDBC Driver,36ffc3,9ffce0,000000
 com.informatica,Informatica,62a9e3,6db9f7,000000
 com.informix,Informix,6ae6b6,7ff5c8,000000
+com.jnetdirect,JNetDirect JDBC Driver,6ae6b6,7ff5c8,000000
 com.matrixone,3DS MatrixOne,ff1919,ff5959,FFFFFF
 com.mchange.v2.c3p0,c3p0 JDBC Driver,36ffc3,9ffce0,000000
 com.mchange.v2.resourcepool,c3p0 JDBC Driver Pooling,36ffc3,9ffce0,000000
 com.microsoft,Microsoft,00A1F1,4FBAF0,000000
 com.microsoft.sqlserver,Microsoft SQL Server Driver,00A1F1,4FBAF0,000000
 com.mongodb,Mongo DB,633838,854949,FFFFFF
+com.moogsoft,Moogsoft,633838,854949,FFFFFF
 com.mule,Mule ESB,e3b2ed,f4cafc,000000
+com.mulesoft,Mule ESB,e3b2ed,f4cafc,000000
 com.mysql,MySQL Driver,36ffc3,9ffce0,000000
 com.netflix.hystrix,Hystrix Fault Tolerance,633838,854949,FFFFFF
 com.newrelic,NewRelic,7668CF,978FCF,FFFFFF
@@ -69,10 +74,14 @@ com.oracle,Oracle Core,f80000,fa3434,FFFFFF
 com.paypal,PayPal,70dbb9,88ebcb,000000
 com.pega,Pega,b2b6db,c2c7f0,000000
 com.pegarules,Pega,b2b6db,c2c7f0,000000
+com.pingidentity,Ping Identity,b2b6db,c2c7f0,000000
 com.pointbase,Pointbase Driver,828156,94936d,FFFFFF
 com.rabbitmq,Rabbit MQ,bcccc6,d5e3de,000000
 com.rsa,RSA Security,8bc4af,9ad9c2,000000
 com.singularity,AppDynamics,7668CF,978FCF,FFFFFF
+com.sap.engine,SAP Engine,bcccc6,d5e3de,000000
+com.sap.portal,SAP Portal,bcccc6,d5e3de,000000
+com.sapportals,SAP Portal,bcccc6,d5e3de,000000
 com.softwareag,Software AG,bcccc6,d5e3de,000000
 com.sun,JDK Core,75E500,BBFA38,000000
 com.sun.jersey,Jersey REST Framework,75E500,BBFA38,000000
@@ -84,9 +93,11 @@ com.teradata,Teradata Database,12588b,226494,FFFFFF
 com.terracotta,Terracotta DB,12588b,226494,FFFFFF
 com.terracottatech,Terracotta DB,12588b,226494,FFFFFF
 com.thoughtworks,ThoughtWorks,e874d9,ff82ee,000000
+com.tibco,TIBCO Core,12588b,226494,FFFFFF
 com.webex,Cisco Webex,418521,4B9E24,FFFFFF
 com.weblogic,WebLogic Core,05f0e0,37ede1,000000
 com.webmethods,Software AG webMethods,40ff96,6effaf,000000
+com.uc4,Broadcom Automic,bcccc6,d5e3de,000000
 Corillian,Corillian/Voyager Banking,fcf644,fcf760,000000
 custom01,Custom Mapping for Flame Graphs,fcf644,fcf760,000000
 custom02,Custom Mapping for Flame Graphs,c4d14d,e1f059,000000
@@ -121,6 +132,7 @@ io.github.resilience4j,Resilience4j Fault Tolerance,8abfb9,a7d6d1,000000
 io.lettuce,Lettuce Redis Client,BA90FC,C5A7FC,000000
 io.netty,Netty NIO,993006,b5471b,FFFFFF
 io.prometheus,Prometheus,BA90FC,C5A7FC,000000
+io.reactivex,Reactive RxJava,e4ff36,ecff73,000000
 io.undertow,JBoss Undertow,99a30d,acb52a,000000
 Ionic.Crc,Ionic,c5d186,e1f099,000000
 Ionic.Zlib,Ionic,c5d186,e1f099,000000
@@ -128,6 +140,7 @@ java,Java Core,75E500,BBFA38,000000
 java.io,Java IO,75E500,BBFA38,000000
 java.lang.reflect,Java Reflection,75E500,BBFA38,000000
 javax,Java Extension,75E500,BBFA38,000000
+jdk.internal.reflect,Java Reflection,75E500,BBFA38,000000
 jdk.internal.dynalink,Oracle Nashorn,f80000,fa3434,FFFFFF
 jdk.nashorn,Oracle Nashorn,f80000,fa3434,FFFFFF
 jdk.xml,Java XML,75E500,BBFA38,000000
@@ -160,7 +173,8 @@ MS.Internal.Xml,.NET XML,6197FF,94C9FF,000000
 MySQL,MySQL Driver,36ffc3,9ffce0,000000
 netegrity.siteminder,Siteminder Netegrity,aca644,aca760,FFFFFF
 net.sf,SourceForge,FE5810,FF8754,000000
-netscape,Netscape,558c07,6aa813,FFFFFF
+net.sourceforge.jtds,MySQL Driver,36ffc3,9ffce0,000000
+netscape,JTDS JDBC Driver,558c07,6aa813,FFFFFF
 Newtonsoft.Json,Newtonsoft JSON,a3f57f,bffca4,000000
 NHibernate,NHibernate ORM,a3f57f,bffca4,000000
 NLog,NLog Framework,a2d9f2,bfebff,000000
@@ -185,10 +199,11 @@ org.eclipse.jetty,Eclipse Jetty,e3396f,f25587,000000
 org.glassfish,GlassFish,bb9bc7,d8b3e6,000000
 org.jboss,JBoss,99a30d,acb52a,FFFFFF
 org.jboss.soa.esb.client,JBoss ESB,99a30d,acb52a,FFFFFF
-org.mule.processor,Mule ESB,FE5810,FF8754,000000
+org.mule,Mule ESB,FE5810,FF8754,000000
 org.springframework,Spring,6DB33F,9ACE78,000000
 org.springframework.integration,Spring Integration,6DB33F,9ACE78,000000
 org.springframework.jms,Spring JMS,6DB33F,9ACE78,000000
+org.quartz,Quartz Job Scheduler,99a30d,acb52a,FFFFFF
 persistence.antlr,TopLink JPA,f20ab0,f549c4,000000
 RazorEngine,Antaris RazorEngine,ad5fc9,c169e0,000000
 redis,Redis Cache,ff4d4d,ff9696,FFFFFF
@@ -199,6 +214,8 @@ rx.internal,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
 rx.Observable,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
 rx.observables,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
 rx.Subscriber,ReactiveX Observable Async,99a30d,acb52a,FFFFFF
+scala,Scala Runtime,FD6DEE,F5CCE7,000000
+SD.LLBLGen,LLBLGen ORM,FD6DEE,F5CCE7,000000
 Sitecore,Sitecore CMS,8abfb9,a7d6d1,000000
 SNINativeMethodWrapper,.NET ADO.NET,6197FF,94C9FF,000000
 StackExchange.Redis,Redis StackExchange,ff4d4d,ff9696,FFFFFF
@@ -215,6 +232,7 @@ System.Diagnostics,.NET Diagnostics,6197FF,94C9FF,000000
 System.IO,.NET IO,6197FF,94C9FF,000000
 System.Linq,.NET Linq,6197FF,94C9FF,000000
 System.Net,.NET Network,6197FF,94C9FF,000000
+System.Reactive,Reactive Rx.NET,e4ff36,ecff73,000000
 System.Reflection,.NET Reflection,6197FF,94C9FF,000000
 System.Runtime,.NET Runtime,6197FF,94C9FF,000000
 System.Security,.NET Security,6197FF,94C9FF,000000

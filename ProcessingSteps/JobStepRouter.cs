@@ -3,7 +3,6 @@ using NLog;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Text;
 
 namespace AppDynamics.Dexter
 {
@@ -96,6 +95,7 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMMetrics,
                 JobStatus.ReportAPMMetricGraphs,
+                JobStatus.ReportAPMFlowmaps,
 
                 JobStatus.ReportAPMSnapshots,
                 JobStatus.ReportAPMSnapshotsMethodCallLines,
@@ -122,7 +122,7 @@ namespace AppDynamics.Dexter
             JobConfiguration jobConfiguration = FileIOHelper.ReadJobConfigurationFromFile(programOptions.OutputJobFilePath);
             if (jobConfiguration == null)
             {
-                loggerConsole.Error("Unable to load job input file {0}", programOptions.InputJobFilePath);
+                loggerConsole.Error("Unable to load job input file {0}", programOptions.InputETLJobFilePath);
 
                 return;
             }
@@ -148,25 +148,13 @@ namespace AppDynamics.Dexter
             }
             if (jobConfiguration.Input.SnapshotSelectionCriteria != null)
             {
-                PropertyInfo[] pis = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperties();
-                StringBuilder sb = new StringBuilder(16 * pis.Length);
-                foreach (PropertyInfo pi in pis)
-                {
-                    sb.AppendFormat("{0}={1}, ", pi.Name, pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType));
-                }
+                PropertyInfo[] pis = jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes.GetType().GetProperties();
                 logger.Info("Job input, SnapshotSelectionCriteria: Tiers='{0}', TierTypes='{1}'",
                     String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.Tiers),
-                    sb.ToString());
-
-                pis = jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.GetType().GetProperties();
-                sb = new StringBuilder(16 * pis.Length);
-                foreach (PropertyInfo pi in pis)
-                {
-                    sb.AppendFormat("{0}={1}, ", pi.Name, pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType));
-                }
+                    String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes));
                 logger.Info("Job input, SnapshotSelectionCriteria: BusinessTransactions='{0}', BusinessTransactionType='{1}'",
                     String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactions),
-                    sb.ToString());
+                    String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionTypes));
                 logger.Info("Job input, SnapshotSelectionCriteria: UserExperience.Normal='{0}', UserExperience.Slow='{1}', UserExperience.VerySlow='{2}', UserExperience.Stall='{3}', UserExperience.Error='{4}'",
                     jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal,
                     jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow,
@@ -183,13 +171,25 @@ namespace AppDynamics.Dexter
             logger.Info("Job input: ConfigurationComparisonReferenceMOBILE='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceMOBILE);
             logger.Info("Job input: ConfigurationComparisonReferenceDB='{0}'", jobConfiguration.Input.ConfigurationComparisonReferenceDB);
 
-            logger.Info("Job output: DetectedEntities='{0}', EntityMetrics='{1}', EntityDetails='{2}', Snapshots='{3}', Configuration='{4}', Events='{5}'", jobConfiguration.Output.DetectedEntities, jobConfiguration.Output.EntityMetrics, jobConfiguration.Output.EntityDetails, jobConfiguration.Output.Snapshots, jobConfiguration.Output.Configuration, jobConfiguration.Output.Events);
-
             foreach (JobTimeRange jobTimeRange in jobConfiguration.Input.HourlyTimeRanges)
             {
                 logger.Info("Expanded time ranges: From='{0:o}', To='{1:o}'", jobTimeRange.From, jobTimeRange.To);
             }
 
+            logger.Info("Job output:");
+            logger.Info("DetectedEntities='{0}'", jobConfiguration.Output.DetectedEntities);
+            logger.Info("Flowmaps='{0}'", jobConfiguration.Output.Flowmaps);
+            logger.Info("EntityMetrics='{0}'", jobConfiguration.Output.EntityMetrics);
+            logger.Info("EntityMetricsGraphs='{0}'", jobConfiguration.Output.EntityMetricGraphs);
+            logger.Info("Snapshots='{0}'", jobConfiguration.Output.Snapshots);
+            logger.Info("Events='{0}'", jobConfiguration.Output.Events);
+            logger.Info("Licenses='{0}''", jobConfiguration.Output.Licenses);
+            logger.Info("Configuration='{0}'", jobConfiguration.Output.Configuration);
+            logger.Info("UsersGroupsRolesPermissions='{0}'", jobConfiguration.Output.UsersGroupsRolesPermissions);
+            logger.Info("EntityDashboards='{0}'", jobConfiguration.Output.EntityDashboards);
+            logger.Info("HealthCheck='{0}'", jobConfiguration.Output.HealthCheck);
+            logger.Info("ApplicationSummary='{0}'", jobConfiguration.Output.ApplicationSummary);
+            
             #endregion
 
             // Run the step and move to next until things are done
@@ -220,10 +220,6 @@ namespace AppDynamics.Dexter
 
                     return;
                 }
-
-                // Do a forced GC Collection after all the work in a step. 
-                // Probably unnecessary, but to counteract the ulimit handle consumption on non-Windows machines
-                GC.Collect();
             }
         }
 
@@ -375,6 +371,8 @@ namespace AppDynamics.Dexter
                     return new ReportAPMMetrics();
                 case JobStatus.ReportAPMMetricGraphs:
                     return new ReportAPMMetricGraphs();
+                case JobStatus.ReportAPMFlowmaps:
+                    return new ReportAPMFlowmaps();
 
                 case JobStatus.ReportAPMSnapshots:
                     return new ReportAPMSnapshots();

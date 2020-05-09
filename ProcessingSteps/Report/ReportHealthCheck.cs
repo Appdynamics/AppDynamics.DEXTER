@@ -436,18 +436,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     // Make header row taller
                     sheet.Row(rowTableStart).Height = 40;
 
-                    // Color code it
-                    ExcelAddress cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 4, sheet.Dimension.Rows, 4 + numColumns);
-                    var cfGrade = sheet.ConditionalFormatting.AddThreeColorScale(cfGradeNum);
-                    cfGrade.LowValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                    cfGrade.LowValue.Color = colorRedFor3ColorScales;
-                    cfGrade.LowValue.Value = 1;
-                    cfGrade.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                    cfGrade.MiddleValue.Value = 3;
-                    cfGrade.MiddleValue.Color = colorYellowFor3ColorScales;
-                    cfGrade.HighValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                    cfGrade.HighValue.Color = colorGreenFor3ColorScales;
-                    cfGrade.HighValue.Value = 5;
+                    if (sheet.Dimension.Rows > rowTableStart)
+                    {
+                        // Color code it
+                        ExcelAddress cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 4, sheet.Dimension.Rows, 4 + numColumns);
+                        var cfGrade = sheet.ConditionalFormatting.AddThreeColorScale(cfGradeNum);
+                        cfGrade.LowValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                        cfGrade.LowValue.Color = colorRedFor3ColorScales;
+                        cfGrade.LowValue.Value = 1;
+                        cfGrade.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                        cfGrade.MiddleValue.Value = 3;
+                        cfGrade.MiddleValue.Color = colorYellowFor3ColorScales;
+                        cfGrade.HighValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                        cfGrade.HighValue.Color = colorGreenFor3ColorScales;
+                        cfGrade.HighValue.Value = 5;
+                    }
 
                     #endregion
 
@@ -568,6 +571,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         sb.AppendFormat("{0}: {1}\n", k + 1, wordWrapString(healthCheckRuleResult.Description, 100));
                                     }
 
+                                    // Limit the size of the comment generated to ~2K of text because I think the Excel barfs when the comments are too long.
+                                    if (sb.Length > 2500)
+                                    {
+                                        sb.Length = 2547;
+                                        sb.Append("...");
+                                    }
+
+                                    // Excessive comments in the workbook lead to poor use experience. Need to rethink and refactor this
                                     ExcelComment comment = sheet.Cells[fromRow + rowIndex, gradeColumnStart + columnIndex].AddComment(sb.ToString(), healthCheckRuleResultsInCell[0].Code);
                                     comment.AutoFit = true;
                                 }
@@ -603,18 +614,21 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Make header row taller
                         sheet.Row(rowTableStart).Height = 50;
 
-                        // Color code it
-                        cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 5, sheet.Dimension.Rows, 5 + numColumns);
-                        cfGrade = sheet.ConditionalFormatting.AddThreeColorScale(cfGradeNum);
-                        cfGrade.LowValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                        cfGrade.LowValue.Color = colorRedFor3ColorScales;
-                        cfGrade.LowValue.Value = 1;
-                        cfGrade.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                        cfGrade.MiddleValue.Value = 3;
-                        cfGrade.MiddleValue.Color = colorYellowFor3ColorScales;
-                        cfGrade.HighValue.Type = eExcelConditionalFormattingValueObjectType.Num;
-                        cfGrade.HighValue.Color = colorGreenFor3ColorScales;
-                        cfGrade.HighValue.Value = 5;
+                        if (sheet.Dimension.Rows > rowTableStart)
+                        {
+                            // Color code it
+                            ExcelAddress cfGradeNum = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, 5, sheet.Dimension.Rows, 5 + numColumns);
+                            var cfGrade = sheet.ConditionalFormatting.AddThreeColorScale(cfGradeNum);
+                            cfGrade.LowValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                            cfGrade.LowValue.Color = colorRedFor3ColorScales;
+                            cfGrade.LowValue.Value = 1;
+                            cfGrade.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                            cfGrade.MiddleValue.Value = 3;
+                            cfGrade.MiddleValue.Color = colorYellowFor3ColorScales;
+                            cfGrade.HighValue.Type = eExcelConditionalFormattingValueObjectType.Num;
+                            cfGrade.HighValue.Color = colorGreenFor3ColorScales;
+                            cfGrade.HighValue.Value = 5;
+                        }
                     }
 
                     #endregion

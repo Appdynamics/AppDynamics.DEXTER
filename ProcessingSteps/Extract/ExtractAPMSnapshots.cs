@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -49,6 +48,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -299,19 +301,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     switch (snapshotToken["userExperience"].ToString())
                                     {
                                         case "NORMAL":
-                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal != true) continue;
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Normal != true) keepSnapshot = false;
                                             break;
                                         case "SLOW":
-                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow != true) continue;
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Slow != true) keepSnapshot = false;
                                             break;
                                         case "VERY_SLOW":
-                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.VerySlow != true) continue;
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.VerySlow != true) keepSnapshot = false;
                                             break;
                                         case "STALL":
-                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Stall != true) continue;
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Stall != true) keepSnapshot = false;
                                             break;
                                         case "ERROR":
-                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Error != true) continue;
+                                            if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience.Error != true) keepSnapshot = false;
                                             break;
                                         default:
                                             // Not sure what kind of beast it is
@@ -320,7 +322,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                     if (keepSnapshot == false)
                                     {
-                                        logger.Trace("Filtering snapshot requestGUID={0} because its user experience is unknown", snapshotToken["requestGUID"]);
+                                        logger.Trace("Filtering snapshot requestGUID={0} because of it's user experience", snapshotToken["requestGUID"]);
                                         continue;
                                     }
 
@@ -339,51 +341,61 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                     if (keepSnapshot == false)
                                     {
-                                        logger.Trace("Filtering snapshot requestGUID={0} because its of call graph criteria didn't match", snapshotToken["requestGUID"]);
+                                        logger.Trace("Filtering snapshot requestGUID={0} because of it's call graph criteria didn't match", snapshotToken["requestGUID"]);
                                         continue;
                                     }
 
                                     // Filter Tier type
-                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.TierType.All != true)
+                                    string allElement = Array.Find(jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
+                                    { 
+                                        // All tiers are to be kept
+                                    }
+                                    else 
                                     {
                                         if (tiersList != null)
                                         {
                                             AppDRESTTier tier = tiersList.Where(t => t.id == (long)snapshotToken["applicationComponentId"]).FirstOrDefault();
                                             if (tier != null)
                                             {
-                                                PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.TierType.GetType().GetProperty(tier.agentType);
-                                                if (pi != null)
+                                                string entityTypeElement = Array.Find(jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes, e => e.ToUpper() == tier.agentType);
+                                                if (entityTypeElement == null)
                                                 {
-                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.TierType) == false) keepSnapshot = false;
+                                                    keepSnapshot = false;
                                                 }
                                             }
                                         }
                                     }
                                     if (keepSnapshot == false)
                                     {
-                                        logger.Trace("Filtering snapshot requestGUID={0} because its of tier type", snapshotToken["requestGUID"]);
+                                        logger.Trace("Filtering snapshot requestGUID={0} because of it's tier type", snapshotToken["requestGUID"]);
                                         continue;
                                     }
 
                                     // Filter BT type
-                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.All != true)
+                                    allElement = Array.Find(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
+                                    {
+                                        // All BTs are to be kept
+                                    }
+                                    else
                                     {
                                         if (businessTransactionsList != null)
                                         {
                                             AppDRESTBusinessTransaction businessTransaction = businessTransactionsList.Where(b => b.id == (long)snapshotToken["businessTransactionId"] && b.tierId == (long)snapshotToken["applicationComponentId"]).FirstOrDefault();
                                             if (businessTransaction != null)
                                             {
-                                                PropertyInfo pi = jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType.GetType().GetProperty(businessTransaction.entryPointType);
-                                                if (pi != null)
+                                                string entityTypeElement = Array.Find(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionTypes, e => e.ToUpper() == businessTransaction.entryPointType);
+                                                if (entityTypeElement == null)
                                                 {
-                                                    if ((bool)pi.GetValue(jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionType) == false) keepSnapshot = false;
+                                                    keepSnapshot = false;
                                                 }
                                             }
                                         }
                                     }
                                     if (keepSnapshot == false)
                                     {
-                                        logger.Trace("Filtering snapshot requestGUID={0} because its of business transaction type", snapshotToken["requestGUID"]);
+                                        logger.Trace("Filtering snapshot requestGUID={0} because of it's business transaction type", snapshotToken["requestGUID"]);
                                         continue;
                                     }
 

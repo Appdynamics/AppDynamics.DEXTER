@@ -274,3 +274,5 @@ __pycache__/
 /JobFiles/demo1ECommerceAWhileAgo.json
 
 packages/*
+/LicenseSign/LicenseFiles
+/LicenseSign/Certificates

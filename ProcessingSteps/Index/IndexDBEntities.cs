@@ -37,6 +37,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_DB) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+
                     return true;
                 }
 
@@ -75,7 +78,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             JObject dbCollectorsCallsContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.DBCollectorsCallsDataFilePath(jobTarget));
                             JObject dbCollectorsTimeSpentContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.DBCollectorsTimeSpentDataFilePath(jobTarget));
-                            JArray dbCollectorDefinitionsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.DBCollectorDefinitionsDataFilePath(jobTarget));
+                            JArray dbCollectorDefinitionsArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.DBCollectorDefinitionsForEntitiesFilePath(jobTarget));
 
                             JArray dbCollectorsCallsArray = null;
                             JArray dbCollectorsTimeSpentArray = null;
@@ -105,11 +108,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     if (dbCollectorDefinitionsArray != null)
                                     {
-                                        // Find the Collector Definition for this Collector
-                                        JToken dbCollectorDefinitionToken = dbCollectorDefinitionsArray.Where(r => getLongValueFromJToken(r, "configId") == getLongValueFromJToken(dbCollectorToken, "configId")).FirstOrDefault();
-                                        if (isTokenNull(dbCollectorDefinitionToken) == false)
+                                        try
                                         {
-                                            if (isTokenPropertyNull(dbCollectorDefinitionToken, "config") == false)
+                                            // Find the Collector Definition for this Collector
+                                            JToken dbCollectorDefinitionToken = dbCollectorDefinitionsArray.Where(r => getLongValueFromJToken(r["config"], "id") == getLongValueFromJToken(dbCollectorToken, "configId")).FirstOrDefault();
+                                            if (isTokenNull(dbCollectorDefinitionToken) == false)
                                             {
                                                 JToken dbCollectorDefinitionConfigToken = dbCollectorDefinitionToken["config"];
 
@@ -121,6 +124,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 dbCollector.CollectorStatus = getStringValueFromJToken(dbCollectorDefinitionToken, "collectorStatus");
                                             }
                                         }
+                                        catch { }
                                     }
 
                                     // Performance data
@@ -204,7 +208,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Wait States
 
                         // Find the Collector Definition for this Collector
-                        DBCollector dbCollectorThis = dbCollectorsList.Where(d => d.CollectorID == jobTarget.DBCollectorID).FirstOrDefault();
+                        DBCollector dbCollectorThis = null;
+                        if (dbCollectorsList != null)
+                        {
+                            dbCollectorThis = dbCollectorsList.Where(d => d.CollectorID == jobTarget.DBCollectorID).FirstOrDefault();
+                        }
 
                         JArray allDBWaitStatesArray = FileIOHelper.LoadJArrayFromFile(FilePathMap.DBAllWaitStatesDataFilePath(jobTarget));
                         JObject currentDBWaitStatesContainerObject = FileIOHelper.LoadJObjectFromFile(FilePathMap.DBCurrentWaitStatesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));

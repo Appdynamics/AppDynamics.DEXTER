@@ -41,6 +41,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
+                logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                 return true;
             }
 
@@ -80,7 +83,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        Parallel.Invoke(
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+
+                        Parallel.Invoke(parallelOptions,
                             () =>
                             {
                                 #region Application

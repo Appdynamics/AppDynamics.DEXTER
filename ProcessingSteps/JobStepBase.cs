@@ -119,6 +119,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         //      https://docs.appdynamics.com/display/PRO43/Build+a+Custom+Action
         // They are defined here :
         //      C:\appdynamics\codebase\controller\controller-api\agent\src\main\java\com\singularity\ee\controller\api\constants\EventType.java
+        //      https://bitbucket.corp.appdynamics.com/projects/CON/repos/controller/raw/controller/controller-api/agent/src/main/java/com/singularity/ee/controller/api/constants/EventType.java
         // But filtering that to only the ones that aren't deprecated
         internal static List<string> EVENT_TYPES = new List<string>
         {
@@ -237,6 +238,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
             { "MEMORY" },
             { "MEMORY_LEAK_DIAGNOSTICS" },
             { "OBJECT_CONTENT_SUMMARY" },
+
+            // Anomaly Detection
+            { "ANOMALY_OPEN_CRITICAL" },
+            { "ANOMALY_OPEN_WARNING" },
+            { "ANOMALY_UPGRADED" },
+            { "ANOMALY_DOWNGRADED" },
+            { "ANOMALY_CLOSE_CRITICAL" },
+            { "ANOMALY_CLOSE_WARNING" },
+            { "ANOMALY_CANCELED_CRITICAL" },
+            { "ANOMALY_CANCELED_WARNING" },
+
+            // Cluster Agent
+            { "KUBERNETES" },
 
             // Others
             { "CONTROLLER_AGENT_VERSION_INCOMPATIBILITY" },

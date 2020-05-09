@@ -1179,10 +1179,10 @@ namespace AppDynamics.Dexter
             switch (controllerVersion)
             {
                 case "4.4":
-                    return this.apiGET("controller/rest/databases/collectors", "application/json", false);
+                    return this.apiGET("controller/rest/databases/collectors", "application/json", true);
 
                 case "4.5":
-                    return this.apiGET("controller/databasesui/collectors", "application/json", false);
+                    return this.apiGET("controller/databasesui/collectors", "application/json", true);
 
                 default:
                     return String.Empty;
@@ -1276,29 +1276,54 @@ namespace AppDynamics.Dexter
 
         public string GetDBAllWaitStates(long dbCollectorID)
         {
-            return this.apiGET(String.Format("controller/databasesui/waitStateFiltering/getAllWaitStatesForDBServer/{0}", dbCollectorID), "application/json", true);
+            return this.apiGET(
+                String.Format("controller/databasesui/waitStateFiltering/getAllWaitStatesForDBServer/{0}", 
+                dbCollectorID), 
+                "application/json", 
+                true);
         }
 
         #endregion
 
         #region DB data
 
-        public string GetDCurrentWaitStates(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long differenceInMinutes, string controllerVersion)
+        public string GetDCurrentWaitStates_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long differenceInMinutes)
         {
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiGET(String.Format("controller/restui/databases/reports/waitReportData?dbId={0}&isCluster=false&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", dbCollectorID, startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, differenceInMinutes), "application/json", true);
-
-                case "4.5":
-                    return this.apiGET(String.Format("controller/databasesui/databases/reports/waitReportData?dbId={0}&isCluster=false&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", dbCollectorID, startTimeInUnixEpochFormat, endTimeInUnixEpochFormat, differenceInMinutes), "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiGET(
+                String.Format("controller/restui/databases/reports/waitReportData?dbId={0}&isCluster=false&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", 
+                    dbCollectorID, 
+                    startTimeInUnixEpochFormat, 
+                    endTimeInUnixEpochFormat, 
+                    differenceInMinutes), 
+                "application/json", 
+                true);
+        }
+        public string GetDCurrentWaitStates_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long differenceInMinutes)
+        {
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/reports/waitReportData?dbId={0}&isCluster=false&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", 
+                    dbCollectorID, 
+                    startTimeInUnixEpochFormat, 
+                    endTimeInUnixEpochFormat, 
+                    differenceInMinutes), 
+                "application/json", 
+                true);
         }
 
-        public string GetDBQueries(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDCurrentWaitStates_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long differenceInMinutes)
+        {
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/reports/waitReportData?dbConfigId=-1&dbServerId={0}&timeRange=Custom_Time_Range|BETWEEN_TIMES|{2}|{1}|{3}&topNum=20", 
+                    dbCollectorID, 
+                    startTimeInUnixEpochFormat, 
+                    endTimeInUnixEpochFormat, 
+                    differenceInMinutes), 
+                "application/json", 
+                true);
+        }
+
+
+        public string GetDBQueries_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1318,20 +1343,56 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBClients(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBQueries_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""cluster"": false,
+    ""serverId"": {0},
+    ""field"": ""query-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2},
+    ""waitStateIds"": [],
+    ""useTimeBasedCorrelation"": false
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBQueries_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""query-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2},
+    ""waitStateIds"": [],
+    ""useTimeBasedCorrelation"": false
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBClients_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1349,20 +1410,53 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/clientListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/clientListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/clientListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBSessions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBClients_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""client-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/clientListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBClients_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""client-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/clientListData", "application/json", requestBody, "application/json", true);
+        }
+
+
+        public string GetDBSessions_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1380,80 +1474,128 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBBlockingSessions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes, string controllerVersion)
+        public string GetDBSessions_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiGET(
-                        String.Format("controller/restui/databases/getBlockingTreeData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
-                            dbCollectorID,
-                            endTimeInUnixEpochFormat,
-                            startTimeInUnixEpochFormat,
-                            durationBetweenTimes),
-                        "application/json",
-                        true);
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""session-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
 
-                case "4.5":
-                    return this.apiGET(
-                        String.Format("controller/databasesui/databases/getBlockingTreeData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
-                            dbCollectorID,
-                            endTimeInUnixEpochFormat,
-                            startTimeInUnixEpochFormat,
-                            durationBetweenTimes),
-                        "application/json",
-                        true);
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
 
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBBlockingSession(long dbCollectorID, long sessionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes, string controllerVersion)
+        public string GetDBSessions_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiGET(
-                        String.Format("controller/restui/databases/getBlockingTreeChildrenData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&blockigSessionId={1}",
-                            dbCollectorID,
-                            sessionID,
-                            endTimeInUnixEpochFormat,
-                            startTimeInUnixEpochFormat,
-                            durationBetweenTimes),
-                        "application/json",
-                        true);
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""session-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
 
-                case "4.5":
-                    return this.apiGET(
-                        String.Format("controller/databasesui/databases/getBlockingTreeChildrenData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&blockigSessionId={1}",
-                            dbCollectorID,
-                            sessionID,
-                            endTimeInUnixEpochFormat,
-                            startTimeInUnixEpochFormat,
-                            durationBetweenTimes),
-                        "application/json",
-                        true);
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
 
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBDatabases(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBBlockingSessions_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/restui/databases/getBlockingTreeData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
+                    dbCollectorID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSessions_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/getBlockingTreeData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
+                    dbCollectorID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSessions_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/getBlockingTreeData?dbConfigId=-1&dbServerId={0}&timerange=Custom_Time_Range.BETWEEN_TIMES.{1}.{2}.{3}",
+                    dbCollectorID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSession_4_4(long dbCollectorID, long sessionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/restui/databases/getBlockingTreeChildrenData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&blockigSessionId={1}",
+                    dbCollectorID,
+                    sessionID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSession_4_5(long dbCollectorID, long sessionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/getBlockingTreeChildrenData?dbId={0}&isCluster=false&timerange=Custom_Time_Range.BETWEEN_TIMES.{2}.{3}.{4}&blockigSessionId={1}",
+                    dbCollectorID,
+                    sessionID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBBlockingSession_20_4(long dbCollectorID, long sessionID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, long durationBetweenTimes)
+        {
+            // blockig, really? Oh man.
+            return this.apiGET(
+                String.Format("controller/databasesui/databases/getBlockingTreeChildrenData?dbConfigId=-1&dbServerId={0}&startTime={3}&endTime={2}&blockingSessionId={1}&blockerQueryId=0",
+                    dbCollectorID,
+                    sessionID,
+                    endTimeInUnixEpochFormat,
+                    startTimeInUnixEpochFormat,
+                    durationBetweenTimes),
+                "application/json",
+                true);
+        }
+
+        public string GetDBDatabases_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1471,20 +1613,52 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBUsers(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBDatabases_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""schema-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBDatabases_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""schema-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBUsers_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1502,20 +1676,51 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBModules(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBUsers_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""db-user-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+        public string GetDBUsers_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""db-user-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBModules_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1533,20 +1738,52 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBPrograms(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat, string controllerVersion)
+        public string GetDBModules_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""module-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBModules_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""module-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBPrograms_4_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{
@@ -1564,20 +1801,71 @@ namespace AppDynamics.Dexter
                 startTimeInUnixEpochFormat,
                 endTimeInUnixEpochFormat);
 
-            switch (controllerVersion)
-            {
-                case "4.4":
-                    return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                case "4.5":
-                    return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
-
-                default:
-                    return String.Empty;
-            }
+            return this.apiPOST("controller/restui/databases/queryListData", "application/json", requestBody, "application/json", true);
         }
 
-        public string GetDBBusinessTransactions(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        public string GetDBPrograms_4_5(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""serverId"": {0},
+    ""cluster"": false,
+    ""field"": ""program-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBPrograms_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""field"": ""program-id"",
+    ""size"": 5000,
+    ""filterBy"": ""time"",
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/databases/queryListData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBBusinessTransactions_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
+        {
+            string requestJSONTemplate =
+@"{{
+    ""dbConfigId"": -1,
+    ""dbServerId"": {0},
+    ""size"": 5000,
+    ""startTime"": {1},
+    ""endTime"": {2}
+}}";
+
+            string requestBody = String.Format(requestJSONTemplate,
+                dbCollectorID,
+                startTimeInUnixEpochFormat,
+                endTimeInUnixEpochFormat);
+
+            return this.apiPOST("controller/databasesui/snapshot/getBTListViewData", "application/json", requestBody, "application/json", true);
+        }
+
+        public string GetDBBusinessTransactions_Pre_20_4(long dbCollectorID, long startTimeInUnixEpochFormat, long endTimeInUnixEpochFormat)
         {
             string requestJSONTemplate =
 @"{{

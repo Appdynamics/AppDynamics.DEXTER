@@ -382,7 +382,7 @@ namespace AppDynamics.Dexter
             }
             catch (Exception ex)
             {
-                loggerConsole.Error(ex);
+                loggerConsole.Error(ex.Message);
                 logger.Error("Unable to load JobConfiguration JSON from job file {0}", configurationFilePath);
                 logger.Error(ex);
             }

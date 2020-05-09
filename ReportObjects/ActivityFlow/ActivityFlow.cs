@@ -57,6 +57,8 @@ namespace AppDynamics.Dexter.ReportObjects
         public string MetricLink { get; set; }
         public List<long> MetricsIDs { get; set; }
 
+        public bool IsCrossApplication { get; set; }
+
         public ActivityFlow Clone()
         {
             return (ActivityFlow)this.MemberwiseClone();

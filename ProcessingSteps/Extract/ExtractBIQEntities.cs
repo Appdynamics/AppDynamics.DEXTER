@@ -36,6 +36,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_BIQ) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_BIQ);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_BIQ);
+
                     return true;
                 }
 
@@ -67,7 +70,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Set up controller access
                         using (ControllerApi controllerApi = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                         {
-
                             controllerApi.PrivateApiLogin();
 
                             #region Prepare time range

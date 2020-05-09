@@ -149,9 +149,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Extract {0} event types out of possible {1} ({2} time ranges)", eventTypesToRetrieve.Count, EVENT_TYPES.Count, jobConfiguration.Input.HourlyTimeRanges.Count);
 
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+                        else
+                        { 
+                            parallelOptions.MaxDegreeOfParallelism = EVENTS_EXTRACT_NUMBER_OF_THREADS;
+                        }
+
                         Parallel.ForEach(
                             eventTypesToRetrieve,
-                            new ParallelOptions { MaxDegreeOfParallelism = EVENTS_EXTRACT_NUMBER_OF_THREADS },
+                            parallelOptions,
                             () => 0,
                             (eventType, loop, subtotal) =>
                             {
@@ -189,7 +199,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     Parallel.ForEach<List<JToken>, int>(
                                         listOfEventsInChunks,
-                                        new ParallelOptions { MaxDegreeOfParallelism = EVENTS_EXTRACT_NUMBER_OF_THREADS },
+                                        parallelOptions,
                                         () => 0,
                                         (listOfEventsChunk, loop, subtotal) =>
                                         {

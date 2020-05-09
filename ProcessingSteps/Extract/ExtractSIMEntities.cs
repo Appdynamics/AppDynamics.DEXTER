@@ -43,6 +43,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_SIM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_SIM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_SIM);
+
                     return true;
                 }
 
@@ -151,9 +154,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 var listOfMachinesChunks = machinesArray.BreakListIntoChunks(ENTITIES_EXTRACT_NUMBER_OF_MACHINES_TO_PROCESS_PER_THREAD);
 
+                                ParallelOptions parallelOptions = new ParallelOptions();
+                                if (programOptions.ProcessSequentially == true)
+                                {
+                                    parallelOptions.MaxDegreeOfParallelism = 1;
+                                }
+                                else
+                                {
+                                    parallelOptions.MaxDegreeOfParallelism = MACHINES_EXTRACT_NUMBER_OF_THREADS;
+                                }
+
                                 Parallel.ForEach<List<JToken>, int>(
                                     listOfMachinesChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = MACHINES_EXTRACT_NUMBER_OF_THREADS },
+                                    parallelOptions,
                                     () => 0,
                                     (listOfMachinesChunk, loop, subtotal) =>
                                     {

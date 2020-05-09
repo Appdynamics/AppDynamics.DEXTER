@@ -38,6 +38,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -484,7 +487,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         healthCheckRuleResults.AddRange(
                             evaluate_APMNode_AgentVersion_APM(
-                                new HealthCheckRuleDescription("APM Node Agent Version", "APM-080-NODE-VERSION-APM", "Node Agent Version"),
+                                new HealthCheckRuleDescription("APM Node Agent Version", "APM-085-NODE-VERSION-APM", "Node Agent Version"),
                                 jobTarget,
                                 healthCheckSettingsDictionary,
                                 jobConfiguration,
@@ -492,7 +495,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         healthCheckRuleResults.AddRange(
                             evaluate_APMNode_AgentVersion_Machine(
-                                new HealthCheckRuleDescription("APM Node Agent Version", "APM-081-NODE-VERSION-MACHINE", "Node Machine Agent Version"),
+                                new HealthCheckRuleDescription("APM Node Agent Version", "APM-086-NODE-VERSION-MACHINE", "Node Machine Agent Version"),
                                 jobTarget,
                                 healthCheckSettingsDictionary,
                                 jobConfiguration,
@@ -2847,7 +2850,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                     else
                     {
-                        healthCheckRuleResult1.Description = String.Format("Machine", node.TierName, node.NodeName, node.AgentType, node.AgentVersion);
+                        healthCheckRuleResult1.Description = String.Format("The Agent '{0}\\{1} [{2}]' is version '{3}'", node.TierName, node.NodeName, node.AgentType, node.AgentVersion);
 
                         Version nodeVersion = new Version(node.AgentVersion);
 
@@ -2904,7 +2907,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     if (node.MachineAgentPresent == false || node.MachineAgentVersion.Length == 0)
                     {
                         healthCheckRuleResult1.Grade = 1;
-                        healthCheckRuleResult1.Description = String.Format("The Node '{0}\\{1} [{2}]' does not have a Machine Agent deployed", node.TierName, node.NodeName, node.AgentType, node.AgentVersion);
+                        healthCheckRuleResult1.Description = String.Format("The Node '{0}\\{1} [{2}]' does not have a Machine Agent deployed", node.TierName, node.NodeName, node.AgentType);
                     }
                     else
                     {

@@ -45,6 +45,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -189,10 +192,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                 // Prepare thread safe storage to dump all those chunks
                                                 ConcurrentBag<IndexedSnapshotsResults> indexedSnapshotsResultsBag = new ConcurrentBag<IndexedSnapshotsResults>();
 
+                                                ParallelOptions parallelOptions = new ParallelOptions();
+                                                if (programOptions.ProcessSequentially == true)
+                                                {
+                                                    parallelOptions.MaxDegreeOfParallelism = 1;
+                                                }
+
                                                 int k = 0;
+
                                                 // Index them in parallel
                                                 Parallel.ForEach<List<JToken>, IndexedSnapshotsResults>(
                                                     listOfSnapshotsInHourChunks,
+                                                    parallelOptions,
                                                     () => new IndexedSnapshotsResults(chunkSize),
                                                     (listOfSnapshotsInHourChunk, loop, subtotal) =>
                                                     {
@@ -2887,25 +2898,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 if (methodCallLine.Type == "JS")
                 {
                     // Node.js call graphs should use pretty name
-                    if (methodCallLine.LineNumber > 0)
-                    {
-                        methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.PrettyName, methodCallLine.LineNumber);
-                    }
-                    else
-                    {
+                    //if (methodCallLine.LineNumber > 0)
+                    //{
+                    //    methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.PrettyName, methodCallLine.LineNumber);
+                    //}
+                    //else
+                    //{
                         methodCallLine.FullName = methodCallLine.PrettyName;
-                    }
+                    //}
                 }
                 else
                 {
-                    if (methodCallLine.LineNumber > 0)
-                    {
-                        methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
-                    }
-                    else
-                    {
+                    //if (methodCallLine.LineNumber > 0)
+                    //{
+                    //    methodCallLine.FullName = String.Format("{0}:{1}:{2}", methodCallLine.Class, methodCallLine.Method, methodCallLine.LineNumber);
+                    //}
+                    //else
+                    //{
                         methodCallLine.FullName = String.Format("{0}:{1}", methodCallLine.Class, methodCallLine.Method);
-                    }
+                    //}
                 }
 
                 // Specify depth

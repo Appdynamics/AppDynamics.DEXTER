@@ -36,6 +36,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -72,7 +75,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Extract Metrics for All Entities ({0} time ranges)", jobConfiguration.Input.HourlyTimeRanges.Count);
 
-                        Parallel.Invoke(
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+
+                        Parallel.Invoke(parallelOptions,
                             () =>
                             {
                                 #region Application

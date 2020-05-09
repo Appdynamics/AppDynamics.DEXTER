@@ -1,21 +1,19 @@
 ﻿using AppDynamics.Dexter.DataObjects;
 using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
+using NLog;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Remote;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
-using OpenQA.Selenium.Remote;
-using OpenQA.Selenium.Support.UI;
-using NLog;
 using System.Runtime.InteropServices;
-using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -59,6 +57,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -549,14 +550,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 foreach (AppDRESTTier tier in tiersList)
                                 {
                                     // Filter Tier type
-                                    if (jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType.All != true)
+                                    string allElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.TierTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
                                     {
-                                        PropertyInfo pi = jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType.GetType().GetProperty(tier.agentType);
-                                        if (pi != null)
-                                        {
-                                            if ((bool)pi.GetValue(jobConfiguration.Input.EntityDashboardSelectionCriteria.TierType) == false) continue;
-                                        }
+                                        // All tiers are to be kept
                                     }
+                                    else
+                                    {
+                                        string entityTypeElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.TierTypes, e => e.ToUpper() == tier.agentType);
+                                        if (entityTypeElement == null) continue;
+                                    }
+
                                     // Filter Tier name
                                     bool tierNameMatch = false;
                                     if (jobConfiguration.Input.EntityDashboardSelectionCriteria.Tiers.Length == 0) tierNameMatch = true;
@@ -628,14 +632,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 foreach (AppDRESTNode node in nodesList)
                                 {
                                     // Filter Node type
-                                    if (jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType.All != true)
+                                    string allElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
                                     {
-                                        PropertyInfo pi = jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType.GetType().GetProperty(node.agentType);
-                                        if (pi != null)
-                                        {
-                                            if ((bool)pi.GetValue(jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeType) == false) continue;
-                                        }
+                                        // All tiers are to be kept
                                     }
+                                    else
+                                    {
+                                        string entityTypeElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.NodeTypes, e => e.ToUpper() == node.agentType);
+                                        if (entityTypeElement == null) continue;
+                                    }
+
                                     // Filter Node name
                                     bool nodeNameMatch = false;
                                     if (jobConfiguration.Input.EntityDashboardSelectionCriteria.Nodes.Length == 0) nodeNameMatch = true;
@@ -707,14 +714,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 foreach (AppDRESTBusinessTransaction businessTransaction in businessTransactionsList)
                                 {
                                     // Filter Business Transaction type
-                                    if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType.All != true)
+                                    string allElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
                                     {
-                                        PropertyInfo pi = jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType.GetType().GetProperty(businessTransaction.entryPointType);
-                                        if (pi != null)
-                                        {
-                                            if ((bool)pi.GetValue(jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionType) == false) continue;
-                                        }
+                                        // All tiers are to be kept
                                     }
+                                    else
+                                    {
+                                        string entityTypeElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactionTypes, e => e.ToUpper() == businessTransaction.entryPointType);
+                                        if (entityTypeElement == null) continue;
+                                    }
+
                                     // Filter Business Transaction name
                                     bool businessTransactionNameMatch = false;
                                     if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BusinessTransactions.Length == 0) businessTransactionNameMatch = true;
@@ -786,14 +796,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 foreach (AppDRESTBackend backend in backendsList)
                                 {
                                     // Filter Backend type
-                                    if (jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType.All != true)
+                                    string allElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendTypes, e => e.ToLower() == "all");
+                                    if (allElement != null && allElement.ToLower() == "all")
                                     {
-                                        PropertyInfo pi = jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType.GetType().GetProperty(backend.exitPointType);
-                                        if (pi != null)
-                                        {
-                                            if ((bool)pi.GetValue(jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendType) == false) continue;
-                                        }
+                                        // All tiers are to be kept
                                     }
+                                    else
+                                    {
+                                        string entityTypeElement = Array.Find(jobConfiguration.Input.EntityDashboardSelectionCriteria.BackendTypes, e => e.ToUpper() == backend.exitPointType);
+                                        if (entityTypeElement == null) continue;
+                                    }
+
                                     // Filter Backend name
                                     bool backendNameMatch = false;
                                     if (jobConfiguration.Input.EntityDashboardSelectionCriteria.Backends.Length == 0) backendNameMatch = true;
