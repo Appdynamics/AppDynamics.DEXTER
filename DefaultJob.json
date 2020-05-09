@@ -1,4 +1,5 @@
 ﻿{
+    "__DOCUMENTATION__": "Please read https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Job-File for information on how to configure parameters in this file",
     "Target": [
         {
             "Controller": "https://your.controller.here",
@@ -50,19 +51,37 @@
         }
     ],
     "Input": {
-        "TimeRange": {
-            "From": "2020-03-20T09:00:00",
-            "To": "2020-03-20T10:00:00"
+        "TimeFrame": {
+            "__DOCUMENTATION__": "Please read https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Job-File#timeframe for information on how to configure TimeFrame parameter",
+            "__DOCUMENTATION_MarkDate__": "Possible values: [2020-05-05 (YYY-MM-DD) | 2020-05-05Z | TODAY | TODAY_Z | YESTERDAY | YESTERDAY_Z | DAY_BEFORE_YESTERDAY | DAY_BEFORE_YESTERDAY_Z | SAME_DAY_LAST_WEEK | SAME_DAY_LAST_WEEK_Z | MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY | MONDAY_Z, TUESDAY_Z, WEDNESDAY_Z, THURSDAY_Z, FRIDAY_Z, SATURDAY_Z, SUNDAY_Z | DAY_OF_MONTH_# | DAY_OF_MONTH_#_Z]",
+            "__DOCUMENTATION_MarkTime__": "Possible values: [14:00:00 (HH:mm:ss) local time | 14:00:00Z GMT | 07:15:00-04:00 Specific Time Zone | NOW | NOW_Z | CURRENT_HOUR | CURRENT_HOUR_Z | PREVIOUS_HOUR | PREVIOUS_HOUR_Z ]",
+            "__DOCUMENTATION_Duration__": "Possible values: [1:00:00 ([-][d.]hh:mm:ss) | PT1H (P[n]Y[n]M[n]DT[n]H[n]M[n]S) ]",
+            "MarkDate": "TODAY",
+            "MarkTime": "PREVIOUS_HOUR",
+            "Duration": "1:00:00"
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
+        "Licenses": false,
         "Events": true,
         "EventsSelectionCriteria": [ "All" ],
         "Configuration": true,
-        "ConfigurationComparisonReferenceAPM": { "Controller": "", "Application": "" },
-        "ConfigurationComparisonReferenceWEB": { "Controller": "", "Application": "" },
-        "ConfigurationComparisonReferenceMOBILE": { "Controller": "", "Application": "" },
-        "ConfigurationComparisonReferenceDB": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceAPM": {
+            "Controller": "",
+            "Application": ""
+        },
+        "ConfigurationComparisonReferenceWEB": {
+            "Controller": "",
+            "Application": ""
+        },
+        "ConfigurationComparisonReferenceMOBILE": {
+            "Controller": "",
+            "Application": ""
+        },
+        "ConfigurationComparisonReferenceDB": {
+            "Controller": "",
+            "Application": ""
+        },
         "DetectedEntities": true,
         "Metrics": true,
         "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "BusinessTransactionPercentiles" ],
@@ -70,50 +89,20 @@
         "EntityDashboards": false,
         "EntityDashboardSelectionCriteria": {
             "Tiers": [],
-            "TierType": {
-                "All": true,
-                "APP_AGENT": false, "DOT_NET_APP_AGENT": false, "NATIVE_APP_AGENT": false, "NATIVE_DYNAMIC": false, "NATIVE_SDK": false,
-                "NATIVE_WEB_SERVER": false, "NODEJS_APP_AGENT": false, "PHP_APP_AGENT": false, "PYTHON_APP_AGENT": false, "RUBY_APP_AGENT": false
-            },
+            "TierTypes": [ "All" ],
             "BusinessTransactions": [],
-            "BusinessTransactionType": {
-                "All": true,
-                "SERVLET": false, "HTTP": false, "WEB_SERVICE": false, "POJO": false, "JMS": false, "EJB": false, "SPRING_BEAN": false, "STRUTS_ACTION": false, 
-                "ASP_DOTNET": false, "ASP_DOTNET_WEB_SERVICE": false, "DOTNET_REMOTING": false, "WCF": false,
-                "DOTNET_JMS": false, "POCO": false, "PHP_WEB": false, "PHP_MVC": false, "PHP_DRUPAL": false,"PHP_WORDPRESS": false,
-                "PHP_CLI": false, "PHP_WEB_SERVICE": false, "NODEJS_WEB": false, "NATIVE": false, "WEB": false, "PYTHON_WEB": false, "RUBY_WEB": false, "RUBY_RAILS": false, "BINARY_REMOTING": false
-            },
+            "BusinessTransactionTypes": [ "All" ],
             "Nodes": [],
-            "NodeType": {
-                "All": true,
-                "APP_AGENT": false, "DOT_NET_APP_AGENT": false, "NATIVE_APP_AGENT": false, "NATIVE_DYNAMIC": false, "NATIVE_SDK": false,
-                "NATIVE_WEB_SERVER": false, "NODEJS_APP_AGENT": false, "PHP_APP_AGENT": false, "PYTHON_APP_AGENT": false, "RUBY_APP_AGENT": false
-            },
+            "NodeTypes": [ "All" ],
             "Backends": [],
-            "BackendType": {
-                "All": true,
-                "SOCKET": false, "HTTP": false, "CUSTOM": false, "CUSTOM_ASYNC": false, "FILE_SERVER": false, "MAIL_SERVER": false, "WEB_SERVICE": false, "ERP": false,
-                "CACHE": false, "WEBSPHERE_MQ": false, "MAINFRAME": false, "TIBCO_ASYNC": false, "TIBCO": false, "ESB": false, "SAP": false, "AVRO": false,
-                "THRIFT": false, "CASSANDRA": false, "MQ": false, "JMS": false, "WEBSOCKET": false, "JDBC": false, "RMI": false, "LDAP": false, "CORBA": false, 
-                "RABBITMQ": false, "ADODOTNET": false, "DOTNETDirectoryServices": false, "DOTNETRemoting": false, "DOTNETMessaging": false, "WCF": false, "MSMQ": false, "DB": false, "NETWORK": false
-            }
+            "BackendTypes": [ "All" ]
         },
         "Snapshots": true,
         "SnapshotSelectionCriteria": {
             "Tiers": [],
-            "TierType": {
-                "All": true,
-                "APP_AGENT": false, "DOT_NET_APP_AGENT": false, "NATIVE_APP_AGENT": false, "NATIVE_DYNAMIC": false, "NATIVE_SDK": false,
-                "NATIVE_WEB_SERVER": false, "NODEJS_APP_AGENT": false, "PHP_APP_AGENT": false, "PYTHON_APP_AGENT": false, "RUBY_APP_AGENT": false
-            },
+            "TierTypes": [ "All" ],
             "BusinessTransactions": [],
-            "BusinessTransactionType": {
-                "All": true,
-                "SERVLET": false, "HTTP": false, "WEB_SERVICE": false, "POJO": false, "JMS": false, "EJB": false, "SPRING_BEAN": false, "STRUTS_ACTION": false, 
-                "ASP_DOTNET": false, "ASP_DOTNET_WEB_SERVICE": false, "DOTNET_REMOTING": false, "WCF": false,
-                "DOTNET_JMS": false, "POCO": false, "PHP_WEB": false, "PHP_MVC": false, "PHP_DRUPAL": false,"PHP_WORDPRESS": false,
-                "PHP_CLI": false, "PHP_WEB_SERVICE": false, "NODEJS_WEB": false, "NATIVE": false, "WEB": false, "PYTHON_WEB": false, "RUBY_WEB": false, "RUBY_RAILS": false, "BINARY_REMOTING": false
-            },
+            "BusinessTransactionTypes": [ "All" ],
             "UserExperience": {
                 "Normal": true,
                 "Slow": true,
@@ -131,11 +120,13 @@
     "Output": {
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
+        "Licenses": false,
         "Events": true,
         "Configuration": true,
         "DetectedEntities": true,
         "EntityMetrics": true,
         "EntityMetricGraphs": true,
+        "Flowmaps": true,
         "EntityDashboards": true,
         "EntityDetails": true,
         "Snapshots": true,

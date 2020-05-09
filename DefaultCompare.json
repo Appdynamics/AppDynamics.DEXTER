@@ -1,0 +1,62 @@
+﻿{
+    "Target": [
+        {
+            "ReferenceController": "https://your.controller.here",
+            "ReferenceApplication": ".*",
+            "DifferenceController": "https://your.other.controller.here",
+            "DifferenceApplication": ".*",
+            "NameRegex": true,
+            "Type": "APM"
+        },
+        {
+            "ReferenceController": "https://your.controller.here",
+            "ReferenceApplication": "SpecificApplication",
+            "DifferenceController": "https://your.controller.here",
+            "DifferenceApplication": "AnotherSpecificApplication",
+            "NumTimeRangesOffset": 0,
+            "NumTimeRangesCompare": -1,
+            "NameRegex": false,
+            "Type": "APM"
+        },
+        {
+            "ReferenceController": "https://your.controller.here",
+            "ReferenceApplication": "SpecificApplication",
+            "DifferenceController": "https://your.other.controller.here",
+            "DifferenceApplication": "AnotherSpecificApplication",
+            "NameRegex": false,
+            "Type": "APM"
+        }
+    ],
+    "Input": {
+        "TimeRange": {
+            "ReferenceSkipRanges": 0,
+            "ReferenceCompareRanges": -1,
+            "DifferenceSkipRanges": 0,
+            "DifferenceConsiderRanges": -1,
+            "xReferenceFrom": "2020-03-20T09:00:00",
+            "xReferenceTo": "2020-03-20T10:00:00",
+            "xDifferenceFrom": "2020-03-20T09:00:00",
+            "xDifferenceTo": "2020-03-20T10:00:00"
+        },
+        "UsersGroupsRolesPermissions": true,
+        "Dashboards": true,
+        "Licenses": true,
+        "Configuration": true,
+        "DetectedEntities": true,
+        "Metrics": true,
+        "Flowmaps": true,
+        "Snapshots": true
+    },
+    "Output": {
+        "UsersGroupsRolesPermissions": true,
+        "Dashboards": true,
+        "Licenses": true,
+        "Configuration": true,
+        "DetectedEntities": true,
+        "EntityMetrics": true,
+        "EntityMetricGraphs": true,
+        "Flowmaps": true,
+        "Snapshots": true,
+        "FlameGraphs": true
+    }
+}

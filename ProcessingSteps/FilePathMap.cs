@@ -433,44 +433,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FOLDER_NAME = "Report";
 
         // Report file names
-        private const string REPORT_DETECTED_APM_ENTITIES_FILE_NAME = "Entities.APM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_SIM_ENTITIES_FILE_NAME = "Entities.SIM.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_DB_ENTITIES_FILE_NAME = "Entities.DB.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_WEB_ENTITIES_FILE_NAME = "Entities.WEB.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_MOBILE_ENTITIES_FILE_NAME = "Entities.MOBILE.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_ANALYTICS_ENTITIES_FILE_NAME = "Entities.BIQ.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_DETECTED_APM_ENTITIES_FILE_NAME = "Entities.APM.{0}.xlsx";
+        private const string REPORT_DETECTED_SIM_ENTITIES_FILE_NAME = "Entities.SIM.{0}.xlsx";
+        private const string REPORT_DETECTED_DB_ENTITIES_FILE_NAME = "Entities.DB.{0}.xlsx";
+        private const string REPORT_DETECTED_WEB_ENTITIES_FILE_NAME = "Entities.WEB.{0}.xlsx";
+        private const string REPORT_DETECTED_MOBILE_ENTITIES_FILE_NAME = "Entities.MOBILE.{0}.xlsx";
+        private const string REPORT_DETECTED_ANALYTICS_ENTITIES_FILE_NAME = "Entities.BIQ.{0}.xlsx";
 
-        private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "CallGraphs.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.html";
+        private const string REPORT_METRICS_ALL_ENTITIES_FILE_NAME = "EntityMetrics.{0}.xlsx";
+        private const string REPORT_FLOWMAPS_ALL_ENTITIES_FILE_NAME = "Flowmaps.{0}.xlsx";
+        private const string REPORT_DETECTED_EVENTS_FILE_NAME = "Events.{0}.xlsx";
+        private const string REPORT_SNAPSHOTS_FILE_NAME = "Snapshots.{0}.xlsx";
+        private const string REPORT_SNAPSHOTS_METHOD_CALL_LINES_FILE_NAME = "CallGraphs.{0}.xlsx";
+        private const string REPORT_CONFIGURATION_FILE_NAME = "Configuration.{0}.xlsx";
+        private const string REPORT_USERS_GROUPS_ROLES_PERMISSIONS_FILE_NAME = "UsersGroupsRoles.{0}.xlsx";
+        private const string REPORT_DASHBOARDS_FILE_NAME = "Dashboards.{0}.xlsx";
+        private const string REPORT_LICENSES_FILE_NAME = "Licenses.{0}.xlsx";
+        private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.html";
         private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
-        private const string REPORT_HEALTH_CHECK_RESULTS_FILE_NAME = "HealthCheck.{0}.{1:yyyyMMddHHmm}-{2:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_HEALTH_CHECK_RESULTS_FILE_NAME = "HealthCheck.{0}.xlsx";
 
         // Per entity report names
-        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "EntityDetails.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.xlsx";
-        private const string REPORT_METRICS_GRAPHS_FILE_NAME = "MetricGraphs.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.xlsx";
+        private const string REPORT_ENTITY_DETAILS_ENTITY_FILE_NAME = "EntityDetails.{0}.{1}.{2}.xlsx";
+        private const string REPORT_METRICS_GRAPHS_FILE_NAME = "MetricGraphs.{0}.{1}.{2}.xlsx";
 
         // Per entity flame graph report name
-        private const string REPORT_FLAME_GRAPH_APPLICATION_FILE_NAME = "FlameGraph.Application.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_GRAPH_TIER_FILE_NAME = "FlameGraph.Tier.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_GRAPH_NODE_FILE_NAME = "FlameGraph.Node.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME = "FlameGraph.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
+        private const string REPORT_FLAME_GRAPH_APPLICATION_FILE_NAME = "FlameGraph.Application.{0}.{1}.svg";
+        private const string REPORT_FLAME_GRAPH_TIER_FILE_NAME = "FlameGraph.Tier.{0}.{1}.{2}.svg";
+        private const string REPORT_FLAME_GRAPH_NODE_FILE_NAME = "FlameGraph.Node.{0}.{1}.{2}.svg";
+        private const string REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME = "FlameGraph.BT.{0}.{1}.{2}.svg";
 
         // Per entity flame chart report name
-        private const string REPORT_FLAME_CHART_APPLICATION_FILE_NAME = "FlameChart.Application.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_CHART_TIER_FILE_NAME = "FlameChart.Tier.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_CHART_NODE_FILE_NAME = "FlameChart.Node.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
-        private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.{3:yyyyMMddHHmm}-{4:yyyyMMddHHmm}.svg";
+        private const string REPORT_FLAME_CHART_APPLICATION_FILE_NAME = "FlameChart.Application.{0}.{1}.svg";
+        private const string REPORT_FLAME_CHART_TIER_FILE_NAME = "FlameChart.Tier.{0}.{1}.{2}.svg";
+        private const string REPORT_FLAME_CHART_NODE_FILE_NAME = "FlameChart.Node.{0}.{1}.{2}.svg";
+        private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.svg";
 
         // Per Application
-        private const string REPORT_APPLICATION_SUMMARY_FILE_NAME = "ApplicationSummary.{0}.{1}.{2:yyyyMMddHHmm}-{3:yyyyMMddHHmm}.docx";
+        private const string REPORT_APPLICATION_SUMMARY_FILE_NAME = "ApplicationSummary.{0}.{1}.docx";
 
         #endregion
 
@@ -5353,6 +5354,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 REPORT_FOLDER_NAME,
                 APM_ACTIVITYGRID_FOLDER_NAME,
+                reportFileName);
+        }
+
+        public string FlowmapsExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_FLOWMAPS_ALL_ENTITIES_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                REPORT_FOLDER_NAME,
                 reportFileName);
         }
 

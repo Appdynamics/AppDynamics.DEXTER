@@ -4,6 +4,7 @@ namespace AppDynamics.Dexter
 {
     public class JobInput
     {
+        public TimeFrame TimeFrame { get; set; }
         public JobTimeRange TimeRange { get; set; }
         public List<JobTimeRange> HourlyTimeRanges { get; set; }
         public JobSnapshotSelectionCriteria SnapshotSelectionCriteria { get; set; }

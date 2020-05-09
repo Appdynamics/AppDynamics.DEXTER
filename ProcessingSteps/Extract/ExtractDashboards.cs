@@ -94,9 +94,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             var listOfDashboardsChunks = allDashboardsArray.BreakListIntoChunks(DASHBOARDS_EXTRACT_NUMBER_OF_ENTITIES_TO_PROCESS_PER_THREAD);
 
+                            ParallelOptions parallelOptions = new ParallelOptions();
+                            if (programOptions.ProcessSequentially == true)
+                            {
+                                parallelOptions.MaxDegreeOfParallelism = 1;
+                            }
+                            else
+                            {
+                                parallelOptions.MaxDegreeOfParallelism = DASHBOARDS_EXTRACT_NUMBER_OF_THREADS;
+                            }
+
                             Parallel.ForEach<List<JToken>, int>(
                                 listOfDashboardsChunks,
-                                new ParallelOptions { MaxDegreeOfParallelism = DASHBOARDS_EXTRACT_NUMBER_OF_THREADS },
+                                parallelOptions,
                                 () => 0,
                                 (listOfDashboardsChunk, loop, subtotal) =>
                                 {

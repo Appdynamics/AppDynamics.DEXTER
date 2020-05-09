@@ -19,6 +19,7 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.ToName).Index(i); i++;
             Map(m => m.ToType).Index(i); i++;
             Map(m => m.ToEntityID).Index(i); i++;
+            Map(m => m.IsCrossApplication).Index(i); i++;
             Map(m => m.ART).Index(i); i++;
             Map(m => m.Calls).Index(i); i++;
             Map(m => m.CPM).Index(i); i++;

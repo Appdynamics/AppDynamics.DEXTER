@@ -109,6 +109,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
+                logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                 return true;
             }
 
@@ -166,7 +169,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        Parallel.Invoke(
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+
+                        Parallel.Invoke(parallelOptions,
                             () =>
                             {
                                 #region Application
@@ -914,35 +923,48 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 if (entity.EntityType == APMApplication.ENTITY_TYPE)
                 {
-                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
+                    if (File.Exists(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget)) == true)
+                    {
+                        List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), new ApplicationActivityFlowReportMap());
 
-                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new ApplicationActivityFlowReportMap());
-
-                    //EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationFlowmapIndexFilePath(jobTarget), 0, sheet, fromRow, 1);
+                        memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new ApplicationActivityFlowReportMap());
+                    }
                 }
                 else if (entity.EntityType == APMTier.ENTITY_TYPE)
                 {
-                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
+                    if (File.Exists(FilePathMap.TiersFlowmapIndexFilePath(jobTarget)) == true)
+                    {
+                        List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.TiersFlowmapIndexFilePath(jobTarget), new TierActivityFlowReportMap()).Where(e => e.TierID == entity.EntityID).ToList();
 
-                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new TierActivityFlowReportMap());
+                        memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new TierActivityFlowReportMap());
+                    }
                 }
                 else if (entity.EntityType == APMNode.ENTITY_TYPE)
                 {
-                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
+                    if (File.Exists(FilePathMap.NodesFlowmapIndexFilePath(jobTarget)) == true)
+                    {
+                        List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.NodesFlowmapIndexFilePath(jobTarget), new NodeActivityFlowReportMap()).Where(e => e.NodeID == entity.EntityID).ToList();
 
-                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new NodeActivityFlowReportMap());
+                        memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new NodeActivityFlowReportMap());
+                    }
                 }
                 else if (entity.EntityType == APMBackend.ENTITY_TYPE)
                 {
-                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
+                    if (File.Exists(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget)) == true)
+                    {
+                        List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BackendsFlowmapIndexFilePath(jobTarget), new BackendActivityFlowReportMap()).Where(e => e.BackendID == entity.EntityID).ToList();
 
-                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BackendActivityFlowReportMap());
+                        memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BackendActivityFlowReportMap());
+                    }
                 }
                 else if (entity.EntityType == APMBusinessTransaction.ENTITY_TYPE)
                 {
-                    List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
+                    if (File.Exists(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget)) == true)
+                    {
+                        List<ActivityFlow> activityFlowFiltered = FileIOHelper.ReadListFromCSVFile<ActivityFlow>(FilePathMap.BusinessTransactionsFlowmapIndexFilePath(jobTarget), new BusinessTransactionActivityFlowReportMap()).Where(e => e.BTID == entity.EntityID).ToList();
 
-                    memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BusinessTransactionActivityFlowReportMap());
+                        memoryStreamActivityFlow = FileIOHelper.WriteListToMemoryStream(activityFlowFiltered, new BusinessTransactionActivityFlowReportMap());
+                    }
                 }
             }
             catch (ArgumentNullException ex)

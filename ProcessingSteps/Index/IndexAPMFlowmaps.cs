@@ -38,6 +38,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -81,7 +84,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             tiersAllIndexedItemsDictionary = new Dictionary<string, APMTier>();
                         }
 
-                        Parallel.Invoke(
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+
+                        Parallel.Invoke(parallelOptions,
                             () =>
                             {
                                 #region Application
@@ -499,10 +508,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.FromType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -531,13 +542,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             // Let's build a pretty call chain that can be matched on the downstream application flowmap
-                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.ToType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -560,7 +573,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 APMTier tierLookup = null;
                                 if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
                                 {
-                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.IsCrossApplication = true;
                                 }
                             }
                         }
@@ -705,10 +719,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.FromType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -737,13 +753,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             // Let's build a pretty call chain that can be matched on the downstream application flowmap
-                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.ToType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -775,7 +793,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 APMTier tierLookup = null;
                                 if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
                                 {
-                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.IsCrossApplication = true;
                                 }
                             }
                         }
@@ -930,10 +949,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.FromType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -967,13 +988,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             // Let's build a pretty call chain that can be matched on the downstream application flowmap
-                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.TierName, activityFlowTemplate.ToName);
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.TierName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.ToType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -1006,7 +1029,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 APMTier tierLookup = null;
                                 if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
                                 {
-                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.IsCrossApplication = true;
                                 }
                             }
                         }
@@ -1152,6 +1176,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -1181,6 +1206,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -1351,10 +1377,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             deepLinkMetricTemplateInMetricBrowser = DEEPLINK_METRIC_TIER_TARGET_METRIC_ID;
                             activityFlowTemplate.FromType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.FromLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.FromEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.FromType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -1383,13 +1411,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         case ENTITY_TYPE_FLOWMAP_APPLICATION:
                             // Let's build a pretty call chain that can be matched on the downstream application flowmap
-                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
+                            activityFlowTemplate.ToName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlowTemplate.ApplicationName, activityFlowTemplate.FromName, activityFlowTemplate.ToName);
                             activityFlowTemplate.ToType = APMApplication.ENTITY_TYPE;
                             activityFlowTemplate.ToLink = String.Format(DEEPLINK_APM_APPLICATION, activityFlowTemplate.Controller, activityFlowTemplate.ToEntityID, DEEPLINK_THIS_TIMERANGE);
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         case ENTITY_TYPE_FLOWMAP_FEDERATED_APPLICATION:
                             activityFlowTemplate.ToType = "Federated Application";
+                            activityFlowTemplate.IsCrossApplication = true;
                             break;
 
                         default:
@@ -1423,7 +1453,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 APMTier tierLookup = null;
                                 if (tiersDictionary.TryGetValue(String.Format("{0}/{1}", activityFlowTemplate.FromEntityID, getLongValueFromJToken(entityConnectionStat["upstreamCrossAppCallingEntity"], "entityId")), out tierLookup) == true)
                                 {
-                                    activityFlow.FromName = String.Format("{{{0}}}->({1})-{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.FromName = String.Format("{{{0}}}->({1})->{{{2}}}", activityFlow.FromName, tierLookup.TierName, activityFlow.ApplicationName);
+                                    activityFlow.IsCrossApplication = true;
                                 }
                             }
                         }

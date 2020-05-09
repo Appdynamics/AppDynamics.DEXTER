@@ -6,7 +6,7 @@ namespace AppDynamics.Dexter
     {
         public DateTime From { get; set; }
         public DateTime To { get; set; }
-        public override String ToString()
+        public override string ToString()
         {
             return String.Format(
                 "JobTimeRange: {0:o}-{1:o} {2:o}-{3:o}",

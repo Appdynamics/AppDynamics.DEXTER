@@ -34,6 +34,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_DB) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+
                     return true;
                 }
 

@@ -9,5 +9,8 @@
         public bool Flowmaps { get; set; }
         public bool FlameGraphs { get; set; }
         public bool Configuration { get; set; }
+        public bool UsersGroupsRolesPermissions { get; set; }
+        public bool Dashboards { get; set; }
+        public bool Licenses { get; set; }
     }
 }

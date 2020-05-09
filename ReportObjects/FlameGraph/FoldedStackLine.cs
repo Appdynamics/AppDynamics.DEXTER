@@ -87,7 +87,6 @@ namespace AppDynamics.Dexter.ReportObjects
                 if (methodCallLine.NumExits > 0)
                 {
                     // Encode the exits because they may contain carriage returns
-
                     string exitCallsWithTiming = methodCallLine.ExitCalls;
 
                     Regex regexDuration = new Regex(@"\[\d+ ms( async)?\]", RegexOptions.IgnoreCase);

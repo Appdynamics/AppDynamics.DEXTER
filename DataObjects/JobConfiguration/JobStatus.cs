@@ -83,6 +83,7 @@
 
         ReportAPMMetrics = 120,
         ReportAPMMetricGraphs = 121,
+        ReportAPMFlowmaps = 122,
 
         ReportAPMSnapshots = 130,
         ReportAPMSnapshotsMethodCallLines = 131,

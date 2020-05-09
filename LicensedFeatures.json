@@ -1,5 +1,5 @@
 {
-  "Signature": "jeBQXY+Bum3Lt3hA5kuYfnff/NLQgRj6NwLbMphjU2Sr1Stz9RlR2U3Qy2DScXWNv4Li42VwhszJhKOdTKbHt3U9YtuavyW69wVSrExX9D67wJuuOi08cOVaCwuEiYJSiISUMCn7rZ9gjCy+2QBfAVkAFMpjSWx0YHDpKyMir5fVxO9Ulv3nCXmz0C/lMpiiOpUlWQfPV+B0agRpEtHvcEfg8zvpLW5Bhmbii0I+UqWn4rdcraG2aXFGKb5AsY47UxUjzI+ihuJQ+HzkI9Lo7CraBNiaRp/R5qfI57Q/9l5vOQPVZMhogSBjwgjzvuYh6hr443N6olHF/yjUY1RfxA==",
+  "Signature": "Hhs4xVSGQvoeAm2UrImV/nD/2HEqYyiNI/3wgQz10gDVGQ9IajjiC9GZV2Zrnc533vVPw5lZP260/faTj1OIT+BkD3d+FxGIl3tyv02zPNCJ3gRO1VIHbcHcMeNMLdeh5CXHZq7QiHZjuqG7c27L5v5/QD9fawSO7mVUYWO8Z2p74VgX3YVIV8xAv5WdkL8+qa78PDvoWGT7O8//jpoEL4gOwqa07pN5CwftqMAdu3/qFQGNapLYES3COIyJlufByl03xSlA+picO65BMAjoVeCvNOW+7qH5xtm2dAUYj7RCRQDbeGNODM/lucJK3SJVFbJ0BtMTetUCsRDlOkIA+w==",
   "LicensedFeatures": {
     "ExpirationDateTime": "2031-01-01T00:00:00Z",
     "ApplicationSummary": false,
@@ -10,6 +10,7 @@
     "EntityDetails": true,
     "EntityMetricGraphs": true,
     "EntityMetrics": true,
+    "Flowmaps": true,
     "Events": true,
     "FlameGraphs": true,
     "HealthCheck": false,

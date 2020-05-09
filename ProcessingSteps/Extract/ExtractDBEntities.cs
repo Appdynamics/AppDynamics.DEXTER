@@ -37,6 +37,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_DB) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+
                     return true;
                 }
 
@@ -69,6 +72,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         Version version4_5 = new Version(4, 5);
                         Version version4_4 = new Version(4, 4);
+                        Version version20_4 = new Version(20, 4);
                         Version versionThisController = new Version(jobTarget.ControllerVersion);
 
                         #endregion
@@ -125,7 +129,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Check the file existence to support resuming previously interrupted jobs
                         if (File.Exists(FilePathMap.DBQueriesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange)) == false)
                         {
-                            Parallel.Invoke(
+                            ParallelOptions parallelOptions = new ParallelOptions();
+                            if (programOptions.ProcessSequentially == true)
+                            {
+                                parallelOptions.MaxDegreeOfParallelism = 1;
+                            }
+
+                            Parallel.Invoke(parallelOptions,
                                 () =>
                                 {
                                     using (ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
@@ -137,14 +147,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         if (allWaitStatesJSON != String.Empty) FileIOHelper.SaveFileToPath(allWaitStatesJSON, FilePathMap.DBAllWaitStatesDataFilePath(jobTarget));
 
                                         loggerConsole.Info("Current Wait States");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string currentWaitStatesJSON = controllerApiParallel.GetDCurrentWaitStates(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.5");
+                                            string currentWaitStatesJSON = controllerApiParallel.GetDCurrentWaitStates_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (currentWaitStatesJSON != String.Empty) FileIOHelper.SaveFileToPath(currentWaitStatesJSON, FilePathMap.DBCurrentWaitStatesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string currentWaitStatesJSON = controllerApiParallel.GetDCurrentWaitStates_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                             if (currentWaitStatesJSON != String.Empty) FileIOHelper.SaveFileToPath(currentWaitStatesJSON, FilePathMap.DBCurrentWaitStatesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string currentWaitStatesJSON = controllerApiParallel.GetDCurrentWaitStates(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.4");
+                                            string currentWaitStatesJSON = controllerApiParallel.GetDCurrentWaitStates_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                             if (currentWaitStatesJSON != String.Empty) FileIOHelper.SaveFileToPath(currentWaitStatesJSON, FilePathMap.DBCurrentWaitStatesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                     }
@@ -156,26 +171,36 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         controllerApiParallel.PrivateApiLogin();
 
                                         loggerConsole.Info("Queries");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string queriesJSON = controllerApiParallel.GetDBQueries(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string queriesJSON = controllerApiParallel.GetDBQueries_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (queriesJSON != String.Empty) FileIOHelper.SaveFileToPath(queriesJSON, FilePathMap.DBQueriesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string queriesJSON = controllerApiParallel.GetDBQueries_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (queriesJSON != String.Empty) FileIOHelper.SaveFileToPath(queriesJSON, FilePathMap.DBQueriesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string queriesJSON = controllerApiParallel.GetDBQueries(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string queriesJSON = controllerApiParallel.GetDBQueries_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (queriesJSON != String.Empty) FileIOHelper.SaveFileToPath(queriesJSON, FilePathMap.DBQueriesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
                                         loggerConsole.Info("Clients");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string clientsJSON = controllerApiParallel.GetDBClients(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string clientsJSON = controllerApiParallel.GetDBClients_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (clientsJSON != String.Empty) FileIOHelper.SaveFileToPath(clientsJSON, FilePathMap.DBClientsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string clientsJSON = controllerApiParallel.GetDBClients_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (clientsJSON != String.Empty) FileIOHelper.SaveFileToPath(clientsJSON, FilePathMap.DBClientsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string clientsJSON = controllerApiParallel.GetDBClients(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string clientsJSON = controllerApiParallel.GetDBClients_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (clientsJSON != String.Empty) FileIOHelper.SaveFileToPath(clientsJSON, FilePathMap.DBClientsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                     }
@@ -187,38 +212,53 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         controllerApiParallel.PrivateApiLogin();
 
                                         loggerConsole.Info("Sessions");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string sessionsJSON = controllerApiParallel.GetDBSessions(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string sessionsJSON = controllerApiParallel.GetDBSessions_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (sessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(sessionsJSON, FilePathMap.DBSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string sessionsJSON = controllerApiParallel.GetDBSessions_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (sessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(sessionsJSON, FilePathMap.DBSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string sessionsJSON = controllerApiParallel.GetDBSessions(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string sessionsJSON = controllerApiParallel.GetDBSessions_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (sessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(sessionsJSON, FilePathMap.DBSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
                                         loggerConsole.Info("Databases");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string databasesJSON = controllerApiParallel.GetDBDatabases(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string databasesJSON = controllerApiParallel.GetDBDatabases_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (databasesJSON != String.Empty) FileIOHelper.SaveFileToPath(databasesJSON, FilePathMap.DBDatabasesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string databasesJSON = controllerApiParallel.GetDBDatabases_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (databasesJSON != String.Empty) FileIOHelper.SaveFileToPath(databasesJSON, FilePathMap.DBDatabasesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string databasesJSON = controllerApiParallel.GetDBDatabases(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string databasesJSON = controllerApiParallel.GetDBDatabases_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (databasesJSON != String.Empty) FileIOHelper.SaveFileToPath(databasesJSON, FilePathMap.DBDatabasesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
                                         loggerConsole.Info("Users");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string usersJSON = controllerApiParallel.GetDBUsers(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string usersJSON = controllerApiParallel.GetDBUsers_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (usersJSON != String.Empty) FileIOHelper.SaveFileToPath(usersJSON, FilePathMap.DBUsersDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string usersJSON = controllerApiParallel.GetDBUsers_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (usersJSON != String.Empty) FileIOHelper.SaveFileToPath(usersJSON, FilePathMap.DBUsersDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string usersJSON = controllerApiParallel.GetDBUsers(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string usersJSON = controllerApiParallel.GetDBUsers_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (usersJSON != String.Empty) FileIOHelper.SaveFileToPath(usersJSON, FilePathMap.DBUsersDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                     }
@@ -230,32 +270,50 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         controllerApiParallel.PrivateApiLogin();
 
                                         loggerConsole.Info("Modules");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string modulesJSON = controllerApiParallel.GetDBModules(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string modulesJSON = controllerApiParallel.GetDBModules_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (modulesJSON != String.Empty) FileIOHelper.SaveFileToPath(modulesJSON, FilePathMap.DBModulesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string modulesJSON = controllerApiParallel.GetDBModules_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (modulesJSON != String.Empty) FileIOHelper.SaveFileToPath(modulesJSON, FilePathMap.DBModulesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string modulesJSON = controllerApiParallel.GetDBModules(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string modulesJSON = controllerApiParallel.GetDBModules_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (modulesJSON != String.Empty) FileIOHelper.SaveFileToPath(modulesJSON, FilePathMap.DBModulesDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
                                         loggerConsole.Info("Programs");
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            string programsJSON = controllerApiParallel.GetDBPrograms(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.5");
+                                            string programsJSON = controllerApiParallel.GetDBPrograms_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (programsJSON != String.Empty) FileIOHelper.SaveFileToPath(programsJSON, FilePathMap.DBProgramsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            string programsJSON = controllerApiParallel.GetDBPrograms_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (programsJSON != String.Empty) FileIOHelper.SaveFileToPath(programsJSON, FilePathMap.DBProgramsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            string programsJSON = controllerApiParallel.GetDBPrograms(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, "4.4");
+                                            string programsJSON = controllerApiParallel.GetDBPrograms_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
                                             if (programsJSON != String.Empty) FileIOHelper.SaveFileToPath(programsJSON, FilePathMap.DBProgramsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
                                         loggerConsole.Info("Business Transactions");
-                                        string businessTransactionsJSON = controllerApiParallel.GetDBBusinessTransactions(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
-                                        if (businessTransactionsJSON != String.Empty) FileIOHelper.SaveFileToPath(businessTransactionsJSON, FilePathMap.DBBusinessTransactionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        if (versionThisController >= version20_4)
+                                        {
+                                            string businessTransactionsJSON = controllerApiParallel.GetDBBusinessTransactions_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (businessTransactionsJSON != String.Empty) FileIOHelper.SaveFileToPath(businessTransactionsJSON, FilePathMap.DBBusinessTransactionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else
+                                        {
+                                            string businessTransactionsJSON = controllerApiParallel.GetDBBusinessTransactions_Pre_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix);
+                                            if (businessTransactionsJSON != String.Empty) FileIOHelper.SaveFileToPath(businessTransactionsJSON, FilePathMap.DBBusinessTransactionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
                                     }
                                 },
                                 () =>
@@ -263,17 +321,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     using (ControllerApi controllerApiParallel = new ControllerApi(jobTarget.Controller, jobTarget.UserName, AESEncryptionHelper.Decrypt(jobTarget.UserPassword)))
                                     {
                                         controllerApiParallel.PrivateApiLogin();
-
+                                        
                                         loggerConsole.Info("All Blocked Sessions");
                                         string blockedSessionsJSON = String.Empty;
-                                        if (versionThisController >= version4_5)
+                                        if (versionThisController >= version20_4)
                                         {
-                                            blockedSessionsJSON = controllerApiParallel.GetDBBlockingSessions(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.5");
+                                            blockedSessionsJSON = controllerApiParallel.GetDBBlockingSessions_20_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                            if (blockedSessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionsJSON, FilePathMap.DBBlockingSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
+                                        }
+                                        else if (versionThisController >= version4_5)
+                                        {
+                                            blockedSessionsJSON = controllerApiParallel.GetDBBlockingSessions_4_5(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                             if (blockedSessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionsJSON, FilePathMap.DBBlockingSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
                                         else if (versionThisController >= version4_4)
                                         {
-                                            blockedSessionsJSON = controllerApiParallel.GetDBBlockingSessions(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.4");
+                                            blockedSessionsJSON = controllerApiParallel.GetDBBlockingSessions_4_4(jobTarget.DBCollectorID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                             if (blockedSessionsJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionsJSON, FilePathMap.DBBlockingSessionsDataFilePath(jobTarget, jobConfiguration.Input.TimeRange));
                                         }
 
@@ -290,14 +353,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                                     {
                                                         long blockingSessionID = (long)blockedSessionToken["blockingSessionId"];
 
-                                                        if (versionThisController >= version4_5)
+                                                        if (versionThisController >= version20_4)
                                                         {
-                                                            string blockedSessionJSON = controllerApiParallel.GetDBBlockingSession(jobTarget.DBCollectorID, blockingSessionID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.5");
+                                                            string blockedSessionJSON = controllerApiParallel.GetDBBlockingSession_20_4(jobTarget.DBCollectorID, blockingSessionID, fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                                            if (blockedSessionJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionJSON, FilePathMap.DBBlockingSessionDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, blockingSessionID));
+                                                        }
+                                                        else if (versionThisController >= version4_5)
+                                                        {
+                                                            string blockedSessionJSON = controllerApiParallel.GetDBBlockingSession_4_5(jobTarget.DBCollectorID, blockingSessionID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                                             if (blockedSessionJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionJSON, FilePathMap.DBBlockingSessionDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, blockingSessionID));
                                                         }
                                                         else if (versionThisController >= version4_4)
                                                         {
-                                                            string blockedSessionJSON = controllerApiParallel.GetDBBlockingSession(jobTarget.DBCollectorID, blockingSessionID, fromTimeUnix, toTimeUnix, differenceInMinutes, "4.4");
+                                                            string blockedSessionJSON = controllerApiParallel.GetDBBlockingSession_4_4(jobTarget.DBCollectorID, blockingSessionID, fromTimeUnix, toTimeUnix, differenceInMinutes);
                                                             if (blockedSessionJSON != String.Empty) FileIOHelper.SaveFileToPath(blockedSessionJSON, FilePathMap.DBBlockingSessionDataFilePath(jobTarget, jobConfiguration.Input.TimeRange, blockingSessionID));
                                                         }
                                                     }

@@ -4,6 +4,7 @@ using OfficeOpenXml;
 using OfficeOpenXml.Drawing.Chart;
 using OfficeOpenXml.Style;
 using OfficeOpenXml.Table;
+using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -38,6 +39,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string SHEET_ENTITIES_METRICS = "Entity.Metrics";
 
+        private const string SHEET_PIVOT_GRAPH_METRICS_ALL_ENTITIES = "12.Graph.{0}";
+
         private const string TABLE_CONTROLLERS = "t_Controllers";
 
         // Metric data tables from metric.values.csv
@@ -59,7 +62,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_INFORMATION_POINTS = "t_InformationPoints_{0}";
         private const string TABLE_INFORMATION_POINTS_SCATTER = "t_InformationPointsScatter";
 
+        private const string PIVOT_GRAPH_METRICS_ALL_ENTITIES = "p_All_{0}";
+
+        private const string GRAPH_METRICS_ALL_ENTITIES = "g_All_{0}";
+
         private const int LIST_SHEET_START_TABLE_AT = 4;
+        private const int PIVOT_SHEET_START_PIVOT_AT = 7;
+        private const int PIVOT_SHEET_CHART_HEIGHT = 14;
         private const int GRAPH_SHEET_START_TABLE_AT = 6;
 
         // Hourly graph data
@@ -111,6 +120,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                     return true;
                 }
 
@@ -147,7 +159,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         loggerConsole.Info("Prepare Entity Metrics Graphs Report with {0} metrics", entityMetricExtractMappingList.Count);
 
-                        Parallel.Invoke(
+                        ParallelOptions parallelOptions = new ParallelOptions();
+                        if (programOptions.ProcessSequentially == true)
+                        {
+                            parallelOptions.MaxDegreeOfParallelism = 1;
+                        }
+
+                        Parallel.Invoke(parallelOptions,
                             () =>
                             {
                                 #region Application
@@ -163,6 +181,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -186,6 +205,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(tiersList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -210,6 +230,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(nodesList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -233,6 +254,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(backendsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -256,6 +278,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(businessTransactionsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -279,6 +302,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(serviceEndpointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -301,6 +325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillMetricValueTablesForEntityType(excelReport, SHEET_ENTITIES_METRICS, entityMetricExtractMappingListFiltered, jobTarget, APMError.ENTITY_FOLDER);
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(errorsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -324,6 +349,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
+                                    fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
 
                                     finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(informationPointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
@@ -677,11 +703,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Add outlines and time range labels for each of the hourly ranges
 
-                for (int i = 0; i < jobConfiguration.Input.HourlyTimeRanges.Count; i++)
+                int indexOfTimeRangeToStartWith = 0;
+                if (jobConfiguration.Input.HourlyTimeRanges.Count > 8)
                 {
-                    JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[i];
+                    indexOfTimeRangeToStartWith = jobConfiguration.Input.HourlyTimeRanges.Count - 8;
+                }
 
-                    int columnIndexTimeRangeStart = columnsBeforeFirstHourRange + 1 + i * columnsBetweenHourRanges + i * numCellsPerHourRange;
+                for (int indexOfTimeRange = indexOfTimeRangeToStartWith; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
+                {
+                    JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
+
+                    int columnIndexTimeRangeStart = columnsBeforeFirstHourRange + 1 + (indexOfTimeRange - indexOfTimeRangeToStartWith) * (columnsBetweenHourRanges + numCellsPerHourRange);
                     int columnIndexTimeRangeEnd = columnIndexTimeRangeStart + numCellsPerHourRange;
                     for (int columnIndex = columnIndexTimeRangeStart; columnIndex < columnIndexTimeRangeEnd; columnIndex++)
                     {
@@ -762,7 +794,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     bool entityHasActivity = false;
 
                     // Output graphs for every hour range one at a time
-                    for (int indexOfTimeRange = 0; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
+                    for (int indexOfTimeRange = indexOfTimeRangeToStartWith; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
                     {
                         JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
 
@@ -779,7 +811,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             // Output headers for each of the metrics
                             // Calculate where the index of the column value (ART, Total etc) are going to be output
                             // Sum of (Offset of tables + offset of the time range + number of columns between + the number of the metric
-                            int columnIndexOfCurrentRangeBegin = columnsBeforeFirstHourRange + 1 + indexOfTimeRange * columnsBetweenHourRanges + indexOfTimeRange * numCellsPerHourRange;
+                            int columnIndexOfCurrentRangeBegin = columnsBeforeFirstHourRange + 1 + (indexOfTimeRange - indexOfTimeRangeToStartWith) * (columnsBetweenHourRanges + numCellsPerHourRange);
                             int columnIndexOfValueOfCurrentMetric = columnIndexOfCurrentRangeBegin + indexOfMetricMapping * 2;
                             sheetGraphs.Cells[entityTableHeaderRow - 1, columnIndexOfValueOfCurrentMetric].Value = metricExtractMapping.MetricName;
                             sheetGraphs.Cells[entityTableHeaderRow - 1, columnIndexOfValueOfCurrentMetric].StyleName = "MetricNameStyle";
@@ -1129,11 +1161,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Add outlines and time range labels for each of the hourly ranges
 
-                for (int i = 0; i < jobConfiguration.Input.HourlyTimeRanges.Count; i++)
+                int indexOfTimeRangeToStartWith = 0;
+                if (jobConfiguration.Input.HourlyTimeRanges.Count > 8)
                 {
-                    JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[i];
+                    indexOfTimeRangeToStartWith = jobConfiguration.Input.HourlyTimeRanges.Count - 8;
+                }
 
-                    int columnIndexTimeRangeStart = columnsBeforeFirstHourRange + 1 + i * columnsBetweenHourRanges + i * numCellsPerHourRange;
+                for (int indexOfTimeRange = indexOfTimeRangeToStartWith; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
+                {
+                    JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
+
+                    int columnIndexTimeRangeStart = columnsBeforeFirstHourRange + 1 + (indexOfTimeRange - indexOfTimeRangeToStartWith) * (columnsBetweenHourRanges + numCellsPerHourRange);
                     int columnIndexTimeRangeEnd = columnIndexTimeRangeStart + numCellsPerHourRange;
                     for (int columnIndex = columnIndexTimeRangeStart; columnIndex < columnIndexTimeRangeEnd; columnIndex++)
                     {
@@ -1216,13 +1254,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     bool entityHasActivity = false;
 
                     // Output graphs for every hour range one at a time
-                    for (int indexOfTimeRange = 0; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
+                    for (int indexOfTimeRange = indexOfTimeRangeToStartWith; indexOfTimeRange < jobConfiguration.Input.HourlyTimeRanges.Count; indexOfTimeRange++)
                     {
                         JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
 
                         #region Headers and legend for each range
 
-                        int columnIndexOfCurrentRangeBegin = columnsBeforeFirstHourRange + 1 + indexOfTimeRange * columnsBetweenHourRanges + indexOfTimeRange * numCellsPerHourRange;
+                        int columnIndexOfCurrentRangeBegin = columnsBeforeFirstHourRange + 1 + (indexOfTimeRange - indexOfTimeRangeToStartWith) * (columnsBetweenHourRanges + numCellsPerHourRange);
 
                         #endregion
 
@@ -1434,6 +1472,58 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #endregion
 
                 Console.WriteLine("{0} {1} complete", entityFolderName, sheetName);
+            }
+        }
+
+        private void fillPivotGraphsForEntityType(
+            ExcelPackage excelReportMetrics,
+            List<MetricExtractMapping> entityMetricExtractMappingList,
+            List<APMEntityBase> entityList,
+            JobConfiguration jobConfiguration,
+            JobTarget jobTarget,
+            string entityFolderName,
+            string entityType)
+        {
+            ExcelWorksheet sheetMetrics = excelReportMetrics.Workbook.Worksheets[SHEET_ENTITIES_METRICS];
+
+            // Load each of the metrics in the mapping table that apply to this entity type
+            foreach (MetricExtractMapping metricExtractMapping in entityMetricExtractMappingList)
+            {
+                string worksheetName = getExcelTableOrSheetSafeString(String.Format(SHEET_PIVOT_GRAPH_METRICS_ALL_ENTITIES, metricExtractMapping.FolderName));
+                ExcelWorksheet sheetGraphs = excelReportMetrics.Workbook.Worksheets.Add(worksheetName);
+                sheetGraphs.Cells[1, 1].Value = "Table of Contents";
+                sheetGraphs.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheetGraphs.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheetGraphs.Cells[2, 1].Value = "See Data";
+                sheetGraphs.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_ENTITIES_METRICS);
+                sheetGraphs.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheetGraphs.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+                excelReportMetrics.Workbook.Worksheets.MoveBefore(worksheetName, SHEET_ENTITIES_METRICS);
+
+                sheetGraphs.Cells[1, 3].Value = metricExtractMapping.MetricName;
+                sheetGraphs.Cells[2, 3].Value = metricExtractMapping.MetricPath;
+
+                ExcelTable tableMetrics = sheetMetrics.Tables[String.Format(TABLE_METRIC_VALUES, entityFolderName, metricExtractMapping.FolderName)];
+                if (tableMetrics != null)
+                {
+                    ExcelRangeBase rangeTableMetrics = (ExcelRangeBase)tableMetrics.Address;
+                    ExcelPivotTable pivot= sheetGraphs.PivotTables.Add(sheetGraphs.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], rangeTableMetrics, String.Format(PIVOT_GRAPH_METRICS_ALL_ENTITIES, metricExtractMapping.FolderName));
+                    setDefaultPivotTableSettings(pivot);
+                    ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["EventTimeStamp"]);
+                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours | eDateGroupBy.Minutes);
+                    fieldR.Compact = false;
+                    fieldR.Outline = false;
+                    addColumnFieldToPivot(pivot, "EntityName", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "Value", DataFieldFunctions.Average);
+
+                    ExcelChart chart = sheetGraphs.Drawings.AddChart(String.Format(GRAPH_METRICS_ALL_ENTITIES, metricExtractMapping.FolderName), eChartType.Line, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(1200, 350);
+
+                    sheetGraphs.Column(1).Width = 20;
+                    sheetGraphs.Column(2).Width = 20;
+                    sheetGraphs.Column(3).Width = 20;
+                }
             }
         }
 

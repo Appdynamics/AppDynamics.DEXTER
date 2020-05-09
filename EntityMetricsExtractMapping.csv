@@ -13,8 +13,9 @@ Tier,Overall Application Performance|*|External Calls|*|Average Response Time (m
 Tier,Overall Application Performance|*|External Calls|*|Calls per Minute,Calls per Minute,BACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerTier
 Tier,Overall Application Performance|*|External Calls|*|Errors per Minute,Errors per Minute,BACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerTier
 Tier,Overall Application Performance|*|External Calls|Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,BACKCPMSPEC,SUM,SpecSQLCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
-Tier,Application Infrastructure Performance|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentAvailability,PRIMARY,108000,AgentStats
-Tier,Application Infrastructure Performance|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentAvailability,PRIMARY,0000FF,AgentStats
+Tier,Application Infrastructure Performance|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentStatistics,PRIMARY,108000,AgentStats
+Tier,Application Infrastructure Performance|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentStatistics,PRIMARY,0000FF,AgentStats
+Tier,Application Infrastructure Performance|*|Agent|Metric Upload|Metrics uploaded,Agent|Metric Upload|Metrics uploaded,METRUPL,SUM,AgentStatistics,SECONDARY,FFA500,AgentStats
 Tier,Application Infrastructure Performance|*|Hardware Resources|CPU|%Busy,Hardware Resources|CPU|%Busy,CPUBUSY,AVERAGE,OSCPUMemory,PRIMARY,108000,OSHardware
 Tier,Application Infrastructure Performance|*|Hardware Resources|Memory|Used (MB),Hardware Resources|Memory|Used (MB),MEMUSEDMB,AVERAGE,OSCPUMemory,SECONDARY,0000FF,OSHardware
 Tier,Application Infrastructure Performance|*|Hardware Resources|Disks|KB written/sec,Hardware Resources|Disks|KB written/sec,DISKKBWRITE,AVERAGE,OSDisk,PRIMARY,108000,OSHardware
@@ -70,8 +71,9 @@ Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Avera
 Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Calls per Minute,Calls per Minute,BACKCPM,SUM,,PRIMARY,0000FF,BackendCallsPerNode
 Node,Overall Application Performance|*|Individual Nodes|*|External Calls|*|Errors per Minute,Errors per Minute,BACKEPM,SUM,,PRIMARY,FF0000,BackendCallsPerNode
 Node,Overall Application Performance|*|Individual Nodes|*|External Calls|Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,Call-JDBC to Discovered backend call - XE-Oracle DB-oracle-db-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute,BACKCPMSPEC,SUM,SpecSQLCPM,PRIMARY,0000FF,BackendCallsSpecificCustom1
-Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentAvailability,PRIMARY,108000,AgentStats
-Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentAvailability,PRIMARY,0000FF,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|App|Availability,Agent|App|Availability,AVAILAGENT,SUM,AgentStatistics,PRIMARY,108000,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|Machine|Availability,Agent|Machine|Availability,AVAILMACHINE,SUM,AgentStatistics,PRIMARY,0000FF,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|Metric Upload|Metrics uploaded,Agent|Metric Upload|Metrics uploaded,METRUPL,SUM,AgentStatistics,SECONDARY,FFA500,AgentStats
 Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|CPU|%Busy,Hardware Resources|CPU|%Busy,CPUBUSY,AVERAGE,OSCPUMemory,PRIMARY,108000,OSHardware
 Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Memory|Used (MB),Hardware Resources|Memory|Used (MB),MEMUSEDMB,AVERAGE,OSCPUMemory,SECONDARY,0000FF,OSHardware
 Node,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Disks|KB written/sec,Hardware Resources|Disks|KB written/sec,DISKKBWRITE,AVERAGE,OSDisk,PRIMARY,108000,OSHardware

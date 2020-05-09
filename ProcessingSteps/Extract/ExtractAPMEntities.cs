@@ -45,6 +45,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
                 {
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+        
                     return true;
                 }
 
@@ -131,9 +134,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 var listOfBackendsInHourChunks = backendsList.BreakListIntoChunks(ENTITIES_EXTRACT_NUMBER_OF_BACKENDS_TO_PROCESS_PER_THREAD);
 
+                                ParallelOptions parallelOptions = new ParallelOptions();
+                                if (programOptions.ProcessSequentially == true)
+                                {
+                                    parallelOptions.MaxDegreeOfParallelism = 1;
+                                }
+                                else
+                                { 
+                                    parallelOptions.MaxDegreeOfParallelism = BACKEND_PROPERTIES_EXTRACT_NUMBER_OF_THREADS;
+                                }
+
                                 Parallel.ForEach<List<AppDRESTBackend>, int>(
                                     listOfBackendsInHourChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = BACKEND_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
+                                    parallelOptions,
                                     () => 0,
                                     (listOfBackendsInHourChunk, loop, subtotal) =>
                                     {
@@ -222,9 +235,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 var listOfNodesInHourChunks = nodesList.BreakListIntoChunks(ENTITIES_EXTRACT_NUMBER_OF_NODES_TO_PROCESS_PER_THREAD);
 
+                                ParallelOptions parallelOptions = new ParallelOptions();
+                                if (programOptions.ProcessSequentially == true)
+                                {
+                                    parallelOptions.MaxDegreeOfParallelism = 1;
+                                }
+                                else
+                                {
+                                    parallelOptions.MaxDegreeOfParallelism = NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS;
+                                }
+
                                 Parallel.ForEach<List<AppDRESTNode>, int>(
                                     listOfNodesInHourChunks,
-                                    new ParallelOptions { MaxDegreeOfParallelism = NODE_PROPERTIES_EXTRACT_NUMBER_OF_THREADS },
+                                    parallelOptions,
                                     () => 0,
                                     (listOfNodesInHourChunk, loop, subtotal) =>
                                     {

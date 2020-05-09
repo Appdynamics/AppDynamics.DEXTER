@@ -48,12 +48,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_INFORMATION_POINTS_HOURLY = "11.Information Points.Hourly";
         private const string SHEET_INFORMATION_POINTS_PERF_PIVOT = "11.Information Points.Perf";
 
-        private const string SHEET_APPLICATIONS_ACTIVITYFLOW = "4.Applications.Activity Flow";
-        private const string SHEET_TIERS_ACTIVITYFLOW = "5.Tiers.Activity Flow";
-        private const string SHEET_NODES_ACTIVITYFLOW = "6.Nodes.Activity Flow";
-        private const string SHEET_BACKENDS_ACTIVITYFLOW = "7.Backends.Activity Flow";
-        private const string SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW = "8.BTs.Activity Flow";
-
         private const string TABLE_CONTROLLERS = "t_Controllers";
         private const string TABLE_APPLICATIONS_FULL = "t_Applications_Full";
         private const string TABLE_APPLICATIONS_HOURLY = "t_Applications_Hourly";
@@ -71,12 +65,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string TABLE_ERRORS_HOURLY = "t_Errors_Hourly";
         private const string TABLE_INFORMATION_POINTS_FULL = "t_InformationPoints_Full";
         private const string TABLE_INFORMATION_POINTS_HOURLY = "t_InformationPoints_Hourly";
-
-        private const string TABLE_APPLICATIONS_ACTIVITYFLOW = "t_Applications_ActivityFlow";
-        private const string TABLE_TIERS_ACTIVITYFLOW = "t_Tiers_ActivityFlow";
-        private const string TABLE_NODES_ACTIVITYFLOW = "t_Nodes_ActivityFlow";
-        private const string TABLE_BACKENDS_ACTIVITYFLOW = "t_Backends_ActivityFlow";
-        private const string TABLE_BUSINESS_TRANSACTIONS_ACTIVITYFLOW = "t_BusinessTransactions_ActivityFlow";
 
         private const string PIVOT_APPLICATIONS = "p_Applications";
         private const string PIVOT_TIERS = "p_Tiers";
@@ -135,6 +123,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_APM) == 0)
             {
+                logger.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+                loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_APM);
+
                 return true;
             }
 
@@ -190,9 +181,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APPLICATIONS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APPLICATIONS_ACTIVITYFLOW);
-                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS_HOURLY);
@@ -213,15 +201,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 3, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS_ACTIVITYFLOW);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_APPLICATIONS_FULL);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
-
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -229,12 +208,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_ACTIVITYFLOW);
+                sheet.Cells[3, 1].Value = "See Agent Availability";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See Agent Availability";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
-                sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_HOURLY);
@@ -244,12 +220,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_ACTIVITYFLOW);
+                sheet.Cells[3, 1].Value = "See Agent Availability";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See Agent Availability";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_AVAILABILITY_PIVOT);
-                sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_PERF_PIVOT);
@@ -270,15 +243,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 5, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_TIERS_ACTIVITYFLOW);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TIERS_FULL);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
-
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -286,12 +250,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_ACTIVITYFLOW);
+                sheet.Cells[3, 1].Value = "See Agent Availability";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See Agent Availability";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
-                sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_HOURLY);
@@ -301,12 +262,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_ACTIVITYFLOW);
+                sheet.Cells[3, 1].Value = "See Agent Availability";
+                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[4, 1].Value = "See Agent Availability";
-                sheet.Cells[4, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_AVAILABILITY_PIVOT);
-                sheet.Cells[4, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_PERF_PIVOT);
@@ -327,15 +285,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 7, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_ACTIVITYFLOW);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_FULL);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
-
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_BACKENDS_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -343,9 +292,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BACKENDS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BACKENDS_ACTIVITYFLOW);
-                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_BACKENDS_HOURLY);
@@ -366,15 +312,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 3, 1);
 
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_BACKENDS_ACTIVITYFLOW);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BACKENDS_FULL);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
-
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_BUSINESS_TRANSACTIONS_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -382,9 +319,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BUSINESS_TRANSACTIONS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[3, 1].Value = "See Activity Flow";
-                sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW);
-                sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_BUSINESS_TRANSACTIONS_HOURLY);
@@ -404,15 +338,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BUSINESS_TRANSACTIONS_FULL);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 3, 1);
-
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW);
-                sheet.Cells[1, 1].Value = "Table of Contents";
-                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.Cells[2, 1].Value = "See Table";
-                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_BUSINESS_TRANSACTIONS_FULL);
-                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_SERVICE_ENDPOINTS_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -527,11 +452,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_HOURLY];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
-                loggerConsole.Info("Applications Flowmap");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
-
                 #endregion
 
                 #region Tiers
@@ -545,11 +465,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_HOURLY];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
-
-                loggerConsole.Info("Tiers Flowmap");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.TiersFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -565,11 +480,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_HOURLY];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
-                loggerConsole.Info("Nodes Flowmap");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_NODES_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.NodesFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
-
                 #endregion
 
                 #region Backends
@@ -584,11 +494,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_HOURLY];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
 
-                loggerConsole.Info("Backends Flowmap");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BackendsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
-
                 #endregion
 
                 #region Business Transactions
@@ -602,11 +507,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_HOURLY];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
-
-                loggerConsole.Info("Business Transactions Flowmap");
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BusinessTransactionsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -736,21 +636,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(2).Width = 20;
                 }
 
-                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ACTIVITYFLOW];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_APPLICATIONS_ACTIVITYFLOW);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfActivityFlowRowTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
-                }
-
                 #endregion
 
                 #region Tiers
@@ -829,7 +714,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addFilterFieldToPivot(pivot, "AvailAgent");
                     addFilterFieldToPivot(pivot, "AgentType");
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["From"]);
-                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours);
+                    fieldR.AddDateGrouping(eDateGroupBy.Months | eDateGroupBy.Days | eDateGroupBy.Hours);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "Controller", eSortType.Ascending);
@@ -843,21 +728,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
-                }
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_ACTIVITYFLOW];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_TIERS_ACTIVITYFLOW);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfActivityFlowRowTableInMetricReport(APMTier.ENTITY_TYPE, sheet, table);
                 }
 
                 #endregion
@@ -939,17 +809,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     setDefaultPivotTableSettings(pivot);
                     addFilterFieldToPivot(pivot, "IsAPMAgentUsed");
                     addFilterFieldToPivot(pivot, "IsMachineAgentUsed");
-                    addFilterFieldToPivot(pivot, "AvailAgent");
                     addFilterFieldToPivot(pivot, "AvailMachine");
                     addFilterFieldToPivot(pivot, "AgentType");
                     ExcelPivotTableField fieldR = pivot.RowFields.Add(pivot.Fields["From"]);
-                    fieldR.AddDateGrouping(eDateGroupBy.Days | eDateGroupBy.Hours);
+                    fieldR.AddDateGrouping(eDateGroupBy.Months | eDateGroupBy.Days | eDateGroupBy.Hours);
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "Controller", eSortType.Ascending);
                     addColumnFieldToPivot(pivot, "ApplicationName", eSortType.Ascending);
                     addColumnFieldToPivot(pivot, "TierName", eSortType.Ascending);
-                    addDataFieldToPivot(pivot, "NodeID", DataFieldFunctions.Count);
+                    addDataFieldToPivot(pivot, "AvailAgent", DataFieldFunctions.Average);
 
                     ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODES_AVAILABILITY, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
@@ -957,21 +826,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
-                }
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_NODES_ACTIVITYFLOW];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_NODES_ACTIVITYFLOW);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfActivityFlowRowTableInMetricReport(APMNode.ENTITY_TYPE, sheet, table);
                 }
 
                 #endregion
@@ -1043,21 +897,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(4).Width = 20;
                 }
 
-                sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_ACTIVITYFLOW];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_BACKENDS_ACTIVITYFLOW);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfActivityFlowRowTableInMetricReport(APMBackend.ENTITY_TYPE, sheet, table);
-                }
-
                 #endregion
 
                 #region Business Transactions
@@ -1127,21 +966,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(3).Width = 20;
                     sheet.Column(4).Width = 20;
                     sheet.Column(5).Width = 20;
-                }
-
-                sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW];
-                logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
-                {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
-                    table = sheet.Tables.Add(range, TABLE_BUSINESS_TRANSACTIONS_ACTIVITYFLOW);
-                    table.ShowHeader = true;
-                    table.TableStyle = TableStyles.Medium2;
-                    table.ShowFilter = true;
-                    table.ShowTotal = false;
-
-                    adjustColumnsOfActivityFlowRowTableInMetricReport(APMBusinessTransaction.ENTITY_TYPE, sheet, table);
                 }
 
                 #endregion
@@ -1409,15 +1233,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             logger.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
             loggerConsole.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
-            logger.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
-            loggerConsole.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
             logger.Trace("Output.EntityMetrics={0}", jobConfiguration.Output.EntityMetrics);
             loggerConsole.Trace("Output.EntityMetrics={0}", jobConfiguration.Output.EntityMetrics);
-            if ((jobConfiguration.Input.Metrics == false && jobConfiguration.Input.Flowmaps == false) || jobConfiguration.Output.EntityMetrics == false)
+            if (jobConfiguration.Input.Metrics == false && jobConfiguration.Output.EntityMetrics == false)
             {
                 loggerConsole.Trace("Skipping report of entity metrics");
             }
-            return ((jobConfiguration.Input.Metrics == true || jobConfiguration.Input.Flowmaps == true) && jobConfiguration.Output.EntityMetrics == true);
+            return (jobConfiguration.Input.Flowmaps == true && jobConfiguration.Output.EntityMetrics == true);
         }
 
         private static void addConditionalFormattingToTableInMetricReport(string entityType, ExcelWorksheet sheet, ExcelTable table)

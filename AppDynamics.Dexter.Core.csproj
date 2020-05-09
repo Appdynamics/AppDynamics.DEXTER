@@ -56,13 +56,13 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.Words" Version="20.3.0" />
-    <PackageReference Include="CommandLineParser" Version="2.6.0" />
+    <PackageReference Include="CommandLineParser" Version="2.7.82" />
     <PackageReference Include="CsvHelper" Version="7.1.1" />
-    <PackageReference Include="EPPlus" Version="4.5.3" />
+    <PackageReference Include="EPPlus" Version="4.5.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.6.8" />
-    <PackageReference Include="NLog.Config" Version="4.6.8" />
-    <PackageReference Include="NLog.Schema" Version="4.6.8" />
+    <PackageReference Include="NLog" Version="4.7.0" />
+    <PackageReference Include="NLog.Config" Version="4.7.0" />
+    <PackageReference Include="NLog.Schema" Version="4.7.0" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
@@ -94,6 +94,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="ChromeDriver\80\win32\chromedriver.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ChromeDriver\81\linux64\chromedriver">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ChromeDriver\81\mac64\chromedriver">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="ChromeDriver\81\win32\chromedriver.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\seps.detection.json">
@@ -297,7 +306,7 @@
     <None Update="ConfigCompare\reference.controller\EmptyWEB.0\ENT\webpages.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="CompareStates.json">
+    <None Update="DefaultCompare.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="EmptyConfig\reference.controller\CFG\controllerversion.xml">

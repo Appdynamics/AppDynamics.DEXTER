@@ -91,9 +91,11 @@ Snapshot Exit Calls broken by time and duration:
 Snapshots with multiple Segments have an enhanced Waterfall view, with “^” caret character indicating exactly when in the Segment execution the Exit Calls occurred
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
-An even better way to explore this data is by using PowerBI visual analytics tool with very interactive and rapid exploration views provided by [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI) and [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports.
+An even better way to explore this data is by using Tableau or PowerBI visual analytics tools with very interactive and rapid exploration views provided by [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI), [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports and [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI) and [Snapshots in Tableau](../../wiki/Snapshot-Report-in-Tableau).
 
-![Snapshots in PowerBI](../master/docs/introduction/SnaphotsPowerBI.png?raw=true)
+![Snapshots in PowerBI](../master/docs/introduction/SnapshotsPowerBI.png?raw=true)
+
+![Snapshots in PowerBI](../master/docs/introduction/SnapshotsTableau.png.png?raw=true)
 
 You can even explore your Call Graph data:
 ![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
