@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Drawing;
+using EPPlus;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -427,6 +428,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(table.Columns["ApplicationName"].Position + 1).Width = 20;
                     sheet.Column(table.Columns["ApplicationID"].Position + 1);
 
+                    //APM Configurations
                     ExcelAddress cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTLockdownEnabled"].Position + 1, sheet.Dimension.Rows, table.Columns["BTLockdownEnabled"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["DeveloperModeOff"].Position + 1, sheet.Dimension.Rows, table.Columns["DeveloperModeOff"].Position + 1);
@@ -439,15 +441,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress, SEPCountPass.ToString(), SEPCountFail.ToString());
-                    //AddHealthCheckConditionalFormatting(sheet, cfAddress,"27","500");
-
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BTOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BackendOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BackendOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTErrorRateHigh"].Position + 1, sheet.Dimension.Rows, table.Columns["BTErrorRateHigh"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
-
 
                     //Advanced APM Configurations
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumInfoPoints"].Position + 1, sheet.Dimension.Rows, table.Columns["NumInfoPoints"].Position + 1);
@@ -613,25 +612,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         internal static void AddHealthCheckConditionalFormatting(ExcelWorksheet sheet, ExcelAddress cfAddressAHC, string PassCondition, string FailCondition)
         {
+            // Examples: https://github.com/JanKallman/EPPlus/blob/master/SampleApp/Sample14.cs
+
             //Color Green if PassCondition
-            var cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
-            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
-            cfUserExperience.Formula = @"PassCondition";
-            cfUserExperience.Formula = String.Format(@"=({0})", PassCondition);
+            var cfPass = sheet.ConditionalFormatting.AddLessThan(cfAddressAHC);
+            cfPass.Style.Font.Color.Color = Color.Black;
+            cfPass.Style.Fill.BackgroundColor.Color = Color.FromArgb(198, 239, 206);
+            cfPass.Formula = String.Format(@"=({0})", PassCondition);
             //cfUserExperience.Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
 
             //Color Red if FailCondition
-            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
-            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
-            cfUserExperience.Formula = String.Format(@"=({0})", FailCondition);
+            var cfFail = sheet.ConditionalFormatting.AddGreaterThan(cfAddressAHC);
+            cfFail.Style.Font.Color.Color = Color.Black;
+            cfFail.Style.Fill.BackgroundColor.Color = Color.FromArgb(255, 199, 206);
+            //cfFail.Formula = @"=500";
+            cfFail.Formula = String.Format(@"=({0})", FailCondition);
 
             //Color Yellow if "Warning" or 2
-            cfUserExperience = sheet.ConditionalFormatting.AddEqual(cfAddressAHC);
-            cfUserExperience.Style.Font.Color.Color = Color.Black;
-            cfUserExperience.Style.Fill.BackgroundColor.Color = Color.FromArgb(253, 235, 156);
-            cfUserExperience.Formula = @"=""WARN""";
+            var cfWarn = sheet.ConditionalFormatting.AddBetween(cfAddressAHC);
+            cfWarn.Style.Font.Color.Color = Color.Black;
+            cfWarn.Style.Fill.BackgroundColor.Color = Color.FromArgb(253, 235, 156);
+            //cfWarn.Formula = @"=""WARN""";
+            cfWarn.Formula = String.Format(@"=({0})", PassCondition);
+            cfWarn.Formula2 = String.Format(@"=({0})", FailCondition);
 
         }
 
