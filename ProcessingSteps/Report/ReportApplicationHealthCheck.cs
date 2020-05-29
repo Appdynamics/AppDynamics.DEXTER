@@ -63,7 +63,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region HARDCODED Variables
                 /*REMOVE HARDCODED: Variables to be read from AppHealthCheckProperties.csv*/
                 /**********************************************/
-
+                /*
                 int SEPCountPass = 100;
                 int SEPCountFail = 500;
 
@@ -80,8 +80,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int PoliciesActionPass = 2;
                 int PoliciesActionFail = 1;
 
-                string LatestAppAgentVersion = "4.5";
-                string LatestMachineAgentVersion = "4.5";
+                double LatestAppAgentVersion = 20;
                 int AgentPriorSupportedVersions = 2;
                 int AgentOldPercent = 20;
                 int MachineAgentEnabledPass = 80;
@@ -90,7 +89,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 int TierActivePercentFail = 70;
                 int NodeActivePercentPass = 90;
                 int NodeActivePercentFail = 70;
-
+                */
                 /**********************************************/
                 #endregion
 
@@ -164,8 +163,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             healthCheck.BTLockdownEnabled = GetHealthCheckScore(APMConfigurationsThisAppList.IsBTLockdownEnabled == true, APMConfigurationsThisAppList.IsBTLockdownEnabled == false);
                             healthCheck.DeveloperModeOff = GetHealthCheckScore(APMConfigurationsThisAppList.IsDeveloperModeEnabled == false, APMConfigurationsThisAppList.IsDeveloperModeEnabled == true);
                             healthCheck.NumInfoPoints = GetHealthCheckScore((decimal) APMConfigurationsThisAppList.NumInfoPointRules > ACDCDictionary["InfoPointPass"], (decimal) APMConfigurationsThisAppList.NumInfoPointRules < ACDCDictionary["InfoPointFail"]);
-                            //healthCheck.NumInfoPoints = GetHealthCheckScore(APMConfigurationsThisAppList.NumInfoPointRules > InfoPointPass, APMConfigurationsThisAppList.NumInfoPointRules < InfoPointFail);
-
 
                             //Console.WriteLine("APMConfigurationsThisAppList.NumInfoPointRules:{0} - DictPass:{1} - DictFail:{2}", APMConfigurationsThisAppList.NumInfoPointRules, ACDCDictionary["InfoPointPass"], ACDCDictionary["InfoPointFail"]);
                         }
@@ -183,7 +180,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         int CombinedDataCollectorCount = HTTPDataCollectorCount + MethodInvocationDataCollectorCount;
                         healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore((decimal) CombinedDataCollectorCount > ACDCDictionary["DataCollectorPass"], (decimal) CombinedDataCollectorCount < ACDCDictionary["DataCollectorFail"]);
-                        //healthCheck.NumDataCollectorsEnabled = GetHealthCheckScore(CombinedDataCollectorCount > DataCollectorPass, CombinedDataCollectorCount < DataCollectorFail);
 
                         //Add Policy To Action into Health Check
                         //If (policy active & has associated actions): Add count of policies to healthcheck list
@@ -192,7 +188,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (policiesList != null) policiesThisAppList = policiesList.Where(c => c.Controller.StartsWith(apmApp.Controller) == true && c.ApplicationName == apmApp.ApplicationName).ToList<Policy>();
                         int PolicyCount = policiesThisAppList.Count(p => p.IsEnabled == true && p.NumActions > 0);
                         healthCheck.PoliciesActionsEnabled = GetHealthCheckScore((decimal) PolicyCount > ACDCDictionary["PoliciesActionPass"], (decimal) PolicyCount < ACDCDictionary["PoliciesActionFail"]);
-                        //healthCheck.PoliciesActionsEnabled = GetHealthCheckScore(PolicyCount > PoliciesActionPass, PolicyCount < PoliciesActionFail);
 
                         //Add TiersActivePercent to Health Check
                         //CountOfTiersWithNumNodesGreaterThanZero/CountOfTiers *100
@@ -204,7 +199,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             ActiveTierPercent = (int)Math.Round((double)(apmTierThisAppList.Count(t => t.NumNodes > 0) * 100) / apmTierThisAppList.Count());
 
                         healthCheck.TiersActivePercent = GetHealthCheckScore((decimal) ActiveTierPercent > ACDCDictionary["TierActivePercentPass"], (decimal) ActiveTierPercent < ACDCDictionary["TierActivePercentFail"]);
-                        //healthCheck.TiersActivePercent = GetHealthCheckScore(ActiveTierPercent > TierActivePercentPass, ActiveTierPercent < TierActivePercentFail);
 
                         //Add BackendOverflow to Health Check
                         //If BackendOverflow contains "All Other Traffic": Fail
@@ -228,36 +222,57 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (NodeActiveCount > 0)
                             ActiveNodePercent = (int)Math.Round((double)(NodeActiveCount * 100) / apmNodesThisAppList.Count());
                         healthCheck.NodesActivePercent = GetHealthCheckScore((decimal) ActiveNodePercent > ACDCDictionary["NodeActivePercentPass"], (decimal) ActiveNodePercent < ACDCDictionary["NodeActivePercentFail"]);
-                        //healthCheck.NodesActivePercent = GetHealthCheckScore(ActiveNodePercent > NodeActivePercentPass, ActiveNodePercent < NodeActivePercentFail);
 
                         if (MachineAgentPresentCount > 0)
                             ActiveMachineAgentPercent = (int)Math.Round((double)(MachineAgentPresentCount * 100) / apmNodesThisAppList.Count());
                         healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore((decimal) ActiveMachineAgentPercent > ACDCDictionary["MachineAgentEnabledPass"], (decimal) ActiveNodePercent < ACDCDictionary["MachineAgentEnabledFail"]);
-                        //healthCheck.MachineAgentEnabledPercent = GetHealthCheckScore(ActiveMachineAgentPercent > MachineAgentEnabledPass, ActiveNodePercent < MachineAgentEnabledFail);
 
                         //Add AppAgentVersion & MachineAgentVersion to Health Check
                         //Count Active Agents with versions older than 2. Compare with total agent count as percent
-                        int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(ACDCDictionary["AppAgentVersionPass"].ToString()) && c.IsDisabled == false);
-                        int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(ACDCDictionary["AppAgentVersionPass"].ToString()) * 10 - 1) / 10)) && c.IsDisabled == false);
-                        int LatestMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(ACDCDictionary["MachineAgentVersionPass"].ToString()) && c.IsDisabled == false);
-                        int AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(Convert.ToString((Convert.ToDecimal(ACDCDictionary["MachineAgentVersionPass"].ToString()) * 10 - 1) / 10)) && c.IsDisabled == false);
-                        /*int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(LatestAppAgentVersion) && c.IsDisabled == false);
-                        int AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestAppAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
-                        int LatestMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(LatestMachineAgentVersion) && c.IsDisabled == false);
-                        int AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.Contains(Convert.ToString((Convert.ToDecimal(LatestMachineAgentVersion) * 10 - 1) / 10)) && c.IsDisabled == false);
-                        */
+                        decimal[] AgentVersionMap = { 20, (decimal)4.5, (decimal)4.4 };
+                        int AcceptableAppAgentCount=0, AcceptableMachineAgentCount=0;
+
+                        int LatestAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.StartsWith(ACDCDictionary["AppAgentVersionPass"].ToString()) && c.IsDisabled == false);
+                        int LatestMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.StartsWith(ACDCDictionary["AppAgentVersionPass"].ToString()) && c.IsDisabled == false);
+
+                        //is Latest Agent Version at least 21? then subtract one to get Acceptable Agent Version
+                        if (ACDCDictionary["AppAgentVersionPass"] >= 21)
+                        {
+                            AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.StartsWith(Convert.ToString(Decimal.Subtract(ACDCDictionary["AppAgentVersionPass"], 1))) && c.IsDisabled == false);
+                            AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.StartsWith(Convert.ToString(Decimal.Subtract(ACDCDictionary["AppAgentVersionPass"], 1))) && c.IsDisabled == false);
+                        }
+                        //otherwise if latest agent version is in the mapping array & is not the last element in that array, acceptable version is the next array element 
+                        else if (AgentVersionMap.Contains(ACDCDictionary["AppAgentVersionPass"]) &&
+                            Array.IndexOf(AgentVersionMap, ACDCDictionary["AppAgentVersionPass"]) != AgentVersionMap.GetUpperBound(0))
+                        {
+                            //check PassVersion with array, get pointer + 1 to get old version
+                            var index = Array.IndexOf(AgentVersionMap, ACDCDictionary["AppAgentVersionPass"]);
+                            AcceptableAppAgentCount = apmNodesThisAppList.Count(c => c.AgentVersion.StartsWith(Convert.ToString(AgentVersionMap.ElementAt(index+1))) && c.IsDisabled == false); ;
+                            AcceptableMachineAgentCount = apmNodesThisAppList.Count(c => c.MachineAgentVersion.StartsWith(Convert.ToString(AgentVersionMap.ElementAt(index+1))) && c.IsDisabled == false); ;
+
+                            //Console.WriteLine("Latest Agent Version {0}, Acceptable Agent Version {1}", AgentVersionMap.ElementAt(index), AgentVersionMap.ElementAt(index+1));
+                        }
+                        //if neither of the above conditions, throw exception because value is incorrectly formatted
+                        else
+                        {
+                            //throw exception that Value in Mapping CSV file is incorrect
+                            Console.WriteLine("AgentVersion is {0} is either not correct or not formatted correctly", ACDCDictionary["AppAgentVersionPass"]);
+                        }
+
+                        //Console.WriteLine("Latest - AppAgent Count:{0}, MA Count:{1}", LatestAppAgentCount, LatestMachineAgentCount);
+                        //Console.WriteLine("Acceptable - AppAgent Count:{0}, MA Count:{1}", AcceptableAppAgentCount, AcceptableMachineAgentCount);
 
                         if (apmNodesThisAppList.Count() > 0)
                         {
-                            if ((LatestAppAgentCount * 100 / apmNodesThisAppList.Count()) >= 80)
+                            if ((LatestAppAgentCount * 100 / apmNodesThisAppList.Count()) >= ACDCDictionary["AgentNewPercentPass"])
                                 healthCheck.AppAgentVersion = "PASS";
-                            else if (((LatestAppAgentCount + AcceptableAppAgentCount) * 100 / apmNodesThisAppList.Count()) >= 80)
+                            else if (((LatestAppAgentCount + AcceptableAppAgentCount) * 100 / apmNodesThisAppList.Count()) >= ACDCDictionary["AgentNewPercentPass"])
                                 healthCheck.AppAgentVersion = "WARN";
                             else healthCheck.AppAgentVersion = "FAIL";
 
-                            if (apmNodesThisAppList != null && (LatestMachineAgentCount * 100 / apmNodesThisAppList.Count()) >= 80)
+                            if (apmNodesThisAppList != null && (LatestMachineAgentCount * 100 / apmNodesThisAppList.Count()) >= ACDCDictionary["AgentNewPercentPass"])
                                 healthCheck.MachineAgentVersion = "PASS";
-                            else if (apmNodesThisAppList != null && ((LatestMachineAgentCount + AcceptableMachineAgentCount) * 100 / apmNodesThisAppList.Count()) >= 80)
+                            else if (apmNodesThisAppList != null && ((LatestMachineAgentCount + AcceptableMachineAgentCount) * 100 / apmNodesThisAppList.Count()) >= ACDCDictionary["AgentNewPercentPass"])
                                 healthCheck.MachineAgentVersion = "WARN";
                             else healthCheck.MachineAgentVersion = "FAIL";
                         }
@@ -317,7 +332,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         if (appEventThisApp != null) HRViolationCount = appEventThisApp.NumHRViolations;
                         healthCheck.HRViolationsHigh = GetHealthCheckScore((decimal) HRViolationCount < ACDCDictionary["HRViolationsPass"], (decimal) HRViolationCount > ACDCDictionary["HRViolationsFail"]);
-                        //healthCheck.HRViolationsHigh = GetHealthCheckScore(HRViolationCount < HRViolationsPass, HRViolationCount > HRViolationsFail);
 
                         //Console.WriteLine("{0} - HRViolations: {1}", apmApp.ApplicationName, HRViolationCount);
 
@@ -440,7 +454,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumBTs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumBTs"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["NumSEPs"].Position + 1, sheet.Dimension.Rows, table.Columns["NumSEPs"].Position + 1);
-                    AddHealthCheckConditionalFormatting(sheet, cfAddress, SEPCountPass.ToString(), SEPCountFail.ToString());
+                    AddHealthCheckConditionalFormatting(sheet, cfAddress, ACDCDictionary["SEPCountPass"].ToString(), ACDCDictionary["SEPCountFail"].ToString());
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BTOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BTOverflow"].Position + 1);
                     AddHealthCheckConditionalFormatting(sheet, cfAddress);
                     cfAddress = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["BackendOverflow"].Position + 1, sheet.Dimension.Rows, table.Columns["BackendOverflow"].Position + 1);

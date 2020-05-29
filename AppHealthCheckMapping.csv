@@ -1,13 +1,12 @@
-Name,Pass,Fail,EvalCondition,Description,
-AppAgentVersion,4.5,4.4,Pass (Green) is above this number. Fail (Red) below this number,Latest Major Version of the AppDynamics App Agent,*
-MachineAgentVersion,4.5,4.3,Pass (Green) is above this number. Fail (Red) below this number,Latest Major Version of the AppDynamics Machine Agent,*
-AgentOldPercent,20,25,Fail (Red) above this number,Acceptable Percentage of Old Agents,
-MachineAgentEnabled,80,60,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Machine Agents enabled vs. total nodes,*
-SEPCount,100,500,Pass (Green) below this number. Fail (Red) is above this number.,Number of SEPs for the application,*
-InfoPoint,3,1,Pass (Green) is above this number. Fail (Red) below this number,Number of Info Points,*
-DataCollector,3,1,Pass (Green) is above this number. Fail (Red) below this number,Number of Data Collectors,*
-BTErrorRate,60,80,Pass (Green) below this number. Fail (Red) is above this number.,If BT Error rate is excessive,*
-HRViolations,50,100,Pass (Green) below this number. Fail (Red) is above this number.,Excessive HR Violations,*
-PoliciesAction,2,1,Pass (Green) is above this number. Fail (Red) below this number,Number of enabled Policies associated with Actions,*
-TierActivePercent,90,70,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Tier with load.,*
-NodeActivePercent,90,70,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Nodes with load. ,*
+Name,Pass,Fail,EvalCondition,Description
+AppAgentVersion,20,4.4,Pass (Green) is above this number. Fail (Red) below this number,Latest Major Version of the AppDynamics App Agent
+AgentNewPercent,80,80,Fail (Red) below this number,Percentage of agents on latest or one version down
+MachineAgentEnabled,80,60,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Machine Agents enabled vs. total nodes
+SEPCount,100,500,Pass (Green) below this number. Fail (Red) is above this number.,Number of SEPs for the application
+InfoPoint,3,1,Pass (Green) is above this number. Fail (Red) below this number,Number of Info Points
+DataCollector,3,1,Pass (Green) is above this number. Fail (Red) below this number,Number of Data Collectors
+BTErrorRate,60,80,Pass (Green) below this number. Fail (Red) is above this number.,If BT Error rate is excessive
+HRViolations,50,100,Pass (Green) below this number. Fail (Red) is above this number.,Excessive HR Violations
+PoliciesAction,2,1,Pass (Green) is above this number. Fail (Red) below this number,Number of enabled Policies associated with Actions
+TierActivePercent,90,70,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Tier with load.
+NodeActivePercent,90,70,Pass (Green) is above this number. Fail (Red) below this number,Percentage of Nodes with load. 
