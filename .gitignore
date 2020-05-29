@@ -276,3 +276,5 @@ __pycache__/
 packages/*
 /LicenseSign/LicenseFiles
 /LicenseSign/Certificates
+*.hyper
+*.twbr

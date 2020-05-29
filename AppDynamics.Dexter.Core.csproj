@@ -43,7 +43,6 @@
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
-    <None Remove="Aspose.Words.lic" />
     <None Remove="packages.config" />
     <None Remove="README.md" />
     <None Remove="~%24MethodNamespaceTypeMapping.xlsm" />
@@ -51,18 +50,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Aspose.Words.lic" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Aspose.Words" Version="20.3.0" />
-    <PackageReference Include="CommandLineParser" Version="2.7.82" />
+    <PackageReference Include="Aspose.Words" Version="20.5.0" />
+    <PackageReference Include="CommandLineParser" Version="2.8.0" />
     <PackageReference Include="CsvHelper" Version="7.1.1" />
     <PackageReference Include="EPPlus" Version="4.5.3.3" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-    <PackageReference Include="NLog" Version="4.7.0" />
-    <PackageReference Include="NLog.Config" Version="4.7.0" />
-    <PackageReference Include="NLog.Schema" Version="4.7.0" />
+    <PackageReference Include="NLog" Version="4.7.1" />
+    <PackageReference Include="NLog.Config" Version="4.7.1" />
+    <PackageReference Include="NLog.Schema" Version="4.7.1" />
     <PackageReference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing" Version="5.8.64" />
     <PackageReference Include="Selenium.Support" Version="3.141.0" />
     <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />

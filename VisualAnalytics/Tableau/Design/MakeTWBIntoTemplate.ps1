@@ -30,24 +30,41 @@ $outputFile
 #---------------------------------------------------------------------
 # Load input file
 $inputDocument = [xml](Get-Content -Path $inputFile)
-$inputDocument
+# $inputDocument
+
 
 #---------------------------------------------------------------------
-# Edit connections
-$connectionNode = $inputDocument.workbook.datasources.datasource.connection."named-connections"."named-connection".connection
-$connectionNode
+# Edit each datasource
 
-$connectionNode.directory
-$connectionNode.directory = "./SNAP"
-$connectionNode.directory
+foreach ($dataSourceNode in $inputDocument.workbook.datasources.datasource)
+{
 
-$extractNode = $inputDocument.workbook.datasources.datasource.extract.connection
-$extractNode
+    #---------------------------------------------------------------------
+    # Edit connections
+    foreach ($namedConnectionNode in $dataSourceNode.connection."named-connections"."named-connection")
+    {
+        $connectionNode = $namedConnectionNode.connection
+        $connectionNode
 
-$extractNode.dbname
-[array]$tokens = $extractNode.dbname -split "/"
-$extractNode.dbname = "./" + $tokens[$tokens.count - 1]
-$extractNode.dbname
+        $connectionNode.directory
+
+        [array]$directoryTokens = $connectionNode.directory -split "/"
+        $connectionNode.directory = "./" + $directoryTokens[$directoryTokens.length - 1]
+        $connectionNode.directory
+    }
+
+    #---------------------------------------------------------------------
+    # Edit extracts
+    $extractNode = $dataSourceNode.extract.connection
+    $extractNode
+
+    $extractNode.dbname
+    [array]$tokens = $extractNode.dbname -split "/"
+    $extractNode.dbname = "./" + $tokens[$tokens.count - 1]
+    $extractNode.dbname
+
+}
+
 
 #---------------------------------------------------------------------
 # Save input file

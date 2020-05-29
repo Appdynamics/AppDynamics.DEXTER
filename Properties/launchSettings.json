@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "-j \"D:\\AppD.Dexter.Out\\Teranet\\Teranet.Polaris.json\" -o C:\\AppD.Dexter.Out -v -s"
+      "commandLineArgs": "-j \"D:\\AppD.Dexter.Out\\Shaw\\shaw.db.json\" -o D:\\AppD.Dexter.Out\\Shaw -v -s"
     }
   }
 }

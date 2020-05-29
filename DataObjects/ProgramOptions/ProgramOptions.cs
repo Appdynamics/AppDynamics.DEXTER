@@ -9,6 +9,9 @@ namespace AppDynamics.Dexter
         [Option('j', "job-file", Required = true, SetName = "etl", HelpText = "Input file defining the parameters of the ETL job to process.")]
         public string InputETLJobFilePath { get; set; }
 
+        [Option('n', "job-name", Required = false, SetName = "etl", HelpText = "Job name to use instead of automatically defined based on --job-file parameter.")]
+        public string JobName { get; set; }
+
         // Compare States
         //[Option('c', "compare-states-file", Required = true, SetName = "compare", HelpText = "Compare file defining the mappings of the state comparison to perform.")]
         public string InputCompareJobFilePath { get; set; }
@@ -40,8 +43,6 @@ namespace AppDynamics.Dexter
 
         public string ProgramLocationFolderPath { get; set; }
 
-        public string JobName { get; set; }
-
         public JobOutput LicensedReports { get; set; }
 
         public override string ToString()
@@ -49,6 +50,7 @@ namespace AppDynamics.Dexter
             return String.Format(
 @"ProgramOptions:
 InputJobFilePath='{0}'
+InputJobFilePath='{11}'
 RestartJobFromBeginning='{1}'
 OutputFolderPath='{2}'
 OutputJobFolderPath='{3}'
@@ -70,7 +72,8 @@ SkipVersionCheck='{10}'
                 this.InputCompareJobFilePath, 
                 this.CompareReportReferenceFolderPath, 
                 this.CompareReportDifferenceFolderPath,
-                this.SkipVersionCheck);
+                this.SkipVersionCheck,
+                this.JobName);
         }
     }
 }

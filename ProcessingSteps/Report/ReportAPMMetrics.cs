@@ -1239,7 +1239,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 loggerConsole.Trace("Skipping report of entity metrics");
             }
-            return (jobConfiguration.Input.Flowmaps == true && jobConfiguration.Output.EntityMetrics == true);
+            return (jobConfiguration.Input.Metrics == true && jobConfiguration.Output.EntityMetrics == true);
         }
 
         private static void addConditionalFormattingToTableInMetricReport(string entityType, ExcelWorksheet sheet, ExcelTable table)

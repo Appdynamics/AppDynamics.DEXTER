@@ -987,11 +987,19 @@ namespace AppDynamics.Dexter
 
             #region Get job file name
 
-            // Job name is derived from the file name, start date and number of hourly chunks in that range
-            programOptions.JobName = String.Format("{0}.{1:yyyyMMddHHmm}.{2}",
+            // It is either passed as parameter
+            if (programOptions.JobName != null && programOptions.JobName.Length > 0)
+            {
+                // Using jobName passed in the parameter
+            }
+            else
+            {
+                // Job name is derived from the file name, start date and number of hourly chunks in that range
+                programOptions.JobName = String.Format("{0}.{1:yyyyMMddHHmm}.{2}",
                 Path.GetFileNameWithoutExtension(programOptions.InputETLJobFilePath),
                 jobConfiguration.Input.TimeRange.From,
                 jobConfiguration.Input.HourlyTimeRanges.Count);
+            }
 
             #endregion
 

@@ -401,11 +401,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             logger.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
             loggerConsole.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
-            if (jobConfiguration.Input.Flowmaps == false)
+            logger.Trace("Output.Flowmaps={0}", jobConfiguration.Output.Flowmaps);
+            loggerConsole.Trace("Output.Flowmaps={0}", jobConfiguration.Output.Flowmaps);
+            if (jobConfiguration.Input.Flowmaps == false && jobConfiguration.Output.Flowmaps == false)
             {
                 loggerConsole.Trace("Skipping report of entity flowmaps");
             }
-            return (jobConfiguration.Input.Flowmaps == true);
+            return (jobConfiguration.Input.Flowmaps == true && jobConfiguration.Output.Flowmaps == true);
         }
     }
 }

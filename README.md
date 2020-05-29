@@ -92,14 +92,12 @@ Snapshots with multiple Segments have an enhanced Waterfall view, with “^” c
 ![](../master/docs/introduction/SnapshotsTimelineWaterfall.png?raw=true)
 
 An even better way to explore this data is by using Tableau or PowerBI visual analytics tools with very interactive and rapid exploration views provided by [Snapshots in PowerBI](../../wiki/Snapshots-Report-in-PowerBI), [Snapshots Method Calls in PowerBI](../../wiki/Snapshot-Method-Calls-Report-in-PowerBI) reports:
-
 ![Snapshots in PowerBI](../master/docs/introduction/SnapshotsPowerBI.png?raw=true)
 
 ...  and [Snapshots in Tableau](../../wiki/Snapshots-Report-in-Tableau):
 ![Snapshots in Tableau](../master/docs/introduction/SnapshotsTableau.png?raw=true)
 
-You can even explore your Call Graph data:
-![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
+You can even explore your Call Graph data ![Snapshot Method Calls in PowerBI](../master/docs/introduction/SnapshotMethodCallsPowerBI.png?raw=true)
 
 ## Flame Graph and Flame Chart Reports
 [Flame Graphs and Flame Chart](../../wiki/Flame-Graph-Report) reports are an ingenious and useful way to visualize many call graphs in single screen.
