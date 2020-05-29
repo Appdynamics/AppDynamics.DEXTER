@@ -54,8 +54,8 @@
         "TimeFrame": {
             "__DOCUMENTATION__": "Please read https://github.com/Appdynamics/AppDynamics.DEXTER/wiki/Job-File#timeframe for information on how to configure TimeFrame parameter",
             "__DOCUMENTATION_MarkDate__": "Possible values: [2020-05-05 (YYY-MM-DD) | 2020-05-05Z | TODAY | TODAY_Z | YESTERDAY | YESTERDAY_Z | DAY_BEFORE_YESTERDAY | DAY_BEFORE_YESTERDAY_Z | SAME_DAY_LAST_WEEK | SAME_DAY_LAST_WEEK_Z | MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY | MONDAY_Z, TUESDAY_Z, WEDNESDAY_Z, THURSDAY_Z, FRIDAY_Z, SATURDAY_Z, SUNDAY_Z | DAY_OF_MONTH_# | DAY_OF_MONTH_#_Z]",
-            "__DOCUMENTATION_MarkTime__": "Possible values: [14:00:00 (HH:mm:ss) local time | 14:00:00Z GMT | 07:15:00-04:00 Specific Time Zone | NOW | NOW_Z | CURRENT_HOUR | CURRENT_HOUR_Z | PREVIOUS_HOUR | PREVIOUS_HOUR_Z ]",
-            "__DOCUMENTATION_Duration__": "Possible values: [1:00:00 ([-][d.]hh:mm:ss) | PT1H (P[n]Y[n]M[n]DT[n]H[n]M[n]S) ]",
+            "__DOCUMENTATION_MarkTime__": "Possible values: [14:00:00 (HH:mm:ss) local time | 14:00:00Z GMT | 07:15:00-04:00 Specific Time Zone | NOW | NOW_Z | CURRENT_HOUR | CURRENT_HOUR_Z | PREVIOUS_HOUR | PREVIOUS_HOUR_Z]",
+            "__DOCUMENTATION_Duration__": "Possible values: [1:00:00 ([-][d.]hh:mm:ss) | PT1H (P[n]Y[n]M[n]DT[n]H[n]M[n]S)]",
             "MarkDate": "TODAY",
             "MarkTime": "PREVIOUS_HOUR",
             "Duration": "1:00:00"

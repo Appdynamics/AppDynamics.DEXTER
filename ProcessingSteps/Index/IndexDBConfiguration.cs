@@ -160,6 +160,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     dbCollectorDefinition.ModifiedOn = UnixTimeHelper.ConvertFromUnixTimestamp(getLongValueFromJToken(dbCollectorDefinitionConfigToken, "modifiedOn"));
 
                                     dbCollectorDefinition.ConfigID = getLongValueFromJToken(dbCollectorDefinitionToken, "configId");
+                                    if (dbCollectorDefinition.ConfigID == 0)
+                                    {
+                                        dbCollectorDefinition.ConfigID = getLongValueFromJToken(dbCollectorDefinitionConfigToken, "id");
+                                    }
+                                    
 
                                     dbCollectorDefinition.ControllerLink = String.Format(DEEPLINK_CONTROLLER, dbCollectorDefinition.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
                                     dbCollectorDefinition.ApplicationLink = String.Format(DEEPLINK_DB_APPLICATION, dbCollectorDefinition.Controller, DEEPLINK_TIMERANGE_LAST_15_MINUTES);
