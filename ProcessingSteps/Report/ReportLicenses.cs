@@ -7,6 +7,7 @@ using OfficeOpenXml.Table;
 using OfficeOpenXml.Table.PivotTable;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -243,7 +244,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -252,7 +253,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -261,7 +262,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Accounts");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ACCOUNTS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseAccountReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseAccountReportFilePath(), 0, typeof(LicenseAccountSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -270,7 +271,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Licenses");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_LICENSES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicensesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicensesReportFilePath(), 0, typeof(ReportObjects.License), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -279,7 +280,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("License Usage");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_LICENSES_USAGE_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseUsageAccountReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseUsageAccountReportFilePath(), 0, typeof(LicenseValue), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -288,7 +289,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of License Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_LICENSE_RULES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseRulesReportFilePath(), 0, typeof(LicenseRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -297,7 +298,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("License Rules Usage");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_LICENSE_RULES_USAGE_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseUsageRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseUsageRulesReportFilePath(), 0, typeof(LicenseValue), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -306,7 +307,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of License Rule Scopes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_LICENSE_RULE_SCOPES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseRuleScopesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.LicenseRuleScopesReportFilePath(), 0, typeof(LicenseRuleScope), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

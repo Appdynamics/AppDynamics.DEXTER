@@ -39,7 +39,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string SHEET_ENTITIES_METRICS = "Entity.Metrics";
 
-        private const string SHEET_PIVOT_GRAPH_METRICS_ALL_ENTITIES = "12.Graph.{0}";
+        private const string SHEET_PIVOT_GRAPH_METRICS_ALL_ENTITIES = "12.G.{0}";
 
         private const string TABLE_CONTROLLERS = "t_Controllers";
 
@@ -421,13 +421,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             logger.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
             loggerConsole.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
+            logger.Trace("Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail={0}", jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail);
+            loggerConsole.Trace("Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail={0}", jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail);
             logger.Trace("Output.EntityMetricGraphs={0}", jobConfiguration.Output.EntityMetricGraphs);
             loggerConsole.Trace("Output.EntityMetricGraphs={0}", jobConfiguration.Output.EntityMetricGraphs);
-            if (jobConfiguration.Input.Metrics == false || jobConfiguration.Output.EntityMetricGraphs == false)
+            if (jobConfiguration.Input.Metrics == false || jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail == false || jobConfiguration.Output.EntityMetricGraphs == false)
             {
                 loggerConsole.Trace("Skipping report of entity metric graphs");
             }
-            return (jobConfiguration.Input.Metrics == true && jobConfiguration.Output.EntityMetricGraphs == true);
+            return (jobConfiguration.Input.Metrics == true && jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail == true && jobConfiguration.Output.EntityMetricGraphs == true);
         }
 
         private ExcelPackage createIndividualEntityMetricGraphsReportTemplate(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget)
@@ -481,7 +483,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
             sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
-            range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryIndexFilePath(jobTarget), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+            range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryIndexFilePath(jobTarget), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
             if (range != null)
             {
                 table = sheet.Tables.Add(range, TABLE_CONTROLLERS);
@@ -570,7 +572,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 string metricsValuesFilePath = FilePathMap.MetricValuesIndexFilePath(jobTarget, entityFolderName, metricExtractMapping.FolderName);
                 if (File.Exists(metricsValuesFilePath) == true)
                 {
-                    ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(metricsValuesFilePath, 0, sheetMetrics, fromRow, fromColumn);
+                    ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(metricsValuesFilePath, 0, typeof(MetricValue), sheetMetrics, fromRow, fromColumn);
                     if (range != null)
                     {
                         if (range.Rows == 1)
@@ -1497,8 +1499,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheetGraphs.Cells[2, 1].Value = "See Data";
                 sheetGraphs.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_ENTITIES_METRICS);
                 sheetGraphs.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheetGraphs.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
-                excelReportMetrics.Workbook.Worksheets.MoveBefore(worksheetName, SHEET_ENTITIES_METRICS);
+                sheetGraphs.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 4, 1);
+                excelReportMetrics.Workbook.Worksheets.MoveBefore(sheetGraphs.Name, SHEET_ENTITIES_METRICS);
 
                 sheetGraphs.Cells[1, 3].Value = metricExtractMapping.MetricName;
                 sheetGraphs.Cells[2, 3].Value = metricExtractMapping.MetricPath;
@@ -1514,6 +1516,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     fieldR.Compact = false;
                     fieldR.Outline = false;
                     addColumnFieldToPivot(pivot, "EntityName", eSortType.Ascending);
+                    addColumnFieldToPivot(pivot, "MetricName", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "Value", DataFieldFunctions.Average);
 
                     ExcelChart chart = sheetGraphs.Drawings.AddChart(String.Format(GRAPH_METRICS_ALL_ENTITIES, metricExtractMapping.FolderName), eChartType.Line, pivot);

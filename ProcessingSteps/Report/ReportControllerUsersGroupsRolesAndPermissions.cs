@@ -243,7 +243,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RBACControllerSummaryReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RBACControllerSummaryReportFilePath(), 0, typeof(RBACControllerSummary), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -252,7 +252,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Users");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_USERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.UsersReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.UsersReportFilePath(), 0, typeof(RBACUser), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -261,7 +261,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Groups");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_GROUPS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.GroupsReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.GroupsReportFilePath(), 0, typeof(RBACGroup), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -270,7 +270,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Roles");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_ROLES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RolesReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RolesReportFilePath(), 0, typeof(RBACRole), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -279,7 +279,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Permissions");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_PERMISSIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.PermissionsReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.PermissionsReportFilePath(), 0, typeof(RBACPermission), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -288,7 +288,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of User Permissions");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_USER_PERMISSIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.UserPermissionsReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.UserPermissionsReportFilePath(), 0, typeof(RBACUserPermission), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -297,7 +297,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Group Memberships");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_GROUP_MEMBERSHIPS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.GroupMembershipsReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.GroupMembershipsReportFilePath(), 0, typeof(RBACGroupMembership), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -306,7 +306,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Role Memberships");
 
                 sheet = excelReport.Workbook.Worksheets[REPORT_RBAC_SHEET_ROLE_MEMBERSHIPS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RoleMembershipsReportFilePath(), 0, sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.RoleMembershipsReportFilePath(), 0, typeof(RBACRoleMembership), sheet, REPORT_RBAC_LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

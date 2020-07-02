@@ -11,7 +11,7 @@ namespace AppDynamics.Dexter
         public bool DetectedEntities { get; set; }
         public bool Flowmaps { get; set; }
         public bool Metrics { get; set; }
-        public string[] MetricsSelectionCriteria { get; set; }
+        public JobMetricSelectionCriteria MetricsSelectionCriteria { get; set; }
         public bool Snapshots { get; set; }
         public bool Configuration { get; set; }
         public JobTarget ConfigurationComparisonReferenceAPM { get; set; }

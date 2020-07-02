@@ -500,7 +500,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
                         if (File.Exists(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget)).Length > 0)
                         {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.SnapshotsDetectedErrorsCallsReportFilePath(), FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget));
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.SnapshotsDetectedErrorsReportFilePath(), FilePathMap.SnapshotsDetectedErrorsIndexFilePath(jobTarget));
                         }
                         if (File.Exists(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.SnapshotsBusinessDataIndexFilePath(jobTarget)).Length > 0)
                         {

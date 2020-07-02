@@ -162,7 +162,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -171,7 +171,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Applications Flowmap");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationsFlowmapReportFilePath(), 0, typeof(ActivityFlow), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -180,7 +180,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Tiers Flowmap");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.TiersFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.TiersFlowmapReportFilePath(), 0, typeof(ActivityFlow), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -189,7 +189,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Nodes Flowmap");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.NodesFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.NodesFlowmapReportFilePath(), 0, typeof(ActivityFlow), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -198,7 +198,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Backends Flowmap");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BackendsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BackendsFlowmapReportFilePath(), 0, typeof(ActivityFlow), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 
@@ -207,7 +207,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("Business Transactions Flowmap");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_ACTIVITYFLOW];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BusinessTransactionsFlowmapReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BusinessTransactionsFlowmapReportFilePath(), 0, typeof(ActivityFlow), sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
 
                 #endregion
 

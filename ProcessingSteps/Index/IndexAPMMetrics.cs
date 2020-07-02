@@ -1680,6 +1680,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 case METRIC_CPM_FULLNAME:
                     entity.CPM = (long)Math.Round((double)((double)metricValues.Sum(mv => mv.Sum) / (double)timerangeDuration), 0);
                     entity.Calls = metricValues.Sum(mv => mv.Sum);
+                    if (Double.IsInfinity(entity.ErrorsPercentage) == true)
+                    {
+                        // Timing issue! If CPM was read before EPM, then the percentage wouldn't be calculated and the value will be recalculatedhere
+                        entity.ErrorsPercentage = Math.Round((double)(double)entity.Errors / (double)entity.Calls * 100, 2);
+                        if (Double.IsNaN(entity.ErrorsPercentage) == true) entity.ErrorsPercentage = 0;
+                    }
                     break;
 
                 case METRIC_EPM_FULLNAME:

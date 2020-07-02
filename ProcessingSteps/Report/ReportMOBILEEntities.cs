@@ -182,7 +182,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -191,7 +191,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -200,7 +200,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_MOBILE_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILEApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILEApplicationsReportFilePath(), 0, typeof(MOBILEApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -209,7 +209,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Network Requests");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NETWORK_REQUESTS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestsReportFilePath(), 0, typeof(MOBILENetworkRequest), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -218,7 +218,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Network Request Business Transactions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NETWORK_REQUESTS_BUSINESS_TRANSACTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestsBusinessTransactionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestsBusinessTransactionsReportFilePath(), 0, typeof(MOBILENetworkRequestToBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion              
 

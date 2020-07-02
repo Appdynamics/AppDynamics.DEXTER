@@ -89,12 +89,14 @@
         ReportAPMSnapshotsMethodCallLines = 131,
         ReportAPMFlameGraphs = 132,
 
-        ReportAPMEntityDetails = 133,
+        ReportAPMEntityDetails = 135,
         
         ReportHealthCheck = 140,
         ReportAPMApplicationSummary = 141,
 
         ReportAPMEntityDashboardScreenshots = 150,
+
+        ReportAPMIndividualSnapshots = 160,
 
         // The rest
         Done = 500,

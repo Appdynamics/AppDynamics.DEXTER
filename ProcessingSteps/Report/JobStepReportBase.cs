@@ -243,15 +243,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[1, 2].Value = "# Entities";
             sheet.Cells[1, 3].Value = "Link";
             int rowNum = 1;
-            foreach (ExcelWorksheet s in excelReport.Workbook.Worksheets)
+            foreach (ExcelWorksheet sheetInWorkbook in excelReport.Workbook.Worksheets)
             {
                 rowNum++;
-                sheet.Cells[rowNum, 1].Value = s.Name;
-                sheet.Cells[rowNum, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", s.Name);
+                sheet.Cells[rowNum, 1].Value = sheetInWorkbook;
+                sheet.Cells[rowNum, 3].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", sheetInWorkbook.Name);
                 sheet.Cells[rowNum, 3].StyleName = "HyperLinkStyle";
-                if (s.Tables.Count > 0)
+                if (sheetInWorkbook.Tables.Count > 0)
                 {
-                    sheet.Cells[rowNum, 2].Value = s.Tables[0].Address.Rows - 1;
+                    sheet.Cells[rowNum, 2].Value = sheetInWorkbook.Tables[0].Address.Rows - 1;
+                }
+                else if(sheetInWorkbook.PivotTables.Count > 0)
+                {
+                    sheet.Cells[rowNum, 2].Value = String.Format("{0} rows x {1} columns x {2} filters", sheetInWorkbook.PivotTables[0].RowFields.Count, sheetInWorkbook.PivotTables[0].ColumnFields.Count, sheetInWorkbook.PivotTables[0].PageFields.Count);
                 }
             }
             ExcelRangeBase range = sheet.Cells[1, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];

@@ -217,7 +217,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     JobTimeRange jobTimeRange = jobConfiguration.Input.TimeRange;
 
                     loggerConsole.Trace("{0} {1}", metricExtractMapping.EntityType, metricExtractMapping.MetricPath);
-                    logger.Info("Retrieving metric in Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricExtractMapping.MetricPath, jobTimeRange.From, jobTimeRange.To);
+                    logger.Info("Retrieving metric summary for Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricExtractMapping.MetricPath, jobTimeRange.From, jobTimeRange.To);
 
                     string metricsJson = String.Empty;
 
@@ -235,25 +235,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (metricsJson != String.Empty) FileIOHelper.SaveFileToPath(metricsJson, metricsDataFilePath);
                     }
 
-                    // Get the hourly time ranges
-                    for (int j = 0; j < jobConfiguration.Input.HourlyTimeRanges.Count; j++)
+                    if (jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail == true)
                     {
-                        jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
-
-                        logger.Info("Retrieving metric for Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricExtractMapping.MetricPath, jobTimeRange.From, jobTimeRange.To);
-
-                        metricsDataFilePath = FilePathMap.MetricHourRangeDataFilePath(jobTarget, entityFolderName, metricExtractMapping.FolderName, jobTimeRange);
-                        if (File.Exists(metricsDataFilePath) == false)
+                        // Get the hourly time ranges
+                        for (int j = 0; j < jobConfiguration.Input.HourlyTimeRanges.Count; j++)
                         {
-                            // Subsequent ones are details
-                            metricsJson = controllerApi.GetMetricData(
-                                jobTarget.ApplicationID,
-                                metricExtractMapping.MetricPath,
-                                UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From),
-                                UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.To),
-                                false);
+                            jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
-                            if (metricsJson != String.Empty) FileIOHelper.SaveFileToPath(metricsJson, metricsDataFilePath);
+                            logger.Info("Retrieving metric details for Application {0}({1}), Metric='{2}', From {3:o}, To {4:o}", jobTarget.Application, jobTarget.ApplicationID, metricExtractMapping.MetricPath, jobTimeRange.From, jobTimeRange.To);
+
+                            metricsDataFilePath = FilePathMap.MetricHourRangeDataFilePath(jobTarget, entityFolderName, metricExtractMapping.FolderName, jobTimeRange);
+                            if (File.Exists(metricsDataFilePath) == false)
+                            {
+                                // Subsequent ones are details
+                                metricsJson = controllerApi.GetMetricData(
+                                    jobTarget.ApplicationID,
+                                    metricExtractMapping.MetricPath,
+                                    UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.From),
+                                    UnixTimeHelper.ConvertToUnixTimestamp(jobTimeRange.To),
+                                    false);
+
+                                if (metricsJson != String.Empty) FileIOHelper.SaveFileToPath(metricsJson, metricsDataFilePath);
+                            }
                         }
                     }
                 }

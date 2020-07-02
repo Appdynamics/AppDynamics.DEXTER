@@ -203,7 +203,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -212,7 +212,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -221,7 +221,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Dashboards");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DASHBOARDS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardsReportFilePath(), 0, typeof(Dashboard), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -230,7 +230,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Widgets");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WIDGETS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardWidgetsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardWidgetsReportFilePath(), 0, typeof(DashboardWidget), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -239,7 +239,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Widget Data Series");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DATA_SERIES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardMetricSeriesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DashboardMetricSeriesReportFilePath(), 0, typeof(DashboardMetricSeries), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

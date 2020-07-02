@@ -679,7 +679,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -688,7 +688,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -697,7 +697,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controller Settings");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLER_SETTINGS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSettingsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSettingsReportFilePath(), 0, typeof(ControllerSetting), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -706,7 +706,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Email Alert Templates");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLER_EMAIL_ALERT_TEMPLATES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EmailTemplatesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EmailTemplatesReportFilePath(), 0, typeof(EmailAlertTemplate), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -715,7 +715,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of HTTP Alert Templates");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLER_HTTP_ALERT_TEMPLATES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.HTTPTemplatesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.HTTPTemplatesReportFilePath(), 0, typeof(HTTPAlertTemplate), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -724,7 +724,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Application Health Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTH_RULES_SUMMARY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationConfigurationHealthRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationConfigurationHealthRulesReportFilePath(), 0, typeof(ApplicationConfigurationPolicy), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -733,7 +733,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Health Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_HEALTH_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthRulesReportFilePath(), 0, typeof(HealthRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -742,7 +742,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Policies");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_POLICIES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationPoliciesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationPoliciesReportFilePath(), 0, typeof(Policy), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -751,7 +751,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Actions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_ACTIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationActionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationActionsReportFilePath(), 0, typeof(ReportObjects.Action), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -760,7 +760,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Policy and Action Mappings");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APP_POLICIES_TO_ACTIONS_MAPPING];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationPolicyActionMappingsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationPolicyActionMappingsReportFilePath(), 0, typeof(PolicyActionMapping), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -769,7 +769,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Application Config");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_APPLICATION_CONFIGURATION];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMApplicationConfigurationReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMApplicationConfigurationReportFilePath(), 0, typeof(APMApplicationConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -778,7 +778,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_DISCOVERY_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionDiscoveryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionDiscoveryRulesReportFilePath(), 0, typeof(BusinessTransactionDiscoveryRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -787,7 +787,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction Entry Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryRulesReportFilePath(), 0, typeof(BusinessTransactionEntryRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -796,7 +796,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Service Endpoint Discovery Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_DISCOVERY_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointDiscoveryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointDiscoveryRulesReportFilePath(), 0, typeof(ServiceEndpointDiscoveryRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -805,7 +805,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Service Endpoint Entry Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_SERVICE_ENDPOINT_ENTRY_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointEntryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointEntryRulesReportFilePath(), 0, typeof(ServiceEndpointEntryRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -814,7 +814,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction Scopes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_SCOPES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryScopesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryScopesReportFilePath(), 0, typeof(BusinessTransactionEntryScope), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -823,7 +823,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction 2.0 Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_DISCOVERY_RULES_20];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionDiscoveryRules20ReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionDiscoveryRules20ReportFilePath(), 0, typeof(BusinessTransactionDiscoveryRule20), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -832,7 +832,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction 2.0 Entry Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_ENTRY_RULES_20];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryRules20ReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionEntryRules20ReportFilePath(), 0, typeof(BusinessTransactionEntryRule20), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -841,7 +841,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Backend Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BACKEND_DISCOVERY_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBackendDiscoveryRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBackendDiscoveryRulesReportFilePath(), 0, typeof(BackendDiscoveryRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -850,7 +850,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Custom Exit Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_CUSTOM_EXIT_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMCustomExitRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMCustomExitRulesReportFilePath(), 0, typeof(CustomExitRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -859,7 +859,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Information Point Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_INFORMATION_POINT_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMInformationPointRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMInformationPointRulesReportFilePath(), 0, typeof(InformationPointRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -868,7 +868,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Agent Configuration Properties");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_AGENT_CONFIGURATION_PROPERTIES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMAgentConfigurationPropertiesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMAgentConfigurationPropertiesReportFilePath(), 0, typeof(AgentConfigurationProperty), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -877,12 +877,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Method Invocation Data Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_METHOD_INVOCATION_DATA_COLLECTORS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMMethodInvocationDataCollectorsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMMethodInvocationDataCollectorsReportFilePath(), 0, typeof(MethodInvocationDataCollector), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of HTTP Data Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_HTTP_DATA_COLLECTORS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMHttpDataCollectorsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMHttpDataCollectorsReportFilePath(), 0, typeof(HTTPDataCollector), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -891,7 +891,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Tier Settings");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_TIER_SETTINGS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMTierConfigurationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMTierConfigurationsReportFilePath(), 0, typeof(TierConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -900,7 +900,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Business Transaction Configurations");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_BUSINESS_TRANSACTION_SETTINGS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionConfigurationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionConfigurationsReportFilePath(), 0, typeof(BusinessTransactionConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -909,7 +909,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Agent Call Graph Settings");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_AGENT_CALL_GRAPH_SETTINGS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMAgentCallGraphSettingsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMAgentCallGraphSettingsReportFilePath(), 0, typeof(AgentCallGraphSetting), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -918,7 +918,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of APM Developer Mode Nodes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_DEVELOPER_MODE_NODES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMDeveloperModeNodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMDeveloperModeNodesReportFilePath(), 0, typeof(DeveloperModeNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -927,32 +927,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Error Detection Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRulesReportFilePath(), 0, typeof(ErrorDetectionRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Error Detection Ignore Messages");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_MESSAGES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreMessagesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreMessagesReportFilePath(), 0, typeof(ErrorDetectionIgnoreMessage), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Error Detection Ignore Loggers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_IGNORE_LOGGERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreLoggersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionIgnoreLoggersReportFilePath(), 0, typeof(ErrorDetectionIgnoreLogger), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Error Detection Loggers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_LOGGERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionLoggersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionLoggersReportFilePath(), 0, typeof(ErrorDetectionLogger), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Error Detection HTTP Codes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_HTTP_CODES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionHTTPCodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionHTTPCodesReportFilePath(), 0, typeof(ErrorDetectionHTTPCode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Error Detection Redirect Pages");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APM_ERROR_DETECTION_REDIRECT_PAGES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRedirectPagesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorDetectionRedirectPagesReportFilePath(), 0, typeof(ErrorDetectionRedirectPage), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -961,7 +961,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of DB Application Config");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DB_APPLICATION_CONFIGURATION];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBApplicationConfigurationReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBApplicationConfigurationReportFilePath(), 0, typeof(DBApplicationConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -970,7 +970,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of DB Collector Definitions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DB_COLLECTOR_DEFINITIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCollectorDefinitionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCollectorDefinitionsReportFilePath(), 0, typeof(DBCollectorDefinition), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -979,7 +979,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of DB Custom Metrics");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DB_CUSTOM_METRICS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCustomMetricsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCustomMetricsReportFilePath(), 0, typeof(DBCustomMetric), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -988,7 +988,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of WEB Application Config");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WEB_APPLICATION_CONFIGURATION];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBApplicationConfigurationReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBApplicationConfigurationReportFilePath(), 0, typeof(WEBApplicationConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -997,7 +997,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of WEB Pages and AJAX Request Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WEB_PAGE_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageAjaxVirtualPageRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageAjaxVirtualPageRulesReportFilePath(), 0, typeof(WEBPageDetectionRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1006,7 +1006,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of WEB Synthetic Jobs");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WEB_SYNTHETIC_JOBS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBSyntheticJobsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBSyntheticJobsReportFilePath(), 0, typeof(WEBSyntheticJobDefinition), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1015,7 +1015,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of MOBILE Application Config");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MOBILE_APPLICATION_CONFIGURATION];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILEApplicationConfigurationReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILEApplicationConfigurationReportFilePath(), 0, typeof(MOBILEApplicationConfiguration), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1024,7 +1024,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of MOBILE Network Request Rules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MOBILE_NETWORK_REQUEST_RULES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestRulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.MOBILENetworkRequestRulesReportFilePath(), 0, typeof(MOBILENetworkRequestRule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1033,7 +1033,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Configuration Differences");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONFIGURATION_DIFFERENCES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ConfigurationComparisonReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ConfigurationComparisonReportFilePath(), 0, typeof(ConfigurationDifference), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

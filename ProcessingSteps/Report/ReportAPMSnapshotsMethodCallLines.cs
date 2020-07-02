@@ -183,7 +183,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -192,7 +192,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationSnapshotsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationSnapshotsReportFilePath(), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -201,7 +201,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Method Call Lines");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_METHOD_CALL_LINES];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsMethodCallLinesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT + 1, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsMethodCallLinesReportFilePath(), 0, typeof(MethodCallLine),sheet, LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 #endregion
 

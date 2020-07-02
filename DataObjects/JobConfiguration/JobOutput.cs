@@ -8,6 +8,7 @@
         public bool EntityDetails { get; set; }
         public bool EntityDashboards { get; set; }
         public bool Snapshots { get; set; }
+        public bool IndividualSnapshots { get; set; }
         public bool Flowmaps { get; set; }
         public bool FlameGraphs { get; set; }
         public bool Configuration { get; set; }

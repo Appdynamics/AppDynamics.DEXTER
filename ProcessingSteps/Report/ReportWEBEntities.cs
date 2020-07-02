@@ -228,7 +228,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -237,7 +237,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -246,7 +246,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_WEB_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBApplicationsReportFilePath(), 0, typeof(WEBApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -255,7 +255,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Web Pages");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WEB_PAGES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPagesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPagesReportFilePath(), 0, typeof(WEBPage), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -264,7 +264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Web Page Resources");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_PAGE_RESOURCES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageResourcesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageResourcesReportFilePath(), 0, typeof(WEBPageToWebPage), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -273,7 +273,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Web Page Business Transactions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_PAGE_BUSINESS_TRANSACTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageBusinessTransactionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBPageBusinessTransactionsReportFilePath(), 0, typeof(WEBPageToBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -282,7 +282,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Geo Locations");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_GEO_LOCATIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBGeoLocationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.WEBGeoLocationsReportFilePath(), 0, typeof(WEBGeoLocation), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

@@ -8,6 +8,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 {
     public class FilePathMap
     {
+
         #region Constants for the folder names
 
         // Parent Folder names
@@ -452,6 +453,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.html";
         private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
         private const string REPORT_HEALTH_CHECK_RESULTS_FILE_NAME = "HealthCheck.{0}.xlsx";
+        private const string REPORT_SNAPSHOT_FILE_NAME = "Snapshot.{0}-{1}-{2}-{3}-{4}.xlsx";
 
         // Per entity report names
         private const string REPORT_ENTITY_DETAILS_APPLICATION_FILE_NAME = "EntityDetails.{0}.{1}.xlsx";
@@ -463,6 +465,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_GRAPH_TIER_FILE_NAME = "FlameGraph.Tier.{0}.{1}.{2}.svg";
         private const string REPORT_FLAME_GRAPH_NODE_FILE_NAME = "FlameGraph.Node.{0}.{1}.{2}.svg";
         private const string REPORT_FLAME_GRAPH_BUSINESS_TRANSACTION_FILE_NAME = "FlameGraph.BT.{0}.{1}.{2}.svg";
+        private const string REPORT_APPLICATION_FLAMEGRAPHS_FILE_NAME = "ApplicationFlamegraphs.html";
 
         // Per entity flame chart report name
         private const string REPORT_FLAME_CHART_APPLICATION_FILE_NAME = "FlameChart.Application.{0}.{1}.svg";
@@ -494,6 +497,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Flame graph template SVG XML file
         private const string FLAME_GRAPH_TEMPLATE_FILE_NAME = "FlameGraphTemplate.svg";
+        // Application Flamegraphs template
+        private const string LINKS_TO_APPLICATION_FLAMEGRAPHSS_TEMPLATE_FILE_NAME = "LinksToApplicationFlameGraphsTemplate.html";
 
         // Template controller export of an empty applications
         private const string TEMPLATE_CONTROLLER_AND_APPLICATIONS_FOLDER_NAME = "EmptyConfig";
@@ -507,7 +512,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Snapshot UX to Folder Mapping
 
-        internal static Dictionary<string, string> USEREXPERIENCE_FOLDER_MAPPING = new Dictionary<string, string>
+        private static Dictionary<string, string> USEREXPERIENCE_FOLDER_MAPPING = new Dictionary<string, string>
         {
             {"NORMAL", "NM"},
             {"SLOW", "SL"},
@@ -525,10 +530,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public JobConfiguration JobConfiguration { get; set; }
 
+        public string ReportFolderName { get; set; }
+
         public FilePathMap(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
             this.ProgramOptions = programOptions;
             this.JobConfiguration = jobConfiguration;
+            this.ReportFolderName = REPORT_FOLDER_NAME;
+            if (programOptions.IndividualSnapshotsNonDefaultReportFolderName != null && programOptions.IndividualSnapshotsNonDefaultReportFolderName.Length > 0)
+            {
+                this.ReportFolderName = programOptions.IndividualSnapshotsNonDefaultReportFolderName;
+            }
         }
 
         #endregion
@@ -538,7 +550,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public string StepTimingReportFilePath()
         {
-            return Path.Combine(this.ProgramOptions.OutputJobFolderPath, REPORT_FOLDER_NAME, TIMING_REPORT_FILE_NAME);
+            return Path.Combine(this.ProgramOptions.OutputJobFolderPath, this.ReportFolderName, TIMING_REPORT_FILE_NAME);
         }
 
         #endregion
@@ -905,14 +917,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME);
+                this.ReportFolderName);
         }
 
         public string APMEntitiesReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME);
         }
 
@@ -920,7 +932,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_APPLICATIONS_FILE_NAME);
         }
@@ -929,7 +941,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_TIERS_FILE_NAME);
         }
@@ -938,7 +950,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_NODES_FILE_NAME);
         }
@@ -947,7 +959,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_NODE_STARTUP_OPTIONS_FILE_NAME);
         }
@@ -956,7 +968,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_NODE_PROPERTIES_FILE_NAME);
         }
@@ -965,7 +977,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_NODE_ENVIRONMENT_VARIABLES_FILE_NAME);
         }
@@ -974,7 +986,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_BACKENDS_FILE_NAME);
         }
@@ -983,7 +995,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_MAPPED_BACKENDS_FILE_NAME);
         }
@@ -992,7 +1004,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -1001,7 +1013,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_OVERFLOW_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -1010,7 +1022,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_SERVICE_ENDPOINTS_FILE_NAME);
         }
@@ -1019,7 +1031,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_ERRORS_FILE_NAME);
         }
@@ -1028,7 +1040,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_APM_FOLDER_NAME,
                 CONVERT_APM_INFORMATION_POINTS_FILE_NAME);
         }
@@ -1042,7 +1054,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -1195,7 +1207,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_WEB_FOLDER_NAME);
         }
 
@@ -1203,7 +1215,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_WEB_FOLDER_NAME,
                 CONVERT_CONFIG_WEB_SUMMARY_FILE_NAME);
         }
@@ -1212,7 +1224,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_WEB_FOLDER_NAME,
                 CONVERT_CONFIG_WEB_PAGE_RULES_FILE_NAME);
         }
@@ -1221,7 +1233,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_WEB_FOLDER_NAME,
                 CONVERT_CONFIG_SYNTHETIC_JOB_DEFINITIONS_FILE_NAME);
         }
@@ -1341,7 +1353,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME);
         }
 
@@ -1349,7 +1361,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME,
                 CONVERT_WEB_APPLICATIONS_FILE_NAME);
         }
@@ -1358,7 +1370,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME,
                 CONVERT_WEB_PAGES_FILE_NAME);
         }
@@ -1367,7 +1379,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME,
                 CONVERT_WEB_PAGE_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -1376,7 +1388,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME,
                 CONVERT_WEB_PAGE_RESOURCES_FILE_NAME);
         }
@@ -1385,7 +1397,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_WEB_FOLDER_NAME,
                 CONVERT_WEB_GEO_LOCATIONS_FILE_NAME);
         }
@@ -1399,7 +1411,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -1486,7 +1498,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_MOBILE_FOLDER_NAME);
         }
 
@@ -1494,7 +1506,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_MOBILE_FOLDER_NAME,
                 CONVERT_CONFIG_MOBILE_SUMMARY_FILE_NAME);
         }
@@ -1503,7 +1515,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_MOBILE_FOLDER_NAME,
                 CONVERT_CONFIG_MOBILE_NETWORK_REQUEST_RULES_FILE_NAME);
         }
@@ -1586,7 +1598,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_MOBILE_FOLDER_NAME);
         }
 
@@ -1594,7 +1606,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_MOBILE_FOLDER_NAME,
                 CONVERT_MOBILE_APPLICATIONS_FILE_NAME);
         }
@@ -1603,7 +1615,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_MOBILE_FOLDER_NAME,
                 CONVERT_NETWORK_REQUESTS_FILE_NAME);
         }
@@ -1612,7 +1624,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_MOBILE_FOLDER_NAME,
                 CONVERT_NETWORK_REQUEST_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -1626,7 +1638,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -1891,7 +1903,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME);
         }
 
@@ -1899,7 +1911,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_APPLICATIONS_FILE_NAME);
         }
@@ -1908,7 +1920,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_TIERS_FILE_NAME);
         }
@@ -1917,7 +1929,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_NODES_FILE_NAME);
         }
@@ -1926,7 +1938,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINES_FILE_NAME);
         }
@@ -1935,7 +1947,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROPERTIES_FILE_NAME);
         }
@@ -1944,7 +1956,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CPUS_FILE_NAME);
         }
@@ -1953,7 +1965,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_VOLUMES_FILE_NAME);
         }
@@ -1962,7 +1974,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_NETWORKS_FILE_NAME);
         }
@@ -1971,7 +1983,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_CONTAINERS_FILE_NAME);
         }
@@ -1980,7 +1992,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_SIM_FOLDER_NAME,
                 CONVERT_SIM_MACHINE_PROCESSES_FILE_NAME);
         }
@@ -1994,7 +2006,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -2070,7 +2082,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_DB_FOLDER_NAME);
         }
 
@@ -2078,7 +2090,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_DB_FOLDER_NAME,
                 CONVERT_CONFIG_DB_SUMMARY_FILE_NAME);
         }
@@ -2087,7 +2099,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_DB_FOLDER_NAME,
                 CONVERT_CONFIG_DB_COLLECTOR_DEFINITIONS_FILE_NAME);
         }
@@ -2096,7 +2108,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_DB_FOLDER_NAME,
                 CONVERT_CONFIG_DB_CUSTOM_METRICS_FILE_NAME);
         }
@@ -2471,7 +2483,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME);
         }
 
@@ -2479,7 +2491,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_COLLECTORS_FILE_NAME);
         }
@@ -2488,7 +2500,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_APPLICATIONS_FILE_NAME);
         }
@@ -2497,7 +2509,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_WAIT_STATES_FILE_NAME);
         }
@@ -2506,7 +2518,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_QUERIES_FILE_NAME);
         }
@@ -2515,7 +2527,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_CLIENTS_FILE_NAME);
         }
@@ -2524,7 +2536,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_SESSIONS_FILE_NAME);
         }
@@ -2533,7 +2545,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_BLOCKING_SESSIONS_FILE_NAME);
         }
@@ -2542,7 +2554,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_DATABASES_FILE_NAME);
         }
@@ -2551,7 +2563,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_USERS_FILE_NAME);
         }
@@ -2560,7 +2572,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_MODULES_FILE_NAME);
         }
@@ -2569,7 +2581,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_PROGRAMS_FILE_NAME);
         }
@@ -2578,7 +2590,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_DB_FOLDER_NAME,
                 CONVERT_DB_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -2592,7 +2604,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -2771,7 +2783,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME);
         }
 
@@ -2779,7 +2791,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_APPLICATIONS_FILE_NAME);
         }
@@ -2788,7 +2800,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_SEARCHES_FILE_NAME);
         }
@@ -2797,7 +2809,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_WIDGETS_FILE_NAME);
         }
@@ -2806,7 +2818,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_METRICS_FILE_NAME);
         }
@@ -2815,7 +2827,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_BUSINESS_JOURNEYS_FILE_NAME);
         }
@@ -2824,7 +2836,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_EXPERIENCE_LEVELS_FILE_NAME);
         }
@@ -2833,7 +2845,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_SCHEMAS_FILE_NAME);
         }
@@ -2842,7 +2854,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_BIQ_FOLDER_NAME,
                 CONVERT_ANALYTICS_SCHEMA_FIELDS_FILE_NAME);
         }
@@ -2856,7 +2868,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -3071,7 +3083,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_FOLDER_NAME);
         }
 
@@ -3079,7 +3091,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_FOLDER_NAME);
         }
 
@@ -3087,7 +3099,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 DASHBOARDS_FOLDER_NAME);
         }
 
@@ -3095,7 +3107,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_FOLDER_NAME,
                 CONVERT_CONTROLLERS_SUMMARY_FILE_NAME);
         }
@@ -3104,7 +3116,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 ENTITIES_FOLDER_NAME,
                 CONVERT_CONTROLLER_APPLICATIONS_FILE_NAME);
         }
@@ -3113,7 +3125,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_CONTROLLER_SETTINGS_FILE_NAME);
         }
@@ -3122,7 +3134,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_HTTP_TEMPLATES_FILE_NAME);
         }
@@ -3131,7 +3143,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_FOLDER_NAME,
                 CONVERT_EMAIL_TEMPLATES_FILE_NAME);
         }
@@ -3140,7 +3152,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARDS_FILE_NAME);
         }
@@ -3149,7 +3161,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARD_WIDGETS_FILE_NAME);
         }
@@ -3158,7 +3170,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 DASHBOARDS_FOLDER_NAME,
                 CONVERT_DASHBOARD_WIDGET_DATA_SERIES_FILE_NAME);
         }
@@ -3172,7 +3184,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -3359,7 +3371,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME);
         }
 
@@ -3367,7 +3379,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSE_ACCOUNT_FILE_NAME);
         }
@@ -3376,7 +3388,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSES_FILE_NAME);
         }
@@ -3385,7 +3397,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSE_RULES_FILE_NAME);
         }
@@ -3394,7 +3406,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSE_RULE_SCOPES_FILE_NAME);
         }
@@ -3403,7 +3415,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSE_USAGE_ACCOUNT_FILE_NAME);
         }
@@ -3412,7 +3424,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 LICENSE_FOLDER_NAME,
                 CONVERT_LICENSE_USAGE_RULES_FILE_NAME);
         }
@@ -3426,7 +3438,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -3663,7 +3675,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME);
         }
 
@@ -3671,7 +3683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
                 CONVERT_CONFIG_HEALTH_RULES_SUMMARY_FILE_NAME);
         }
@@ -3680,7 +3692,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
                 CONVERT_CONFIG_HEALTH_RULES_FILE_NAME);
         }
@@ -3689,7 +3701,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
                 CONVERT_CONFIG_POLICIES_FILE_NAME);
         }
@@ -3698,7 +3710,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
                 CONVERT_CONFIG_ACTIONS_FILE_NAME);
         }
@@ -3707,7 +3719,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_ALL_APPLICATIONS_FOLDER_NAME,
                 CONVERT_CONFIG_POLICY_ACTION_MAPPING_FILE_NAME);
         }
@@ -4097,7 +4109,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME);
         }
 
@@ -4105,7 +4117,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_APM_SUMMARY_FILE_NAME);
         }
@@ -4114,7 +4126,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_FILE_NAME);
         }
@@ -4123,7 +4135,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_FILE_NAME);
         }
@@ -4132,7 +4144,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_SERVICE_ENDPOINT_DISCOVERY_RULES_FILE_NAME);
         }
@@ -4141,7 +4153,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_SERVICE_ENDPOINT_ENTRY_RULES_FILE_NAME);
         }
@@ -4150,7 +4162,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_SCOPES_FILE_NAME);
         }
@@ -4159,7 +4171,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_ENTRY_RULES_2_0_FILE_NAME);
         }
@@ -4168,7 +4180,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BUSINESS_TRANSACTION_DISCOVERY_RULES_2_0_FILE_NAME);
         }
@@ -4177,7 +4189,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_BACKEND_DISCOVERY_RULES_FILE_NAME);
         }
@@ -4186,7 +4198,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_CUSTOM_EXIT_RULES_FILE_NAME);
         }
@@ -4195,7 +4207,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_AGENT_CONFIGURATION_PROPERTIES_FILE_NAME);
         }
@@ -4204,7 +4216,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_INFORMATION_POINT_RULES_FILE_NAME);
         }
@@ -4213,7 +4225,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ENTITY_BUSINESS_TRANSACTIONS_FILE_NAME);
         }
@@ -4222,7 +4234,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ENTITY_TIERS_FILE_NAME);
         }
@@ -4231,7 +4243,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_METHOD_INVOCATION_DATA_COLLECTORS_FILE_NAME);
         }
@@ -4240,7 +4252,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_HTTP_DATA_COLLECTORS_FILE_NAME);
         }
@@ -4249,7 +4261,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_AGENT_CALL_GRAPH_SETTINGS_FILE_NAME);
         }
@@ -4258,7 +4270,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_DEVELOPER_MODE_NODES_FILE_NAME);
         }
@@ -4267,7 +4279,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_RULES_FILE_NAME);
         }
@@ -4276,7 +4288,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_IGNORE_MESSAGES_FILE_NAME);
         }
@@ -4285,7 +4297,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_IGNORE_LOGGERS_FILE_NAME);
         }
@@ -4294,7 +4306,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_LOGGERS_FILE_NAME);
         }
@@ -4303,7 +4315,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_HTTP_CODES_FILE_NAME);
         }
@@ -4312,7 +4324,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_APM_FOLDER_NAME,
                 CONVERT_CONFIG_ERROR_DETECTION_REDIRECT_PAGES_FILE_NAME);
         }        
@@ -4326,7 +4338,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -4395,7 +4407,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_COMPARISON_FOLDER_NAME);
         }
 
@@ -4403,7 +4415,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONFIGURATION_COMPARISON_FOLDER_NAME,
                 CONFIGURATION_DIFFERENCES_FILE_NAME);
         }
@@ -4449,7 +4461,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 HEALTHCHECK_FOLDER_NAME);
         }
 
@@ -4457,7 +4469,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 HEALTHCHECK_APM_FOLDER_NAME);
         }
 
@@ -4465,7 +4477,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 HEALTHCHECK_FOLDER_NAME,
                 CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
         }
@@ -4474,7 +4486,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 HEALTHCHECK_APM_FOLDER_NAME,
                 CONVERT_APM_HEALTH_CHECK_RULE_RESULTS_FILE_NAME);
         }
@@ -4488,7 +4500,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -4695,7 +4707,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME);
         }
 
@@ -4708,7 +4720,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -4716,7 +4728,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USERS_FILE_NAME);
         }
@@ -4725,7 +4737,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUPS_FILE_NAME);
         }
@@ -4734,7 +4746,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLES_FILE_NAME);
         }
@@ -4743,7 +4755,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_PERMISSIONS_FILE_NAME);
         }
@@ -4752,7 +4764,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_GROUP_MEMBERSHIPS_FILE_NAME);
         }
@@ -4761,7 +4773,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_ROLE_MEMBERSHIPS_FILE_NAME);
         }
@@ -4770,7 +4782,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_USER_PERMISSIONS_FILE_NAME);
         }
@@ -4779,7 +4791,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 CONTROLLER_RBAC_FOLDER_NAME,
                 CONVERT_CONTROLLER_RBAC_SUMMARY_FILE_NAME);
         }
@@ -4793,7 +4805,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -4909,7 +4921,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_METRICS_FOLDER_NAME);
         }
 
@@ -4921,7 +4933,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
@@ -4934,7 +4946,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
@@ -4948,7 +4960,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_METRICS_FOLDER_NAME,
                 reportFileName);
         }
@@ -4962,7 +4974,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 APM_METRICS_FOLDER_NAME,
@@ -4979,7 +4991,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -5003,7 +5015,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFilePath = Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
-                    REPORT_FOLDER_NAME,
+                    this.ReportFolderName,
                     getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                     getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                     entity.FolderName,
@@ -5275,7 +5287,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME);
         }
 
@@ -5287,7 +5299,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5300,7 +5312,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5313,7 +5325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5326,7 +5338,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5339,7 +5351,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5352,7 +5364,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_ACTIVITYGRID_FOLDER_NAME,
                 reportFileName);
         }
@@ -5366,7 +5378,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -5617,7 +5629,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_APPS_FOLDER_NAME);
         }
 
@@ -5625,7 +5637,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_CONTROLLER_FOLDER_NAME);
         }
 
@@ -5633,7 +5645,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_HEALTH_RULE_EVENTS_FILE_NAME);
         }
@@ -5642,7 +5654,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_EVENTS_FILE_NAME);
         }
@@ -5651,7 +5663,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_EVENTS_DETAILS_FILE_NAME);
         }
@@ -5660,7 +5672,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_CONTROLLER_FOLDER_NAME,
                 CONVERT_CONTROLLER_AUDIT_EVENTS_FILE_NAME);
         }
@@ -5669,7 +5681,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_CONTROLLER_FOLDER_NAME,
                 CONVERT_CONTROLLER_NOTIFICATIONS_FILE_NAME);
         }
@@ -5678,7 +5690,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 EVENTS_APPS_FOLDER_NAME,
                 CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME);
         }
@@ -5692,7 +5704,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -6252,7 +6264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME);
         }
 
@@ -6260,7 +6272,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_FILE_NAME);
         }
@@ -6269,7 +6281,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
         }
@@ -6278,7 +6290,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
         }
@@ -6287,16 +6299,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
         }
 
-        public string SnapshotsDetectedErrorsCallsReportFilePath()
+        public string SnapshotsDetectedErrorsReportFilePath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
         }
@@ -6305,7 +6317,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
         }
@@ -6314,7 +6326,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
         }
@@ -6323,9 +6335,226 @@ namespace AppDynamics.Dexter.ProcessingSteps
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 APM_SNAPSHOTS_FOLDER_NAME,
                 CONVERT_APPLICATION_SNAPSHOTS_SUMMARY_FILE_NAME);
+        }
+
+        public string SnapshotReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotSegmentsReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotExitCallsReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_EXIT_CALLS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotServiceEndpointCallsReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_SERVICE_ENDPOINTS_CALLS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotDetectedErrorsReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_DETECTED_ERRORS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotBusinessDataReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_BUSINESS_DATA_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
+        public string SnapshotMethodCallLinesReportFilePath(Snapshot snapshot, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    APM_SNAPSHOTS_FOLDER_NAME,
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                    getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                    getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                    getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                    snapshot.RequestID,
+                    CONVERT_SNAPSHOTS_SEGMENTS_METHOD_CALL_LINES_FILE_NAME);
+            }
+
+            return reportFilePath;
         }
 
         public string SnapshotsExcelReportFilePath(JobTimeRange jobTimeRange)
@@ -6337,7 +6566,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -6350,7 +6579,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
+                reportFileName);
+        }
+
+        public string SnapshotExcelReportFilePath(Snapshot snapshot)
+        {
+            string reportFileName = String.Format(
+                REPORT_SNAPSHOT_FILE_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(snapshot.Controller)),
+                getShortenedEntityNameForFileSystem(snapshot.ApplicationName, snapshot.ApplicationID),
+                getShortenedEntityNameForFileSystem(snapshot.TierName, snapshot.TierID),
+                getShortenedEntityNameForFileSystem(snapshot.BTName, snapshot.BTID),
+                snapshot.RequestID);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -6472,7 +6716,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.To);
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
-                REPORT_FOLDER_NAME,
+                this.ReportFolderName,
                 reportFileName);
         }
 
@@ -6484,7 +6728,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             {
                 reportFilePath = Path.Combine(
                     this.ProgramOptions.OutputJobFolderPath,
-                    REPORT_FOLDER_NAME,
+                    this.ReportFolderName,
                     getFileSystemSafeString(getControllerNameForFileSystem(application.Controller)),
                     getShortenedEntityNameForFileSystem(application.ApplicationName, application.ApplicationID),
                     REPORT_APPLICATION_DASHBOARDS_FILE_NAME);
@@ -6566,7 +6810,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
-                        REPORT_FOLDER_NAME,
+                        this.ReportFolderName,
                         reportRelativeFilePath);
                 }
                 else
@@ -6589,6 +6833,38 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.ProgramLocationFolderPath,
                 FLAME_GRAPH_TEMPLATE_FILE_NAME);
         }
+
+        public string ApplicationFlameGraphsLinksTemplateFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                LINKS_TO_APPLICATION_FLAMEGRAPHSS_TEMPLATE_FILE_NAME);
+        }
+
+        public string ApplicationFlameGraphsLinksReportFilePath(APMApplication application, bool absolutePath)
+        {
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(application.Controller)),
+                    getShortenedEntityNameForFileSystem(application.ApplicationName, application.ApplicationID),
+                    REPORT_APPLICATION_FLAMEGRAPHS_FILE_NAME);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(application.Controller)),
+                    getShortenedEntityNameForFileSystem(application.ApplicationName, application.ApplicationID),
+                    REPORT_APPLICATION_FLAMEGRAPHS_FILE_NAME);
+            }
+
+            return reportFilePath;
+        }
+
 
         public string FlameGraphReportFilePath(APMEntityBase entity, JobTarget jobTarget, JobTimeRange jobTimeRange, bool absolutePath)
         {
@@ -6641,7 +6917,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
-                        REPORT_FOLDER_NAME,
+                        this.ReportFolderName,
                         getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
@@ -6711,7 +6987,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
-                        REPORT_FOLDER_NAME,
+                        this.ReportFolderName,
                         getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
@@ -6816,7 +7092,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
-                        REPORT_FOLDER_NAME,
+                        this.ReportFolderName,
                         getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(entity.ApplicationName, entity.ApplicationID),
                         entity.FolderName,
@@ -6858,7 +7134,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     reportFilePath = Path.Combine(
                         this.ProgramOptions.OutputJobFolderPath,
-                        REPORT_FOLDER_NAME,
+                        this.ReportFolderName,
                         getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                         getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                         reportFileName);

@@ -9,9 +9,6 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Xml;
 
 namespace AppDynamics.Dexter.ProcessingSteps
@@ -276,7 +273,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Generate links
+                        #region Generate links for Application
 
                         loggerConsole.Info("Generating Links to All Dashboards");
 
@@ -378,7 +375,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             {
                                                 xmlWriter.WriteStartElement(xmlReader.LocalName);
                                                 xmlReader.Read();
-                                                xmlWriter.WriteString(String.Format("{0}[{1}] - {2}", jobTarget.Application, jobTarget.ApplicationID, jobTarget.Controller));
+                                                xmlWriter.WriteString(String.Format("Dash: {0}[{1}] - {2}", jobTarget.Application, jobTarget.ApplicationID, jobTarget.Controller));
                                                 xmlWriter.WriteEndElement();
 
                                                 // Read the template string and closing /text tag to move the reader forward
@@ -727,7 +724,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
 
-                #region Applications list
+                #region Generate Applications list
 
                 List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsReportFilePath(), new APMApplicationReportMap());
                 if (applicationsList != null)
@@ -741,7 +738,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     xmlReaderSettings.DtdProcessing = DtdProcessing.Parse;
                     xmlReaderSettings.IgnoreComments = false;
 
-                    using (StringReader stringReader = new StringReader(FileIOHelper.ReadFileFromPath(FilePathMap.ApplicationsLinksTemplateFilePath())))
+                    using (StringReader stringReader = new StringReader(FileIOHelper.ReadFileFromPath(FilePathMap.ApplicationDashboardsLinksTemplateFilePath())))
                     {
                         using (XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings))
                         {

@@ -26,6 +26,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_NODES_LIST = "7.Nodes";
         private const string SHEET_NODES_TYPE_APPAGENT_PIVOT = "7.Nodes.Type.AppAgent";
         private const string SHEET_NODES_TYPE_MACHINEAGENT_PIVOT = "7.Nodes.Type.MachineAgent";
+        private const string SHEET_NODES_HOST_TYPE = "7.Nodes.Host.Type";
+        private const string SHEET_NODES_HEAP_SIZE = "7.Nodes.Heap.Size";
+        private const string SHEET_NODES_RUNTIME_VERSION = "7.Nodes.Runtime.Version";
         private const string SHEET_NODE_STARTUP_OPTIONS_LIST = "8.Node Startup Options";
         private const string SHEET_NODE_STARTUP_OPTIONS_TYPE_PIVOT = "8.Node Startup Options.Type";
         private const string SHEET_NODE_STARTUP_OPTIONS_LOCATION_PIVOT = "8.Node Startup Options.Location";
@@ -73,6 +76,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string PIVOT_TIERS_TYPE = "p_TiersType";
         private const string PIVOT_NODES_APPAGENT_TYPE = "p_NodesTypeAppAgent";
         private const string PIVOT_NODES_MACHINEAGENT_TYPE = "p_NodesTypeMachineAgent";
+        private const string PIVOT_NODES_HOST_TYPE = "p_NodesTypeHost";
+        private const string PIVOT_NODES_HEAP_SIZE = "p_NodesHeapSize";
+        private const string PIVOT_NODES_RUNTIME_VERSION = "p_NodesRuntimeVersion";
         private const string PIVOT_NODE_STARTUP_OPTIONS_TYPE = "p_NodeStartupOptionsType";
         private const string PIVOT_NODE_STARTUP_OPTIONS_LOCATION = "p_NodeStartupOptionsLocation";
         private const string PIVOT_NODE_PROPERTIES_TYPE = "p_NodePropertiesType";
@@ -94,18 +100,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string GRAPH_TIERS_TYPE = "g_TiersType";
         private const string GRAPH_NODES_APPAGENT_TYPE = "g_NodesTypeAppAgent";
         private const string GRAPH_NODES_MACHINEAGENT_TYPE = "g_NodesTypeMachineAgent";
-        private const string GRAPH_NODE_STARTUP_OPTIONS_TYPE = "g_NodeStartupOptionsType";
-        private const string GRAPH_NODE_STARTUP_OPTIONS_LOCATION = "g_NodeStartupOptionsLocation";
-        private const string GRAPH_NODE_PROPERTIES_TYPE = "g_NodePropertiesType";
-        private const string GRAPH_NODE_PROPERTIES_LOCATION = "g_NodePropertiesLocation";
-        private const string GRAPH_NODE_ENVIRONMENT_VARIABLES_TYPE = "g_NodeEnvironmentVariablesType";
-        private const string GRAPH_NODE_ENVIRONMENT_VARIABLES_LOCATION = "g_NodeEnvironmentVariablesLocation";
+        private const string GRAPH_NODES_HOST_TYPE = "g_NodesTypeHost";
+        private const string GRAPH_NODES_HEAP_SIZE = "g_NodesHeapSize";
+        private const string GRAPH_NODES_RUNTIME_VERSION = "g_NodesRuntimeVersion";
         private const string GRAPH_BACKENDS_TYPE = "g_BackendsType";
         private const string GRAPH_BUSINESS_TRANSACTIONS_TYPE = "g_BusinessTransactionsType";
         private const string GRAPH_SERVICE_ENDPOINTS_TYPE = "g_ServiceEndpointsType";
         private const string GRAPH_ERRORS_TYPE = "g_ErrorsType";
         private const string GRAPH_INFORMATION_POINTS_TYPE = "g_InformationPointsType";
-        private const string GRAPH_MAPPED_BACKENDS_TYPE = "g_MappedBackends";
         private const string GRAPH_OVERFLOW_BUSINESS_TRANSACTIONS_TYPE = "g_OverflowBusinessTransactionsType";
 
         private const int LIST_SHEET_START_TABLE_AT = 4;
@@ -228,6 +230,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[3, 1].Value = "Types of Machine Agent";
                 sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_TYPE_MACHINEAGENT_PIVOT);
                 sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 3].Value = "Host Info";
+                sheet.Cells[2, 4].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_HOST_TYPE);
+                sheet.Cells[2, 4].StyleName = "HyperLinkStyle";
+                sheet.Cells[3, 3].Value = "Heap Size";
+                sheet.Cells[3, 4].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_HEAP_SIZE);
+                sheet.Cells[3, 4].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 5].Value = "Runtime/Version";
+                sheet.Cells[2, 6].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_RUNTIME_VERSION);
+                sheet.Cells[2, 6].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_TYPE_APPAGENT_PIVOT);
@@ -248,6 +259,33 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_HOST_TYPE);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_LIST);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_HEAP_SIZE);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_LIST);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 3, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODES_RUNTIME_VERSION);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.Cells[2, 1].Value = "See Table";
+                sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODES_LIST);
+                sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_STARTUP_OPTIONS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
@@ -267,7 +305,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_STARTUP_OPTIONS_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_STARTUP_OPTIONS_LOCATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -276,7 +314,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_STARTUP_OPTIONS_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_PROPERTIES_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -297,7 +335,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_PROPERTIES_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_PROPERTIES_LOCATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -306,7 +344,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_PROPERTIES_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_ENVIRONMENT_VARIABLES_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -327,7 +365,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_ENVIRONMENT_VARIABLES_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_NODE_ENVIRONMENT_VARIABLES_LOCATION_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -336,7 +374,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Table";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_NODE_ENVIRONMENT_VARIABLES_LIST);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 2, 1);
+                sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT + 2, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_BACKENDS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -531,7 +569,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -540,7 +578,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -549,7 +587,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_APM_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMApplicationsReportFilePath(), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -558,7 +596,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Tiers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMTiersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMTiersReportFilePath(), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -567,22 +605,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Nodes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodesReportFilePath(), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Node Startup Options");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODE_STARTUP_OPTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodeStartupOptionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodeStartupOptionsReportFilePath(), 0, typeof(APMNodeProperty), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Node VM Properties");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODE_PROPERTIES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodePropertiesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodePropertiesReportFilePath(), 0, typeof(APMNodeProperty), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Node Environment Variables");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODE_ENVIRONMENT_VARIABLES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodeEnvironmentVariablesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMNodeEnvironmentVariablesReportFilePath(), 0, typeof(APMNodeProperty), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -591,7 +629,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Backends");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBackendsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBackendsReportFilePath(), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -600,7 +638,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Transactions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMBusinessTransactionsReportFilePath(), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -609,7 +647,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Service Endpoints");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMServiceEndpointsReportFilePath(), 0,  typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -618,7 +656,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Errors");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMErrorsReportFilePath(), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -627,7 +665,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Information Points");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMInformationPointsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMInformationPointsReportFilePath(), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -636,7 +674,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Backends");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MAPPED_BACKENDS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMMappedBackendsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMMappedBackendsReportFilePath(), 0, typeof(APMResolvedBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -645,7 +683,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Overflow Business Transactions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_OVERFLOW_BUSINESS_TRANSACTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMOverflowBusinessTransactionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMOverflowBusinessTransactionsReportFilePath(), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -852,6 +890,82 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(2).Width = 20;
                     sheet.Column(3).Width = 20;
                     sheet.Column(4).Width = 20;
+
+                    sheet = excelReport.Workbook.Worksheets[SHEET_NODES_HOST_TYPE];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODES_HOST_TYPE);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "AgentPresent");
+                    addRowFieldToPivot(pivot, "CloudHostType");
+                    addRowFieldToPivot(pivot, "CloudRegion");
+                    addRowFieldToPivot(pivot, "ContainerRuntimeType");
+                    addRowFieldToPivot(pivot, "WebHostContainerType");
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "NodeName");
+                    addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
+                    addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
+
+                    chart = sheet.Drawings.AddChart(GRAPH_NODES_HOST_TYPE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 20;
+                    sheet.Column(6).Width = 20;
+                    sheet.Column(7).Width = 20;
+                    sheet.Column(8).Width = 20;
+
+                    sheet = excelReport.Workbook.Worksheets[SHEET_NODES_HEAP_SIZE];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT + 1, 1], range, PIVOT_NODES_HEAP_SIZE);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "AgentPresent");
+                    addFilterFieldToPivot(pivot, "HeapInitialSizeMB", eSortType.Ascending, true);
+                    addFilterFieldToPivot(pivot, "HeapMaxSizeMB", eSortType.Ascending, true);
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "NodeName");
+                    addDataFieldToPivot(pivot, "HeapInitialSizeMB", DataFieldFunctions.Average, "InitialMB");
+                    addDataFieldToPivot(pivot, "HeapMaxSizeMB", DataFieldFunctions.Average, "MaximumMB");
+
+                    chart = sheet.Drawings.AddChart(GRAPH_NODES_HEAP_SIZE, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+
+                    sheet = excelReport.Workbook.Worksheets[SHEET_NODES_RUNTIME_VERSION];
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODES_RUNTIME_VERSION);
+                    setDefaultPivotTableSettings(pivot);
+                    addFilterFieldToPivot(pivot, "AgentPresent");
+                    addFilterFieldToPivot(pivot, "AgentType");
+                    addRowFieldToPivot(pivot, "VMName");
+                    addRowFieldToPivot(pivot, "VMVendor");
+                    addRowFieldToPivot(pivot, "Version");
+                    addRowFieldToPivot(pivot, "Controller");
+                    addRowFieldToPivot(pivot, "ApplicationName");
+                    addRowFieldToPivot(pivot, "TierName");
+                    addRowFieldToPivot(pivot, "NodeName");
+                    addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
+
+                    chart = sheet.Drawings.AddChart(GRAPH_NODES_RUNTIME_VERSION, eChartType.ColumnClustered, pivot);
+                    chart.SetPosition(2, 0, 0, 0);
+                    chart.SetSize(800, 300);
+
+                    sheet.Column(1).Width = 20;
+                    sheet.Column(2).Width = 20;
+                    sheet.Column(3).Width = 20;
+                    sheet.Column(4).Width = 20;
+                    sheet.Column(5).Width = 20;
+                    sheet.Column(6).Width = 20;
+                    sheet.Column(7).Width = 20;
                 }
 
                 // Make table
@@ -871,7 +985,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_STARTUP_OPTIONS_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_STARTUP_OPTIONS_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_STARTUP_OPTIONS_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
@@ -881,10 +995,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "PropValue");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODE_STARTUP_OPTIONS_TYPE, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
@@ -894,7 +1004,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(6).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_STARTUP_OPTIONS_LOCATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_STARTUP_OPTIONS_LOCATION);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_STARTUP_OPTIONS_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "PropName");
                     addRowFieldToPivot(pivot, "PropValue");
@@ -904,10 +1014,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "NodeName");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    chart = sheet.Drawings.AddChart(GRAPH_NODE_STARTUP_OPTIONS_LOCATION, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
@@ -934,7 +1040,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_PROPERTIES_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_PROPERTIES_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_PROPERTIES_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
@@ -944,10 +1050,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "PropValue");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODE_PROPERTIES_TYPE, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
@@ -957,7 +1059,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(6).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_PROPERTIES_LOCATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_PROPERTIES_LOCATION);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_PROPERTIES_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "PropName");
                     addRowFieldToPivot(pivot, "PropValue");
@@ -967,10 +1069,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "NodeName");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    chart = sheet.Drawings.AddChart(GRAPH_NODE_PROPERTIES_LOCATION, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
@@ -997,7 +1095,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     // Make pivot
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_ENVIRONMENT_VARIABLES_TYPE_PIVOT];
-                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_ENVIRONMENT_VARIABLES_TYPE);
+                    ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_ENVIRONMENT_VARIABLES_TYPE);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "Controller");
                     addRowFieldToPivot(pivot, "ApplicationName");
@@ -1007,10 +1105,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "PropValue");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    ExcelChart chart = sheet.Drawings.AddChart(GRAPH_NODE_ENVIRONMENT_VARIABLES_TYPE, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;
@@ -1020,7 +1114,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     sheet.Column(6).Width = 20;
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODE_ENVIRONMENT_VARIABLES_LOCATION_PIVOT];
-                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + PIVOT_SHEET_CHART_HEIGHT, 1], range, PIVOT_NODE_ENVIRONMENT_VARIABLES_LOCATION);
+                    pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT, 1], range, PIVOT_NODE_ENVIRONMENT_VARIABLES_LOCATION);
                     setDefaultPivotTableSettings(pivot);
                     addRowFieldToPivot(pivot, "PropName");
                     addRowFieldToPivot(pivot, "PropValue");
@@ -1030,10 +1124,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addRowFieldToPivot(pivot, "NodeName");
                     addColumnFieldToPivot(pivot, "AgentType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "NodeName", DataFieldFunctions.Count);
-
-                    chart = sheet.Drawings.AddChart(GRAPH_NODE_ENVIRONMENT_VARIABLES_LOCATION, eChartType.ColumnClustered, pivot);
-                    chart.SetPosition(2, 0, 0, 0);
-                    chart.SetSize(800, 300);
 
                     sheet.Column(1).Width = 20;
                     sheet.Column(2).Width = 20;

@@ -1,0 +1,193 @@
+﻿<?xml version="1.0"?>
+<html>
+    <head>
+        <title>[TITLE GOES HERE]</title>
+        <style>
+            body
+            {
+                font-family: Arial;
+            }
+            thead
+            {
+                display: table-header-group;
+                font-weight: bold;
+                vertical-align: middle;
+                border-color: inherit;
+                background: LightGray;
+            }
+            td
+            {
+                font-size: 10pt;
+                vertical-align: top;
+                border-color: inherit;
+            }
+            tr:nth-child(odd)
+                {
+                background: LightGray;
+            }
+            tr:nth-child(even)
+            {
+                background: white;
+            }
+            table.Entities
+            {
+                word-wrap: break-word;
+            }
+            td.Controller
+            {
+                max-width: 200px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.Application
+            {
+                max-width: 100px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.Tier
+            {
+                max-width: 150px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.Node
+            {
+                max-width: 150px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.BusinessTransaction
+            {
+                max-width: 150px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.Backend
+            {
+                max-width: 150px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+            td.Type
+            {
+                max-width: 100px;
+                overflow: visible;
+                word-wrap: inherit;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>AppDynamics DEXTER Application Flame Graphs Screenshots Report</h1>
+        <p>
+            <table>
+                <tr>
+                    <td>Version</td>
+                    <td id="tdVersion">AppDynamics DEXTER v{0}</td>
+                </tr>
+                <tr>
+                    <td>From</td>
+                    <td id="tdFromDateTime">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>To</td>
+                    <td id="tdToDateTime">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>Timezone</td>
+                    <td id="tdTimezone">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>Controller</td>
+                    <td id="tdController">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>Application</td>
+                    <td id="tdApplication">[TO BE FILLED]</td>
+                </tr>
+                <tr>
+                    <td>ID</td>
+                    <td id="tdApplicationID">[TO BE FILLED]</td>
+                </tr>
+            </table>
+        </p>
+        <p>
+            <a href="#Application">Application</a>
+            <a href="#Tiers">Tiers</a>
+            <a href="#Nodes">Nodes</a>
+            <a href="#BusinessTransactions">Business Transactions</a>
+        </p>
+        <h1 id="Application">Application</h1>
+        <p>
+            <table class="Entities">
+                <thead>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Application</td>
+                        <td>ID</td>
+                        <td>File Name</td>
+                        <td>Flame Graph</td>
+                        <td>Flame Chart</td>
+                    </tr>
+                </thead>
+                <tr id="trApplicationPlaceholder"></tr>
+            </table>
+        </p>
+        <h1 id="Tiers">Tiers</h1>
+        <p>
+            <table class="Entities">
+                <thead>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Application</td>
+                        <td>Tier</td>
+                        <td>Type</td>
+                        <td>ID</td>
+                        <td>File Name</td>
+                        <td>Flame Graph</td>
+                        <td>Flame Chart</td>
+                    </tr>
+                </thead>
+                <tr id="trTiersPlaceholder"></tr>
+            </table>
+        </p>
+        <h1 id="Nodes">Nodes</h1>
+        <p>
+            <table class="Entities">
+                <thead>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Application</td>
+                        <td>Tier</td>
+                        <td>Node</td>
+                        <td>Type</td>
+                        <td>ID</td>
+                        <td>File Name</td>
+                        <td>Flame Graph</td>
+                        <td>Flame Chart</td>
+                    </tr>
+                </thead>
+                <tr id="trNodesPlaceholder"></tr>
+            </table>
+        </p>
+        <h1 id="BusinessTransactions">Business Transactions</h1>
+        <p>
+            <table class="Entities">
+                <thead>
+                    <tr>
+                        <td>Controller</td>
+                        <td>Application</td>
+                        <td>Tier</td>
+                        <td>Business Transaction</td>
+                        <td>Type</td>
+                        <td>ID</td>
+                        <td>File Name</td>
+                        <td>Flame Graph</td>
+                        <td>Flame Chart</td>
+                    </tr>
+                </thead>
+                <tr id="trBusinessTransactionsPlaceholder"></tr>
+            </table>
+        </p>
+    </body>
+</html>

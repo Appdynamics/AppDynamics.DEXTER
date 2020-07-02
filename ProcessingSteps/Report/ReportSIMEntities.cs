@@ -298,7 +298,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -307,7 +307,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -316,7 +316,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_SIM_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMApplicationsReportFilePath(), 0, typeof(SIMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -325,7 +325,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Tiers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMTiersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMTiersReportFilePath(), 0, typeof(SIMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -334,7 +334,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Nodes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMNodesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMNodesReportFilePath(), 0, typeof(SIMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -343,7 +343,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machines");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachinesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachinesReportFilePath(), 0, typeof(SIMMachine), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -352,7 +352,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine Properties");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_PROPERTIES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachinePropertiesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachinePropertiesReportFilePath(), 0, typeof(SIMMachineProperty), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -361,7 +361,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine Volumes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_VOLUMES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineVolumesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineVolumesReportFilePath(), 0, typeof(SIMMachineVolume), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -370,7 +370,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine Networks");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_NETWORKS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineNetworksReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineNetworksReportFilePath(), 0, typeof(SIMMachineNetwork), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -379,7 +379,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine CPUs");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_CPUS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineCPUsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineCPUsReportFilePath(), 0, typeof(SIMMachineCPU), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -388,7 +388,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine Containers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_CONTAINERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineContainersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineContainersReportFilePath(), 0, typeof(SIMMachineContainer), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -397,7 +397,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Machine Processes");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MACHINE_PROCESSES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineProcessesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SIMMachineProcessesReportFilePath(), 0, typeof(SIMMachineProcess), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

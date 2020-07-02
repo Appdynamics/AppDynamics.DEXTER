@@ -81,6 +81,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Load and bucketize the framework mappings
                         Dictionary<string, List<MethodCallLineClassTypeMapping>> methodCallLineClassToFrameworkTypeMappingDictionary = populateMethodCallMappingDictionary(FilePathMap.MethodCallLinesToFrameworkTypetMappingFilePath());
 
+                        XmlWriterSettings xmlWriterSettings = new XmlWriterSettings();
+                        xmlWriterSettings.Indent = true;
+
+                        XmlReaderSettings xmlReaderSettings = new XmlReaderSettings();
+                        xmlReaderSettings.DtdProcessing = DtdProcessing.Parse;
+                        xmlReaderSettings.IgnoreComments = false;
+
+                        List<APMApplication> applicationList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
+                        List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersIndexFilePath(jobTarget), new APMTierReportMap());
+                        List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                        List<APMBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget), new APMBusinessTransactionReportMap());
+
                         #endregion
 
                         ParallelOptions parallelOptions = new ParallelOptions();
@@ -94,20 +106,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Application
 
-                                List<APMApplication> applicationsList = FileIOHelper.ReadListFromCSVFile<APMApplication>(FilePathMap.APMApplicationsIndexFilePath(jobTarget), new APMApplicationReportMap());
-                                if (applicationsList != null && applicationsList.Count > 0)
+                                if (applicationList != null && applicationList.Count > 0)
                                 {
                                     loggerConsole.Info("Flame Graphs for Application");
 
                                     stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + 1;
 
-                                    APMApplication application = applicationsList[0];
+                                    APMApplication application = applicationList[0];
 
                                     if (File.Exists(FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget)) == true)
                                     {
                                         createFlameGraph(
                                             FilePathMap.SnapshotsFoldedCallStacksIndexApplicationFilePath(jobTarget),
-                                            FilePathMap.FlameGraphReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
+                                            FilePathMap.FlameGraphReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
                                             methodCallLineClassToFrameworkTypeMappingDictionary,
@@ -118,14 +129,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     {
                                         createFlameGraph(
                                             FilePathMap.SnapshotsFoldedCallStacksWithTimeIndexApplicationFilePath(jobTarget),
-                                            FilePathMap.FlameChartReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true),
+                                            FilePathMap.FlameChartReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, true),
                                             String.Format("{0}/{1} ({2:G}-{3:G})", application.Controller, application.ApplicationName, jobConfiguration.Input.TimeRange.From.ToLocalTime(), jobConfiguration.Input.TimeRange.To.ToLocalTime()),
                                             flameGraphTemplateString,
                                             methodCallLineClassToFrameworkTypeMappingDictionary,
                                             true);
                                     }
 
-                                    Interlocked.Add(ref numEntitiesTotal, applicationsList.Count);
+                                    Interlocked.Add(ref numEntitiesTotal, applicationList.Count);
                                 }
 
                                 #endregion
@@ -134,7 +145,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Tier
 
-                                List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersIndexFilePath(jobTarget), new APMTierReportMap());
                                 if (tiersList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Tiers ({0} entities)", tiersList.Count);
@@ -176,7 +186,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Nodes
 
-                                List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
                                 if (nodesList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Nodes ({0} entities)", nodesList.Count);
@@ -217,7 +226,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 #region Business Transactions
 
-                                List<APMBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget), new APMBusinessTransactionReportMap());
                                 if (businessTransactionsList != null)
                                 {
                                     loggerConsole.Info("Flame Graphs for Business Transactions ({0} entities)", businessTransactionsList.Count);
@@ -255,6 +263,434 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 #endregion
                             }
                         );
+
+                        #region Generate links
+
+                        loggerConsole.Info("Generating Links to All Flame Graphs");
+
+                        if (applicationList != null && applicationList.Count > 0)
+                        {
+                            APMApplication application = applicationList[0];
+
+                            string flameGraphLinkFilePath = FilePathMap.ApplicationFlameGraphsLinksReportFilePath(application, true);
+
+                            FileIOHelper.CreateFolderForFile(flameGraphLinkFilePath);
+
+                            using (StringReader stringReader = new StringReader(FileIOHelper.ReadFileFromPath(FilePathMap.ApplicationFlameGraphsLinksTemplateFilePath())))
+                            {
+                                using (XmlReader xmlReader = XmlReader.Create(stringReader, xmlReaderSettings))
+                                {
+                                    using (XmlWriter xmlWriter = XmlWriter.Create(flameGraphLinkFilePath, xmlWriterSettings))
+                                    {
+                                        while (xmlReader.Read())
+                                        {
+                                            // Adjust version
+                                            if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdVersion")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(String.Format(xmlReader.Value, Assembly.GetEntryAssembly().GetName().Version));
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust date from
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdFromDateTime")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(jobConfiguration.Input.TimeRange.From.ToLocalTime().ToString("G"));
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust date to
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdToDateTime")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(jobConfiguration.Input.TimeRange.To.ToLocalTime().ToString("G"));
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust date timezone
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdTimezone")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(TimeZoneInfo.Local.DisplayName);
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust Controller
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdController")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(application.Controller);
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust Application
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdApplication")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(application.ApplicationName);
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Adjust Application ID
+                                            else if (xmlReader.IsStartElement("td") == true && xmlReader.GetAttribute("id") == "tdApplicationID")
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(application.ApplicationID.ToString());
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // Title
+                                            else if (xmlReader.IsStartElement("title") == true)
+                                            {
+                                                xmlWriter.WriteStartElement(xmlReader.LocalName);
+                                                xmlReader.Read();
+                                                xmlWriter.WriteString(String.Format("Flame: {0}[{1}] - {2}", jobTarget.Application, jobTarget.ApplicationID, jobTarget.Controller));
+                                                xmlWriter.WriteEndElement();
+
+                                                // Read the template string and closing /text tag to move the reader forward
+                                                xmlReader.Read();
+                                            }
+                                            // List of Applications
+                                            else if (xmlReader.IsStartElement("tr") == true && xmlReader.GetAttribute("id") == "trApplicationPlaceholder")
+                                            {
+                                                xmlWriter.WriteStartElement("tr");
+
+                                                xmlWriter.WriteStartElement("td");
+                                                xmlWriter.WriteAttributeString("class", "Controller");
+                                                xmlWriter.WriteString(application.Controller);
+                                                xmlWriter.WriteEndElement();
+
+                                                xmlWriter.WriteStartElement("td");
+                                                xmlWriter.WriteAttributeString("class", "Application");
+                                                xmlWriter.WriteString(application.ApplicationName);
+                                                xmlWriter.WriteEndElement();
+
+                                                xmlWriter.WriteStartElement("td");
+                                                xmlWriter.WriteString(application.ApplicationID.ToString());
+                                                xmlWriter.WriteEndElement();
+
+                                                if (File.Exists(FilePathMap.FlameGraphReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, true)) == true)
+                                                {
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteString(FilePathMap.FlameGraphReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, false));
+                                                    xmlWriter.WriteEndElement();
+
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteStartElement("a");
+                                                    xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameGraphReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                    xmlWriter.WriteAttributeString("target", "_blank");
+                                                    xmlWriter.WriteString("Flame Graph");
+                                                    xmlWriter.WriteEndElement();
+                                                    xmlWriter.WriteEndElement();
+
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteStartElement("a");
+                                                    xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameChartReportFilePath(application, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                    xmlWriter.WriteAttributeString("target", "_blank");
+                                                    xmlWriter.WriteString("Flame Chart");
+                                                    xmlWriter.WriteEndElement();
+                                                    xmlWriter.WriteEndElement();
+                                                }
+                                                else
+                                                {
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteString(" ");
+                                                    xmlWriter.WriteEndElement();
+
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteString(" ");
+                                                    xmlWriter.WriteEndElement();
+
+                                                    xmlWriter.WriteStartElement("td");
+                                                    xmlWriter.WriteString("  ");
+                                                    xmlWriter.WriteEndElement();
+                                                }
+
+                                                xmlWriter.WriteEndElement();
+
+                                                // Move off the content placeholder
+                                                xmlReader.Read();
+                                                xmlReader.Read();
+                                            }
+                                            // List of Tiers
+                                            else if (xmlReader.IsStartElement("tr") == true && xmlReader.GetAttribute("id") == "trTiersPlaceholder")
+                                            {
+                                                if (tiersList != null)
+                                                {
+                                                    foreach (APMTier tier in tiersList)
+                                                    {
+                                                        xmlWriter.WriteStartElement("tr");
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Controller");
+                                                        xmlWriter.WriteString(tier.Controller);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Application");
+                                                        xmlWriter.WriteString(tier.ApplicationName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Tier");
+                                                        xmlWriter.WriteString(tier.TierName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Type");
+                                                        xmlWriter.WriteString(tier.TierType);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteString(tier.TierID.ToString());
+                                                        xmlWriter.WriteEndElement();
+
+                                                        if (File.Exists(FilePathMap.FlameGraphReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, true)) == true)
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(FilePathMap.FlameGraphReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, false));
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameGraphReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Graph");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameChartReportFilePath(tier, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Chart");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+                                                        else
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString("  ");
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+
+                                                        xmlWriter.WriteEndElement();
+                                                    }
+                                                }
+
+                                                // Move off the content placeholder
+                                                xmlReader.Read();
+                                                xmlReader.Read();
+                                            }
+                                            // List of Nodes
+                                            else if (xmlReader.IsStartElement("tr") == true && xmlReader.GetAttribute("id") == "trNodesPlaceholder")
+                                            {
+                                                if (nodesList != null)
+                                                {
+                                                    foreach (APMNode node in nodesList)
+                                                    {
+                                                        xmlWriter.WriteStartElement("tr");
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Controller");
+                                                        xmlWriter.WriteString(node.Controller);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Application");
+                                                        xmlWriter.WriteString(node.ApplicationName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Tier");
+                                                        xmlWriter.WriteString(node.TierName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Node");
+                                                        xmlWriter.WriteString(node.NodeName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Type");
+                                                        xmlWriter.WriteString(node.AgentType);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteString(node.NodeID.ToString());
+                                                        xmlWriter.WriteEndElement();
+
+                                                        if (File.Exists(FilePathMap.FlameGraphReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, true)) == true)
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(FilePathMap.FlameGraphReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, false));
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameGraphReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Graph");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameChartReportFilePath(node, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Chart");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+                                                        else
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString("  ");
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+
+                                                        xmlWriter.WriteEndElement();
+                                                    }
+                                                }
+
+                                                // Move off the content placeholder
+                                                xmlReader.Read();
+                                                xmlReader.Read();
+                                            }
+                                            // List of Business Transactions
+                                            else if (xmlReader.IsStartElement("tr") == true && xmlReader.GetAttribute("id") == "trBusinessTransactionsPlaceholder")
+                                            {
+                                                if (businessTransactionsList != null)
+                                                {
+                                                    foreach (APMBusinessTransaction businessTransaction in businessTransactionsList)
+                                                    {
+                                                        xmlWriter.WriteStartElement("tr");
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Controller");
+                                                        xmlWriter.WriteString(businessTransaction.Controller);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Application");
+                                                        xmlWriter.WriteString(businessTransaction.ApplicationName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Tier");
+                                                        xmlWriter.WriteString(businessTransaction.TierName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "BusinessTransaction");
+                                                        xmlWriter.WriteString(businessTransaction.BTName);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteAttributeString("class", "Type");
+                                                        xmlWriter.WriteString(businessTransaction.BTType);
+                                                        xmlWriter.WriteEndElement();
+
+                                                        xmlWriter.WriteStartElement("td");
+                                                        xmlWriter.WriteString(businessTransaction.BTID.ToString());
+                                                        xmlWriter.WriteEndElement();
+
+                                                        if (File.Exists(FilePathMap.FlameGraphReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, true)) == true)
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(FilePathMap.FlameGraphReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, false));
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameGraphReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Graph");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteStartElement("a");
+                                                            xmlWriter.WriteAttributeString("href", String.Format(@"..\..\{0}", FilePathMap.FlameChartReportFilePath(businessTransaction, jobTarget, jobConfiguration.Input.TimeRange, false)));
+                                                            xmlWriter.WriteAttributeString("target", "_blank");
+                                                            xmlWriter.WriteString("Flame Chart");
+                                                            xmlWriter.WriteEndElement();
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+                                                        else
+                                                        {
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString(" ");
+                                                            xmlWriter.WriteEndElement();
+
+                                                            xmlWriter.WriteStartElement("td");
+                                                            xmlWriter.WriteString("  ");
+                                                            xmlWriter.WriteEndElement();
+                                                        }
+
+                                                        xmlWriter.WriteEndElement();
+                                                    }
+                                                }
+
+                                                // Move off the content placeholder
+                                                xmlReader.Read();
+                                                xmlReader.Read();
+                                            }
+                                            // All other nodes
+                                            else
+                                            {
+                                                WriteShallowNode(xmlReader, xmlWriter);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
+                        #endregion
 
                         stepTimingTarget.NumEntities = numEntitiesTotal;
                     }
