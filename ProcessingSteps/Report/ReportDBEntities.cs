@@ -361,7 +361,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -370,7 +370,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -379,7 +379,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_DB_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBApplicationsReportFilePath(), 0, typeof(DBApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -388,7 +388,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Collectors");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_COLLECTORS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCollectorsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBCollectorsReportFilePath(), 0, typeof(DBCollector), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -397,7 +397,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Queries");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_QUERIES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBQueriesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBQueriesReportFilePath(), 0, typeof(DBQuery), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -406,7 +406,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Users");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_USERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBUsersReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBUsersReportFilePath(), 0, typeof(DBUser), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -415,7 +415,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Sessions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SESSIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBSessionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBSessionsReportFilePath(), 0, typeof(DBSession), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -424,7 +424,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Blocking Sessions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BLOCKING_SESSIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBBlockingSessionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBBlockingSessionsReportFilePath(), 0, typeof(DBBlockingSession), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -433,7 +433,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Clients");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CLIENTS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBClientsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBClientsReportFilePath(), 0, typeof(DBClient), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -442,7 +442,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Databases");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DATABASES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBDatabasesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBDatabasesReportFilePath(), 0, typeof(DBDatabase), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -451,7 +451,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Modules");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_MODULES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBModulesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBModulesReportFilePath(), 0, typeof(DBModule), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -460,7 +460,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Programs");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_PROGRAMS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBProgramsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBProgramsReportFilePath(), 0, typeof(DBProgram), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -469,7 +469,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Transactions");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBBusinessTransactionsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBBusinessTransactionsReportFilePath(), 0, typeof(DBBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -478,7 +478,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Wait States");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WAITSTATES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBWaitStatesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.DBWaitStatesReportFilePath(), 0, typeof(DBProgram), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

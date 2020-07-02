@@ -94,7 +94,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string GRAPH_INFORMATION_POINTS_FULL = "g_InformationPoints_Full_Scatter";
         private const string GRAPH_INFORMATION_POINTS_HOURLY = "g_InformationPoints_Hourly_Scatter";
 
-        private const int LIST_SHEET_START_TABLE_AT = 17;
+        private const int LIST_SHEET_START_TABLE_AT = 4;
         private const int PIVOT_SHEET_START_PIVOT_AT = 7;
         private const int PIVOT_SHEET_CHART_HEIGHT = 14;
 
@@ -172,7 +172,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS_FULL);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -373,7 +373,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_ERRORS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_ERRORS_HOURLY);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -382,7 +382,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[2, 1].Value = "See Pivot";
                 sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_ERRORS_PERF_PIVOT);
                 sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT - 13 + 1, 1);
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
                 sheet = excelReport.Workbook.Worksheets.Add(SHEET_ERRORS_PERF_PIVOT);
                 sheet.Cells[1, 1].Value = "Table of Contents";
@@ -436,7 +436,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -445,12 +445,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Applications (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -459,12 +459,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Tiers (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Tiers (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -473,12 +473,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Nodes (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Nodes (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -487,12 +487,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Backends (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Backends (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -501,12 +501,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Transactions (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Business Transactions (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -515,12 +515,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Service Endpoints (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Service Endpoints (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -529,12 +529,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Errors (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMError.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Errors (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMError.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT - 13, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -543,12 +543,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Information Points (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Information Points (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -560,9 +560,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                     table = sheet.Tables.Add(range, TABLE_CONTROLLERS);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
@@ -593,7 +593,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     adjustColumnsOfEntityRowTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
                     addConditionalFormattingToTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
 
-                    addScatterChartToEntityMetricSheet(sheet, table, "ApplicationName", GRAPH_APPLICATIONS_FULL);
+                    // addScatterChartToEntityMetricSheet(sheet, table, "ApplicationName", GRAPH_APPLICATIONS_FULL);
                 }
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_HOURLY];
@@ -611,7 +611,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     adjustColumnsOfEntityRowTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
                     addConditionalFormattingToTableInMetricReport(APMApplication.ENTITY_TYPE, sheet, table);
 
-                    addScatterChartToEntityMetricSheet(sheet, table, "ApplicationName", GRAPH_APPLICATIONS_HOURLY);
+                    // addScatterChartToEntityMetricSheet(sheet, table, "ApplicationName", GRAPH_APPLICATIONS_HOURLY);
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_PERF_PIVOT];
                     ExcelPivotTable pivot = sheet.PivotTables.Add(sheet.Cells[PIVOT_SHEET_START_PIVOT_AT + 1, 1], range, PIVOT_APPLICATIONS);
@@ -658,7 +658,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "TierName", GRAPH_TIERS_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "TierName", GRAPH_TIERS_FULL);
                     }
                 }
 
@@ -679,7 +679,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "TierName", GRAPH_TIERS_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "TierName", GRAPH_TIERS_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_PERF_PIVOT];
@@ -752,7 +752,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "NodeName", GRAPH_NODES_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "NodeName", GRAPH_NODES_FULL);
                     }
                 }
 
@@ -773,7 +773,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "NodeName", GRAPH_NODES_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "NodeName", GRAPH_NODES_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_NODES_PERF_PIVOT];
@@ -850,7 +850,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "BackendName", GRAPH_BACKENDS_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "BackendName", GRAPH_BACKENDS_FULL);
                     }
                 }
 
@@ -871,7 +871,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "BackendName", GRAPH_BACKENDS_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "BackendName", GRAPH_BACKENDS_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_PERF_PIVOT];
@@ -919,7 +919,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "BTName", GRAPH_BUSINESS_TRANSACTIONS_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "BTName", GRAPH_BUSINESS_TRANSACTIONS_FULL);
                     }
                 }
 
@@ -940,7 +940,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "BTName", GRAPH_BUSINESS_TRANSACTIONS_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "BTName", GRAPH_BUSINESS_TRANSACTIONS_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_PERF_PIVOT];
@@ -990,7 +990,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "SEPName", GRAPH_SERVICE_ENDPOINTS_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "SEPName", GRAPH_SERVICE_ENDPOINTS_FULL);
                     }
                 }
 
@@ -1011,7 +1011,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "SEPName", GRAPH_SERVICE_ENDPOINTS_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "SEPName", GRAPH_SERVICE_ENDPOINTS_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_PERF_PIVOT];
@@ -1047,9 +1047,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_FULL];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                     table = sheet.Tables.Add(range, TABLE_ERRORS_FULL);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
@@ -1063,9 +1063,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_HOURLY];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
-                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT - 13)
+                if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
-                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT - 13, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
+                    range = sheet.Cells[LIST_SHEET_START_TABLE_AT, 1, sheet.Dimension.Rows, sheet.Dimension.Columns];
                     table = sheet.Tables.Add(range, TABLE_ERRORS_HOURLY);
                     table.ShowHeader = true;
                     table.TableStyle = TableStyles.Medium2;
@@ -1117,7 +1117,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "IPName", GRAPH_INFORMATION_POINTS_FULL);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "IPName", GRAPH_INFORMATION_POINTS_FULL);
                     }
                 }
 
@@ -1138,7 +1138,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     if (sheet.Dimension.Rows < 2018)
                     {
-                        addScatterChartToEntityMetricSheet(sheet, table, "IPName", GRAPH_INFORMATION_POINTS_HOURLY);
+                        // addScatterChartToEntityMetricSheet(sheet, table, "IPName", GRAPH_INFORMATION_POINTS_HOURLY);
                     }
 
                     sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_PERF_PIVOT];
@@ -1285,7 +1285,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             }
             else if (entityType == APMError.ENTITY_TYPE)
             {
-                ExcelAddress cfAddressEPM = new ExcelAddress(LIST_SHEET_START_TABLE_AT - 13 + 1, table.Columns["EPM"].Position + 1, sheet.Dimension.Rows, table.Columns["EPM"].Position + 1);
+                ExcelAddress cfAddressEPM = new ExcelAddress(LIST_SHEET_START_TABLE_AT + 1, table.Columns["EPM"].Position + 1, sheet.Dimension.Rows, table.Columns["EPM"].Position + 1);
                 var cfEPM = sheet.ConditionalFormatting.AddThreeColorScale(cfAddressEPM);
                 cfEPM.LowValue.Color = colorGreenFor3ColorScales;
                 cfEPM.MiddleValue.Type = eExcelConditionalFormattingValueObjectType.Percentile;

@@ -44,6 +44,80 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool IsAPMAgentUsed { get; set; }
         public bool IsMachineAgentUsed { get; set; }
 
+        // IIS, Self-hosted, Tomcat, JBoss, WebSphere, WebLogic, GlassFish, Jetty
+        public string WebHostContainerType { get; set; }
+        // AWS, Azure, GCP, OnPrem
+        public string CloudHostType { get; set; }
+        public string CloudRegion { get; set; }
+        // Kubernetes, Openshift, Pivotal
+        public string ContainerRuntimeType { get; set; }
+
+        //java.class.path
+        public string ClassPath { get; set; }
+        //java.class.version
+        public string ClassVersion { get; set; }
+
+        //java.home
+        public string Home { get; set; }
+
+        //java.runtime.name
+        public string RuntimeName { get; set; }
+        //java.runtime.version
+        public string RuntimeVersion { get; set; }
+
+        //java.vendor
+        //or Microsoft for CLR
+        public string Vendor { get; set; }
+        //java.vendor.version
+        public string VendorVersion { get; set; }
+        //java.version
+        //CLR Version
+        public string Version { get; set; }
+
+        //java.vm.info
+        public string VMInfo { get; set; }
+        //java.vm.name
+        public string VMName { get; set; }
+        //java.vm.vendor
+        //or Microsoft for CLR
+        public string VMVendor { get; set; }
+        //java.vm.version
+        public string VMVersion { get; set; }
+
+        //os.arch
+        //PROCESSOR_ARCHITECTURE
+        public string OSArchitecture { get; set; }
+        //os.name
+        //OS
+        public string OSName { get; set; }
+        //os.version
+        public string OSVersion { get; set; }
+        //COMPUTERNAME, HOSTNAME, HOST_NAME
+        public string OSComputerName { get; set; }
+        
+        //PROCESSOR_IDENTIFIER
+        public string OSProcessorType { get; set; }
+        //PROCESSOR_REVISION
+        public string OSProcessorRevision { get; set; }
+        // NUMBER_OF_PROCESSORS
+        public int? OSNumberOfProcs { get; set; }
+
+        //USER, USERNAME
+        public string UserName { get; set; }
+        //DOMAIN, DOMAINNAME
+        public string Domain { get; set; }
+
+        // -Xmnsize
+        // -XX:NewSize
+        public double? HeapYoungInitialSizeMB { get; set; }
+        // -XX:MaxNewSize
+        public double? HeapYoungMaxSizeMB { get; set; }
+        // -Xmssize
+        public double? HeapInitialSizeMB { get; set; }
+        // -XX:MaxHeapSize
+        // -Xmxsize
+        public double? HeapMaxSizeMB { get; set; }
+
         public override long EntityID
         {
             get

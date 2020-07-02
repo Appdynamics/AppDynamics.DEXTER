@@ -595,6 +595,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             logger.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
             loggerConsole.Trace("Input.Metrics={0}", jobConfiguration.Input.Metrics);
+            logger.Trace("Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail={0}", jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail);
+            loggerConsole.Trace("Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail={0}", jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail);
             logger.Trace("Input.Events={0}", jobConfiguration.Input.Events);
             loggerConsole.Trace("Input.Events={0}", jobConfiguration.Input.Events);
             logger.Trace("Input.Flowmaps={0}", jobConfiguration.Input.Flowmaps);
@@ -609,11 +611,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Trace("Too many time ranges in the selection criteria, skipping report of per-entity details because they will not all fit");
                 return false;
             }
-            if ((jobConfiguration.Input.Metrics == false && jobConfiguration.Input.Events == false && jobConfiguration.Input.Flowmaps == false && jobConfiguration.Input.Snapshots == false) || jobConfiguration.Output.EntityDetails == false)
+            if (((jobConfiguration.Input.Metrics == false || jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail == false) && jobConfiguration.Input.Events == false && jobConfiguration.Input.Flowmaps == false && jobConfiguration.Input.Snapshots == false) || jobConfiguration.Output.EntityDetails == false)
             {
                 loggerConsole.Trace("Skipping report of per-entity details");
             }
-            return ((jobConfiguration.Input.Metrics == true || jobConfiguration.Input.Events == true || jobConfiguration.Input.Flowmaps == true || jobConfiguration.Input.Snapshots == true) && jobConfiguration.Output.EntityDetails == true);
+            return (((jobConfiguration.Input.Metrics == true && jobConfiguration.Input.MetricsSelectionCriteria.IncludeHourAndMinuteDetail == true) || jobConfiguration.Input.Events == true || jobConfiguration.Input.Flowmaps == true || jobConfiguration.Input.Snapshots == true) && jobConfiguration.Output.EntityDetails == true);
         }
 
         private ExcelPackage createIndividualEntityDetailReportTemplate(ProgramOptions programOptions, JobConfiguration jobConfiguration, JobTarget jobTarget)
@@ -658,7 +660,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
             sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
-            ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryIndexFilePath(jobTarget), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+            ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryIndexFilePath(jobTarget), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
             if (range != null)
             {
                 ExcelTable table = sheet.Tables.Add(range, TABLE_CONTROLLERS);
@@ -767,6 +769,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             MemoryStream memoryStreamEntitiesFullRange = null;
             MemoryStream memoryStreamEntitiesHourlyRanges = null;
+            Type APMEntityType = typeof(APMEntityBase);
 
             try
             {
@@ -777,6 +780,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ApplicationMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ApplicationMetricReportMap());
+
+                    APMEntityType = typeof(APMApplication);
                 }
                 else if (entity.EntityType == APMTier.ENTITY_TYPE)
                 {
@@ -785,6 +790,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new TierMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new TierMetricReportMap());
+                
+                    APMEntityType = typeof(APMTier);
                 }
                 else if (entity.EntityType == APMNode.ENTITY_TYPE)
                 {
@@ -793,6 +800,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new NodeMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new NodeMetricReportMap());
+                
+                    APMEntityType = typeof(APMNode);
                 }
                 else if (entity.EntityType == APMBackend.ENTITY_TYPE)
                 {
@@ -801,6 +810,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BackendMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BackendMetricReportMap());
+                
+                    APMEntityType = typeof(APMBackend);
                 }
                 else if (entity.EntityType == APMBusinessTransaction.ENTITY_TYPE)
                 {
@@ -809,6 +820,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new BusinessTransactionMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new BusinessTransactionMetricReportMap());
+                
+                    APMEntityType = typeof(APMBusinessTransaction);
                 }
                 else if (entity.EntityType == APMServiceEndpoint.ENTITY_TYPE)
                 {
@@ -817,6 +830,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ServiceEndpointMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ServiceEndpointMetricReportMap());
+                
+                    APMEntityType = typeof(APMServiceEndpoint);
                 }
                 else if (entity.EntityType == APMError.ENTITY_TYPE)
                 {
@@ -825,6 +840,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     memoryStreamEntitiesFullRange = FileIOHelper.WriteListToMemoryStream(entitiesFullRangeFiltered, new ErrorMetricReportMap());
                     memoryStreamEntitiesHourlyRanges = FileIOHelper.WriteListToMemoryStream(entitiesHourRangeFiltered, new ErrorMetricReportMap());
+                
+                    APMEntityType = typeof(APMError);
                 }
             }
             catch (ArgumentNullException ex)
@@ -847,7 +864,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             fromRow = LIST_SHEET_START_TABLE_AT;
             if (memoryStreamEntitiesFullRange != null)
             {
-                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamEntitiesFullRange, 0, sheet, fromRow, 1);
+                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamEntitiesFullRange, 0, APMEntityType, sheet, fromRow, 1);
                 memoryStreamEntitiesFullRange.Close();
                 memoryStreamEntitiesFullRange.Dispose();
 
@@ -884,7 +901,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             if (memoryStreamEntitiesHourlyRanges != null)
             {
-                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamEntitiesHourlyRanges, 0, sheet, fromRow, 1);
+                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamEntitiesHourlyRanges, 0, APMEntityType, sheet, fromRow, 1);
                 memoryStreamEntitiesHourlyRanges.Close();
                 memoryStreamEntitiesHourlyRanges.Dispose();
 
@@ -981,7 +998,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             fromRow = LIST_SHEET_START_TABLE_AT;
             if (memoryStreamActivityFlow != null)
             {
-                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamActivityFlow, 0, sheet, fromRow, 1);
+                range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(memoryStreamActivityFlow, 0, typeof(ActivityFlow), sheet, fromRow, 1);
 
                 memoryStreamActivityFlow.Close();
                 memoryStreamActivityFlow.Dispose();
@@ -1046,7 +1063,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 using (MemoryStream ms = FileIOHelper.WriteListToMemoryStream(eventsFilteredList, new EventReportMap()))
                 {
-                    range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
+                    range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(ms, 0, typeof(Event), sheet, fromRow, 1);
                     if (range != null && range.Rows > 1)
                     {
                         tableEvents = sheet.Tables.Add(range, TABLE_EVENTS);
@@ -1217,7 +1234,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 using (MemoryStream ms = FileIOHelper.WriteListToMemoryStream(snapshotsFilteredList, new SnapshotReportMap()))
                 {
-                    range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(ms, 0, sheet, fromRow, 1);
+                    range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(ms, 0, typeof(Snapshot), sheet, fromRow, 1);
                     if (range != null && range.Rows > 1)
                     {
                         tableSnapshots = sheet.Tables.Add(range, TABLE_SNAPSHOTS);
@@ -2114,7 +2131,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 string metricsValuesFilePath = FilePathMap.MetricValuesIndexFilePath(jobTarget, entityFolderName, metricExtractMapping.FolderName);
                 if (File.Exists(metricsValuesFilePath) == true)
                 {
-                    ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(metricsValuesFilePath, 0, sheetMetrics, fromRow, fromColumn);
+                    ExcelRangeBase range = EPPlusCSVHelper.ReadCSVFileIntoExcelRange(metricsValuesFilePath, 0, typeof(MetricValue), sheetMetrics, fromRow, fromColumn);
                     if (range != null)
                     {
                         if (range.Rows == 1)

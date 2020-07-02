@@ -297,6 +297,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         continue;
                                     }
 
+                                    // Filter only requested RequestIDs
+                                    if (jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs.Length == 0)
+                                    {
+                                        // Don't filter anything if no request IDs specified
+                                        keepSnapshot = true;
+                                    }
+                                    else
+                                    {
+                                        keepSnapshot = false;
+                                        foreach (string matchCriteria in jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs)
+                                        {
+                                            if (matchCriteria.Length > 0)
+                                            {
+                                                // Try straight up string compare first
+                                                if (String.Compare(snapshotToken["requestGUID"].ToString(), matchCriteria, true) == 0)
+                                                {
+                                                    keepSnapshot = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    if (keepSnapshot == false)
+                                    {
+                                        logger.Trace("Filtering snapshot requestGUID={0} because requestID didn't match", snapshotToken["requestGUID"]);
+                                        continue;
+                                    }
+
                                     // Filter user experience
                                     switch (snapshotToken["userExperience"].ToString())
                                     {

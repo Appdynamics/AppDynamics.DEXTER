@@ -383,7 +383,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -392,7 +392,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationSnapshotsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationSnapshotsReportFilePath(), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -401,7 +401,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Snapshots");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SNAPSHOTS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsReportFilePath(), 0, typeof(Snapshot), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -409,7 +409,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Segments");
                 sheet = excelReport.Workbook.Worksheets[SHEET_SEGMENTS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsSegmentsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsSegmentsReportFilePath(), 0, typeof(Segment), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -418,7 +418,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Exit Calls");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_EXIT_CALLS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsExitCallsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsExitCallsReportFilePath(), 0, typeof(ExitCall), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -427,7 +427,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Service Endpoint Calls");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINT_CALLS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsServiceEndpointCallsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsServiceEndpointCallsReportFilePath(), 0, typeof(ServiceEndpointCall), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -436,7 +436,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Detected Errors");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_DETECTED_ERRORS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsDetectedErrorsCallsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsDetectedErrorsReportFilePath(), 0, typeof(DetectedError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -445,7 +445,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Data");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_DATA];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsBusinessDataReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.SnapshotsBusinessDataReportFilePath(), 0, typeof(BusinessData), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -1178,7 +1178,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     addColumnFieldToPivot(pivot, "DataType", eSortType.Ascending);
                     addDataFieldToPivot(pivot, "SegmentID", DataFieldFunctions.Count);
 
-                    chart = sheet.Drawings.AddChart(GRAPH_BUSINESS_DATA_TYPE, eChartType.Line, pivot);
+                    chart = sheet.Drawings.AddChart(GRAPH_BUSINESS_DATA_TIMELINE, eChartType.Line, pivot);
                     chart.SetPosition(2, 0, 0, 0);
                     chart.SetSize(800, 300);
 

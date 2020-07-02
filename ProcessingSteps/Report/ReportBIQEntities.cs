@@ -282,7 +282,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -291,7 +291,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -300,7 +300,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_BIQ_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQApplicationsReportFilePath(), 0, typeof(BIQApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -309,7 +309,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Searches");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SEARCHES_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSearchesReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSearchesReportFilePath(), 0, typeof(BIQSearch), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -318,7 +318,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Widgets");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_WIDGETS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQWidgetsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQWidgetsReportFilePath(), 0, typeof(BIQWidget), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -327,7 +327,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Saved Metrics");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SAVED_METRICS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQMetricsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQMetricsReportFilePath(), 0, typeof(BIQMetric), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -336,7 +336,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Journeys");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_JOURNEYS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQBusinessJourneysReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQBusinessJourneysReportFilePath(), 0, typeof(BIQBusinessJourney), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -345,7 +345,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Experience Levels");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_EXPERIENCE_LEVELS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQExperienceLevelsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQExperienceLevelsReportFilePath(), 0, typeof(BIQExperienceLevel), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -354,7 +354,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Schemas");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SCHEMAS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSchemasReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSchemasReportFilePath(), 0, typeof(BIQSchema), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -363,7 +363,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Schema Fields");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_FIELDS_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSchemaFieldsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BIQSchemaFieldsReportFilePath(), 0, typeof(BIQSchema), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

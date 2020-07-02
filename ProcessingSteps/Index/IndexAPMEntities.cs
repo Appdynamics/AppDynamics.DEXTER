@@ -75,9 +75,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<AppDRESTNode> nodesRESTList = FileIOHelper.LoadListOfObjectsFromFile<AppDRESTNode>(FilePathMap.APMNodesDataFilePath(jobTarget));
                         List<APMNode> nodesList = null;
-                        List<APMNodeProperty> entityNodeStartupOptionsList = null;
-                        List<APMNodeProperty> entityNodePropertiesList = null;
-                        List<APMNodeProperty> entityNodeEnvironmentVariablesList = null;
+                        List<APMNodeProperty> entityNodesStartupOptionsList = null;
+                        List<APMNodeProperty> entityNodesPropertiesList = null;
+                        List<APMNodeProperty> entityNodesEnvironmentVariablesList = null;
                         if (nodesRESTList != null)
                         {
                             loggerConsole.Info("Index List of Nodes and Node Properties ({0} entities)", nodesRESTList.Count);
@@ -85,45 +85,63 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             stepTimingTarget.NumEntities = stepTimingTarget.NumEntities + nodesRESTList.Count;
 
                             nodesList = new List<APMNode>(nodesRESTList.Count);
-                            entityNodeStartupOptionsList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
-                            entityNodePropertiesList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
-                            entityNodeEnvironmentVariablesList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
+                            entityNodesStartupOptionsList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
+                            entityNodesPropertiesList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
+                            entityNodesEnvironmentVariablesList = new List<APMNodeProperty>(nodesRESTList.Count * 25);
 
                             foreach (AppDRESTNode nodeREST in nodesRESTList)
                             {
+                                List<APMNodeProperty> entityNodeStartupOptionsList = new List<APMNodeProperty>(25);
+                                List<APMNodeProperty> entityNodePropertiesList = new List<APMNodeProperty>(25);
+                                List<APMNodeProperty> entityNodeEnvironmentVariablesList = new List<APMNodeProperty>(25);
+
+                                #region Parse node basics
+
                                 APMNode node = new APMNode();
-                                node.NodeID = nodeREST.id;
-                                node.AgentPresent = nodeREST.appAgentPresent;
-                                node.AgentType = nodeREST.agentType;
-                                node.AgentVersion = nodeREST.appAgentVersion;
+                                node.Controller = jobTarget.Controller;
                                 node.ApplicationName = jobTarget.Application;
                                 node.ApplicationID = jobTarget.ApplicationID;
-                                node.Controller = jobTarget.Controller;
+                                node.AgentType = nodeREST.agentType;
+                                node.TierName = nodeREST.tierName;
+                                node.TierID = nodeREST.tierId;
+                                node.NodeName = nodeREST.name;
+                                node.NodeID = nodeREST.id;
+                                node.MachineName = nodeREST.machineName;
+                                node.MachineID = nodeREST.machineId;
+                                node.AgentPresent = nodeREST.appAgentPresent;
+                                node.AgentVersion = nodeREST.appAgentVersion;
                                 node.MachineAgentPresent = nodeREST.machineAgentPresent;
                                 node.MachineAgentVersion = nodeREST.machineAgentVersion;
-                                node.MachineID = nodeREST.machineId;
-                                node.MachineName = nodeREST.machineName;
                                 node.MachineOSType = nodeREST.machineOSType;
-                                node.NodeName = nodeREST.name;
-                                node.TierID = nodeREST.tierId;
-                                node.TierName = nodeREST.tierName;
                                 node.MachineType = nodeREST.type;
                                 if (node.AgentVersion != String.Empty)
                                 {
                                     // Java agent looks like that
-                                    //Server Agent v4.2.3.2 GA #12153 r13c5eb6a7acbfea4d6da465a3ae47412715e26fa 59-4.2.3.next-build
-                                    //Server Agent v3.7.16.0 GA #2014-02-26_21-19-08 raf61d5f54753290c983f95173e74e6865f6ad123 130-3.7.16
-                                    //Server Agent v4.2.7.1 GA #13005 rc04adaef4741dbb8f2e7c206bdb2a6614046798a 11-4.2.7.next-analytics
-                                    //Server Agent v4.0.6.0 GA #2015-05-11_20-44-33 r7cb8945756a0779766bf1b4c32e49a96da7b8cfe 10-4.0.6.next
-                                    //Server Agent v3.8.3.0 GA #2014-06-06_17-06-05 r34b2744775df248f79ffb2da2b4515b1f629aeb5 7-3.8.3.next
-                                    //Server Agent v3.9.3.0 GA #2014-09-23_22-14-15 r05918cd8a4a8a63504a34f0f1c85511e207049b3 20-3.9.3.next
-                                    //Server Agent v4.1.7.1 GA #9949 ra4a2721d52322207b626e8d4c88855c846741b3d 18-4.1.7.next-build
-                                    //Server Agent v3.7.11.1 GA #2013-10-23_17-07-44 r41149afdb8ce39025051c25382b1cf77e2a7fed0 21
-                                    //Server Agent v4.1.8.5 GA #10236 r8eca32e4695e8f6a5902d34a66bfc12da1e12241 45-4.1.8.next-controller
-                                    //Server Agent v4.4.2 GA #4.4.2.22394 rnull null
+                                    // Server Agent v4.2.3.2 GA #12153 r13c5eb6a7acbfea4d6da465a3ae47412715e26fa 59-4.2.3.next-build
+                                    // Server Agent v3.7.16.0 GA #2014-02-26_21-19-08 raf61d5f54753290c983f95173e74e6865f6ad123 130-3.7.16
+                                    // Server Agent v4.2.7.1 GA #13005 rc04adaef4741dbb8f2e7c206bdb2a6614046798a 11-4.2.7.next-analytics
+                                    // Server Agent v4.0.6.0 GA #2015-05-11_20-44-33 r7cb8945756a0779766bf1b4c32e49a96da7b8cfe 10-4.0.6.next
+                                    // Server Agent v3.8.3.0 GA #2014-06-06_17-06-05 r34b2744775df248f79ffb2da2b4515b1f629aeb5 7-3.8.3.next
+                                    // Server Agent v3.9.3.0 GA #2014-09-23_22-14-15 r05918cd8a4a8a63504a34f0f1c85511e207049b3 20-3.9.3.next
+                                    // Server Agent v4.1.7.1 GA #9949 ra4a2721d52322207b626e8d4c88855c846741b3d 18-4.1.7.next-build
+                                    // Server Agent v3.7.11.1 GA #2013-10-23_17-07-44 r41149afdb8ce39025051c25382b1cf77e2a7fed0 21
+                                    // Server Agent v4.1.8.5 GA #10236 r8eca32e4695e8f6a5902d34a66bfc12da1e12241 45-4.1.8.next-controller
+                                    // Server Agent v4.4.2 GA #4.4.2.22394 rnull null
+                                    // Server Agent #20.4.0.29862 v20.4.0 GA compatible with 4.4.1.0 r23226cf913828e244d2d32691aac97efccf39724 release/20.4.0
+
 
                                     // Apache agent looks like this
                                     // Proxy v4.2.5.1 GA SHA-1:.ad6c804882f518b3350f422489866ea2008cd664 #13146 35-4.2.5.next-build
+
+                                    // .NET agent looks like this
+                                    // 20.4.1 compatible with 4.4.1.0
+                                    // 4.5.1.0 compatible with 4.4.1.0
+                                    // 4.5.13.0 compatible with 4.4.1.0
+                                    // 4.5.14.0 compatible with 4.4.1.0
+
+                                    // .NET Core agent looks like that 
+                                    // 20.4.1 compatible with 4.4.1.0
+                                    // 4.5.17.0 compatible with 4.4.1.0
 
                                     Regex regexVersion = new Regex(@"(?i)(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
                                     Match match = regexVersion.Match(node.AgentVersion);
@@ -169,6 +187,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 updateEntityWithDeeplinks(node);
                                 updateEntityWithEntityDetailAndFlameGraphLinks(node, jobTarget, jobConfiguration.Input.TimeRange);
 
+                                #endregion
+
+                                #region Parse extra properties
+
                                 // Node properties (JVM Tab)
                                 JObject nodeProperties = FileIOHelper.LoadJObjectFromFile(FilePathMap.APMNodeRuntimePropertiesDataFilePath(jobTarget, nodeREST));
                                 if (nodeProperties != null)
@@ -211,14 +233,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             if (optionValueAdjusted.Length > 0)
                                             {
+                                                nodePropertyRow.PropValue = String.Empty;
+
                                                 string[] optionValueAdjustedTokens = optionValueAdjusted.Split(new char[] { '=', ':' });
                                                 if (optionValueAdjustedTokens.Length > 0)
                                                 {
                                                     nodePropertyRow.PropName = optionValueAdjustedTokens[0];
                                                 }
-                                                if (optionValueAdjustedTokens.Length > 1)
+                                                if (optionValueAdjustedTokens.Length == 2)
                                                 {
                                                     nodePropertyRow.PropValue = optionValueAdjustedTokens[1];
+                                                }
+                                                else if (optionValueAdjustedTokens.Length > 2)
+                                                {
+                                                    nodePropertyRow.PropValue = optionValueAdjusted.Substring(optionValueAdjustedTokens[0].Length + 1);
+                                                }
+
+                                                // Adjust for + and - in front of the value
+                                                // Those break Excel by making it think it is a formula
+                                                // Prefixing it with space suffices
+                                                if (nodePropertyRow.PropValue.StartsWith("+") == true || nodePropertyRow.PropValue.StartsWith("-") == true)
+                                                {
+                                                    nodePropertyRow.PropValue = String.Format(" {0}", nodePropertyRow.PropValue);
+                                                }
+
+                                                // Parse out well known properties for memory sizes
+                                                if (nodePropertyRow.PropName.StartsWith("Xmx", StringComparison.InvariantCultureIgnoreCase) == true ||
+                                                    nodePropertyRow.PropName.StartsWith("Xms", StringComparison.InvariantCultureIgnoreCase) == true ||
+                                                    nodePropertyRow.PropName.StartsWith("Xmn", StringComparison.InvariantCultureIgnoreCase) == true ||
+                                                    nodePropertyRow.PropName.StartsWith("Xss", StringComparison.InvariantCultureIgnoreCase) == true)
+                                                {
+                                                    nodePropertyRow.PropValue = nodePropertyRow.PropName.Substring(3);
+                                                    nodePropertyRow.PropName = nodePropertyRow.PropName.Substring(0, 3);
+                                                }
+
+                                                // Parse out the XX: properties
+                                                if (String.Compare(nodePropertyRow.PropName, "XX", true) == 0)
+                                                { 
+                                                    optionValueAdjustedTokens = nodePropertyRow.PropValue.Split('=');
+                                                    if (optionValueAdjustedTokens.Length >= 2)
+                                                    {
+                                                        nodePropertyRow.PropName = String.Format("{0}:{1}", nodePropertyRow.PropName, optionValueAdjustedTokens[0]);
+                                                        nodePropertyRow.PropValue = nodePropertyRow.PropValue.Substring(optionValueAdjustedTokens[0].Length + 1);
+                                                    }
                                                 }
                                             }
                                             else
@@ -230,6 +287,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             entityNodeStartupOptionsList.Add(nodePropertyRow);
                                         }
                                     }
+
                                     if (isTokenPropertyNull(nodeProperties, "latestVmSystemProperties") == false)
                                     {
                                         node.NumProperties = nodeProperties["latestVmSystemProperties"].Count();
@@ -251,6 +309,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             entityNodePropertiesList.Add(nodePropertyRow);
                                         }
                                     }
+                                    
                                     if (isTokenPropertyNull(nodeProperties, "latestEnvironmentVariables") == false)
                                     {
                                         node.NumEnvVariables = nodeProperties["latestEnvironmentVariables"].Count();
@@ -302,19 +361,676 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     }
                                 }
 
+                                #endregion
+
+                                #region Analyze properties for extra information
+
+                                // Parse some versions and properties into Agent-specific lists
+                                // Things like VM properties, Container types, Startup parameters, etc
+
+                                #region Loop through each of 3 types of extra properties to populate well known properties to columns
+
+                                // Parse important java VM properties 
+                                foreach (APMNodeProperty nodeProp in entityNodePropertiesList)
+                                {
+                                    switch (nodeProp.PropName.ToLower())
+                                    {
+                                        case "java.class.path":
+                                            node.ClassPath = nodeProp.PropValue;
+                                            break;
+                                        case "java.class.version":
+                                            node.ClassVersion = nodeProp.PropValue;
+                                            break;
+                                        case "java.home":
+                                            node.Home = nodeProp.PropValue;
+                                            break;
+                                        case "java.runtime.name":
+                                            node.RuntimeName = nodeProp.PropValue;
+                                            break;
+                                        case "java.runtime.version":
+                                            node.RuntimeVersion = nodeProp.PropValue;
+                                            break;
+                                        case "java.vendor":
+                                            node.Vendor = nodeProp.PropValue;
+                                            break;
+                                        case "java.vendor.version":
+                                            node.VendorVersion = nodeProp.PropValue;
+                                            break;
+                                        case "java.version":
+                                            node.Version = nodeProp.PropValue;
+                                            break;
+                                        case "java.vm.info":
+                                            node.VMInfo = nodeProp.PropValue;
+                                            break;
+                                        case "java.vm.name":
+                                            node.VMName = nodeProp.PropValue;
+                                            break;
+                                        case "java.vm.vendor":
+                                            node.VMVendor = nodeProp.PropValue;
+                                            break;
+                                        case "java.vm.version":
+                                            node.VMVersion = nodeProp.PropValue;
+                                            break;
+                                        case "os.arch":
+                                            node.OSArchitecture = nodeProp.PropValue;
+                                            break;
+                                        case "os.name":
+                                            node.OSName = nodeProp.PropValue;
+                                            break;
+                                        case "os.version":
+                                            node.OSVersion = nodeProp.PropValue;
+                                            break;
+                                        case "dotnet-os-ver":
+                                            node.OSVersion = nodeProp.PropValue;
+                                            if (node.OSVersion.Contains("windows") == true || node.OSVersion.Contains("Windows") == true)
+                                            { 
+                                                node.OSName = "Windows";
+                                            }
+                                            break;
+                                        case "process-identity":
+                                            node.UserName = nodeProp.PropValue;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                // Parse important java startup properties
+                                // https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html
+                                foreach (APMNodeProperty nodeProp in entityNodeStartupOptionsList)
+                                {
+                                    double parsedValue = -1;
+                                    switch (nodeProp.PropName.ToLower())
+                                    {
+                                        case "xmn":
+                                        case "xx:newsize":
+                                            //-Xmnsize
+                                            //Sets the initial and maximum size (in bytes) of the heap for the young generation (nursery). Append the letter k or K to indicate kilobytes, m or M to indicate megabytes, g or G to indicate gigabytes.
+                                            //The young generation region of the heap is used for new objects. GC is performed in this region more often than in other regions. If the size for the young generation is too small, then a lot of minor garbage collections will be performed. If the size is too large, then only full garbage collections will be performed, which can take a long time to complete. Oracle recommends that you keep the size for the young generation between a half and a quarter of the overall heap size.
+                                            //The following examples show how to set the initial and maximum size of young generation to 256 MB using various units:
+                                            //-Xmn256m
+                                            //-Xmn262144k
+                                            //-Xmn268435456
+                                            //Instead of the -Xmn option to set both the initial and maximum size of the heap for the young generation, you can use -XX:NewSize to set the initial size and -XX:MaxNewSize to set the maximum size.
+                                            //-XX:NewSize=size
+                                            //Sets the initial size (in bytes) of the heap for the young generation (nursery). Append the letter k or K to indicate kilobytes, m or M to indicate megabytes, g or G to indicate gigabytes.
+                                            //The young generation region of the heap is used for new objects. GC is performed in this region more often than in other regions. If the size for the young generation is too low, then a large number of minor GCs will be performed. If the size is too high, then only full GCs will be performed, which can take a long time to complete. Oracle recommends that you keep the size for the young generation between a half and a quarter of the overall heap size.
+                                            //The following examples show how to set the initial size of young generation to 256 MB using various units:
+                                            //-XX:NewSize=256m
+                                            //-XX:NewSize=262144k
+                                            //-XX:NewSize=268435456
+                                            //The -XX:NewSize option is equivalent to -Xmn.
+                                            parsedValue = convertValueSettingFromJavaStartupMemoryParameterToMB(nodeProp.PropValue);
+                                            if (parsedValue >= 0) node.HeapYoungInitialSizeMB = parsedValue;
+                                            break;
+                                        case "xx:maxnewsize":
+                                            //-XX:MaxNewSize=size
+                                            //Sets the maximum size (in bytes) of the heap for the young generation (nursery). The default value is set ergonomically.
+                                            parsedValue = convertValueSettingFromJavaStartupMemoryParameterToMB(nodeProp.PropValue);
+                                            if (parsedValue >= 0) node.HeapYoungMaxSizeMB = parsedValue;
+                                            break;
+                                        case "xms":
+                                            //-Xmssize
+                                            //Sets the initial size(in bytes) of the heap.This value must be a multiple of 1024 and greater than 1 MB.Append the letter k or K to indicate kilobytes, m or M to indicate megabytes, g or G to indicate gigabytes.
+                                            //The following examples show how to set the size of allocated memory to 6 MB using various units:
+                                            //-Xms6291456
+                                            //-Xms6144k
+                                            //-Xms6m
+                                            //If you do not set this option, then the initial size will be set as the sum of the sizes allocated for the old generation and the young generation.The initial size of the heap for the young generation can be set using the -Xmn option or the -XX:NewSize option.
+                                            parsedValue = convertValueSettingFromJavaStartupMemoryParameterToMB(nodeProp.PropValue);
+                                            if (parsedValue >= 0) node.HeapInitialSizeMB = parsedValue;
+                                            break;
+                                        case "xmx":
+                                        case "xx:maxheapsize":
+                                            //-Xmxsize
+                                            //Specifies the maximum size(in bytes) of the memory allocation pool in bytes.This value must be a multiple of 1024 and greater than 2 MB.Append the letter k or K to indicate kilobytes, m or M to indicate megabytes, g or G to indicate gigabytes.The default value is chosen at runtime based on system configuration.For server deployments, -Xms and - Xmx are often set to the same value.See the section "Ergonomics" in Java SE HotSpot Virtual Machine Garbage Collection Tuning Guide at http://docs.oracle.com/javase/8/docs/technotes/guides/vm/gctuning/index.html.
+                                            //The following examples show how to set the maximum allowed size of allocated memory to 80 MB using various units:
+                                            //-Xmx83886080
+                                            //-Xmx81920k
+                                            //-Xmx80m
+                                            //The -Xmx option is equivalent to -XX:MaxHeapSize.
+                                            parsedValue = convertValueSettingFromJavaStartupMemoryParameterToMB(nodeProp.PropValue);
+                                            if (parsedValue >= 0) node.HeapMaxSizeMB = parsedValue;
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                // Parse important environment properties
+                                foreach (APMNodeProperty nodeProp in entityNodeEnvironmentVariablesList)
+                                {
+                                    switch (nodeProp.PropName.ToLower())
+                                    {
+                                        case "computername":
+                                        case "hostname":
+                                        case "host_name":
+                                            node.OSComputerName = nodeProp.PropValue;
+                                            break;
+
+                                        case "number_of_processors":
+                                            int numOfProcessors;
+                                            if (Int32.TryParse(nodeProp.PropValue, out numOfProcessors) == true)
+                                            {
+                                                node.OSNumberOfProcs = numOfProcessors;
+                                            }
+                                            break;
+
+                                        case "os":
+                                            if (node.OSName == null || node.OSName.Length == 0 ) node.OSName = nodeProp.PropValue;
+                                            break;
+                                        case "processor_architecture":
+                                            node.OSArchitecture = nodeProp.PropValue;
+                                            break;
+
+                                        case "processor_identifier":
+                                            node.OSProcessorType = nodeProp.PropValue;
+                                            break;
+
+                                        case "processor_revision":
+                                            node.OSProcessorRevision = nodeProp.PropValue;
+                                            break;
+
+                                        case "user":
+                                        case "username":
+                                            if (node.UserName == null || node.UserName.Length == 0) node.UserName = nodeProp.PropValue;
+                                            break;
+
+                                        case "domain":
+                                        case "userdomain":
+                                            node.Domain = nodeProp.PropValue;
+                                            break;
+
+                                        default:
+                                            break;
+                                    }
+                                }
+
+                                #endregion
+
+                                #region Container Orchestration Runtime
+
+                                // Pivotal Cloud Foundry
+                                if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("CF_INSTANCE_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                {
+                                    // Pivotal Cloud Foundry evidence:
+                                    //PropName PropValue
+                                    //CF_INSTANCE_ADDR    10.60.5.5:60538
+                                    //CF_INSTANCE_GUID    13b0a99c - 4eea - 4800 - 7720 - fc9b
+                                    //CF_INSTANCE_INDEX   2
+                                    //CF_INSTANCE_INTERNAL_IP 10.254.0.70
+                                    //CF_INSTANCE_IP  10.60.5.5
+                                    //CF_INSTANCE_PORT    60538
+                                    //CF_INSTANCE_PORTS[{ "external":60538,"internal":8080}]
+
+                                    node.ContainerRuntimeType = "Pivotal Cloud Foundry (PCF)";
+                                }
+                                // Kubernetes
+                                else if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("KUBERNETES_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                {
+                                    // Kubernetes evidence:
+                                    //PropName	PropValue
+                                    //KUBERNETES_PORT	tcp://10.76.0.1:443
+                                    //KUBERNETES_PORT_443_TCP	tcp://10.76.0.1:443
+                                    //KUBERNETES_PORT_443_TCP_ADDR	10.76.0.1
+                                    //KUBERNETES_PORT_443_TCP_PORT	443
+                                    //KUBERNETES_PORT_443_TCP_PROTO	tcp
+                                    //KUBERNETES_PORT_53_TCP	tcp://10.76.0.1:53
+                                    //KUBERNETES_PORT_53_TCP_ADDR	10.76.0.1
+                                    //KUBERNETES_PORT_53_TCP_PORT	53
+                                    //KUBERNETES_PORT_53_TCP_PROTO	tcp
+                                    //KUBERNETES_PORT_53_UDP	udp://10.76.0.1:53
+                                    //KUBERNETES_PORT_53_UDP_ADDR	10.76.0.1
+                                    //KUBERNETES_PORT_53_UDP_PORT	53
+                                    //KUBERNETES_PORT_53_UDP_PROTO	udp
+
+                                    node.ContainerRuntimeType = "Kubernetes (K8S)";
+                                }
+                                // Openshift
+                                else if (entityNodeEnvironmentVariablesList.Count(e => e.PropName == "OPENSHIFT_OH_WHAT_ARE_YOU") == 1)
+                                {
+                                    // OpenShift evidence:
+                                    // Per SME, there isn't an easy way to get openshift evidence!
+
+                                    node.ContainerRuntimeType = "OpenShift (OSCP)";
+                                }
+
+                                #endregion
+
+                                #region Cloud Host
+
+                                // AWS
+                                APMNodeProperty nodePropAWS_Region = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("AWS_REGION", StringComparison.InvariantCultureIgnoreCase) || e.PropName.Equals("AWS_REGION_NAME", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                if (nodePropAWS_Region != null)
+                                {
+                                    // AWS Evidence
+                                    //AWS_REGION	us-gov-west-1
+                                    //AWS_REGION_NAME	us-west-2
+                                    node.CloudHostType = "AWS";
+                                    node.CloudRegion = nodePropAWS_Region.PropValue;
+                                }
+
+                                // Azure
+                                if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("APPSETTING_", StringComparison.InvariantCultureIgnoreCase) == true) > 0 ||
+                                    entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("AZURE_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                {
+                                    // Azure Evidence
+                                    //APPSETTING_AZURE_CLIENT_ID
+                                    //3eb5ee34-818f-484e-8d4b-1abced4846b0
+                                    //46b1a514-3d1b-4e67-9eb7-095b7cd6a66c
+                                    //APPSETTING_AZURE_CLIENT_SECRET
+                                    //Xlkjasdlkjasdlkasjdalskjda
+                                    //aslkdjalkdjaslkdsalkdasj
+                                    //APPSETTING_AZURE_TENANT_ID
+                                    //46080c3d-3ac0-45d5-bdb0-f66e64e4bef9
+                                    //APPSETTING_AzureWebJobs.HttpGetServiceRequestTrigger.Disabled
+                                    //APPSETTING_AzureWebJobs.HttpGetServicesRequestTrigger.Disabled
+                                    //APPSETTING_AzureWebJobs.HttpPingTrigger.Disabled
+                                    //APPSETTING_AzureWebJobs.HttpPostServicesRequestTrigger.Disabled
+                                    //APPSETTING_AzureWebJobs.ServiceRequestQueueTrigger.Disabled
+                                    //APPSETTING_AzureWebJobsDashboard
+                                    //APPSETTING_AzureWebJobsStorage
+                                    //AZURE_JETTY9_CMDLINE
+                                    //AZURE_JETTY9_HOME
+                                    //AZURE_JETTY93_CMDLINE
+                                    //AZURE_JETTY93_HOME
+                                    //AZURE_TOMCAT7_CMDLINE
+                                    //AZURE_TOMCAT7_HOME
+                                    //AZURE_TOMCAT8_CMDLINE
+                                    //AZURE_TOMCAT8_HOME
+                                    //AZURE_TOMCAT85_CMDLINE
+                                    //AZURE_TOMCAT85_HOME
+                                    //AZURE_TOMCAT90_CMDLINE
+                                    //AZURE_TOMCAT90_HOME
+
+                                    node.CloudHostType = "Azure";
+                                }
+                                APMNodeProperty nodePropAzure_Region = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("REGION_NAME", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                if (nodePropAzure_Region != null)
+                                {
+                                    // Azure Evidence
+                                    //REGION_NAME	Central US
+                                    node.CloudHostType = "Azure";
+                                    node.CloudRegion = nodePropAzure_Region.PropValue;
+                                }
+
+                                if (node.OSComputerName != null && (node.CloudHostType == null || node.CloudHostType.Length == 0))
+                                {
+                                    // Azure Evidence
+                                    //RD00155DA01778
+                                    // Red Dog is the codename of Azure from back in a day
+                                    if (node.OSComputerName.StartsWith("RD00", StringComparison.InvariantCultureIgnoreCase) == true)
+                                    { 
+                                        node.CloudHostType = "Azure";
+                                    }
+                                }
+
+                                // GCP
+                                if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("GCLOUD_", StringComparison.InvariantCultureIgnoreCase) == true) >0 ||
+                                    entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("GCP_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                {
+                                    node.CloudHostType = "GCP";
+                                }
+                                // Can't use Contains() since it complains like that 
+                                // https://stackoverflow.com/questions/41415458/why-does-dynamic-tostring-return-something-between-a-string-and-not-a-string/41415574#41415574
+                                // will use indexof
+                                else if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.IndexOf("GKE_", StringComparison.InvariantCultureIgnoreCase) >= 0) > 0)
+                                {
+                                    node.CloudHostType = "GCP";
+                                }
+
+                                APMNodeProperty nodePropGCP_Region = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("FUNCTION_REGION", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                if (nodePropGCP_Region != null)
+                                {
+                                    // GCP Evidence
+                                    //???
+                                    node.CloudHostType = "GCP";
+                                    node.CloudRegion = nodePropGCP_Region.PropValue;
+                                }
+
+                                #endregion
+
+                                #region Container Type
+
+                                switch (node.AgentType)
+                                {
+                                    case "APP_AGENT":
+                                        // Determine Tomcat, JBoss, IBM Websphere, Oracle WebLogic, IBM Sterling
+                                        // Long tail: Oracle Glassfish, Jetty, SAP NetWeaver 
+
+                                        if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("CATALINA_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // Tomcat evidence:
+                                            //CATALINA_BASE
+                                            //CATALINA_HOME
+                                            //CATALINA_OPTS
+                                            //CATALINA_PID
+                                            node.WebHostContainerType = "Tomcat Catalina";
+                                        }
+                                        else if (entityNodePropertiesList.Count(e => e.PropName.StartsWith("catalina.", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // Tomcat evidence:
+                                            //catalina.base
+                                            //catalina.home
+                                            node.WebHostContainerType = "Tomcat Catalina";
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        APMNodeProperty nodePropJBossHome = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("JBOSS_HOME", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                        if (nodePropJBossHome != null)
+                                        {
+                                            // JBoss evidence:
+                                            //JBOSS_HOME
+                                            // Wildfly/EAP evidence - contents of the home path. Not precise but good enough
+                                            if (nodePropJBossHome.PropValue.IndexOf("wildfly", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                                            {
+                                                node.WebHostContainerType = "JBoss Wildfly";
+                                            }
+                                            else if (nodePropJBossHome.PropValue.IndexOf("eap", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                                            {
+                                                node.WebHostContainerType = "JBoss EAP";
+                                            }
+                                            else
+                                            {
+                                                node.WebHostContainerType = "JBoss";
+                                            }
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        APMNodeProperty nodePropWASHome = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("WAS_HOME", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                        if (nodePropWASHome != null)
+                                        {
+                                            // WebSphere Application Server:
+                                            //WAS_HOME
+                                            //was.install.root
+                                            if (nodePropWASHome.PropValue.IndexOf("websphere", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                                            {
+                                                node.WebHostContainerType = "IBM WebSphere";
+                                            }
+                                            else
+                                            {
+                                                if (entityNodePropertiesList.Count(e => e.PropName.Equals("was.install.root", StringComparison.InvariantCultureIgnoreCase)) > 0)
+                                                {
+                                                    node.WebHostContainerType = "IBM WebSphere";
+                                                }
+                                                else
+                                                {
+                                                    node.WebHostContainerType = "IBM WebSphere ?";
+                                                }
+                                            }
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.Equals("WL_HOME", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // Weblogic
+                                            //WL_HOME
+                                            node.WebHostContainerType = "Oracle WebLogic";
+                                        }
+                                        else if (entityNodePropertiesList.Count(e => e.PropName.StartsWith("weblogic.", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // Weblogic
+                                            //weblogic.classloader.preprocessor,weblogic.diagnostics.instrumentation.DiagnosticClassPreProcessor,569,4909,2101477
+                                            //weblogic.management.server,http://10.102.121.238:8099,569,4909,2101477
+                                            //weblogic.Name,ABCDEFTG,569,4909,2101477
+                                            //weblogic.nodemanager.ServiceEnabled,true,569,4909,2101477
+                                            //weblogic.ReverseDNSAllowed,false,569,4909,2101477
+                                            //weblogic.security.SSL.ignoreHostnameVerification,false,569,4909,2101477
+                                            //weblogic.system.BootIdentityFile,/apps/ouapps/managed_server/prd/weblogic/....
+                                            node.WebHostContainerType = "Oracle WebLogic";
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        APMNodeProperty nodePropIBMJavaHome = entityNodeEnvironmentVariablesList.Where(e => e.PropName.Equals("IBM_JAVA_COMMAND_LINE", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                        if (nodePropIBMJavaHome != null)
+                                        {
+                                            // IBM Sterling Commerce 
+                                            //IBM_JAVA_COMMAND_LINE	/opt/ibm/mft/si/jdk/bin/java -d64 -javaagent:/opt/AppD/AppServerAgent-ibm-4.5.11.26665/javaagent.jar -Dappdynamics.socket.collection.bci.enable=true -Dappdynamics.http.proxyHost=forcepoint.corp.internal.citizensbank.com -Dappdynamics.http.proxyPort=80 -Dappdynamics.agent.uniqueHostId=lsfgrib00001001 -Dappdynamics.agent.applicationName=IBM-MFT-PROD -Dappdynamics.agent.tierName=B2BI_ActiveMQ_EPOC -Dappdynamics.agent.nodeName=ActiveMQ_P_lsfgrib00001001 -Djava.io.tmpdir=/opt/ibm/mft/si/tmp -XX:CompileCommandFile=.hotspot_compiler -d64 -Doracle.jdbc.maxCachedBufferSize=21 -Doracle.jdbc.maxCachedBufferSize=21 -Dssh.maxWindowSpace=4194304 -Dcom.certicom.tls.record.maximumPaddingLength=0 -Dsun.rmi.dgc.server.gcInterval=900000 -Dsun.rmi.dgc.client.gcInterval=900000 -Dmaverick.enableBCProvider=false -Xms2048m -Xmx2048m -Dvendor=shell -DvendorFile=/opt/ibm/mft/si/properties/servers.properties -Dactivemq.base=/opt/ibm/mft/si/activemq -Djava.security.auth.login.config=/opt/ibm/mft/si/activemq/conf/login.conf -classpath /opt/ibm/mft/si/jar/bootstrapper.jar com.sterlingcommerce.woodstock.noapp.NoAppLoader -f /opt/ibm/mft/si/properties/ACTIVEMQDynamicclasspath.cfg -class com.sterlingcommerce.jms.activemq.SCIBrokerFactory -invokeargs /opt/ibm/mft/si/activemq/conf/activemqconfig.xml activemq.txt
+                                            if (nodePropIBMJavaHome.PropValue.IndexOf("sterling", StringComparison.InvariantCultureIgnoreCase) >= 0)
+                                            {
+                                                node.WebHostContainerType = "IBM Sterling";
+                                            }
+                                        }
+
+                                        break;
+
+                                    case "DOT_NET_APP_AGENT":
+                                        // Parse .NET Version
+                                        if (node.AgentRuntime != null && node.AgentRuntime.Length > 0)
+                                        {
+                                            //clr.version=.NET Core 2.0.9|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1
+                                            //clr.version=.NET Core 2.2.8|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.3.1-1
+                                            //clr.version=.NET Core 2.2.8|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1
+                                            //clr.version=.NET Core 3.0.3|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1
+                                            //clr.version=.NET Core 3.0.3|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.5.0-0
+                                            //clr.version=.NET Core 3.1.3|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1
+                                            //clr.version=.NET Core 3.1.4|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1
+                                            //clr.version=.NET Core 3.1.4|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.5.0-0
+                                            //clr.version=.NET Framework v4.0.30319|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.3.1-1||clr.releasekey=461814
+                                            //clr.version=.NET Framework v4.0.30319|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.4.1-1||clr.releasekey=461814
+                                            //clr.version=.NET Framework v4.0.30319|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.5.0-0||clr.releasekey=461814
+                                            //clr.version=3.0.3|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.5.18.1|clr.releasekey=461814
+                                            //clr.version=4.0.30319.42000|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.5.14.0|clr.releasekey=461814
+                                            //clr.version=.NET Framework v4.0.30319|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=20.5.0-0||clr.releasekey=461814
+                                            //clr.version=2.0.50727.8810|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.4.3.0|clr.releasekey=394271
+                                            //clr.version=2.0.50727.8813|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.4.3.0|clr.releasekey=394271
+                                            //clr.version=2.0.50727.8813|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.4.3.0|clr.releasekey=461814
+                                            //clr.version=2.0.50727.8813|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.5.1.0|clr.releasekey=379893
+                                            //clr.version=4.0.30319.36627|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.5.1.0|clr.releasekey=379893
+                                            //clr.version=4.0.30319.42000|agent.version.assemblyversion=1.0.0.0|agent.version.fileversion=4.4.3.0|clr.releasekey=394271
+
+                                            node.RuntimeName = "Common Language Runtime";
+                                            node.Vendor = "Microsoft";
+                                            node.VMVendor = "Microsoft";
+
+                                            string[] agentRuntimeTokens = node.AgentRuntime.Split('|');
+                                            foreach (string agentRuntimeToken in agentRuntimeTokens)
+                                            {
+                                                if (agentRuntimeToken.StartsWith("clr.version", StringComparison.InvariantCultureIgnoreCase) == true)
+                                                {
+                                                    string[] versionTokens = agentRuntimeToken.Split('=');
+                                                    if (versionTokens.Length > 1)
+                                                    {
+                                                        string potentialVersion = versionTokens[1];
+                                                        if (potentialVersion.StartsWith(".NET Core", StringComparison.InvariantCultureIgnoreCase) == true)
+                                                        {
+                                                            node.VMVersion = "5.0";
+                                                            node.VMName = ".NET Core";
+                                                        }
+                                                        else if (potentialVersion.StartsWith(".NET Framework", StringComparison.InvariantCultureIgnoreCase) == true)
+                                                        {
+                                                            node.VMName = ".NET Full";
+                                                        }
+
+                                                        // Parse version
+                                                        Regex regexVersion = new Regex(@"(?i)(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
+                                                        Match match = regexVersion.Match(potentialVersion);
+                                                        if (match != null)
+                                                        {
+                                                            if (match.Groups.Count > 1)
+                                                            {
+                                                                node.Version = match.Groups[1].Value;
+                                                            }
+                                                        }
+
+                                                        // Decide what kind of runtime is it
+                                                        // https://docs.microsoft.com/en-us/dotnet/framework/migration-guide/versions-and-dependencies
+                                                        // https://en.wikipedia.org/wiki/.NET_Framework_version_history
+                                                        // https://jonathanparker.wordpress.com/2014/12/05/list-of-net-framework-versions/ 
+                                                        if (node.Version.StartsWith("1.0.3705") == true)
+                                                        {
+                                                            node.VMVersion = "1.0";
+                                                            node.RuntimeVersion = "1.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (node.Version.StartsWith("1.1.4322") == true)
+                                                        {
+                                                            node.VMVersion = "1.1";
+                                                            node.RuntimeVersion = "1.1";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (node.Version.StartsWith("2.0.50727") == true)
+                                                        {
+                                                            node.VMVersion = "2.0";
+                                                            node.RuntimeVersion = "2.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (node.Version.StartsWith("3.0.4506") == true)
+                                                        {
+                                                            node.VMVersion = "2.0";
+                                                            node.RuntimeVersion = "3.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (
+                                                            node.Version.StartsWith("3.5.21022") == true ||
+                                                            node.Version.StartsWith("3.5.30428") == true ||
+                                                            node.Version.StartsWith("3.5.30729") == true)
+                                                        {
+                                                            node.VMVersion = "2.0";
+                                                            node.RuntimeVersion = "3.5";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (
+                                                            node.Version.StartsWith("4.0.30319") == true ||
+                                                            node.Version.StartsWith("4.5.50709") == true)
+                                                        {
+                                                            node.VMVersion = "4.0";
+                                                            node.RuntimeVersion = "4.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (
+                                                            node.Version.StartsWith("4.6") == true ||
+                                                            node.Version.StartsWith("4.7") == true ||
+                                                            node.Version.StartsWith("4.8") == true)
+                                                        {
+                                                            node.VMVersion = "4.0";
+                                                            node.RuntimeVersion = "4.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Full";
+                                                        }
+                                                        else if (
+                                                            node.Version.StartsWith("2.") == true ||
+                                                            node.Version.StartsWith("3.") == true)
+                                                        {
+                                                            node.VMVersion = "5.0";
+                                                            node.RuntimeVersion = "5.0";
+                                                            if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Core";
+                                                        }
+
+                                                        // Assume .NET Core if we haven't caught the VM name
+                                                        if (node.VMName == null || node.VMName.Length == 0) node.VMName = ".NET Core";
+                                                    }
+                                                }
+                                            }
+
+                                            //.NET Core 3.1+ (v4.0.30319)
+                                            //.NET Core 2.2 (v4.0.30319)
+                                            if (node.Version == null || node.Version.Length == 0)
+                                            {
+                                                if (node.AgentRuntime.StartsWith(".NET Core", StringComparison.InvariantCultureIgnoreCase) == true)
+                                                {
+                                                    node.VMVersion = "5.0";
+                                                    node.VMName = ".NET Core";
+
+                                                    // Parse version
+                                                    Regex regexVersion = new Regex(@"(?i)(\d*\.\d*\.\d*(\.\d*)?).*", RegexOptions.IgnoreCase);
+                                                    Match match = regexVersion.Match(node.AgentRuntime);
+                                                    if (match != null)
+                                                    {
+                                                        if (match.Groups.Count > 1)
+                                                        {
+                                                            node.Version = match.Groups[1].Value;
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                        if (entityNodePropertiesList.Count(e => e.PropName.StartsWith("iis-", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // IIS Evidence
+                                            //iis-application-id
+                                            //iis-physical-path
+                                            //iis-site-name
+                                            //iis-version
+                                            //iis-virtual-path
+                                            if (node.CloudHostType == "Azure")
+                                            {
+                                                node.WebHostContainerType = "Azure App Service (IIS)";
+                                            }
+                                            else
+                                            {
+                                                node.WebHostContainerType = "Internet Information Services (IIS)";
+                                            }
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        APMNodeProperty nodePropAppDomain = entityNodePropertiesList.Where(e => e.PropName.Equals("appdomain", StringComparison.InvariantCultureIgnoreCase)).FirstOrDefault();
+                                        if (nodePropAppDomain != null)
+                                        {
+                                            if (nodePropAppDomain.PropValue.EndsWith(".exe", StringComparison.InvariantCultureIgnoreCase) == true)
+                                            {
+                                                if (node.CloudHostType == "Azure")
+                                                {
+                                                    if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("WEBJOBS_", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                                    {
+                                                        node.WebHostContainerType = "Azure WebJob Executable";
+                                                    }
+                                                    else
+                                                    { 
+                                                        node.WebHostContainerType = "Standalone Executable in Azure";
+                                                    }
+                                                }
+                                                else
+                                                { 
+                                                    node.WebHostContainerType = "Standalone Executable";
+                                                }
+                                            }
+                                        }
+
+                                        if (node.WebHostContainerType != null && node.WebHostContainerType.Length > 0) break;
+
+                                        if (entityNodeEnvironmentVariablesList.Count(e => e.PropName.StartsWith("Fabric", StringComparison.InvariantCultureIgnoreCase) == true) > 0)
+                                        {
+                                            // Service Fabric evidence
+                                            //PropName	PropValue
+                                            //FabricBinRoot	C:\Program Files\Windows Fabric\bin
+                                            //FabricCodePath	C:\Program Files\Windows Fabric\bin\Fabric\Fabric.Code.1.0
+                                            //FabricDataRoot	C:\ProgramData\Windows Fabric\
+                                            //FabricRoot	C:\Program Files\Windows Fabric\
+                                            node.WebHostContainerType = "Service Fabric";
+                                        }
+
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+
+                                #endregion
+
+                                #endregion
+
                                 nodesList.Add(node);
+                                entityNodesStartupOptionsList.AddRange(entityNodeStartupOptionsList);
+                                entityNodesPropertiesList.AddRange(entityNodePropertiesList);
+                                entityNodesEnvironmentVariablesList.AddRange(entityNodeEnvironmentVariablesList);
                             }
 
                             // Sort them
                             nodesList = nodesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ToList();
-                            entityNodeStartupOptionsList = entityNodeStartupOptionsList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
-                            entityNodePropertiesList = entityNodePropertiesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
-                            entityNodeEnvironmentVariablesList = entityNodeEnvironmentVariablesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
+                            entityNodesStartupOptionsList = entityNodesStartupOptionsList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
+                            entityNodesPropertiesList = entityNodesPropertiesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
+                            entityNodesEnvironmentVariablesList = entityNodesEnvironmentVariablesList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.PropName).ToList();
 
                             FileIOHelper.WriteListToCSVFile(nodesList, new APMNodeReportMap(), FilePathMap.APMNodesIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(entityNodeStartupOptionsList, new APMNodePropertyReportMap(), FilePathMap.APMNodeStartupOptionsIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(entityNodePropertiesList, new APMNodePropertyReportMap(), FilePathMap.APMNodePropertiesIndexFilePath(jobTarget));
-                            FileIOHelper.WriteListToCSVFile(entityNodeEnvironmentVariablesList, new APMNodePropertyReportMap(), FilePathMap.APMNodeEnvironmentVariablesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodesStartupOptionsList, new APMNodePropertyReportMap(), FilePathMap.APMNodeStartupOptionsIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodesPropertiesList, new APMNodePropertyReportMap(), FilePathMap.APMNodePropertiesIndexFilePath(jobTarget));
+                            FileIOHelper.WriteListToCSVFile(entityNodesEnvironmentVariablesList, new APMNodePropertyReportMap(), FilePathMap.APMNodeEnvironmentVariablesIndexFilePath(jobTarget));
                         }
 
                         #endregion
@@ -625,7 +1341,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 error.ErrorType = APMError.ENTITY_TYPE;
                                 // Do some analysis of the error type based on their name
-                                if (error.ErrorName.IndexOf("exception", 0, StringComparison.OrdinalIgnoreCase) >= 0)
+                                if (error.ErrorName.IndexOf("exception", 0, StringComparison.InvariantCultureIgnoreCase) >= 0)
                                 {
                                     error.ErrorType = "Exception";
                                 }
@@ -1123,7 +1839,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     }
                 }
 
-                return true;
+                 return true;
             }
             catch (Exception ex)
             {
@@ -1173,6 +1889,74 @@ namespace AppDynamics.Dexter.ProcessingSteps
             entity.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<FlGraph>"")", FilePathMap.FlameGraphReportFilePath(entity, jobTarget, jobTimeRange, false));
             entity.FlameChartLink = String.Format(@"=HYPERLINK(""{0}"", ""<FlChart>"")", FilePathMap.FlameChartReportFilePath(entity, jobTarget, jobTimeRange, false));
             entity.MetricGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Metrics>"")", FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(entity, jobTarget, jobTimeRange, false));
+        }
+
+        /// <summary>
+        /// https://docs.oracle.com/javase/8/docs/technotes/tools/windows/java.html
+        /// If you are expected to specify the size in bytes, you can use no suffix, or use the suffix k or K for kilobytes (KB), m or M for megabytes (MB), 
+        /// g or G for gigabytes (GB). For example, to set the size to 8 GB, you can specify either 8g, 8192m, 8388608k, or 8589934592 as the argument.
+        /// </summary>
+        /// <param name="memorySettingString">Value from Xmx or Xms java param</param>
+        /// <returns>Numeric value in megabytes</returns>
+        private double convertValueSettingFromJavaStartupMemoryParameterToMB(string memorySettingString)
+        {
+            if (memorySettingString != null && memorySettingString.Length > 0)
+            {
+                string suffix = memorySettingString.Substring(memorySettingString.Length - 1, 1);
+                string memorySettingValueWithoutSuffix = memorySettingString.Substring(0, memorySettingString.Length - 1);
+
+                long memorySettingValueBytes = -1;
+                long memorySettingValueNumeric;
+                switch (suffix)
+                {
+                    case "k":
+                    case "K":
+                        // Value in kilobytes
+                        if (Int64.TryParse(memorySettingValueWithoutSuffix, out memorySettingValueNumeric) == true)
+                        {
+                            memorySettingValueBytes = memorySettingValueNumeric * 1024;
+                        }
+                        break;
+                    case "m":
+                    case "M":
+                        // Value in megabytes
+                        if (Int64.TryParse(memorySettingValueWithoutSuffix, out memorySettingValueNumeric) == true)
+                        {
+                            memorySettingValueBytes = memorySettingValueNumeric * 1024 * 1024;
+                        }
+                        break;
+                    case "g":
+                    case "G":
+                        // Value in gigabytes
+                        if (Int64.TryParse(memorySettingValueWithoutSuffix, out memorySettingValueNumeric) == true)
+                        {
+                            memorySettingValueBytes = memorySettingValueNumeric * 1024 * 1024 * 1024;
+                        }
+                        break;
+                    default:
+                        // Value must be numeric, and in bytes
+                        if (Int64.TryParse(memorySettingString, out memorySettingValueNumeric) == true)
+                        {
+                            memorySettingValueBytes = memorySettingValueNumeric;
+                        }
+                        break;
+                }
+
+                // Convert to megabytes
+                if (memorySettingValueBytes != -1)
+                {
+                    double memorySettingValueMegabytes = Math.Round((double)memorySettingValueBytes / 1048576, 2);
+                    return memorySettingValueMegabytes;
+                }
+                else
+                {
+                    return -1;
+                }
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }

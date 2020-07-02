@@ -135,6 +135,12 @@ namespace AppDynamics.Dexter
 
                 RunProgramETL(programOptions);
             }
+            else if (programOptions.RequestIDs != null && programOptions.ReportFolderPath.Length > 0)
+            {
+                loggerConsole.Info("Running Individual Snapshots workload");
+
+                RunProgramIndividualSnapshots(programOptions);
+            }
             else if (programOptions.InputCompareJobFilePath != null && programOptions.InputCompareJobFilePath.Length > 0)
             {
                 loggerConsole.Info("Running Compare workload");
@@ -143,7 +149,7 @@ namespace AppDynamics.Dexter
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding ArgumentOutOfRangeException and FormatException that may occur when dates")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Compiler", "CS0168", Justification = "Hiding ArgumentOutOfRangeException and FormatException that may occur when dates are parsed")]
         public static void RunProgramETL(ProgramOptions programOptions)
         {
             #region Validate job file exists and load it
@@ -160,7 +166,7 @@ namespace AppDynamics.Dexter
 
                 return;
             }
-            
+
             // Load job configuration
             JobConfiguration jobConfiguration = FileIOHelper.ReadJobConfigurationFromFile(programOptions.InputETLJobFilePath);
             if (jobConfiguration == null)
@@ -505,7 +511,7 @@ namespace AppDynamics.Dexter
                 }
 
                 if (markDate == DateTime.MinValue)
-                { 
+                {
                     loggerConsole.Error("Job File Problem: Input.TimeFrame.MarkDate={0} is not a valid Date or recognized token", jobConfiguration.Input.TimeFrame.MarkDate);
                     return;
                 }
@@ -740,9 +746,9 @@ namespace AppDynamics.Dexter
 
                 #endregion
             }
-            
+
             else
-            { 
+            {
                 // Either TimeFrame or TimeRange must be specified. TimeRange is older style for explicit saying, TimeFrame is for the newer one
                 logger.Error("Job File Problem: Input.TimeRange and Input.TimeFrame can not both be empty");
                 loggerConsole.Error("Job File Problem: Input.TimeRange and Input.TimeFrame can not both be empty");
@@ -793,7 +799,8 @@ namespace AppDynamics.Dexter
             // Validate Metrics selection criteria
             if (jobConfiguration.Input.MetricsSelectionCriteria == null)
             {
-                jobConfiguration.Input.MetricsSelectionCriteria = new string[0];
+                jobConfiguration.Input.MetricsSelectionCriteria = new JobMetricSelectionCriteria();
+                jobConfiguration.Input.MetricsSelectionCriteria.MetricSets = new string[0];
             }
 
             // Validate Events selection criteria
@@ -828,6 +835,11 @@ namespace AppDynamics.Dexter
             {
                 jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionTypes = new string[1];
                 jobConfiguration.Input.SnapshotSelectionCriteria.BusinessTransactionTypes[0] = "All";
+            }
+
+            if (jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs == null)
+            {
+                jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs = new string[0];
             }
 
             if (jobConfiguration.Input.SnapshotSelectionCriteria.UserExperience == null)
@@ -1600,11 +1612,11 @@ namespace AppDynamics.Dexter
                 }
 
                 // Also save a copy of the original file name
-
                 string copyOfJobFileInOriginalName = Path.Combine(
-                    programOptions.OutputJobFolderPath, 
+                    programOptions.OutputJobFolderPath,
                     Path.GetFileName(programOptions.InputETLJobFilePath));
-
+                // Remove the timeframe for later replay
+                jobConfiguration.Input.TimeFrame = null;
                 if (FileIOHelper.WriteJobConfigurationToFile(jobConfiguration, copyOfJobFileInOriginalName) == false)
                 {
                     loggerConsole.Error("Unable to write job input file {0}", programOptions.OutputJobFilePath);
@@ -1620,98 +1632,163 @@ namespace AppDynamics.Dexter
 
             #endregion
 
-            #region Load and validate license
+            if (LoadAndValidateLicense(programOptions) == false) return;
 
-            string programLicensePath = Path.Combine(
-                programOptions.ProgramLocationFolderPath,
-                "LicensedFeatures.json");
+            logger.Trace("Executing:\r\n{0}", programOptions);
+            loggerConsole.Trace("Executing:\r\n{0}", programOptions);
 
-            JObject licenseFile = FileIOHelper.LoadJObjectFromFile(programLicensePath);
-            JObject licensedFeatures = (JObject)licenseFile["LicensedFeatures"];
+            // Go to work on the expanded and validated job file
+            JobStepRouter.ExecuteJobThroughSteps(programOptions);
+        }
 
-            string dataSigned = licensedFeatures.ToString(Newtonsoft.Json.Formatting.None);
-            var bytesSigned = Encoding.UTF8.GetBytes(dataSigned);
+        public static void RunProgramIndividualSnapshots(ProgramOptions programOptions)
+        {
+            #region Validate report folder exits
 
-            string dataSignature = licenseFile["Signature"].ToString();
-            byte[] bytesSignature = Convert.FromBase64String(dataSignature);
+            programOptions.ReportFolderPath = Path.GetFullPath(programOptions.ReportFolderPath);
 
-            string licenseCertificatePath = Path.Combine(
-                programOptions.ProgramLocationFolderPath,
-                "AppDynamics.DEXTER.public.cer");
-
-            X509Certificate2 publicCert = new X509Certificate2(licenseCertificatePath);
-
-            var rsaPublicKey = publicCert.GetRSAPublicKey();
-
-            bool licenseValidationResult = rsaPublicKey.VerifyData(bytesSigned, bytesSignature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-
-            logger.Info(
-@"Validating license
-{0}
-with signature {1}
-from {2} containing
-{3} returned {4}", 
-                dataSigned, dataSignature, licenseCertificatePath, publicCert, licenseValidationResult);
-
-            JobOutput licensedReports = new JobOutput();
-            licensedReports.ApplicationSummary = true;
-            licensedReports.Configuration = true;
-            licensedReports.Dashboards = true;
-            licensedReports.DetectedEntities = true;
-            licensedReports.EntityDashboards = true;
-            licensedReports.EntityDetails = true;
-            licensedReports.EntityMetricGraphs = true;
-            licensedReports.EntityMetrics = true;
-            licensedReports.Events = true;
-            licensedReports.FlameGraphs = true;
-            // Health check is not free
-            licensedReports.HealthCheck = false;
-            // Licenses are not free
-            licensedReports.Licenses = false;
-            licensedReports.Snapshots = true;
-            licensedReports.UsersGroupsRolesPermissions = true;
-            
-            if (licenseValidationResult == true)
+            if (Directory.Exists(programOptions.ReportFolderPath) == false)
             {
-                logger.Info("License validation signature check succeeded");
-                loggerConsole.Info("License validation signature check succeeded");
+                logger.Error("Report folder {0} does not exist", programOptions.ReportFolderPath);
+                loggerConsole.Error("Report folder {0} does not exist", programOptions.ReportFolderPath);
 
-                DateTime dateTimeLicenseExpiration = (DateTime)licensedFeatures["ExpirationDateTime"];
-                if (dateTimeLicenseExpiration >= DateTime.Now)
+                return;
+            }
+
+            if (File.Exists(Path.Combine(programOptions.ReportFolderPath, "SNAP", "snapshots.csv")) == false)
+            {
+                logger.Error("Report folder {0} does not contain Snapshot data", programOptions.ReportFolderPath);
+                loggerConsole.Error("Report folder {0} does not contain Snapshot data", programOptions.ReportFolderPath);
+
+                return;
+            }
+
+            #endregion
+
+            #region Read existing or create new Job File 
+
+            // Parse the request IDs into the right list
+            string[] requestIDsTokens = programOptions.RequestIDs.Split(',');
+            for (int i = 0; i < requestIDsTokens.Length; i++)
+            {
+                requestIDsTokens[i] = requestIDsTokens[i].Trim();
+            }
+            logger.Info("Parsed {0} to {1} items {2}", programOptions.RequestIDs, requestIDsTokens.Length, String.Join(",", requestIDsTokens));
+            loggerConsole.Info("Parsed {0} to {1} items {2}", programOptions.RequestIDs, requestIDsTokens.Length, String.Join(",", requestIDsTokens));
+
+            // Reverse engineer it from the path 
+            // 
+            // D:\AppD.Dexter.Out\Demo\demodev.all.202005081500.2\Report
+            // ^^^^^^^^^^^^^^^^^^^^^^^^                                     Output folder path
+            //                         ^^^^^^^^^^^^^^^^^^^^^^^^^^           Job name
+            char pathSeparatorToken = '\\';
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) == true)
+            {
+                pathSeparatorToken = '\\';
+            }
+            // Mac/Linux: a child of %HOME% path
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) == true || RuntimeInformation.IsOSPlatform(OSPlatform.OSX) == true)
+            {
+                pathSeparatorToken = '/';
+            }
+
+            string[] pathTokens = programOptions.ReportFolderPath.Split(pathSeparatorToken);
+            string[] pathTokensMinus1Folder = pathTokens.Take(pathTokens.Length - 1).ToArray();
+            string[] pathTokensMinus2Folder = pathTokens.Take(pathTokens.Length - 2).ToArray();
+
+            if (pathTokensMinus1Folder.Length == 0 || pathTokensMinus2Folder.Length == 0)
+            { 
+                loggerConsole.Error("{0} needs to be at least 2 layers deep in the folder hierachy. Yes this is silly but it is how it works here", programOptions.ReportFolderPath);
+                return;
+            }
+
+            string reportFolderName = pathTokens[pathTokens.Length - 1];
+
+            programOptions.OutputFolderPath = Path.Combine(pathTokensMinus2Folder);
+            programOptions.JobName = pathTokens[pathTokens.Length - 2];
+            programOptions.OutputJobFolderPath = Path.Combine(programOptions.OutputFolderPath, programOptions.JobName);
+            programOptions.OutputJobFilePath = Path.Combine(programOptions.OutputJobFolderPath, "jobparameters.json");
+            programOptions.ProgramLocationFolderPath = AppDomain.CurrentDomain.BaseDirectory;
+
+            // Resume or create new job file
+            if (File.Exists(programOptions.OutputJobFilePath) == true)
+            {
+                // Let's update it with the right parameters and fast forward the job to the right 
+
+                // Read job file from the location
+                JobConfiguration jobConfiguration = FileIOHelper.ReadJobConfigurationFromFile(programOptions.OutputJobFilePath);
+                if (jobConfiguration == null)
                 {
-                    logger.Trace("License expires on {0:o}, valid", dateTimeLicenseExpiration);
-                    loggerConsole.Info("License expires on {0:o}, valid", dateTimeLicenseExpiration);
+                    loggerConsole.Error("Unable to load job input file {0}", programOptions.InputETLJobFilePath);
 
-                    licensedReports.ApplicationSummary = JobStepBase.getBoolValueFromJToken(licensedFeatures, "ApplicationSummary");
-                    licensedReports.Configuration = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Configuration");
-                    licensedReports.Dashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Dashboards");
-                    licensedReports.DetectedEntities = JobStepBase.getBoolValueFromJToken(licensedFeatures, "DetectedEntities");
-                    licensedReports.EntityDashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDashboards");
-                    licensedReports.EntityDetails = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDetails");
-                    licensedReports.EntityMetricGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetricGraphs");
-                    licensedReports.EntityMetrics = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetrics");
-                    licensedReports.Events = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Events");
-                    licensedReports.FlameGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "FlameGraphs");
-                    licensedReports.HealthCheck = JobStepBase.getBoolValueFromJToken(licensedFeatures, "HealthCheck");
-                    licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
-                    licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
-                    licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
+                    return;
                 }
-                else
+                
+                // Specify request IDs that we want
+                jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs = requestIDsTokens;
+
+                // Set up the report to output
+                jobConfiguration.Output.IndividualSnapshots = true;
+
+                // Fast forward the status
+                jobConfiguration.Status = JobStatus.ReportAPMIndividualSnapshots;
+
+                // Save the resulting JSON file to the job target folder
+                if (FileIOHelper.WriteJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
                 {
-                    logger.Trace("License expires on {0:o}, expired", dateTimeLicenseExpiration);
-                    loggerConsole.Info("License expires on {0:o}, expired", dateTimeLicenseExpiration);
+                    loggerConsole.Error("Unable to write job input file {0}", programOptions.OutputJobFilePath);
+
+                    return;
                 }
             }
             else
             {
-                logger.Warn("License validation signature check failed");
-                loggerConsole.Warn("License validation signature check failed");
+                // We don't have the old jobparameters.json, so let's make a minimum one
+
+                string defaultJobFilePath = Path.Combine(
+                    programOptions.ProgramLocationFolderPath,
+                    "DefaultJob.json");
+                JobConfiguration jobConfiguration = FileIOHelper.ReadJobConfigurationFromFile(defaultJobFilePath);
+                if (jobConfiguration == null)
+                {
+                    loggerConsole.Error("Unable to load job input file {0}", programOptions.InputETLJobFilePath);
+
+                    return;
+                }
+
+                // These have to exist for application not to complain
+                jobConfiguration.Input.TimeRange = new JobTimeRange();
+                jobConfiguration.Input.HourlyTimeRanges = new List<JobTimeRange>();
+
+                // Specify request IDs that we want
+                jobConfiguration.Input.SnapshotSelectionCriteria.RequestIDs = requestIDsTokens;
+
+                // Set up the report to output
+                jobConfiguration.Output = new JobOutput();
+                jobConfiguration.Output.IndividualSnapshots = true;
+
+                // Fast forward the status
+                jobConfiguration.Status = JobStatus.ReportAPMIndividualSnapshots;
+
+                // Save the resulting JSON file to the job target folder
+                if (FileIOHelper.WriteJobConfigurationToFile(jobConfiguration, programOptions.OutputJobFilePath) == false)
+                {
+                    loggerConsole.Error("Unable to write job input file {0}", programOptions.OutputJobFilePath);
+
+                    return;
+                }
             }
 
-            programOptions.LicensedReports = licensedReports;
+            // Finally, if the folder is not Report, check 
+
+            if (String.Compare(reportFolderName, "Report", true) != 0)
+            {
+                programOptions.IndividualSnapshotsNonDefaultReportFolderName = reportFolderName;
+            }
 
             #endregion
+
+            if (LoadAndValidateLicense(programOptions) == false) return;
 
             logger.Trace("Executing:\r\n{0}", programOptions);
             loggerConsole.Trace("Executing:\r\n{0}", programOptions);
@@ -1815,6 +1892,104 @@ from {2} containing
             loggerConsole.Warn("RunProgramCompare is not implemented yet");
 
             // Go to work on the expanded and validated compare file
+        }
+
+        public static bool LoadAndValidateLicense(ProgramOptions programOptions)
+        {
+            string programLicensePath = Path.Combine(
+                programOptions.ProgramLocationFolderPath,
+                "LicensedFeatures.json");
+
+            JObject licenseFile = FileIOHelper.LoadJObjectFromFile(programLicensePath);
+            JObject licensedFeatures = (JObject)licenseFile["LicensedFeatures"];
+
+            string dataSigned = licensedFeatures.ToString(Newtonsoft.Json.Formatting.None);
+            var bytesSigned = Encoding.UTF8.GetBytes(dataSigned);
+
+            string dataSignature = licenseFile["Signature"].ToString();
+            byte[] bytesSignature = Convert.FromBase64String(dataSignature);
+
+            string licenseCertificatePath = Path.Combine(
+                programOptions.ProgramLocationFolderPath,
+                "AppDynamics.DEXTER.public.cer");
+
+            X509Certificate2 publicCert = new X509Certificate2(licenseCertificatePath);
+
+            var rsaPublicKey = publicCert.GetRSAPublicKey();
+
+            bool licenseValidationResult = rsaPublicKey.VerifyData(bytesSigned, bytesSignature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+
+            logger.Info(
+@"Validating license
+{0}
+with signature {1}
+from {2} containing
+{3} returned {4}",
+                dataSigned, dataSignature, licenseCertificatePath, publicCert, licenseValidationResult);
+
+            JobOutput licensedReports = new JobOutput();
+            licensedReports.ApplicationSummary = true;
+            licensedReports.Configuration = true;
+            licensedReports.Dashboards = true;
+            licensedReports.DetectedEntities = true;
+            licensedReports.EntityDashboards = true;
+            licensedReports.EntityDetails = true;
+            licensedReports.EntityMetricGraphs = true;
+            licensedReports.EntityMetrics = true;
+            licensedReports.Events = true;
+            licensedReports.FlameGraphs = true;
+            // Health check is not free
+            licensedReports.HealthCheck = false;
+            // Licenses are not free
+            licensedReports.Licenses = false;
+            licensedReports.Snapshots = true;
+            licensedReports.UsersGroupsRolesPermissions = true;
+
+            if (licenseValidationResult == true)
+            {
+                logger.Info("License validation signature check succeeded");
+                loggerConsole.Info("License validation signature check succeeded");
+
+                DateTime dateTimeLicenseExpiration = (DateTime)licensedFeatures["ExpirationDateTime"];
+                if (dateTimeLicenseExpiration >= DateTime.Now)
+                {
+                    logger.Trace("License expires on {0:o}, valid", dateTimeLicenseExpiration);
+                    loggerConsole.Info("License expires on {0:o}, valid", dateTimeLicenseExpiration);
+
+                    licensedReports.ApplicationSummary = JobStepBase.getBoolValueFromJToken(licensedFeatures, "ApplicationSummary");
+                    licensedReports.Configuration = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Configuration");
+                    licensedReports.Dashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Dashboards");
+                    licensedReports.DetectedEntities = JobStepBase.getBoolValueFromJToken(licensedFeatures, "DetectedEntities");
+                    licensedReports.EntityDashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDashboards");
+                    licensedReports.EntityDetails = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDetails");
+                    licensedReports.EntityMetricGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetricGraphs");
+                    licensedReports.EntityMetrics = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetrics");
+                    licensedReports.Events = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Events");
+                    licensedReports.FlameGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "FlameGraphs");
+                    licensedReports.HealthCheck = JobStepBase.getBoolValueFromJToken(licensedFeatures, "HealthCheck");
+                    licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
+                    licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
+                    licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
+                }
+                else
+                {
+                    logger.Trace("License expires on {0:o}, expired", dateTimeLicenseExpiration);
+                    loggerConsole.Info("License expires on {0:o}, expired", dateTimeLicenseExpiration);
+
+                    return false;
+                }
+            }
+            else
+            {
+                logger.Warn("License validation signature check failed");
+                loggerConsole.Warn("License validation signature check failed");
+
+                return false;
+            }
+
+            programOptions.LicensedReports = licensedReports;
+
+            return true;
         }
 
         public static string ReadPassword(char mask)

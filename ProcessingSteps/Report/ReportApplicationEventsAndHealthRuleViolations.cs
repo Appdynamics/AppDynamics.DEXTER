@@ -255,7 +255,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -264,7 +264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventsSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventsSummaryReportFilePath(), 0, typeof(ApplicationEventSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -273,14 +273,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Events");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_EVENTS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventsReportFilePath(), 0, typeof(Event), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
                 #region Event Details
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_EVENT_DETAILS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventDetailsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationEventDetailsReportFilePath(), 0, typeof(EventDetail), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -289,7 +289,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Health Rule Violation Events");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_RULE_VIOLATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthRuleViolationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ApplicationHealthRuleViolationsReportFilePath(), 0, typeof(HealthRuleViolationEvent), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -298,7 +298,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Audit Events");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_AUDIT_EVENTS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.AuditEventsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.AuditEventsReportFilePath(), 0, typeof(AuditEvent), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -307,7 +307,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Notifications");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NOTIFICATIONS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.NotificationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.NotificationsReportFilePath(), 0, typeof(Event), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

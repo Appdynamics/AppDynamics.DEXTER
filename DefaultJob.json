@@ -84,7 +84,10 @@
         },
         "DetectedEntities": true,
         "Metrics": true,
-        "MetricsSelectionCriteria": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "BusinessTransactionPercentiles" ],
+        "MetricsSelectionCriteria": {
+            "MetricSets": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "JMXDBConnStats", "JMXWebContainerStats", "BusinessTransactionPercentiles" ],
+            "IncludeHourAndMinuteDetail": true
+        },
         "Flowmaps": true,
         "EntityDashboards": false,
         "EntityDashboardSelectionCriteria": {
@@ -103,6 +106,7 @@
             "TierTypes": [ "All" ],
             "BusinessTransactions": [],
             "BusinessTransactionTypes": [ "All" ],
+            "RequestIDs": [],
             "UserExperience": {
                 "Normal": true,
                 "Slow": true,
@@ -130,6 +134,7 @@
         "EntityDashboards": true,
         "EntityDetails": true,
         "Snapshots": true,
+        "IndividualSnapshots": false,
         "FlameGraphs": true,
         "HealthCheck": false,
         "ApplicationSummary": false

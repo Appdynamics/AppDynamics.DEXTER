@@ -359,7 +359,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             List<MetricExtractMapping> entityMetricExtractMappingList = FileIOHelper.ReadListFromCSVFile<MetricExtractMapping>(FilePathMap.EntityMetricExtractMappingFilePath(), new MetricExtractMappingReportMap());
 
             List<MetricExtractMapping> entityMetricExtractMappingListFiltered = new List<MetricExtractMapping>(entityMetricExtractMappingList.Count);
-            foreach (string metricSet in jobConfiguration.Input.MetricsSelectionCriteria)
+            foreach (string metricSet in jobConfiguration.Input.MetricsSelectionCriteria.MetricSets)
             {
                 List<MetricExtractMapping> entityMetricExtractMappingListForMetricSet = entityMetricExtractMappingList.Where(m => m.MetricSet == metricSet).ToList();
                 if (entityMetricExtractMappingListForMetricSet != null)

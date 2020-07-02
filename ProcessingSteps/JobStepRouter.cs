@@ -108,6 +108,8 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMEntityDashboardScreenshots,
 
+                JobStatus.ReportAPMIndividualSnapshots,
+
                 // Done 
                 JobStatus.Done,
 
@@ -148,7 +150,6 @@ namespace AppDynamics.Dexter
             }
             if (jobConfiguration.Input.SnapshotSelectionCriteria != null)
             {
-                PropertyInfo[] pis = jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes.GetType().GetProperties();
                 logger.Info("Job input, SnapshotSelectionCriteria: Tiers='{0}', TierTypes='{1}'",
                     String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.Tiers),
                     String.Join(",", jobConfiguration.Input.SnapshotSelectionCriteria.TierTypes));
@@ -380,6 +381,8 @@ namespace AppDynamics.Dexter
                     return new ReportAPMSnapshotsMethodCallLines();
                 case JobStatus.ReportAPMFlameGraphs:
                     return new ReportAPMFlameGraphs();
+                case JobStatus.ReportAPMIndividualSnapshots:
+                    return new ReportAPMIndividualSnapshots();
 
                 case JobStatus.ReportAPMEntityDetails:
                     return new ReportAPMEntityDetails();

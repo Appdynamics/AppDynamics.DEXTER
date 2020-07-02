@@ -165,7 +165,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Controllers");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -174,7 +174,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications - All");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_ALL_LIST];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerApplicationsReportFilePath(), 0, typeof(ControllerApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -183,14 +183,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Health Check Results");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_HEALTH_CHECK_RULE_RESULTS];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMHealthCheckRuleResultsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMHealthCheckRuleResultsReportFilePath(), 0, typeof(HealthCheckRuleResult), sheet, LIST_SHEET_START_TABLE_AT, 1);
                 if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
                 {
-                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 1, sheet, sheet.Dimension.Rows + 1, 1);
+                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 1, typeof(HealthCheckRuleResult), sheet, sheet.Dimension.Rows + 1, 1);
                 }
                 else
                 { 
-                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 0, sheet, LIST_SHEET_START_TABLE_AT, 1);
+                    EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerHealthCheckRuleResultsReportFilePath(), 0, typeof(HealthCheckRuleResult), sheet, LIST_SHEET_START_TABLE_AT, 1);
                 }
 
                 #endregion

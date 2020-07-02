@@ -563,6 +563,118 @@ namespace AppDynamics.Dexter
             return null;
         }
 
+        public static List<T> ReadListFromCSVFileForSnapshotsWithRequestIDs<T>(string csvFilePath, ClassMap<T> classMap, List<string> requestIDs)
+        {
+            List<T> resultsList = new List<T>();
+
+            try
+            {
+                logger.Trace("Reading List of type {0} from file {1}", typeof(T), csvFilePath);
+
+                if (File.Exists(csvFilePath) == false)
+                {
+                    logger.Warn("File {0} does not exist", csvFilePath);
+                }
+                else
+                {
+                    using (StreamReader sr = File.OpenText(csvFilePath))
+                    {
+                        CsvReader csvReader = new CsvReader(sr);
+                        csvReader.Configuration.RegisterClassMap(classMap);
+                        csvReader.Read();
+                        csvReader.ReadHeader();
+
+                        int indexOfRequestID = Array.IndexOf(csvReader.Context.HeaderRecord, "RequestID");
+
+                        // Read all rows
+                        // All records in the Snapshots, Exits, Etc, are grouped by RequestID by earlier process
+                        // Read all records with this RequestID
+                        // For Snapshots, there will be just one record
+                        // For all other data like Exits and Method Calls there will be more
+                        string currentlyReadingRequestID = String.Empty;
+                        while (true)
+                        {
+                            csvReader.Read();
+                            if (csvReader.Context.Record == null)
+                            {
+                                // At end of file, exit
+                                break;
+                            }
+                            else
+                            {
+                                if (currentlyReadingRequestID.Length == 0 && requestIDs.Count == 0)
+                                {
+                                    // Found everything, exit
+                                    break;
+                                }
+                                else
+                                {
+                                    if (csvReader.Context.Row % 10000 == 0)
+                                    {
+                                        Console.Write("[{0}].", csvReader.Context.Row);
+                                    }
+
+                                    // Are we reading a record with matched requestID?
+                                    if (currentlyReadingRequestID.Length > 0)
+                                    {
+                                        // Yes, we are, and we moved to the next record
+                                        // Is this record still part of that request ID?
+                                        if (String.Compare(csvReader.Context.Record[indexOfRequestID], currentlyReadingRequestID, true) == 0)
+                                        {
+                                            // Yes it sure is, read it
+                                            T record = csvReader.GetRecord<T>();
+                                            resultsList.Add(record);
+                                        }
+                                        else
+                                        {
+                                            // No, then reset the currently reading request ID and find the next one
+                                            currentlyReadingRequestID = String.Empty;
+                                        }
+                                    }
+
+                                    // Are we ready to find next requestID?
+                                    if (currentlyReadingRequestID.Length == 0)
+                                    {
+                                        // Yes we moved from previously found request ID
+                                        // Find a match out of request IDs
+                                        foreach (string requestID in requestIDs)
+                                        {
+                                            if (String.Compare(csvReader.Context.Record[indexOfRequestID], requestID, true) == 0)
+                                            {
+                                                // Found a match!
+                                                Console.WriteLine("[{0}]={1}", csvReader.Context.Row, requestID);
+
+                                                // Read the first record
+                                                T record = csvReader.GetRecord<T>();
+                                                resultsList.Add(record);
+
+                                                // Save for the next record, what if it has the same request ID?
+                                                currentlyReadingRequestID = requestID;
+
+                                                // Remove that one from the list
+                                                requestIDs.Remove(requestID);
+                                                
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        Console.WriteLine("[{0}].Done", csvReader.Context.Row);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error("Unable to read CSV from file {0}", csvFilePath);
+                logger.Error(ex);
+            }
+
+            return resultsList;
+        }
+
+
         public static bool AppendTwoCSVFiles(string csvToAppendToFilePath, string csvFromWhichToAppendFilePath)
         {
             string folderPath = Path.GetDirectoryName(csvToAppendToFilePath);
