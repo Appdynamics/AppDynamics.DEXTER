@@ -66,28 +66,22 @@
         "Events": true,
         "EventsSelectionCriteria": [ "All" ],
         "Configuration": true,
-        "ConfigurationComparisonReferenceAPM": {
-            "Controller": "",
-            "Application": ""
-        },
-        "ConfigurationComparisonReferenceWEB": {
-            "Controller": "",
-            "Application": ""
-        },
-        "ConfigurationComparisonReferenceMOBILE": {
-            "Controller": "",
-            "Application": ""
-        },
-        "ConfigurationComparisonReferenceDB": {
-            "Controller": "",
-            "Application": ""
-        },
+        "ConfigurationComparisonReferenceAPM": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceWEB": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceMOBILE": { "Controller": "", "Application": "" },
+        "ConfigurationComparisonReferenceDB": { "Controller": "", "Application": "" },
         "DetectedEntities": true,
         "Metrics": true,
         "MetricsSelectionCriteria": {
-            "MetricSets": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "JMXDBConnStats", "JMXWebContainerStats", "BusinessTransactionPercentiles" ],
+            "MetricSets": [ "TransactionApplication", "TransactionTier", "TransactionNode", "TransactionBackend", "TransactionBT", "TransactionSEP", "TransactionError", "TransactionIP", "AgentStats", "OSHardware", "CLRStats", "IISStats", "IISReqCounts", "IISReqPerf", "JVMStats", "JMXDBConnStats", "JMXWebContainerStats", "BusinessTransactionPercentiles", 
+            "BIQMetric", "BIQBizJourney",
+            "DBKPI", "DBServerStats", "DBIO", "DBEngineStats",
+            "WEBTransactionApplication", "WEBTransactionPage", "WEBTransactionAJAX", "WEBTransactionVirtualPage",
+            "MOBILETransactionApplication", "MOBILETransactionNetworkRequest",
+            "SIMHardware" ],
             "IncludeHourAndMinuteDetail": true
         },
+        "MetricsList": true,
         "Flowmaps": true,
         "EntityDashboards": false,
         "EntityDashboardSelectionCriteria": {
@@ -107,18 +101,8 @@
             "BusinessTransactions": [],
             "BusinessTransactionTypes": [ "All" ],
             "RequestIDs": [],
-            "UserExperience": {
-                "Normal": true,
-                "Slow": true,
-                "VerySlow": true,
-                "Stall": true,
-                "Error": true
-            },
-            "SnapshotType": {
-                "Full": true,
-                "Partial": true,
-                "None": true
-            }
+            "UserExperience": { "Normal": true, "Slow": true, "VerySlow": true, "Stall": true, "Error": true },
+            "SnapshotType": { "Full": true, "Partial": true, "None": true }
         }
     },
     "Output": {
@@ -130,6 +114,7 @@
         "DetectedEntities": true,
         "EntityMetrics": true,
         "EntityMetricGraphs": true,
+        "MetricsList": true,
         "Flowmaps": true,
         "EntityDashboards": true,
         "EntityDetails": true,

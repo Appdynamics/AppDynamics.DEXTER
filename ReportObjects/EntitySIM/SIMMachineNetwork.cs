@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class SIMMachineNetwork : SIMEntityBase
     {
+        public const string ENTITY_TYPE = "SIMNetwork";
+        public const string ENTITY_FOLDER = "NIC";
+        
         public long TierID { get; set; }
         public string TierName { get; set; }
 

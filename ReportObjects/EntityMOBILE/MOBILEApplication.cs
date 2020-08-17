@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class MOBILEApplication : MOBILEEntityBase
     {
+        public const string ENTITY_TYPE = "MOBILEApplication";
+        public const string ENTITY_FOLDER = "MOBILEAPP";
+
         public int NumNetworkRequests { get; set; }
 
         public int NumActivity { get; set; }

@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class SIMMachine : SIMEntityBase
     {
+        public const string ENTITY_TYPE = "SIMMachine";
+        public const string ENTITY_FOLDER = "MACHINE";
+
         public long TierID { get; set; }
         public string TierName { get; set; }
 

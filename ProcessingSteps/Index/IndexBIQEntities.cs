@@ -330,6 +330,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     metric.MetricLink = String.Format(DEEPLINK_METRIC, metric.Controller, metric.ApplicationID, sb.ToString(), DEEPLINK_TIMERANGE_LAST_15_MINUTES);
                                 }
 
+                                metric.MetricID = String.Join(",", metric.MetricsIDs.ToArray());
+
                                 biqMetricsList.Add(metric);
                             }
 

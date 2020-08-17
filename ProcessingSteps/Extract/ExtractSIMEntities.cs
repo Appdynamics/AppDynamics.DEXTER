@@ -126,11 +126,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 foreach (JToken saToken in sasList)
                                 {
-                                    string saJSON = controllerApi.GetSIMServiceAvailability((long)saToken["id"]);
-                                    if (saJSON != String.Empty) FileIOHelper.SaveFileToPath(saJSON, FilePathMap.SIMServiceAvailabilityDataFilePath(jobTarget, saToken["name"].ToString(), (long)saToken["id"]));
+                                    string saJSON = controllerApi.GetSIMServiceAvailability(getLongValueFromJToken(saToken, "id"));
+                                    if (saJSON != String.Empty) FileIOHelper.SaveFileToPath(saJSON, FilePathMap.SIMServiceAvailabilityDataFilePath(jobTarget, getStringValueFromJToken(saToken, "name"), getLongValueFromJToken(saToken, "id")));
 
-                                    string saEventsJSON = controllerApi.GetSIMServiceAvailabilityEvents((long)saToken["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                    if (saEventsJSON != String.Empty && saEventsJSON != "[]") FileIOHelper.SaveFileToPath(saEventsJSON, FilePathMap.SIMServiceAvailabilityEventsDataFilePath(jobTarget, saToken["name"].ToString(), (long)saToken["id"], jobConfiguration.Input.TimeRange));
+                                    string saEventsJSON = controllerApi.GetSIMServiceAvailabilityEvents(getLongValueFromJToken(saToken, "id"), fromTimeUnix, toTimeUnix, differenceInMinutes);
+                                    if (saEventsJSON != String.Empty && saEventsJSON != "[]") FileIOHelper.SaveFileToPath(saEventsJSON, FilePathMap.SIMServiceAvailabilityEventsDataFilePath(jobTarget, getStringValueFromJToken(saToken, "name"), getLongValueFromJToken(saToken, "id"), jobConfiguration.Input.TimeRange));
                                 }
 
                                 loggerConsole.Info("Completed {0} Service Availabilities", sasList.Count);
@@ -176,16 +176,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                             foreach (JToken machineToken in listOfMachinesChunk)
                                             {
-                                                if (File.Exists(FilePathMap.SIMMachineDataFilePath(jobTarget, machineToken["name"].ToString(), (long)machineToken["id"])) == false)
+                                                if (File.Exists(FilePathMap.SIMMachineDataFilePath(jobTarget, getStringValueFromJToken(machineToken, "name"), getLongValueFromJToken(machineToken, "id"))) == false)
                                                 {
-                                                    string machineJSON = controllerApi.GetSIMMachine((long)machineToken["id"]);
-                                                    if (machineJSON != String.Empty) FileIOHelper.SaveFileToPath(machineJSON, FilePathMap.SIMMachineDataFilePath(jobTarget, machineToken["name"].ToString(), (long)machineToken["id"]));
+                                                    string machineJSON = controllerApi.GetSIMMachine(getLongValueFromJToken(machineToken, "id"));
+                                                    if (machineJSON != String.Empty) FileIOHelper.SaveFileToPath(machineJSON, FilePathMap.SIMMachineDataFilePath(jobTarget, getStringValueFromJToken(machineToken, "name"), getLongValueFromJToken(machineToken, "id")));
 
-                                                    string machineDockerJSON = controllerApi.GetSIMMachineDockerContainers((long)machineToken["id"]);
-                                                    if (machineDockerJSON != String.Empty && machineDockerJSON != "[]") FileIOHelper.SaveFileToPath(machineDockerJSON, FilePathMap.SIMMachineDockerContainersDataFilePath(jobTarget, machineToken["name"].ToString(), (long)machineToken["id"]));
+                                                    string machineDockerJSON = controllerApi.GetSIMMachineDockerContainers(getLongValueFromJToken(machineToken, "id"));
+                                                    if (machineDockerJSON != String.Empty && machineDockerJSON != "[]") FileIOHelper.SaveFileToPath(machineDockerJSON, FilePathMap.SIMMachineDockerContainersDataFilePath(jobTarget, getStringValueFromJToken(machineToken, "name"), getLongValueFromJToken(machineToken, "id")));
 
                                                     string machineProcessesJSON = controllerApi.GetSIMMachineProcesses((long)machineToken["id"], fromTimeUnix, toTimeUnix, differenceInMinutes);
-                                                    if (machineProcessesJSON != String.Empty && machineProcessesJSON != "[]") FileIOHelper.SaveFileToPath(machineProcessesJSON, FilePathMap.SIMMachineProcessesDataFilePath(jobTarget, machineToken["name"].ToString(), (long)machineToken["id"], jobConfiguration.Input.TimeRange));
+                                                    if (machineProcessesJSON != String.Empty && machineProcessesJSON != "[]") FileIOHelper.SaveFileToPath(machineProcessesJSON, FilePathMap.SIMMachineProcessesDataFilePath(jobTarget, getStringValueFromJToken(machineToken, "name"), getLongValueFromJToken(machineToken, "id"), jobConfiguration.Input.TimeRange));
                                                 }
                                             }
 

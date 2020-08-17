@@ -39,9 +39,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string EVENTS_SA_FOLDER_NAME = "EVTSA";
 
         private const string APM_ACTIVITYGRID_FOLDER_NAME = "FLOW";
-        private const string APM_METRICS_FOLDER_NAME = "METR";
+        private const string APP_METRICS_FOLDER_NAME = "METR";
+        private const string APP_METRICS_APM_FOLDER_NAME = "METRAPM";
+        private const string APP_METRICS_WEB_FOLDER_NAME = "METRWEB";
+        private const string APP_METRICS_MOBILE_FOLDER_NAME = "METRMOBILE";
+        private const string APP_METRICS_SIM_FOLDER_NAME = "METRSIM";
+        private const string APP_METRICS_BIQ_FOLDER_NAME = "METRBIQ";
+        private const string APP_METRICS_DB_FOLDER_NAME = "METRDB";
         private const string APM_SNAPSHOTS_FOLDER_NAME = "SNAP";
         private const string APM_DASHBOARD_SCREENSHOTS_FOLDER_NAME = "SCRN";
+        private const string APP_METRICS_LIST_FOLDER_NAME = "METRLIST";
 
         private const string SIM_PROCESSES_FOLDER_NAME = "PROC";
 
@@ -52,6 +59,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         private const string HEALTHCHECK_FOLDER_NAME = "HEALTH";
         private const string HEALTHCHECK_APM_FOLDER_NAME = "HEALTHAPM";
+
+        private const string APM_METRICS_LIST_FOLDER_NAME = "METRLISTAPM";
 
         #endregion
 
@@ -194,6 +203,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
         // Metric data file names
         private const string EXTRACT_METRIC_FULL_FILE_NAME = "full.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
         private const string EXTRACT_METRIC_HOUR_FILE_NAME = "hour.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
+
+        // Metric list data file names
+        private const string EXTRACT_METRIC_LIST = "metr.{0}.{1}.json";
 
         // Events data file names
         private const string EXTRACT_HEALTH_RULE_VIOLATIONS_FILE_NAME = "healthruleviolations.{0:yyyyMMddHHmm}-{1:yyyyMMddHHmm}.json";
@@ -382,6 +394,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_ENTITIES_ALL_METRICS_VALUES_FILE_NAME = "{0}.{1}.metricvalues.csv";
         private const string CONVERT_ENTITIES_METRICS_LOCATIONS_FILE_NAME = "metriclocations.csv";
 
+        // Metrics List report conversion file names
+        private const string CONVERT_METRICS_LIST = "metricslist.csv";
+        private const string CONVERT_METRIC_SUMMARY_LIST = "metricssummary.csv";
+
         // Events list conversion file names
         private const string CONVERT_APPLICATION_EVENTS_SUMMARY_FILE_NAME = "application.events.csv";
         private const string CONVERT_APPLICATION_EVENTS_FILE_NAME = "events.csv";
@@ -473,8 +489,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_FLAME_CHART_NODE_FILE_NAME = "FlameChart.Node.{0}.{1}.{2}.svg";
         private const string REPORT_FLAME_CHART_BUSINESS_TRANSACTION_FILE_NAME = "FlameChart.BT.{0}.{1}.{2}.svg";
 
-        // Per Application
+        // Per Application summary
         private const string REPORT_APPLICATION_SUMMARY_FILE_NAME = "ApplicationSummary.{0}.{1}.docx";
+
+        // Metrics List report names
+        private const string REPORT_METRICS_LIST_ALL_FILE_NAME = "MetricsList.{0}.xlsx";
+        private const string REPORT_METRICS_LIST_APPLICATION_FILE_NAME = "MetricsList.{0}.{1}.xlsx";
 
         #endregion
 
@@ -4828,15 +4848,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.From,
                 jobTimeRange.To);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
-                entityFolderName,
-                metricEntitySubFolderName,
-                reportFileName);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    metricEntitySubFolderName,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    metricEntitySubFolderName,
+                    reportFileName);
+            }
         }
 
         public string MetricHourRangeDataFilePath(JobTarget jobTarget, string entityFolderName, string metricEntitySubFolderName, JobTimeRange jobTimeRange)
@@ -4846,41 +4881,56 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 jobTimeRange.From,
                 jobTimeRange.To);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                DATA_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
-                entityFolderName,
-                metricEntitySubFolderName,
-                reportFileName);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    metricEntitySubFolderName,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    DATA_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    metricEntitySubFolderName,
+                    reportFileName);
+            }
         }
 
         #endregion
 
         #region Entity Metrics Index
 
-        public string EntitiesFullIndexFilePath(JobTarget jobTarget, string entityFolderName)
+        public string APMEntitiesFullIndexFilePath(JobTarget jobTarget, string entityFolderName)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
+                APP_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_SUMMARY_FULLRANGE_FILE_NAME);
         }
 
-        public string EntitiesHourIndexFilePath(JobTarget jobTarget, string entityFolderName)
+        public string APMEntitiesHourIndexFilePath(JobTarget jobTarget, string entityFolderName)
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
+                APP_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_SUMMARY_HOURLY_FILE_NAME);
         }
@@ -4891,14 +4941,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 CONVERT_ENTITIES_METRICS_VALUES_FILE_NAME,
                 metricEntitySubFolderName);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                INDEX_FOLDER_NAME,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
-                entityFolderName,
-                reportFileName);
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    reportFileName);            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    INDEX_FOLDER_NAME,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_FOLDER_NAME,
+                    entityFolderName,
+                    reportFileName);
+            }
         }
 
         public string MetricsLocationIndexFilePath(JobTarget jobTarget, string entityFolderName)
@@ -4908,7 +4971,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
+                APP_METRICS_FOLDER_NAME,
                 entityFolderName,
                 CONVERT_ENTITIES_METRICS_LOCATIONS_FILE_NAME);
         }
@@ -4917,15 +4980,38 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Entity Metrics Report
 
-        public string MetricsReportFolderPath()
+        public string MetricsReportFolderPath(JobTarget jobTarget)
         {
+            string folderName = APP_METRICS_FOLDER_NAME;
+            switch (jobTarget.Type)
+            {
+                case JobStepBase.APPLICATION_TYPE_APM:
+                    folderName = APP_METRICS_APM_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_WEB:
+                    folderName = APP_METRICS_WEB_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_MOBILE:
+                    folderName = APP_METRICS_MOBILE_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_BIQ:
+                    folderName = APP_METRICS_BIQ_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_SIM:
+                    folderName = APP_METRICS_SIM_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_DB:
+                    folderName = APP_METRICS_DB_FOLDER_NAME;
+                    break;
+            }
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
-                APM_METRICS_FOLDER_NAME);
+                folderName);
         }
 
-        public string EntitiesFullReportFilePath(string entityFolderName)
+        public string APMEntitiesFullReportFilePath(string entityFolderName)
         {
             string reportFileName = String.Format(
                 CONVERT_ENTITIES_ALL_METRICS_SUMMARY_FULLRANGE_FILE_NAME,
@@ -4934,11 +5020,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
-                APM_METRICS_FOLDER_NAME,
+                APP_METRICS_APM_FOLDER_NAME,
                 reportFileName);
         }
 
-        public string EntitiesHourReportFilePath(string entityFolderName)
+        public string APMEntitiesHourReportFilePath(string entityFolderName)
         {
             string reportFileName = String.Format(
                 CONVERT_ENTITIES_ALL_METRICS_SUMMARY_HOURLY_FILE_NAME,
@@ -4947,21 +5033,44 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
-                APM_METRICS_FOLDER_NAME,
+                APP_METRICS_APM_FOLDER_NAME,
                 reportFileName);
         }
 
-        public string MetricReportFilePath(string entityFolderName, string metricEntitySubFolderName)
+        public string MetricReportFilePath(string entityFolderName, string metricEntitySubFolderName, JobTarget jobTarget)
         {
             string reportFileName = String.Format(
                 CONVERT_ENTITIES_ALL_METRICS_VALUES_FILE_NAME,
                 entityFolderName,
                 metricEntitySubFolderName);
 
+            string folderName = APP_METRICS_FOLDER_NAME;
+            switch (jobTarget.Type)
+            {
+                case JobStepBase.APPLICATION_TYPE_APM:
+                    folderName = APP_METRICS_APM_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_WEB:
+                    folderName = APP_METRICS_WEB_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_MOBILE:
+                    folderName = APP_METRICS_MOBILE_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_BIQ:
+                    folderName = APP_METRICS_BIQ_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_SIM:
+                    folderName = APP_METRICS_SIM_FOLDER_NAME;
+                    break;
+                case JobStepBase.APPLICATION_TYPE_DB:
+                    folderName = APP_METRICS_DB_FOLDER_NAME;
+                    break;
+            }
+
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
-                APM_METRICS_FOLDER_NAME,
+                folderName,
                 reportFileName);
         }
 
@@ -4972,17 +5081,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 entityFolderName,
                 metricEntitySubFolderName);
 
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                this.ReportFolderName,
-                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
-                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
-                APM_METRICS_FOLDER_NAME,
-                reportFileName);
-
+            if (jobTarget.Type == JobStepBase.APPLICATION_TYPE_DB)
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.DBCollectorID),
+                    APP_METRICS_FOLDER_NAME,
+                    reportFileName);
+            }
+            else
+            {
+                return Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_FOLDER_NAME,
+                    reportFileName);
+            }
         }
 
-        public string EntityMetricsExcelReportFilePath(JobTimeRange jobTimeRange)
+        public string APMEntityMetricsExcelReportFilePath(JobTimeRange jobTimeRange)
         {
             string reportFileName = String.Format(
                 REPORT_METRICS_ALL_ENTITIES_FILE_NAME,
@@ -4999,7 +5120,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         #region Entity Metric Graphs Report
 
-        public string EntityTypeMetricGraphsExcelReportFilePath(APMEntityBase entity, JobTarget jobTarget, JobTimeRange jobTimeRange, bool absolutePath)
+        public string APMEntityTypeMetricGraphsExcelReportFilePath(APMEntityBase entity, JobTarget jobTarget, JobTimeRange jobTimeRange, bool absolutePath)
         {
             string reportFileName = String.Format(
                 REPORT_METRICS_GRAPHS_FILE_NAME,
@@ -5032,6 +5153,139 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             return reportFilePath;
         }
+
+        #endregion
+
+
+        #region List of Metrics Data
+
+        public string MetricsListDataFilePath(JobTarget jobTarget, string filePrefix, int depth)
+        {
+            string reportFileName = String.Format(
+                EXTRACT_METRIC_LIST,
+                filePrefix,
+                depth);
+
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                DATA_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APP_METRICS_LIST_FOLDER_NAME,
+                reportFileName);
+        }
+
+        #endregion
+
+        #region List of Metrics Index
+
+        public string MetricsListIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APP_METRICS_LIST_FOLDER_NAME,
+                CONVERT_METRICS_LIST);
+        }
+
+        public string MetricPrefixSummaryIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APP_METRICS_LIST_FOLDER_NAME,
+                CONVERT_METRIC_SUMMARY_LIST);
+        }
+
+        #endregion
+
+        #region List of Metrics Report
+
+        public string APMMetricsListReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                APM_METRICS_LIST_FOLDER_NAME);
+        }
+
+        public string MetricsListReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                APM_METRICS_LIST_FOLDER_NAME,
+                CONVERT_METRICS_LIST);
+        }
+
+        public string MetricPrefixSummaryReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                APM_METRICS_LIST_FOLDER_NAME,
+                CONVERT_METRIC_SUMMARY_LIST);
+        }
+
+        public string MetricsListApplicationReportFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                APP_METRICS_LIST_FOLDER_NAME,
+                CONVERT_METRICS_LIST);
+        }
+
+        public string MetricsListApplicationExcelReportFilePath(JobTarget jobTarget, bool absolutePath)
+        {
+            string reportFileName = String.Format(
+                REPORT_METRICS_LIST_APPLICATION_FILE_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID));
+
+            string reportFilePath = String.Empty;
+
+            if (absolutePath == true)
+            {
+                reportFilePath = Path.Combine(
+                    this.ProgramOptions.OutputJobFolderPath,
+                    this.ReportFolderName,
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_LIST_FOLDER_NAME,
+                    reportFileName);
+            }
+            else
+            {
+                reportFilePath = Path.Combine(
+                    getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                    getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                    APP_METRICS_LIST_FOLDER_NAME,
+                    reportFileName);
+            }
+
+            return reportFilePath;
+        }
+
+        public string MetricsListExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_METRICS_LIST_ALL_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                reportFileName);
+        }
+
 
         #endregion
 

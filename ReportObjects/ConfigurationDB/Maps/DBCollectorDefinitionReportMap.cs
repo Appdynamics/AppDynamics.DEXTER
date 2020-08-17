@@ -48,9 +48,9 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsLDAPEnabled).Index(i); i++;
 
             Map(m => m.CreatedBy).Index(i); i++;
-            Map(m => m.CreatedOn).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.CreatedOn), i); i++;
             Map(m => m.ModifiedBy).Index(i); i++;
-            Map(m => m.ModifiedOn).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.ModifiedOn), i); i++;
 
             Map(m => m.ConfigID).Index(i); i++;
 

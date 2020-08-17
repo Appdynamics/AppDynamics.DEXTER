@@ -39,6 +39,14 @@ namespace AppDynamics.Dexter
                 JobStatus.ExtractBIQEntities,
 
                 JobStatus.ExtractAPMMetrics,
+                JobStatus.ExtractSIMMetrics,
+                JobStatus.ExtractDBMetrics,
+                JobStatus.ExtractWEBMetrics,
+                JobStatus.ExtractMOBILEMetrics,
+                JobStatus.ExtractBIQMetrics,
+
+                JobStatus.ExtractAPMMetricsList,
+
                 JobStatus.ExtractAPMFlowmaps,
                 JobStatus.ExtractAPMEntityDashboardScreenshots,
                 JobStatus.ExtractAPMSnapshots,
@@ -71,6 +79,14 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexApplicationConfigurationDifferences,
 
                 JobStatus.IndexAPMMetrics,
+                JobStatus.IndexSIMMetrics,
+                JobStatus.IndexDBMetrics,
+                JobStatus.IndexWEBMetrics,
+                JobStatus.IndexMOBILEMetrics,
+                JobStatus.IndexBIQMetrics,
+
+                JobStatus.IndexAPMMetricsList,
+
                 JobStatus.IndexAPMFlowmaps,
                 JobStatus.IndexAPMSnapshots,
 
@@ -95,7 +111,10 @@ namespace AppDynamics.Dexter
 
                 JobStatus.ReportAPMMetrics,
                 JobStatus.ReportAPMMetricGraphs,
+
                 JobStatus.ReportAPMFlowmaps,
+
+                JobStatus.ReportAPMMetricsList,
 
                 JobStatus.ReportAPMSnapshots,
                 JobStatus.ReportAPMSnapshotsMethodCallLines,
@@ -274,6 +293,20 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ExtractAPMMetrics:
                     return new ExtractAPMMetrics();
+                case JobStatus.ExtractSIMMetrics:
+                    return new ExtractSIMMetrics();
+                case JobStatus.ExtractDBMetrics:
+                    return new ExtractDBMetrics();
+                case JobStatus.ExtractWEBMetrics:
+                    return new ExtractWEBMetrics();
+                case JobStatus.ExtractMOBILEMetrics:
+                    return new ExtractMOBILEMetrics();
+                case JobStatus.ExtractBIQMetrics:
+                    return new ExtractBIQMetrics();
+
+                case JobStatus.ExtractAPMMetricsList:
+                    return new ExtractAPMMetricsList();
+
                 case JobStatus.ExtractAPMFlowmaps:
                     return new ExtractAPMFlowmaps();
                 case JobStatus.ExtractAPMEntityDashboardScreenshots:
@@ -331,6 +364,20 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.IndexAPMMetrics:
                     return new IndexAPMMetrics();
+                case JobStatus.IndexSIMMetrics:
+                    return new IndexSIMMetrics();
+                case JobStatus.IndexDBMetrics:
+                    return new IndexDBMetrics();
+                case JobStatus.IndexWEBMetrics:
+                    return new IndexWEBMetrics();
+                case JobStatus.IndexMOBILEMetrics:
+                    return new IndexMOBILEMetrics();
+                case JobStatus.IndexBIQMetrics:
+                    return new IndexBIQMetrics();
+
+                case JobStatus.IndexAPMMetricsList:
+                    return new IndexAPMMetricsList();
+
                 case JobStatus.IndexAPMFlowmaps:
                     return new IndexAPMFlowmaps();
                 case JobStatus.IndexAPMSnapshots:
@@ -372,8 +419,12 @@ namespace AppDynamics.Dexter
                     return new ReportAPMMetrics();
                 case JobStatus.ReportAPMMetricGraphs:
                     return new ReportAPMMetricGraphs();
+                
                 case JobStatus.ReportAPMFlowmaps:
                     return new ReportAPMFlowmaps();
+
+                case JobStatus.ReportAPMMetricsList:
+                    return new ReportAPMMetricsList();
 
                 case JobStatus.ReportAPMSnapshots:
                     return new ReportAPMSnapshots();

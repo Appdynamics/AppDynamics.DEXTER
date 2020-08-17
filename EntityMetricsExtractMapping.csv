@@ -163,3 +163,92 @@ Information Point,Information Points|*|Average Response Time (ms),Average Respon
 Information Point,Information Points|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionIP
 Information Point,Information Points|*|Errors per Minute,Errors per Minute,EPM,SUM,CallsAndResponse,PRIMARY,FF0000,TransactionIP
 Information Point,Information Points|*|cartTotal,cartTotal,CARTTOTAL,SUM,CartTotal,PRIMARY,0000FF,InformationPointCustom1
+SavedSearch,Analytics|*,DOESNOTMATTER,BIQMETRALL,SUM,,,,BIQMetric
+BizJourney,Analytics|Business Journeys|*|Calls per minute,Calls per minute,BIZJOURCPM,SUM,,,,BIQBizJourney
+BizJourney,Analytics|Business Journeys|*|Average total time,Average total time,BIZJOURART,AVERAGE,,,,BIQBizJourney
+BizJourney,Analytics|Business Journeys|*|*|Calls per minute,Calls per minute,BIZJOURSTEPCPM,SUM,,,,BIQBizJourney
+BizJourney,Analytics|Business Journeys|*|*|Average time taken,Average time taken,BIZJOURSTEPART,AVERAGE,,,,BIQBizJourney
+Database,KPI|Calls per Minute,KPI|Calls per Minute,DBCPM,SUM,,,,DBKPI
+Database,KPI|DB Availability,KPI|DB Availability,DBAVAIL,SUM,,,,DBKPI
+Database,KPI|Number of Connections,KPI|Number of Connections,DBNUMCONN,SUM,,,,DBKPI
+Database,KPI|Time Spent in Executions (s),"KPI|Time Spent in Executions (s)	",DBEXECTIME,AVERAGE,,,,DBKPI
+Database,Server Statistic|*,DOESNOTMATTER,DBSRVSTATSALL,SUM,,,,DBServerStats
+Database,IO|*,DOESNOTMATTER,DBIOALL,SUM,,,,DBIO
+Database,Engine Statistics|*|*,DOESNOTMATTER,DBENGSTAT,SUM,,,,DBEngineStats
+WEBApplication,End User Experience|App|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Page Requests per Minute,Page Requests per Minute,CPMPAGE,SUM,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|AJAX Requests per Minute,AJAX Requests per Minute,CPMAJAX,SUM,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Application Server Time (ms),Application Server Time (ms),APPSRVT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Browser Queue Time (ms),Browser Queue Time (ms),BROWSERQT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|DOM Building Time (ms),DOM Building Time (ms),DOMBUILDT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|DOM Ready Time (ms),DOM Ready Time (ms),DOMREADYT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Domain Lookup Time (ms),Domain Lookup Time (ms),DNSLOOKT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|End User Response Time (ms),End User Response Time (ms),ART,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|First Byte Time (ms),First Byte Time (ms),FIRSTBYTET,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Front End Time (ms),Front End Time (ms),FRONTT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|HTML Download Time (ms),HTML Download Time (ms),HTMLDT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|HTML Download and DOM Building Time (ms),HTML Download and DOM Building Time (ms),HTMLDDOMT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Resource Fetch Time (ms),Resource Fetch Time (ms),RESFETCHT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Response Available Time (ms),Response Available Time (ms),RESPAVAILT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Server Connection Time (ms),Server Connection Time (ms),SRVCONNT,AVERAGE,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|TCP Connect Time (ms),TCP Connect Time (ms),TCPCONNT,AVERAGE,,,,WEBTransactionApplication
+WEBPage,End User Experience|Base Pages|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Page Requests per Minute,Page Requests per Minute,CPMPAGE,SUM,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|AJAX Requests per Minute,AJAX Requests per Minute,CPMAJAX,SUM,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Application Server Time (ms),Application Server Time (ms),APPSRVT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Browser Queue Time (ms),Browser Queue Time (ms),BROWSERQT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|DOM Building Time (ms),DOM Building Time (ms),DOMBUILDT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|DOM Ready Time (ms),DOM Ready Time (ms),DOMREADYT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Domain Lookup Time (ms),Domain Lookup Time (ms),DNSLOOKT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|End User Response Time (ms),End User Response Time (ms),EURT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|First Byte Time (ms),First Byte Time (ms),FIRSTBYTET,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Front End Time (ms),Front End Time (ms),FRONTT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|HTML Download Time (ms),HTML Download Time (ms),HTMLDT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|HTML Download and DOM Building Time (ms),HTML Download and DOM Building Time (ms),HTMLDDOMT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Resource Fetch Time (ms),Resource Fetch Time (ms),RESFETCHT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Response Available Time (ms),Response Available Time (ms),RESPAVAILT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Server Connection Time (ms),Server Connection Time (ms),SRVCONNT,AVERAGE,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|TCP Connect Time (ms),TCP Connect Time (ms),TCPCONNT,AVERAGE,,,,WEBTransactionPage
+WEBAjax,End User Experience|AJAX Requests|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionAJAX
+WEBAjax,End User Experience|AJAX Requests|*|Application Server Time (ms),Application Server Time (ms),APPSRVT,AVERAGE,,,,WEBTransactionAJAX
+WEBAjax,End User Experience|AJAX Requests|*|End User Response Time (ms),End User Response Time (ms),EURT,AVERAGE,,,,WEBTransactionAJAX
+WEBAjax,End User Experience|AJAX Requests|*|First Byte Time (ms),First Byte Time (ms),FIRSTBYTET,AVERAGE,,,,WEBTransactionAJAX
+WEBAjax,End User Experience|AJAX Requests|*|AJAX Request Errors per Minute,AJAX Request Errors per Minute,EPM,SUM,,,,WEBTransactionAJAX
+WEBVirtualPage,End User Experience|Virtual Pages|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|End User Response Time (ms),End User Response Time (ms),EURT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Front End Time (ms),Front End Time (ms),FRONTT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|HTML Download Time (ms),HTML Download Time (ms),HTMLDT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|HTML Download and DOM Building Time (ms),HTML Download and DOM Building Time (ms),HTMLDDOMT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|DOM Building Time (ms),DOM Building Time (ms),DOMBUILDT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|DOM Ready Time (ms),DOM Ready Time (ms),DOMREADYT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Browser Queue Time (ms),Browser Queue Time (ms),BROWSQT,AVERAGE,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Images Loaded per Pageview,Images Loaded per Pageview,IMGLOAD,SUM,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Resources Loaded per Pageview,Resources Loaded per Pageview,RESLOAD,SUM,,,,WEBTransactionVirtualPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Scripts Loaded per Pageview,Scripts Loaded per Pageview,JSLOAD,SUM,,,,WEBTransactionVirtualPage
+MOBILEApplication,Mobile|{0}|App Starts,App Starts,APPSTART,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|App Starts per Minute,App Starts per Minute,APPSTARTPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|App Crashes,App Crashes,APPCRASH,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|App Crashes per Minute,App Crashes per Minute,APPCRASHPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Application Server Calls per Minute,Application Server Calls per Minute,APPCPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Application Server Time (ms),Application Server Time (ms),APPART,AVERAGE,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|HTTP Errors per Minute,HTTP Errors per Minute,HTTPEPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Network Request Time (ms),Network Request Time (ms),NRT,AVERAGE,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Network Response Content Length (bytes),Network Response Content Length (bytes),NRLENGTH,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Network Errors per Minute,Network Errors per Minute,NETEPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Requests per Minute,Requests per Minute,CPM,SUM,,,,MOBILETransactionApplication
+MOBILENetworkRequest,Mobile|{0}|Application Server Calls per Minute,Application Server Calls per Minute,APPCPM,SUM,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Application Server Time (ms),Application Server Time (ms),APPART,AVERAGE,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|HTTP Errors per Minute,HTTP Errors per Minute,HTTPEPM,SUM,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Network Request Time (ms),Network Request Time (ms),NRT,AVERAGE,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Network Response Content Length (bytes),Network Response Content Length (bytes),NRLENGTH,SUM,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Network Errors per Minute,Network Errors per Minute,NETEPM,SUM,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,MOBILETransactionNetworkRequest
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|CPU|%Busy,CPU|%Busy,CPUBUSY,AVERAGE,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Disks|Writes/sec,Disks|Write/sec,DISKWRITE,AVERAGE,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Disks|Reads/sec,Disks|Reads/sec,DISKREAD,AVERAGE,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Memory|Used %,Memory|Used %,MEMUSED,AVERAGE,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Load|Last 1 minute,Load|Last 1 minute,LOAD1M,SUM,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Load|Last 5 minutes,Load|Last 5 minutes,LOAD5M,SUM,,,,SIMHardware
+SIMMachine,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Load|Last 15 minutes,Load|Last 15 minutes,LOAD15M,SUM,,,,SIMHardware
+SIMNetwork,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Network|Incoming KB/sec,Network|Incoming KB/sec,NETKBIN,AVERAGE,,,,SIMHardware
+SIMNetwork,Application Infrastructure Performance|*|Individual Nodes|*|Hardware Resources|Network|Outgoing KB/sec,Network|Outgoing KB/sec,NETKBOUT,AVERAGE,,,,SIMHardware

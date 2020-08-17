@@ -18,5 +18,6 @@
         public bool Licenses { get; set; }
         public bool HealthCheck { get; set; }
         public bool ApplicationSummary { get; set; }
+        public bool MetricsList { get; set; }
     }
 }

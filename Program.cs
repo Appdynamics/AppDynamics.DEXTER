@@ -1366,7 +1366,7 @@ namespace AppDynamics.Dexter
                                     {
                                         JArray applicationsInTarget = (JArray)applicationMobile["children"];
 
-                                        if (applicationsInTarget.Count > 0)
+                                        if (applicationsInTarget != null && applicationsInTarget.Count > 0)
                                         {
                                             IEnumerable<JToken> applicationsMatchingCriteria = null;
                                             if (jobTarget.NameRegex == true)
@@ -1936,6 +1936,7 @@ from {2} containing
             licensedReports.EntityDetails = true;
             licensedReports.EntityMetricGraphs = true;
             licensedReports.EntityMetrics = true;
+            licensedReports.MetricsList = true;
             licensedReports.Events = true;
             licensedReports.FlameGraphs = true;
             // Health check is not free
@@ -1964,6 +1965,7 @@ from {2} containing
                     licensedReports.EntityDetails = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDetails");
                     licensedReports.EntityMetricGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetricGraphs");
                     licensedReports.EntityMetrics = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetrics");
+                    licensedReports.MetricsList = JobStepBase.getBoolValueFromJToken(licensedFeatures, "MetricsList");
                     licensedReports.Events = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Events");
                     licensedReports.FlameGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "FlameGraphs");
                     licensedReports.HealthCheck = JobStepBase.getBoolValueFromJToken(licensedFeatures, "HealthCheck");

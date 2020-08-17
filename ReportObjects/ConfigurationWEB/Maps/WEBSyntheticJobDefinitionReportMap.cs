@@ -36,10 +36,11 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Config).Index(i); i++;
             Map(m => m.PerfCriteria).Index(i); i++;
 
-            Map(m => m.CreatedOn).Index(i); i++;
-            Map(m => m.CreatedOnUtc).Index(i); i++;
-            Map(m => m.UpdatedOn).Index(i); i++;
-            Map(m => m.UpdatedOnUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.CreatedOn), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.CreatedOnUtc), i); i++;
+
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.UpdatedOn), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.UpdatedOnUtc), i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.JobID).Index(i); i++;

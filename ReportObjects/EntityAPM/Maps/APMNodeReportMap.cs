@@ -26,8 +26,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.AgentRuntime).Index(i); i++;
 
             Map(m => m.InstallDirectory).Index(i); i++;
-            Map(m => m.InstallTime).Index(i); i++;
-            Map(m => m.LastStartTime).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.InstallTime), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.LastStartTime), i); i++;
             Map(m => m.IsDisabled).Index(i); i++;
             Map(m => m.IsMonitoringDisabled).Index(i); i++;
 

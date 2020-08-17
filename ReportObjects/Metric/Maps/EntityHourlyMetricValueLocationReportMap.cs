@@ -14,8 +14,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.EntityType).Index(i); i++;
             Map(m => m.MetricName).Index(i); i++;
 
-            Map(m => m.FromUtc).Index(i); i++;
-            Map(m => m.ToUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.FromUtc), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.ToUtc), i); i++;
 
             Map(m => m.RowStart).Index(i); i++;
             Map(m => m.RowEnd).Index(i); i++;

@@ -23,8 +23,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.RequestID).Index(i); i++;
             Map(m => m.SegmentID).Index(i); i++;
 
-            Map(m => m.Occurred).Index(i); i++;
-            Map(m => m.OccurredUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.Occurred), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.OccurredUtc), i); i++;
 
             Map(m => m.DataName).Index(i); i++;
             Map(m => m.DataValue).Index(i); i++;

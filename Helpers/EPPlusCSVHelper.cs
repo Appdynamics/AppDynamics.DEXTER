@@ -1,4 +1,5 @@
 ﻿using CsvHelper;
+using CsvHelper.Configuration;
 using NLog;
 using OfficeOpenXml;
 using System;
@@ -93,6 +94,7 @@ namespace AppDynamics.Dexter
                             case "MetricGraphLink":
                             case "FlameGraphLink":
                             case "FlameChartLink":
+                            case "MetricsListLink":
                                 dictionaryColumnTypes.Add(prop.Name, "Hyperlink");
                                 break;
 
@@ -171,7 +173,7 @@ namespace AppDynamics.Dexter
                 try
                 {
                     foreach (string fieldValue in rowValues)
-                    { 
+                    {
                         ExcelRange cell = sheet.Cells[csvRowIndex + startRow - skipLinesFromBeginning, csvFieldIndex + startColumn];
 
                         if (csvRowIndex == 0)
@@ -248,15 +250,25 @@ namespace AppDynamics.Dexter
 
                                 case "DateTime":
                                     DateTime dateTimeValue;
+
                                     if (DateTime.TryParse(fieldValue, out dateTimeValue))
                                     {
-                                        cell.Value = dateTimeValue;
+                                        if (fieldName.EndsWith("Utc", StringComparison.InvariantCultureIgnoreCase) == true)
+                                        {
+                                            cell.Value = dateTimeValue.ToUniversalTime();
+                                        }
+                                        else
+                                        {
+                                            cell.Value = dateTimeValue;
+                                        }
                                         cell.Style.Numberformat.Format = cellDateTimeFormat;
                                     }
                                     else
                                     {
                                         cell.Value = fieldValue;
                                     }
+
+
                                     break;
 
                                 case "TimeHourMinute":
@@ -328,6 +340,20 @@ namespace AppDynamics.Dexter
             }
 
             return sheet.Cells[startRow, startColumn, startRow + csvRowIndex, startColumn + numColumnsInCSV - 1];
+        }
+
+        /// <summary>
+        /// The "O" or "o" standard format specifier represents a custom date and time format string using a pattern that preserves time zone information and emits a result string that complies with ISO 8601. 
+        /// https://docs.microsoft.com/en-us/dotnet/standard/base-types/standard-date-and-time-format-strings#the-round-trip-o-o-format-specifier
+        /// </summary>
+        /// <param name="map"></param>
+        /// <param name="index"></param>
+        internal static void setISO8601DateFormat(MemberMap map, int index)
+        {
+            map.TypeConverterOption.Format("O");
+            map.Index(index);
+            
+            return;
         }
     }
 }

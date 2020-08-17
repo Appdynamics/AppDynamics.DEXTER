@@ -27,9 +27,17 @@
         ExtractBIQEntities = 25,
 
         ExtractAPMMetrics = 30,
-        ExtractAPMFlowmaps = 31,
-        ExtractAPMEntityDashboardScreenshots = 32,
-        ExtractAPMSnapshots = 33,
+        ExtractSIMMetrics = 31,
+        ExtractDBMetrics = 32,
+        ExtractWEBMetrics = 33,
+        ExtractMOBILEMetrics = 34,
+        ExtractBIQMetrics = 35,
+
+        ExtractAPMMetricsList = 36,
+
+        ExtractAPMFlowmaps = 40,
+        ExtractAPMEntityDashboardScreenshots = 42,
+        ExtractAPMSnapshots = 43,
 
         // Index steps
         IndexControllerVersionAndApplications = 50,
@@ -59,8 +67,16 @@
         IndexApplicationConfigurationDifferences = 76,
 
         IndexAPMMetrics = 80,
-        IndexAPMFlowmaps = 81,
-        IndexAPMSnapshots = 82,
+        IndexSIMMetrics = 81,
+        IndexDBMetrics = 82,
+        IndexWEBMetrics = 83,
+        IndexMOBILEMetrics = 84,
+        IndexBIQMetrics = 85,
+
+        IndexAPMMetricsList = 86,
+
+        IndexAPMFlowmaps = 88,
+        IndexAPMSnapshots = 89,
 
         IndexControllerHealthCheck = 90,
         IndexAPMHealthCheck = 91,
@@ -83,7 +99,10 @@
 
         ReportAPMMetrics = 120,
         ReportAPMMetricGraphs = 121,
+               
         ReportAPMFlowmaps = 122,
+
+        ReportAPMMetricsList = 125,
 
         ReportAPMSnapshots = 130,
         ReportAPMSnapshotsMethodCallLines = 131,

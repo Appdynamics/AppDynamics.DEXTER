@@ -20,7 +20,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for report contents
 
-        private const string SHEET_CONTROLLERS = "3.Controllers";
+        private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string SHEET_APPLICATIONS_GRAPHS = "4.App.{0}";
         private const string SHEET_APPLICATIONS_SCATTER = "4.App.Calls Scatter";
         private const string SHEET_TIERS_GRAPHS = "5.Tiers.{0}";
@@ -183,7 +183,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, applicationsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(applicationsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, applicationsList.Count);
                                 }
@@ -207,7 +207,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, tiersList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMTier.ENTITY_FOLDER, APMTier.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(tiersList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(tiersList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, tiersList.Count);
                                 }
@@ -232,7 +232,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, nodesList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMNode.ENTITY_FOLDER, APMNode.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(nodesList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(nodesList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, nodesList.Count);
                                 }
@@ -256,7 +256,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, backendsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(backendsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(backendsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, backendsList.Count);
                                 }
@@ -280,7 +280,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, businessTransactionsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(businessTransactionsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(businessTransactionsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, businessTransactionsList.Count);
                                 }
@@ -304,7 +304,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, serviceEndpointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(serviceEndpointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(serviceEndpointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, serviceEndpointsList.Count);
                                 }
@@ -327,7 +327,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillMetricGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, errorsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(errorsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(errorsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, errorsList.Count);
                                 }
@@ -351,7 +351,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     fillTransactionalScatterPlotsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
                                     fillPivotGraphsForEntityType(excelReport, entityMetricExtractMappingListFiltered, informationPointsList.OfType<APMEntityBase>().ToList(), jobConfiguration, jobTarget, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
 
-                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(informationPointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
+                                    finalizeAndSaveIndividualEntityMetricReport(excelReport, FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(informationPointsList[0], jobTarget, jobConfiguration.Input.TimeRange, true));
 
                                     Interlocked.Add(ref numEntitiesTotal, informationPointsList.Count);
                                 }
@@ -477,7 +477,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
             #region Controller sheet
 
-            sheet = excelMetricGraphs.Workbook.Worksheets.Add(SHEET_CONTROLLERS);
+            sheet = excelMetricGraphs.Workbook.Worksheets.Add(SHEET_CONTROLLERS_LIST);
             sheet.Cells[1, 1].Value = "Table of Contents";
             sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
             sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -1157,7 +1157,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheetGraphs.View.FreezePanes(GRAPH_SHEET_START_TABLE_AT + 1, columnsBeforeFirstHourRange + 1);
 
                 // Move before all the Graphs sheets
-                excelReportMetrics.Workbook.Worksheets.MoveAfter(sheetName, SHEET_CONTROLLERS);
+                excelReportMetrics.Workbook.Worksheets.MoveAfter(sheetName, SHEET_CONTROLLERS_LIST);
 
                 #endregion
 
@@ -1578,8 +1578,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[indexOfTimeRange];
                                 EntityHourlyMetricValueLocation entityHourlyMetricValueLocation = entityHourlyMetricValueLocationsForThisEntityAndMetric[indexOfMetricValueLocation];
 
-                                if (entityHourlyMetricValueLocation.FromUtc >= jobTimeRange.From &&
-                                    entityHourlyMetricValueLocation.ToUtc <= jobTimeRange.To)
+                                if (entityHourlyMetricValueLocation.FromUtc.ToUniversalTime() >= jobTimeRange.From &&
+                                    entityHourlyMetricValueLocation.ToUtc.ToUniversalTime() <= jobTimeRange.To)
                                 {
                                     // Found metric values for this entity for this metric in this time range
                                     entityHourlyMetricValueLocationsForThisEntityAndMetricArray[indexOfTimeRange] = entityHourlyMetricValueLocation;
