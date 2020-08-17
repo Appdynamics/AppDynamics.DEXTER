@@ -5,6 +5,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class WEBPage : WEBEntityBase
     {
+        public const string ENTITY_TYPE = "WEBPage";
+        public const string ENTITY_FOLDER = "PAGE";
+
         public string PageType { get; set; }
         public string PageName { get; set; }
         public long PageID { get; set; }

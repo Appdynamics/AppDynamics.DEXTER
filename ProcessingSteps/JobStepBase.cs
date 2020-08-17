@@ -333,8 +333,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         public void DisplayJobTargetStartingStatus(JobConfiguration jobConfiguration, JobTarget jobTarget, int jobTargetIndex)
         {
-            logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
-            loggerConsole.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
+            if (jobTarget.Type == APPLICATION_TYPE_DB)
+            {
+                logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.DBCollectorID, jobTarget.Type);
+                loggerConsole.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.DBCollectorID, jobTarget.Type);
+            }
+            else
+            {
+                logger.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
+                loggerConsole.Info("{0}({0:d}): [{1}/{2}], {3} {4}({5}) [{6}]", jobConfiguration.Status, jobTargetIndex, jobConfiguration.Target.Count, jobTarget.Controller, jobTarget.Application, jobTarget.ApplicationID, jobTarget.Type);
+            }
         }
 
         public void DisplayJobTargetEndedStatus(JobConfiguration jobConfiguration, JobTarget jobTarget, int jobTargetIndex, Stopwatch stopWatch)

@@ -826,6 +826,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             node.RuntimeName = "Common Language Runtime";
                                             node.Vendor = "Microsoft";
                                             node.VMVendor = "Microsoft";
+                                            node.Version = "";
 
                                             string[] agentRuntimeTokens = node.AgentRuntime.Split('|');
                                             foreach (string agentRuntimeToken in agentRuntimeTokens)
@@ -1888,7 +1889,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
             entity.DetailLink = String.Format(@"=HYPERLINK(""{0}"", ""<Detail>"")", FilePathMap.EntityMetricAndDetailExcelReportFilePath(entity, jobTarget, jobTimeRange, false));
             entity.FlameGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<FlGraph>"")", FilePathMap.FlameGraphReportFilePath(entity, jobTarget, jobTimeRange, false));
             entity.FlameChartLink = String.Format(@"=HYPERLINK(""{0}"", ""<FlChart>"")", FilePathMap.FlameChartReportFilePath(entity, jobTarget, jobTimeRange, false));
-            entity.MetricGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Metrics>"")", FilePathMap.EntityTypeMetricGraphsExcelReportFilePath(entity, jobTarget, jobTimeRange, false));
+            entity.MetricGraphLink = String.Format(@"=HYPERLINK(""{0}"", ""<Metrics>"")", FilePathMap.APMEntityTypeMetricGraphsExcelReportFilePath(entity, jobTarget, jobTimeRange, false));
         }
 
         /// <summary>

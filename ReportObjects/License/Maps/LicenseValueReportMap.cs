@@ -14,8 +14,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.RuleName).Index(i); i++;
             Map(m => m.AgentType).Index(i); i++;
 
-            Map(m => m.LicenseEventTime).Index(i); i++;
-            Map(m => m.LicenseEventTimeUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.LicenseEventTime), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.LicenseEventTimeUtc), i); i++;
 
             Map(m => m.Average).Index(i); i++;
             Map(m => m.Min).Index(i); i++;

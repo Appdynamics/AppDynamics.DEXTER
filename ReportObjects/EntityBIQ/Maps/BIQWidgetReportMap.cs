@@ -42,10 +42,10 @@ namespace AppDynamics.Dexter.ReportObjectMaps
 
             Map(m => m.TimeRangeType).Index(i); i++;
             Map(m => m.TimeRangeDuration).Index(i); i++;
-            Map(m => m.StartTime).Index(i); i++;
-            Map(m => m.StartTimeUtc).Index(i); i++;
-            Map(m => m.EndTime).Index(i); i++;
-            Map(m => m.EndTimeUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.StartTime), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.StartTimeUtc), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.EndTime), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.EndTimeUtc), i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
             Map(m => m.SearchID).Index(i); i++;

@@ -120,7 +120,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                 //Parallel.For(0,
                                 //    differenceInMinutesForLastTimeRange,
-                                //    new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                //    parallelOptions,
                                 //    () => 0,
                                 //    (minute, loop, subtotal) =>
                                 //    {
@@ -173,7 +173,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     Parallel.ForEach(
                                         tiersList,
-                                        new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                        parallelOptions,
                                         () => 0,
                                         (tier, loop, subtotal) =>
                                         {
@@ -218,7 +218,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     Parallel.ForEach(
                                         nodesList,
-                                        new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                        parallelOptions,
                                         () => 0,
                                         (node, loop, subtotal) =>
                                         {
@@ -264,7 +264,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     Parallel.ForEach(
                                         backendsList,
-                                        new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                        parallelOptions,
                                         () => 0,
                                         (backend, loop, subtotal) =>
                                         {
@@ -308,7 +308,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     Parallel.ForEach(
                                         businessTransactionsList,
-                                        new ParallelOptions { MaxDegreeOfParallelism = FLOWMAP_EXTRACT_NUMBER_OF_THREADS },
+                                        parallelOptions,
                                         () => 0,
                                         (businessTransaction, loop, subtotal) =>
                                         {

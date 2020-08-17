@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class BIQBusinessJourney : BIQEntityBase
     {
+        public const string ENTITY_TYPE = "BizJourney";
+        public const string ENTITY_FOLDER = "BIZJOURN";
+
         public string JourneyName { get; set; }
         public string JourneyDescription { get; set; }
         public string JourneyID { get; set; }

@@ -22,10 +22,10 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.EPM).Index(i); i++;
             Map(m => m.ErrorsPercentage).Index(i); i++;
             Map(m => m.HasActivity).Index(i); i++;
-            Map(m => m.From).Index(i); i++;
-            Map(m => m.To).Index(i); i++;
-            Map(m => m.FromUtc).Index(i); i++;
-            Map(m => m.ToUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.From), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.To), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.FromUtc), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.ToUtc), i); i++;
             Map(m => m.Duration).Index(i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;

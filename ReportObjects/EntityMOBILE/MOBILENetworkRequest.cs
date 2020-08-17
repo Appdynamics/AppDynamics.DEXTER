@@ -5,6 +5,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class MOBILENetworkRequest : MOBILEEntityBase
     {
+        public const string ENTITY_TYPE = "MOBILENetworkRequest";
+        public const string ENTITY_FOLDER = "NR";
+
         public string RequestName { get; set; }
         public string RequestNameInternal { get; set; }
         public long RequestID { get; set; }

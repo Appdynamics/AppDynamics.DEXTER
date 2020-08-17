@@ -20,7 +20,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
     {
         #region Constants for report contents
 
-        private const string SHEET_CONTROLLERS = "3.Controllers";
+        private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         private const string SHEET_APPLICATIONS_FULL = "4.Applications";
         private const string SHEET_APPLICATIONS_HOURLY = "4.Applications.Hourly";
         private const string SHEET_APPLICATIONS_PERF_PIVOT = "4.Applications.Perf";
@@ -168,7 +168,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Entity sheets and their associated pivots
 
                 // Entity sheets
-                sheet = excelReport.Workbook.Worksheets.Add(SHEET_CONTROLLERS);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_CONTROLLERS_LIST);
                 sheet.Cells[1, 1].Value = "Table of Contents";
                 sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
@@ -435,7 +435,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 loggerConsole.Info("List of Controllers");
 
-                sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.ControllerSummaryReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
@@ -445,12 +445,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Applications (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Applications (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATIONS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), 0, typeof(APMApplication), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -459,12 +459,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Tiers (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Tiers (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_TIERS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), 0, typeof(APMTier), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -473,12 +473,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Nodes (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Nodes (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_NODES_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), 0, typeof(APMNode), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -487,12 +487,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Backends (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Backends (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKENDS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), 0, typeof(APMBackend), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -501,12 +501,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Business Transactions (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Business Transactions (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BUSINESS_TRANSACTIONS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), 0, typeof(APMBusinessTransaction), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -515,12 +515,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Service Endpoints (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Service Endpoints (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINTS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), 0, typeof(APMServiceEndpoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -529,12 +529,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Errors (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Errors (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_ERRORS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMError.ENTITY_FOLDER), 0, typeof(APMError), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -543,12 +543,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 loggerConsole.Info("List of Information Points (Full)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_FULL];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 loggerConsole.Info("List of Information Points (Hourly)");
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_INFORMATION_POINTS_HOURLY];
-                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.EntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.APMEntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), 0, typeof(APMInformationPoint), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
@@ -557,7 +557,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 #region Controllers sheet
 
                 // Make table
-                sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS];
+                sheet = excelReport.Workbook.Worksheets[SHEET_CONTROLLERS_LIST];
                 logger.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 loggerConsole.Info("{0} Sheet ({1} rows)", sheet.Name, sheet.Dimension.Rows);
                 if (sheet.Dimension.Rows > LIST_SHEET_START_TABLE_AT)
@@ -1178,7 +1178,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 FileIOHelper.CreateFolder(FilePathMap.ReportFolderPath());
 
-                string reportFilePath = FilePathMap.EntityMetricsExcelReportFilePath(jobConfiguration.Input.TimeRange);
+                string reportFilePath = FilePathMap.APMEntityMetricsExcelReportFilePath(jobConfiguration.Input.TimeRange);
                 logger.Info("Saving Excel report {0}", reportFilePath);
                 loggerConsole.Info("Saving Excel report {0}", reportFilePath);
 

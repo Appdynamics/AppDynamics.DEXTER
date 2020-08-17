@@ -50,10 +50,10 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.IsSnapCorrData).Index(i); i++;
             Map(m => m.IsSnapWindowData).Index(i); i++;
 
-            Map(m => m.From).Index(i); i++;
-            Map(m => m.To).Index(i); i++;
-            Map(m => m.FromUtc).Index(i); i++;
-            Map(m => m.ToUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.From), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.To), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.FromUtc), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.ToUtc), i); i++;
             Map(m => m.Duration).Index(i); i++;
 
             Map(m => m.ConfigID).Index(i); i++;

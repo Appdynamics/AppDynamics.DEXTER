@@ -5,6 +5,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class BIQMetric : BIQEntityBase
     {
+        public const string ENTITY_TYPE = "SavedSearch";
+        public const string ENTITY_FOLDER = "SAVEDSRCH";
+
         public string MetricName { get; set; }
         public string MetricDescription { get; set; }
 
@@ -20,6 +23,7 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string MetricLink { get; set; }
         public List<long> MetricsIDs { get; set; }
+        public string MetricID { get; set; }
 
         public string Query { get; set; }
 

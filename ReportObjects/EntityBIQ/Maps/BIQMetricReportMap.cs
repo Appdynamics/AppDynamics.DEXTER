@@ -25,10 +25,11 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.FailureCount).Index(i); i++;
 
             Map(m => m.CreatedBy).Index(i); i++;
-            Map(m => m.CreatedOn).Index(i); i++;
-            Map(m => m.CreatedOnUtc).Index(i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.CreatedOn), i); i++;
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.CreatedOnUtc), i); i++;
 
             Map(m => m.ApplicationID).Index(i); i++;
+            Map(m => m.MetricID).Index(i); i++;
             Map(m => m.ControllerLink).Index(i); i++;
             Map(m => m.ApplicationLink).Index(i); i++;
             Map(m => m.MetricLink).Index(i); i++;

@@ -91,7 +91,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -108,14 +108,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMApplication> applicationsFullList = entitiesFullDictionary.Values.OfType<APMApplication>().ToList().OrderBy(o => o.ApplicationName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(applicationsFullList, new ApplicationMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(applicationsFullList, new ApplicationMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMApplication> applicationsHourlyAllList = new List<APMApplication>(applicationsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -144,7 +144,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         applicationsHourlyAllList = applicationsHourlyAllList.OrderBy(o => o.ApplicationName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(applicationsHourlyAllList, new ApplicationMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(applicationsHourlyAllList, new ApplicationMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * applicationsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -189,7 +189,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = tiersList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -211,14 +211,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMTier> tiersFullList = entitiesFullDictionary.Values.OfType<APMTier>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(tiersFullList, new TierMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(tiersFullList, new TierMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMTier> tiersHourlyAllList = new List<APMTier>(tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -252,7 +252,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         tiersHourlyAllList = tiersHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(tiersHourlyAllList, new TierMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(tiersHourlyAllList, new TierMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * tiersList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -297,7 +297,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = nodesList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -323,14 +323,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMNode> nodesFullList = entitiesFullDictionary.Values.OfType<APMNode>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(nodesFullList, new NodeMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(nodesFullList, new NodeMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMNode> nodesHourlyAllList = new List<APMNode>(nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -368,7 +368,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         nodesHourlyAllList = nodesHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.NodeName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(nodesHourlyAllList, new NodeMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(nodesHourlyAllList, new NodeMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * nodesList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -413,7 +413,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = backendsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -430,14 +430,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMBackend> backendsFullList = entitiesFullDictionary.Values.OfType<APMBackend>().ToList().OrderBy(o => o.BackendType).OrderBy(o => o.BackendName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(backendsFullList, new BackendMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(backendsFullList, new BackendMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMBackend> backendsHourlyAllList = new List<APMBackend>(backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -466,7 +466,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         backendsHourlyAllList = backendsHourlyAllList.OrderBy(o => o.BackendType).OrderBy(o => o.BackendName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(backendsHourlyAllList, new BackendMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(backendsHourlyAllList, new BackendMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * backendsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -511,7 +511,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -528,14 +528,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMBusinessTransaction> businessTransactionsFullList = entitiesFullDictionary.Values.OfType<APMBusinessTransaction>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.BTName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(businessTransactionsFullList, new BusinessTransactionMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMBusinessTransaction> businessTransactionsHourlyAllList = new List<APMBusinessTransaction>(businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -564,7 +564,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         businessTransactionsHourlyAllList = businessTransactionsHourlyAllList.OrderBy(o => o.TierName).OrderBy(o => o.BTName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(businessTransactionsHourlyAllList, new BusinessTransactionMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(businessTransactionsHourlyAllList, new BusinessTransactionMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * businessTransactionsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -609,7 +609,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -626,14 +626,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMServiceEndpoint> serviceEndpointsFullList = entitiesFullDictionary.Values.OfType<APMServiceEndpoint>().ToList().OrderBy(o => o.TierName).OrderBy(o => o.SEPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsFullList, new ServiceEndpointMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMServiceEndpoint> serviceEndpointsHourlyAllList = new List<APMServiceEndpoint>(serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -662,7 +662,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         serviceEndpointsHourlyAllList = serviceEndpointsHourlyAllList.OrderBy(o => o.TierName).OrderBy(o => o.SEPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsHourlyAllList, new ServiceEndpointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(serviceEndpointsHourlyAllList, new ServiceEndpointMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * serviceEndpointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -707,7 +707,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -724,14 +724,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMError> errorsFullList = entitiesFullDictionary.Values.OfType<APMError>().ToList().OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(errorsFullList, new ErrorMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(errorsFullList, new ErrorMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMError> errorsHourlyAllList = new List<APMError>(errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -760,7 +760,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         errorsHourlyAllList = errorsHourlyAllList.OrderBy(o => o.TierName).ThenBy(o => o.ErrorName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(errorsHourlyAllList, new ErrorMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(errorsHourlyAllList, new ErrorMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * errorsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -805,7 +805,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     #region Process Full Range Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
                                         Dictionary<long, APMEntityBase> entitiesFullDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
@@ -822,14 +822,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         List<APMInformationPoint> informationPointsFullList = entitiesFullDictionary.Values.OfType<APMInformationPoint>().ToList().OrderBy(o => o.IPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(informationPointsFullList, new InformationPointMetricReportMap(), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
                                     }
 
                                     #endregion
 
                                     #region Process Hourly Ranges Metrics
 
-                                    if (File.Exists(FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER)) == false)
+                                    if (File.Exists(FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER)) == false)
                                     {
                                         List<APMInformationPoint> informationPointsHourlyAllList = new List<APMInformationPoint>(informationPointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
 
@@ -858,7 +858,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         // Sort them
                                         informationPointsHourlyAllList = informationPointsHourlyAllList.OrderBy(o => o.IPName).ThenBy(o => o.From).ToList();
 
-                                        FileIOHelper.WriteListToCSVFile(informationPointsHourlyAllList, new InformationPointMetricReportMap(), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
+                                        FileIOHelper.WriteListToCSVFile(informationPointsHourlyAllList, new InformationPointMetricReportMap(), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
 
                                         // Save individual metric files and create index of their internal structure
                                         List<EntityHourlyMetricValueLocation> entityMetricValuesLocations = new List<EntityHourlyMetricValueLocation>(metricValuesDictionary.Count * informationPointsList.Count * jobConfiguration.Input.HourlyTimeRanges.Count);
@@ -901,29 +901,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // If it is the first one, clear out the combined folder
                         if (reportFolderCleaned == false)
                         {
-                            FileIOHelper.DeleteFolder(FilePathMap.MetricsReportFolderPath());
+                            FileIOHelper.DeleteFolder(FilePathMap.MetricsReportFolderPath(jobTarget));
                             Thread.Sleep(1000);
-                            FileIOHelper.CreateFolder(FilePathMap.MetricsReportFolderPath());
+                            FileIOHelper.CreateFolder(FilePathMap.MetricsReportFolderPath(jobTarget));
                             reportFolderCleaned = true;
                         }
 
                         // Append all the individual report files into one
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMError.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMError.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
-                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.EntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), FilePathMap.EntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMApplication.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMTier.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMNode.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMBackend.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMBackend.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMBusinessTransaction.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMServiceEndpoint.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMError.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMError.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMError.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesFullReportFilePath(APMInformationPoint.ENTITY_FOLDER), FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
+                        FileIOHelper.AppendTwoCSVFiles(FilePathMap.APMEntitiesHourReportFilePath(APMInformationPoint.ENTITY_FOLDER), FilePathMap.APMEntitiesHourIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER));
 
                         // Combine the generated detailed metric value files
                         foreach (MetricExtractMapping metricExtractMapping in entityMetricExtractMappingList)
@@ -932,49 +932,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             {
                                 case APMApplication.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMTier.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMTier.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMTier.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMNode.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMNode.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMNode.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMBackend.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMBackend.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMBackend.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMBusinessTransaction.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMBusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMBusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMServiceEndpoint.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMError.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMError.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMError.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMError.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
                                 case APMInformationPoint.ENTITY_TYPE:
                                     FileIOHelper.AppendTwoCSVFiles(
-                                        FilePathMap.MetricReportFilePath(APMInformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName),
+                                        FilePathMap.MetricReportFilePath(APMInformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName, jobTarget),
                                         FilePathMap.MetricValuesIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER, metricExtractMapping.FolderName));
                                     break;
 
@@ -1082,7 +1082,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
             string entityType,
             Dictionary<string, List<MetricValue>> metricValuesDictionary)
         {
-
             List<MetricExtractMapping> entityMetricExtractMappingListFiltered = entityMetricExtractMappingList.Where(m => m.EntityType == entityType).ToList();
             foreach (MetricExtractMapping metricExtractMapping in entityMetricExtractMappingListFiltered)
             {
@@ -1155,62 +1154,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 #region Determine metric entity type, scope and name from metric path
 
-                if (String.Compare(metricPathComponents[0], "Overall Application Performance", true) == 0)
+                switch (metricPathComponents[0])
                 {
-                    #region Overall Application Performance - App, Tier, Node
+                    case "Overall Application Performance":
 
-                    switch (metricPathComponents.Length)
-                    {
-                        case 2:
-                            // MetricPath = Overall Application Performance|Calls per Minute
-                            // MetricName = BTM|Application Summary|Calls per Minute
-                            // Application
-                            {
-                                entity = entitiesDictionaryByID.FirstOrDefault().Value;
-                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                metricValues.AddRange(metricValuesConverted);
-                                break;
-                            }
-                        case 3:
-                            // MetricPath = Overall Application Performance|ECommerce-Services|Calls per Minute
-                            // MetricName = BTM|Application Summary|Component:184|Calls per Minute
-                            // Tier
-                            {
-                                long tierID = -1;
-                                if (metricNameComponents.Length >= 3)
+                        #region Overall Application Performance - App, Tier, Node
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 2:
+                                // MetricPath = Overall Application Performance|Calls per Minute
+                                // MetricName = BTM|Application Summary|Calls per Minute
+                                // Application
                                 {
-                                    string[] tierIDComponents = metricNameComponents[2].Split(':');
-                                    if (tierIDComponents.Length >= 2 && Int64.TryParse(tierIDComponents[1], out tierID) == true)
-                                    {
-                                        if (entitiesDictionaryByID.TryGetValue(tierID, out entity) == true)
-                                        {
-                                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                            metricValues.AddRange(metricValuesConverted);
-                                        }
-                                    }
+                                    entity = entitiesDictionaryByID.FirstOrDefault().Value;
+                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                    metricValues.AddRange(metricValuesConverted);
+                                    break;
                                 }
-                                break;
-                            }
-                        case 5:
-                            // Node in a Tier 
-                            // or
-                            // Backend exit from Tier
-                            {
-                                // MetricPath = Overall Application Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Calls per Minute
+                            case 3:
+                                // MetricPath = Overall Application Performance|ECommerce-Services|Calls per Minute
                                 // MetricName = BTM|Application Summary|Component:184|Calls per Minute
-                                // Node in a Tier
-                                if (String.Compare(metricPathComponents[2], "Individual Nodes", true) == 0)
-                                {
-                                    if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
-                                    {
-                                        List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                        metricValues.AddRange(metricValuesConverted);
-                                    }
-                                }
-                                // MetricPath = Overall Application Performance|ECommerce-Services|External Calls|Call-HTTP to Discovered backend call - api.shipping.com|Calls per Minute
-                                // MetricName = BTM|Application Summary|Component:184|Exit Call:HTTP|To:{[UNRESOLVED][824]}|Calls per Minute
-                                // Backend exit from Tier
-                                else if (String.Compare(metricPathComponents[2], "External Calls", true) == 0)
+                                // Tier
                                 {
                                     long tierID = -1;
                                     if (metricNameComponents.Length >= 3)
@@ -1220,132 +1185,194 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             if (entitiesDictionaryByID.TryGetValue(tierID, out entity) == true)
                                             {
-                                                metricName = String.Join("|", metricPathComponents, 3, metricPathComponents.Length - 3);
                                                 List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
                                                 metricValues.AddRange(metricValuesConverted);
                                             }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        case 7:
-                            // MetricPath = Overall Application Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB2_NODE|External Calls|Call-HTTP to Discovered backend call - api.shipping.com|Calls per Minute
-                            // MetricName = BTM|Application Summary|Component:184|Exit Call:HTTP|To:{[UNRESOLVED][824]}|Calls per Minute
-                            // Backend exit from Node
-                            {
-                                if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
+                            case 5:
+                                // Node in a Tier 
+                                // or
+                                // Backend exit from Tier
                                 {
-                                    metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
-                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                    metricValues.AddRange(metricValuesConverted);
-                                }
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
-
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Application Infrastructure Performance", true) == 0)
-                {
-                    #region Aplication Infrastructure Performance - Tier, Node
-
-                    // MetricPath = Application Infrastructure Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Agent|App|Availability
-                    // MetricName = Agent|App|Availability
-                    // or
-                    // MetricPath = Application Infrastructure Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Agent|App|Availability
-                    // MetricName = Agent|App|Availability
-                    // Node in a Tier
-                    if (String.Compare(metricPathComponents[2], "Individual Nodes", true) == 0)
-                    {
-                        if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
-                        {
-                            metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
-                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                            metricValues.AddRange(metricValuesConverted);
-                        }
-                    }
-                    // MetricPath = Application Infrastructure Performance|ECommerce-Services|Hardware Resources|CPU|%Busy	
-                    // MetricName = Hardware Resources|CPU|%Busy
-                    // or
-                    // MetricPath = Application Infrastructure Performance|ECommerce-Services|Agent|App|Availability
-                    // MetricName = Agent|App|Availability
-                    // Tier
-                    else
-                    {
-                        if (metricPathComponents.Length >= 2 && entitiesDictionaryByName.TryGetValue(metricPathComponents[1], out entity) == true)
-                        {
-                            metricName = String.Join("|", metricPathComponents, 2, metricPathComponents.Length - 2);
-                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                            metricValues.AddRange(metricValuesConverted);
-                        }
-                    }
-
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Business Transaction Performance", true) == 0)
-                {
-                    #region Business Transaction Performance
-
-                    switch (metricPathComponents.Length)
-                    {
-                        case 5:
-                            // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Homepage|Calls per Minute
-                            // MetricName = BTM|BTs|BT:1008|Component:184|Calls per Minute
-                            // or
-                            // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Login - Mobile|95th Percentile Response Time (ms)
-                            // MetricName = BTM|BTs|BT:557|Component:184|95th Percentile Response Time (ms)
-                            // Business Transaction
-                            {
-                                long businessTransactionID = -1;
-                                if (metricNameComponents.Length >= 3)
-                                {
-                                    string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
-                                    if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
+                                    // MetricPath = Overall Application Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Calls per Minute
+                                    // MetricName = BTM|Application Summary|Component:184|Calls per Minute
+                                    // Node in a Tier
+                                    if (String.Compare(metricPathComponents[2], "Individual Nodes", true) == 0)
                                     {
-                                        if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
+                                        if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
                                         {
                                             List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
                                             metricValues.AddRange(metricValuesConverted);
                                         }
                                     }
+                                    // MetricPath = Overall Application Performance|ECommerce-Services|External Calls|Call-HTTP to Discovered backend call - api.shipping.com|Calls per Minute
+                                    // MetricName = BTM|Application Summary|Component:184|Exit Call:HTTP|To:{[UNRESOLVED][824]}|Calls per Minute
+                                    // Backend exit from Tier
+                                    else if (String.Compare(metricPathComponents[2], "External Calls", true) == 0)
+                                    {
+                                        long tierID = -1;
+                                        if (metricNameComponents.Length >= 3)
+                                        {
+                                            string[] tierIDComponents = metricNameComponents[2].Split(':');
+                                            if (tierIDComponents.Length >= 2 && Int64.TryParse(tierIDComponents[1], out tierID) == true)
+                                            {
+                                                if (entitiesDictionaryByID.TryGetValue(tierID, out entity) == true)
+                                                {
+                                                    metricName = String.Join("|", metricPathComponents, 3, metricPathComponents.Length - 3);
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
                                 }
-                                break;
-                            }
-                        case 7:
-                            // Business Transaction calls by Individual Nodes 
-                            // or
-                            // Business Transaction calls to Backends
+                            case 7:
+                                // MetricPath = Overall Application Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB2_NODE|External Calls|Call-HTTP to Discovered backend call - api.shipping.com|Calls per Minute
+                                // MetricName = BTM|Application Summary|Component:184|Exit Call:HTTP|To:{[UNRESOLVED][824]}|Calls per Minute
+                                // Backend exit from Node
+                                {
+                                    if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
+                                    {
+                                        metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
+                                        List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                        metricValues.AddRange(metricValuesConverted);
+                                    }
+                                    break;
+                                }
+                            default:
+                                {
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
+                                }
+                        }
+
+                        #endregion
+                        
+                        break;
+
+                    case "Application Infrastructure Performance":
+
+                        #region Aplication Infrastructure Performance - Tier, Node
+
+                        // MetricPath = Application Infrastructure Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Agent|App|Availability
+                        // MetricName = Agent|App|Availability
+                        // or
+                        // MetricPath = Application Infrastructure Performance|ECommerce-Services|Individual Nodes|ECommerce_WEB1_NODE|Agent|App|Availability
+                        // MetricName = Agent|App|Availability
+                        // Node in a Tier
+                        if (String.Compare(metricPathComponents[2], "Individual Nodes", true) == 0)
+                        {
+                            if (metricPathComponents.Length >= 4 && entitiesDictionaryByName.TryGetValue(String.Format("{0}-{1}", metricPathComponents[1], metricPathComponents[3]), out entity) == true)
                             {
-                                // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Homepage|Individual Nodes|ECommerce_WEB2_NODE|Calls per Minute
+                                metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
+                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                metricValues.AddRange(metricValuesConverted);
+                            }
+                        }
+                        // MetricPath = Application Infrastructure Performance|ECommerce-Services|Hardware Resources|CPU|%Busy	
+                        // MetricName = Hardware Resources|CPU|%Busy
+                        // or
+                        // MetricPath = Application Infrastructure Performance|ECommerce-Services|Agent|App|Availability
+                        // MetricName = Agent|App|Availability
+                        // Tier
+                        else
+                        {
+                            if (metricPathComponents.Length >= 2 && entitiesDictionaryByName.TryGetValue(metricPathComponents[1], out entity) == true)
+                            {
+                                metricName = String.Join("|", metricPathComponents, 2, metricPathComponents.Length - 2);
+                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                metricValues.AddRange(metricValuesConverted);
+                            }
+                        }
+
+                        #endregion
+
+                        break;
+
+                    case "Business Transaction Performance":
+
+                        #region Business Transaction Performance
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 5:
+                                // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Homepage|Calls per Minute
                                 // MetricName = BTM|BTs|BT:1008|Component:184|Calls per Minute
+                                // or
+                                // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Login - Mobile|95th Percentile Response Time (ms)
+                                // MetricName = BTM|BTs|BT:557|Component:184|95th Percentile Response Time (ms)
+                                // Business Transaction
+                                {
+                                    long businessTransactionID = -1;
+                                    if (metricNameComponents.Length >= 3)
+                                    {
+                                        string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
+                                        if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
+                                        {
+                                            if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
+                                            {
+                                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                metricValues.AddRange(metricValuesConverted);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            case 7:
                                 // Business Transaction calls by Individual Nodes 
-                                if (String.Compare(metricPathComponents[4], "Individual Nodes", true) == 0)
-                                {
-                                    long businessTransactionID = -1;
-                                    if (metricNameComponents.Length >= 3)
-                                    {
-                                        string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
-                                        if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
-                                        {
-                                            if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
-                                            {
-                                                metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
-                                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                                metricValues.AddRange(metricValuesConverted);
-                                            }
-                                        }
-                                    }
-                                }
-                                // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Fetch Catalog|External Calls|Call-JDBC to Discovered backend call - XE-Oracle-ORACLE-DB-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute
-                                // MetricName = BTM|BTs|BT:1010|Component:184|Exit Call:JDBC|To:{[UNRESOLVED][925]}|Calls per Minute
+                                // or
                                 // Business Transaction calls to Backends
-                                else if (String.Compare(metricPathComponents[4], "External Calls", true) == 0)
+                                {
+                                    // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Homepage|Individual Nodes|ECommerce_WEB2_NODE|Calls per Minute
+                                    // MetricName = BTM|BTs|BT:1008|Component:184|Calls per Minute
+                                    // Business Transaction calls by Individual Nodes 
+                                    if (String.Compare(metricPathComponents[4], "Individual Nodes", true) == 0)
+                                    {
+                                        long businessTransactionID = -1;
+                                        if (metricNameComponents.Length >= 3)
+                                        {
+                                            string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
+                                            if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
+                                            {
+                                                if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
+                                                {
+                                                    metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Fetch Catalog|External Calls|Call-JDBC to Discovered backend call - XE-Oracle-ORACLE-DB-Oracle Database 11g Express Edition Release 11.2.0.2.0 - 64bit Production|Calls per Minute
+                                    // MetricName = BTM|BTs|BT:1010|Component:184|Exit Call:JDBC|To:{[UNRESOLVED][925]}|Calls per Minute
+                                    // Business Transaction calls to Backends
+                                    else if (String.Compare(metricPathComponents[4], "External Calls", true) == 0)
+                                    {
+                                        long businessTransactionID = -1;
+                                        if (metricNameComponents.Length >= 3)
+                                        {
+                                            string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
+                                            if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
+                                            {
+                                                if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
+                                                {
+                                                    metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            case 9:
+                                // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Login - Mobile|Individual Nodes|ECommerce_WEB2_NODE|External Calls|Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute
+                                // MetricName = BTM|BTs|BT:557|Component:184|Exit Call:JDBC|To:{[UNRESOLVED][2348]}|Calls per Minute
+                                // Business Transaction calls to Backends by Individual Nodes
                                 {
                                     long businessTransactionID = -1;
                                     if (metricNameComponents.Length >= 3)
@@ -1361,112 +1388,71 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        case 9:
-                            // MetricPath = Business Transaction Performance|Business Transactions|ECommerce-Services|Login - Mobile|Individual Nodes|ECommerce_WEB2_NODE|External Calls|Call-JDBC to Discovered backend call - APPDY-MySQL-DB-5.7.13-0ubuntu0.16.04.2|Calls per Minute
-                            // MetricName = BTM|BTs|BT:557|Component:184|Exit Call:JDBC|To:{[UNRESOLVED][2348]}|Calls per Minute
-                            // Business Transaction calls to Backends by Individual Nodes
-                            {
-                                long businessTransactionID = -1;
-                                if (metricNameComponents.Length >= 3)
+                            default:
                                 {
-                                    string[] businessTransactionIDComponents = metricNameComponents[2].Split(':');
-                                    if (businessTransactionIDComponents.Length >= 2 && Int64.TryParse(businessTransactionIDComponents[1], out businessTransactionID) == true)
-                                    {
-                                        if (entitiesDictionaryByID.TryGetValue(businessTransactionID, out entity) == true)
-                                        {
-                                            metricName = String.Join("|", metricPathComponents, 5, metricPathComponents.Length - 5);
-                                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                            metricValues.AddRange(metricValuesConverted);
-                                        }
-                                    }
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
                                 }
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
+                        }
 
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Backends", true) == 0)
-                {
-                    #region Backends
+                        #endregion
 
-                    switch (metricPathComponents.Length)
-                    {
-                        case 3:
-                            // MetricPath = Backends|Discovered backend call - api.shipping.com|Calls per Minute
-                            // MetricName = BTM|Backends|Component:{[UNRESOLVED][824]}|Calls per Minute
-                            // Backends
-                            {
-                                long backendID = -1;
-                                if (metricNameComponents.Length >= 3)
+                        break;
+
+                    case "Backends":
+
+                        #region Backends
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 3:
+                                // MetricPath = Backends|Discovered backend call - api.shipping.com|Calls per Minute
+                                // MetricName = BTM|Backends|Component:{[UNRESOLVED][824]}|Calls per Minute
+                                // Backends
                                 {
-                                    string[] backendIDComponents = metricNameComponents[2].Split(':');
-                                    if (backendIDComponents.Length >= 2)
+                                    long backendID = -1;
+                                    if (metricNameComponents.Length >= 3)
                                     {
-                                        backendIDComponents = backendIDComponents[1].Split(new char[] { '[', ']' });
-                                        if (backendIDComponents.Length >= 4 && Int64.TryParse(backendIDComponents[3], out backendID) == true)
+                                        string[] backendIDComponents = metricNameComponents[2].Split(':');
+                                        if (backendIDComponents.Length >= 2)
                                         {
-                                            if (entitiesDictionaryByID.TryGetValue(backendID, out entity) == true)
+                                            backendIDComponents = backendIDComponents[1].Split(new char[] { '[', ']' });
+                                            if (backendIDComponents.Length >= 4 && Int64.TryParse(backendIDComponents[3], out backendID) == true)
                                             {
-                                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                                metricValues.AddRange(metricValuesConverted);
+                                                if (entitiesDictionaryByID.TryGetValue(backendID, out entity) == true)
+                                                {
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
                                             }
                                         }
                                     }
+                                    // Backends
+                                    break;
                                 }
-                                // Backends
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
-
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Errors", true) == 0)
-                {
-                    #region Errors
-
-                    switch (metricPathComponents.Length)
-                    {
-                        case 4:
-                            // MetrichPath = Errors|ECommerce-Services|ServletException : CannotCreateTransactionException : DatabaseException : SQLNestedException : NoSuchElementException|Errors per Minute
-                            // MetricName = BTM|Application Diagnostic Data|Error:12611|Errors per Minute
-                            // Error
-                            {
-                                long errorID = -1;
-                                if (metricNameComponents.Length >= 3)
+                            default:
                                 {
-                                    string[] errorIDComponents = metricNameComponents[2].Split(':');
-                                    if (errorIDComponents.Length >= 2 && Int64.TryParse(errorIDComponents[1], out errorID) == true)
-                                    {
-                                        if (entitiesDictionaryByID.TryGetValue(errorID, out entity) == true)
-                                        {
-                                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                            metricValues.AddRange(metricValuesConverted);
-                                        }
-                                    }
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
                                 }
-                                break;
-                            }
-                        case 6:
-                            // Error calls by Individual Node
-                            {
-                                // MetricPath = Errors|ECommerce-Services|ServletException : PersistenceException : DatabaseException : SQLNestedException : NoSuchElementException|Individual Nodes|ECommerce_WEB1_NODE|Errors per Minute
-                                // MetricName = BTM|Application Diagnostic Data|Error:12605|Errors per Minute
-                                // Error calls by Individual Node
-                                if (String.Compare(metricPathComponents[3], "Individual Nodes", true) == 0)
+                        }
+
+                        #endregion
+
+                        break;
+
+                    case "Errors":
+
+                        #region Errors
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 4:
+                                // MetrichPath = Errors|ECommerce-Services|ServletException : CannotCreateTransactionException : DatabaseException : SQLNestedException : NoSuchElementException|Errors per Minute
+                                // MetricName = BTM|Application Diagnostic Data|Error:12611|Errors per Minute
+                                // Error
                                 {
                                     long errorID = -1;
                                     if (metricNameComponents.Length >= 3)
@@ -1476,56 +1462,59 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             if (entitiesDictionaryByID.TryGetValue(errorID, out entity) == true)
                                             {
-                                                metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
                                                 List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
                                                 metricValues.AddRange(metricValuesConverted);
                                             }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
-
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Service Endpoints", true) == 0)
-                {
-                    #region Service End Points
-
-                    switch (metricPathComponents.Length)
-                    {
-                        case 4:
-                            // MetricPath = Service Endpoints|ECommerce-Services|ViewItems.getAllItems|Calls per Minute
-                            // MetricName = BTM|Application Diagnostic Data|SEP:4859|Calls per Minute
-                            // Service Endpoint
-                            {
-                                long serviceEndpointID = -1;
-                                if (metricNameComponents.Length >= 3)
+                            case 6:
+                                // Error calls by Individual Node
                                 {
-                                    string[] serviceEndpointIDComponents = metricNameComponents[2].Split(':');
-                                    if (serviceEndpointIDComponents.Length >= 2 && Int64.TryParse(serviceEndpointIDComponents[1], out serviceEndpointID) == true)
+                                    // MetricPath = Errors|ECommerce-Services|ServletException : PersistenceException : DatabaseException : SQLNestedException : NoSuchElementException|Individual Nodes|ECommerce_WEB1_NODE|Errors per Minute
+                                    // MetricName = BTM|Application Diagnostic Data|Error:12605|Errors per Minute
+                                    // Error calls by Individual Node
+                                    if (String.Compare(metricPathComponents[3], "Individual Nodes", true) == 0)
                                     {
-                                        if (entitiesDictionaryByID.TryGetValue(serviceEndpointID, out entity) == true)
+                                        long errorID = -1;
+                                        if (metricNameComponents.Length >= 3)
                                         {
-                                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                            metricValues.AddRange(metricValuesConverted);
+                                            string[] errorIDComponents = metricNameComponents[2].Split(':');
+                                            if (errorIDComponents.Length >= 2 && Int64.TryParse(errorIDComponents[1], out errorID) == true)
+                                            {
+                                                if (entitiesDictionaryByID.TryGetValue(errorID, out entity) == true)
+                                                {
+                                                    metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
+                                            }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        case 6:
-                            // MetricPath = Service Endpoints|ECommerce-Services|ViewItems.getAllItems|Individual Nodes|ECommerce_WEB2_NODE|Calls per Minute
-                            // MetricName = BTM|Application Diagnostic Data|SEP:4859|Calls per Minute
-                            // Service Endpoint calls by Individual Nodes
-                            {
-                                if (String.Compare(metricPathComponents[3], "Individual Nodes", true) == 0)
+                            default:
+                                {
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
+                                }
+                        }
+
+                        #endregion
+
+                        break;
+
+                    case "Service Endpoints":
+
+                        #region Service Endpoints
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 4:
+                                // MetricPath = Service Endpoints|ECommerce-Services|ViewItems.getAllItems|Calls per Minute
+                                // MetricName = BTM|Application Diagnostic Data|SEP:4859|Calls per Minute
+                                // Service Endpoint
                                 {
                                     long serviceEndpointID = -1;
                                     if (metricNameComponents.Length >= 3)
@@ -1535,63 +1524,90 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         {
                                             if (entitiesDictionaryByID.TryGetValue(serviceEndpointID, out entity) == true)
                                             {
-                                                metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
                                                 List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
                                                 metricValues.AddRange(metricValuesConverted);
                                             }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
-
-                    #endregion
-                }
-                else if (String.Compare(metricPathComponents[0], "Information Points", true) == 0)
-                {
-                    #region Information Points
-
-                    switch (metricPathComponents.Length)
-                    {
-                        case 3:
-                            // MetricPath = Information Points|CartTotal|Calls per Minute
-                            // MetricName = BTM|IPs|IP:8|Calls per Minute
-                            // Information Point
-                            {
-                                long informationPointID = -1;
-                                if (metricNameComponents.Length >= 3)
+                            case 6:
+                                // MetricPath = Service Endpoints|ECommerce-Services|ViewItems.getAllItems|Individual Nodes|ECommerce_WEB2_NODE|Calls per Minute
+                                // MetricName = BTM|Application Diagnostic Data|SEP:4859|Calls per Minute
+                                // Service Endpoint calls by Individual Nodes
                                 {
-                                    string[] informationPointIDComponents = metricNameComponents[2].Split(':');
-                                    if (informationPointIDComponents.Length >= 2 && Int64.TryParse(informationPointIDComponents[1], out informationPointID) == true)
+                                    if (String.Compare(metricPathComponents[3], "Individual Nodes", true) == 0)
                                     {
-                                        if (entitiesDictionaryByID.TryGetValue(informationPointID, out entity) == true)
+                                        long serviceEndpointID = -1;
+                                        if (metricNameComponents.Length >= 3)
                                         {
-                                            List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
-                                            metricValues.AddRange(metricValuesConverted);
+                                            string[] serviceEndpointIDComponents = metricNameComponents[2].Split(':');
+                                            if (serviceEndpointIDComponents.Length >= 2 && Int64.TryParse(serviceEndpointIDComponents[1], out serviceEndpointID) == true)
+                                            {
+                                                if (entitiesDictionaryByID.TryGetValue(serviceEndpointID, out entity) == true)
+                                                {
+                                                    metricName = String.Join("|", metricPathComponents, 4, metricPathComponents.Length - 4);
+                                                    List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                    metricValues.AddRange(metricValuesConverted);
+                                                }
+                                            }
                                         }
                                     }
+                                    break;
                                 }
-                                break;
-                            }
-                        default:
-                            {
-                                logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
-                                break;
-                            }
-                    }
+                            default:
+                                {
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
+                                }
+                        }
 
-                    #endregion
-                }
-                else
-                {
-                    // Unsupported type of metric
-                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                        #endregion
+
+                        break;
+
+                    case "Information Points":
+
+                        #region Information Points
+
+                        switch (metricPathComponents.Length)
+                        {
+                            case 3:
+                                // MetricPath = Information Points|CartTotal|Calls per Minute
+                                // MetricName = BTM|IPs|IP:8|Calls per Minute
+                                // Information Point
+                                {
+                                    long informationPointID = -1;
+                                    if (metricNameComponents.Length >= 3)
+                                    {
+                                        string[] informationPointIDComponents = metricNameComponents[2].Split(':');
+                                        if (informationPointIDComponents.Length >= 2 && Int64.TryParse(informationPointIDComponents[1], out informationPointID) == true)
+                                        {
+                                            if (entitiesDictionaryByID.TryGetValue(informationPointID, out entity) == true)
+                                            {
+                                                List<MetricValue> metricValuesConverted = readMetricValuesIntoEntity(entity, metricName, appDRESTMetric, timerangeDuration);
+                                                metricValues.AddRange(metricValuesConverted);
+                                            }
+                                        }
+                                    }
+                                    break;
+                                }
+                            default:
+                                {
+                                    logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+                                    break;
+                                }
+                        }
+
+                        #endregion
+
+                        break;
+
+                    default:
+                        // Unsupported type of metric
+                        logger.Warn("Metric path='{0}' is not of supported type of metric for processing", appDRESTMetric.metricPath);
+
+                        break;
                 }
 
                 #endregion

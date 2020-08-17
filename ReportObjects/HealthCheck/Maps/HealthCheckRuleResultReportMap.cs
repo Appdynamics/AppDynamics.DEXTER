@@ -19,8 +19,8 @@ namespace AppDynamics.Dexter.ReportObjectMaps
             Map(m => m.Name).Index(i); i++;
             Map(m => m.Grade).Index(i); i++;
             Map(m => m.Description).Index(i); i++;
-                        
-            Map(m => m.EvaluationTime).Index(i); i++;
+
+            EPPlusCSVHelper.setISO8601DateFormat(Map(m => m.EvaluationTime), i); i++;
             Map(m => m.Version).Index(i); i++;
             
             Map(m => m.ApplicationID).Index(i); i++;

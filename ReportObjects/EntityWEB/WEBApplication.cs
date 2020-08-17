@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class WEBApplication : WEBEntityBase
     {
+        public const string ENTITY_TYPE = "WEBApplication";
+        public const string ENTITY_FOLDER = "WEBAPP";
+
         public int NumPages { get; set; }
         public int NumAJAXRequests { get; set; }
         public int NumVirtualPages { get; set; }

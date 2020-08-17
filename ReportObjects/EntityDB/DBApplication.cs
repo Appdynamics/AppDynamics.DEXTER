@@ -4,6 +4,9 @@ namespace AppDynamics.Dexter.ReportObjects
 {
     public class DBApplication : DBEntityBase
     {
+        public const string ENTITY_TYPE = "Database";
+        public const string ENTITY_FOLDER = "STAT";
+
         public int NumCollectors { get; set; }
         public int NumOracle { get; set; }
         public int NumSQLServer { get; set; }
