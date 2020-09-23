@@ -16,16 +16,17 @@ namespace LicenseSign
     {
         static void Main(string[] args)
         {
-            if (args.Length != 2)
+            if (args.Length != 3)
             {
-                Console.WriteLine("path_to_license_file name_of_certificate");
+                Console.WriteLine("path_to_license_file path_to_private_certificate password_of_private_certificate");
                 Console.WriteLine("Not enough parameters passed");
                 return;
             }
 
             string licenseFilePath = args[0];
             //string certificateFilePath = args[1];
-            string certificateName = args[1];
+            string certificatePath = args[1];
+            string certificatePassword = args[2];
 
             JObject licenseFile = JObject.Parse(File.ReadAllText(licenseFilePath));
             JObject licensedFeatures = (JObject)licenseFile["LicensedFeatures"];
@@ -45,15 +46,8 @@ namespace LicenseSign
             //X509Certificate2 privateCert = new X509Certificate2(certificateFilePath, securePassword);
 
             // Instead it needs to be present in the MyStore
-            X509Store store = new X509Store(StoreLocation.CurrentUser);
-            X509Certificate2 privateCert = null;
-            store.Open(OpenFlags.ReadOnly);
-            X509Certificate2Collection cers = store.Certificates.Find(X509FindType.FindBySubjectName, certificateName, false);
-            if (cers.Count > 0)
-            {
-                privateCert = cers[0];
-            };
-            store.Close();
+            X509Certificate2 privateCert = new X509Certificate2(certificatePath, certificatePassword, X509KeyStorageFlags.Exportable);
+            
             Console.WriteLine("Certificate: {0}", privateCert);
 
             var bytesSigned = SignData(privateCert, bytesToSign);
