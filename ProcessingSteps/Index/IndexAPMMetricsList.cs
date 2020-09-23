@@ -107,9 +107,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         Dictionary<string, APMBackend> backendDictionary = new Dictionary<string, APMBackend>();
                         if (backendsList != null)
                         {
-                            backendDictionary = backendsList
-                                .GroupBy(e => e.BackendName, StringComparer.OrdinalIgnoreCase)
-                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.OrdinalIgnoreCase);
+                            backendDictionary = backendsList.ToDictionary(e => e.BackendName, e => e);
                         }
                         Dictionary<string, APMInformationPoint> informationPointDictionary = new Dictionary<string, APMInformationPoint>();
                         if (informationPointsList != null)
