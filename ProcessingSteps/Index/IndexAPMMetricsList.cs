@@ -71,50 +71,70 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Preload lists of entities
 
-                        List<APMTier> tiersList = FileIOHelper.ReadListFromCSVFile<APMTier>(FilePathMap.APMTiersIndexFilePath(jobTarget), new APMTierReportMap());
-                        List<APMNode> nodesList = FileIOHelper.ReadListFromCSVFile<APMNode>(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
-                        List<APMBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget), new APMBusinessTransactionReportMap());
-                        List<APMServiceEndpoint> serviceEndpointsList = FileIOHelper.ReadListFromCSVFile<APMServiceEndpoint>(FilePathMap.APMServiceEndpointsIndexFilePath(jobTarget), new APMServiceEndpointReportMap());
-                        List<APMError> errorsList = FileIOHelper.ReadListFromCSVFile<APMError>(FilePathMap.APMErrorsIndexFilePath(jobTarget), new APMErrorReportMap());
-                        List<APMBackend> backendsList = FileIOHelper.ReadListFromCSVFile<APMBackend>(FilePathMap.APMBackendsIndexFilePath(jobTarget), new APMBackendReportMap());
-                        List<APMInformationPoint> informationPointsList = FileIOHelper.ReadListFromCSVFile<APMInformationPoint>(FilePathMap.APMInformationPointsIndexFilePath(jobTarget), new APMInformationPointReportMap());
+                        var tiersList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMTiersIndexFilePath(jobTarget), new APMTierReportMap());
+                        var nodesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMNodesIndexFilePath(jobTarget), new APMNodeReportMap());
+                        var businessTransactionsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget), new APMBusinessTransactionReportMap());
+                        var serviceEndpointsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMServiceEndpointsIndexFilePath(jobTarget), new APMServiceEndpointReportMap());
+                        var errorsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMErrorsIndexFilePath(jobTarget), new APMErrorReportMap());
+                        var backendsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMBackendsIndexFilePath(jobTarget), new APMBackendReportMap());
+                        var informationPointsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.APMInformationPointsIndexFilePath(jobTarget), new APMInformationPointReportMap());
 
                         Dictionary<string, APMTier> tiersDictionary = new Dictionary<string, APMTier>();
                         if (tiersList != null)
                         {
-                            tiersDictionary = tiersList.ToDictionary(e => e.TierName, e => e);
+                            tiersDictionary = tiersList
+                                .Where(e => e.TierName != null)
+                                .GroupBy(e => e.TierName, StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMNode> nodesDictionary = new Dictionary<string, APMNode>();
                         if (nodesList != null)
                         {
-                            nodesDictionary = nodesList.ToDictionary(e => String.Format(@"{0}\{1}", e.TierName, e.NodeName), e => e);
+                            nodesDictionary = nodesList
+                                .Where(e => e.TierName != null && e.NodeName != null)
+                                .GroupBy(e => $@"{e.TierName}\{e.NodeName}", StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMBusinessTransaction> businessTransactionsDictionary = new Dictionary<string, APMBusinessTransaction>();
                         if (businessTransactionsList != null)
                         {
-                            businessTransactionsDictionary = businessTransactionsList.ToDictionary(e => String.Format(@"{0}\{1}", e.TierName, e.BTName), e => e);
+                            businessTransactionsDictionary = businessTransactionsList
+                                .Where(e => e.TierName != null && e.BTName != null)
+                                .GroupBy(e => $@"{e.TierName}\{e.BTName}", StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMServiceEndpoint> serviceEndpointDictionary = new Dictionary<string, APMServiceEndpoint>();
                         if (serviceEndpointsList != null)
                         {
-                            serviceEndpointDictionary = serviceEndpointsList.ToDictionary(e => String.Format(@"{0}\{1}", e.TierName, e.SEPName), e => e);
+                            serviceEndpointDictionary = serviceEndpointsList
+                                .Where(e => e.TierName != null && e.SEPName != null)
+                                .GroupBy(e => $@"{e.TierName}\{e.SEPName}", StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMError> errorDictionary = new Dictionary<string, APMError>();
                         if (errorsList != null)
                         {
-                            errorDictionary = errorsList.ToDictionary(e => String.Format(@"{0}\{1}", e.TierName, e.ErrorName), e => e);
+                            errorDictionary = errorsList
+                                .Where(e => e.TierName != null && e.ErrorName != null)
+                                .GroupBy(e => $@"{e.TierName}\{e.ErrorName}", StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMBackend> backendDictionary = new Dictionary<string, APMBackend>();
                         if (backendsList != null)
                         {
-                            backendDictionary = backendsList.ToDictionary(e => e.BackendName, e => e);
+                            backendDictionary = backendsList
+                                .Where(e => e.BackendName != null)
+                                .GroupBy(e => e.BackendName, StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
                         Dictionary<string, APMInformationPoint> informationPointDictionary = new Dictionary<string, APMInformationPoint>();
                         if (informationPointsList != null)
                         {
-                            informationPointDictionary = informationPointsList.ToDictionary(e => e.IPName, e => e);
+                            informationPointDictionary = informationPointsList
+                                .Where(e => e.IPName != null)
+                                .GroupBy(e => e.IPName, StringComparer.Ordinal)
+                                .ToDictionary(e => e.Key, e => e.First(), StringComparer.Ordinal);
                         }
-
                         #endregion
 
                         #region Parse metrics into lists
