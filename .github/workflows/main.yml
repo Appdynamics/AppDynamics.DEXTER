@@ -1,0 +1,29 @@
+on:
+  release:
+    types: [published]
+
+name: Upload Release Asset
+
+jobs:
+  build:
+    name: Upload Release Asset
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/linux-x64-framework-dependent.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/linux-x64-self-contained.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/osx-x64-framework-dependent.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/osx-x64-self-contained.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/win-x64-framework-dependent.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/win-x64-net472.pubxml
+           dotnet publish -f netcoreapp3.1 AppDynamics.Dexter.Core.csproj -p:PublishProfile=Properties/PublishProfiles/win-x64-self-contained.pubxml
+           for file in bin/Publish/*; do zip -r ${file%.*}.zip $file; done
+      - name: Upload
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          tag_name="${GITHUB_REF##*/}"
+          hub release edit $(find bin/publish -type f -name "*.zip" -printf "-a %p ") -m "" "$tag_name" 
