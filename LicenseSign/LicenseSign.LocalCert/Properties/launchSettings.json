@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "LicenseSign.LocalCert": {
+      "commandName": "Project",
+      "commandLineArgs": "\"path_to_license_file\"  \"path_to_private_certificate\"  \"password_of_private_certificate\""
+    }
+  }
+}
