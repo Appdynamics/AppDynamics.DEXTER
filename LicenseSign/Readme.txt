@@ -22,8 +22,16 @@ There should never be a need to issue a new cert with the IssueCertificate progr
 - Valid private cert is hosted on AppDynamics Google Drive. 
     - email: leon.muntingh@appdynamics.com for access
 
-Signing a new license
-- Run LicenseSign with the following arguments [path_to_license_file path_to_private_certificate password_of_private_certificate]
+Signing a new license can be done in two ways
+1. If private cert is installed in your local PC with export parameters enabled.
+   - path_to_license_file: license file on which to overwrite the "Signature" field
+        - default choose from any json from LicenseSign/LicenseFiles/*.
+        - make sure to verify "ExpirationDateTime".
+        - new license will OVERWRITE old license.
+   - Name of the private cert installed in your PC cert store.
+
+2. If you have private cert file located in your PC and you know the password of the cert file
+Run LicenseSign.LocalCert with the following arguments [path_to_license_file path_to_private_certificate password_of_private_certificate]
     - path_to_license_file: license file on which to overwrite the "Signature" field
         - default choose from any json from LicenseSign/LicenseFiles/*
         - make sure to verify "ExpirationDateTime"
