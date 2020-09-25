@@ -2,7 +2,7 @@
   "profiles": {
     "LicenseSign": {
       "commandName": "Project",
-      "commandLineArgs": "\"path_to_license_file\" \"path_to_private_certificate\" \"password_of_private_certificate\""
+      "commandLineArgs": "\"path_to_license_file\" \"certificate_name_in_local_store\" "
     }
   }
 }
