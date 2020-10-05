@@ -86,7 +86,9 @@ namespace LicenseSign
                 ProviderType = 24,
                 ProviderName = "Microsoft Enhanced RSA and AES Cryptographic Provider"
             };
-            var rsaCryptoServiceProvider = new RSACryptoServiceProvider(cspParams);
+            // var rsaCryptoServiceProvider = new RSACryptoServiceProvider(cspParams);
+            var rsaCryptoServiceProvider = RSA.Create();
+            
             rsaCryptoServiceProvider.ImportParameters(parameters);
 
             // sign data
