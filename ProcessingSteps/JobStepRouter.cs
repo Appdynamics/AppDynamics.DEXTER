@@ -128,6 +128,8 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportAPMEntityDashboardScreenshots,
 
                 JobStatus.ReportAPMIndividualSnapshots,
+                
+                JobStatus.ReportBSG,
 
                 // Done 
                 JobStatus.Done,
@@ -445,6 +447,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportAPMEntityDashboardScreenshots:
                     return new ReportAPMEntityDashboardScreenshots();
+                
+                case JobStatus.ReportBSG:
+                    return new ReportBSG();
 
                 default:
                     break;

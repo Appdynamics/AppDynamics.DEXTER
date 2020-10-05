@@ -116,6 +116,8 @@
         ReportAPMEntityDashboardScreenshots = 150,
 
         ReportAPMIndividualSnapshots = 160,
+        
+        ReportBSG = 170,
 
         // The rest
         Done = 500,

@@ -1,8 +1,8 @@
 {
-  "Signature": "oXC5NNrrzR3NkzM+TxwD5bSvvCkwglT+LzGRzvdgkv5jslJzjdb6/zmBQxbgo8l2WQxVKTCLmVwjLXlBx/kIuttjLsK2F9xXsARJVTMbBMR5uhxD8d006NnXy88ouS7rX/udi/4hdQrsOdZcvs6N8GmhSHp7t8lrtBjSTFKxnupYyeUyRQ26lZjGvFnKp0kD/dJNBqM7CbEM8uimMXKOr7aATmZELG8omqAqJw1kKdRlRQK2FtVvhy2MnoZv+503zv1DhXhA8R7VmRwBZ4P5/sJq6L8gAioUllD3h6D3QhQtPYc0WAf2t1kJ0o6I8+ygk134ZP1jdWj2cLbqH03CFQ==",
+  "Signature": "HjlWEKzFlAbRN+31ItgtclzrEWChd2wGQhOa7hw5zDVaWiWTaLX+5whhoFgby18uJAcPOp8htMW4aJWBPwCRMwMCywCUkCzZiYy8Hp1h+lqe+N9hpRdWEveh6+rDZaplrqVy0znTh4xHMSbc2mkMnRyU50gZsALze9EF3JCb3CNXNcGfE3PJbFFvD2h5xAPdFFUZKgbKf/0gebd5aoT0s6ccpfYxWdrAVni8Dv0qLdRIaR0fzNrS89mYdH15qy2MdMGAN5jfjDUpNQY5d47upHD6lOYwCOaBVbSR2pmhb9Exc2TPWtaSY08iRB+UKYiBgVeXxxyhPGHzgJAMaQvpyA==",
   "LicensedFeatures": {
-    "ExpirationDateTime": "2031-01-01T00:00:00Z",
-    "ApplicationSummary": false,
+    "ExpirationDateTime": "2030-05-31T00:00:00Z",
+    "ApplicationSummary": true,
     "Configuration": true,
     "Dashboards": true,
     "DetectedEntities": true,
@@ -14,9 +14,10 @@
     "Flowmaps": true,
     "Events": true,
     "FlameGraphs": true,
-    "HealthCheck": false,
-    "Licenses": false,
+    "HealthCheck": true,
+    "Licenses": true,
     "Snapshots": true,
-    "UsersGroupsRolesPermissions": true
+    "UsersGroupsRolesPermissions": true,
+    "BSG": true
   }
 }
