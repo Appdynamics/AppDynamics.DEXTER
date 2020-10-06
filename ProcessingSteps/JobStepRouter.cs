@@ -92,6 +92,8 @@ namespace AppDynamics.Dexter
 
                 JobStatus.IndexControllerHealthCheck,
                 JobStatus.IndexAPMHealthCheck,
+                
+                JobStatus.IndexBSG,
 
                 // Report data
                 JobStatus.ReportControllerAndApplicationConfiguration,
@@ -389,6 +391,9 @@ namespace AppDynamics.Dexter
                     return new IndexControllerHealthCheck();
                 case JobStatus.IndexAPMHealthCheck:
                     return new IndexAPMHealthCheck();
+                
+                case JobStatus.IndexBSG:
+                    return new IndexBSG();
 
                 // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:

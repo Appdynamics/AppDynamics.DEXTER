@@ -80,6 +80,8 @@
 
         IndexControllerHealthCheck = 90,
         IndexAPMHealthCheck = 91,
+        
+        IndexBSG = 92,
 
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,
