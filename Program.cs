@@ -1974,7 +1974,7 @@ from {2} containing
                     licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
                     licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
                     licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
-                    licensedReports.BSG = JobStepBase.getBoolValueFromJToken(licensedFeatures, "asdf");
+                    licensedReports.BSG = JobStepBase.getBoolValueFromJToken(licensedFeatures, "BSG");
                 }
                 else
                 {

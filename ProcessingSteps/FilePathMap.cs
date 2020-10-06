@@ -61,6 +61,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string HEALTHCHECK_APM_FOLDER_NAME = "HEALTHAPM";
 
         private const string APM_METRICS_LIST_FOLDER_NAME = "METRLISTAPM";
+        
+        private const string BSG_FOLDER_NAME = "BSG";
 
         #endregion
 
@@ -443,6 +445,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_APM_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.APM.results.csv";
         private const string CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.PLAT.results.csv";
 
+        private const string CONVERT_BSG_AGENTS_RESULTS_FILE_NAME = "bsg.agents.APM.results.csv";
+        
         #endregion
 
         #region Constants for the folder and file names of data reports
@@ -469,6 +473,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string REPORT_APPLICATIONS_DASHBOARDS_FILE_NAME = "ApplicationsDashboards.{0}.html";
         private const string REPORT_APPLICATION_DASHBOARDS_FILE_NAME = "ApplicationDashboards.html";
         private const string REPORT_HEALTH_CHECK_RESULTS_FILE_NAME = "HealthCheck.{0}.xlsx";
+        private const string REPORT_BSG_RESULTS_FILE_NAME = "BSG.{0}.xlsx";
         private const string REPORT_SNAPSHOT_FILE_NAME = "Snapshot.{0}-{1}-{2}-{3}-{4}.xlsx";
 
         // Per entity report names
@@ -4522,6 +4527,52 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
                 reportFileName);
+        }
+
+        #endregion
+
+        
+        #region BSG Report
+
+        public string BSGResultsExcelReportFilePath(JobTimeRange jobTimeRange)
+        {
+            string reportFileName = String.Format(
+                REPORT_BSG_RESULTS_FILE_NAME,
+                this.ProgramOptions.JobName,
+                jobTimeRange.From,
+                jobTimeRange.To);
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                reportFileName);
+        }
+        
+        public string BSGResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGReportFolderPath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME);
+        }
+
+        public string BSGAgentResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
         }
 
         #endregion
