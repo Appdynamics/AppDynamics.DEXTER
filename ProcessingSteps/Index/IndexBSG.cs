@@ -169,21 +169,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Sort them
                         bsgAgentResults = bsgAgentResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.TierName).ThenBy(h => h.NodeName).ToList();
 
-                        foreach (var backend in backendsList)
+                        foreach (var backend in backendsMetricsList)
                         {
                             BSGBackendResult backendResult = new BSGBackendResult();
                             backendResult.Controller = backend.Controller;
                             backendResult.ApplicationName = backend.ApplicationName;
-                            backendResult.ApplicationID = backend.ApplicationID;
                             backendResult.BackendName = backend.BackendName;
                             backendResult.BackendType = backend.BackendType;
+                            backendResult.HasActivity = backend.HasActivity;
                             bsgBackendResults.Add(backendResult);
                         }
                         bsgBackendResults.RemoveAll(h => h == null);
                         // Sort them
                         bsgBackendResults = bsgBackendResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.BackendName).ToList();
                         
-                        
+                        var backendCustomizationResult = new BSGBackendCustomizationResult();
+                        backendCustomizationResult.Controller = jobTarget.Controller;
+                        backendCustomizationResult.ApplicationName = jobTarget.Application;
+                        backendCustomizationResult.CustomDiscoveryRules =
+                            backendDiscoveryRulesList.FindAll(e => e.IsBuiltIn == false).Count;
+                        backendCustomizationResult.CustomExitPoints = customExitRulesList.Count;
+                        var bsgBackendCustomizationResults = new List<BSGBackendCustomizationResult>();
+                        bsgBackendCustomizationResults.Add(backendCustomizationResult);
                         
                         
                         // Set version to each of the health check rule results
@@ -191,6 +198,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         FileIOHelper.WriteListToCSVFile(bsgAgentResults, new BSGAgentResultMap(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendResults, new BSGBackendResultMap(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgBackendCustomizationResults, new BSGBackendCustomizationResultMap(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -209,6 +217,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BSGAgentResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGAgentResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGAgentResultsExcelReportFilePath(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
+                        }
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGBackendResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBackendResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBackendResultsExcelReportFilePath(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
+                        }
+                        
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBackendCustomizationResultsExcelReportFilePath(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion

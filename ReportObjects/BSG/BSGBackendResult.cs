@@ -11,6 +11,7 @@ namespace AppDynamics.Dexter.ReportObjects
 
         public string BackendName { get; set; }
         public string BackendType { get; set; }
+        public bool HasActivity { get; set; }
 
 
         public BSGAgentResult Clone()
