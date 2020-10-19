@@ -7,22 +7,17 @@ namespace AppDynamics.Dexter.ReportObjects
         public string Controller { get; set; }
 
         public long ApplicationID { get; set; }
-        public string Application { get; set; }
+        public string ApplicationName { get; set; }
 
         public string TierName { get; set; }
 
         public string NodeName { get; set; }
-
-        public string AgentType { get; set; }
-        public bool AgentPresent { get; set; }
+        
         public string AgentVersion { get; set; }
-
-        public bool MachineAgentPresent { get; set; }
+        public bool IsAPMAgentUsed { get; set; }
+        
         public string MachineAgentVersion { get; set; }
-
-        public bool IsDisabled { get; set; }
-        public bool IsMonitoringDisabled { get; set; }
-
+        public bool IsMachineAgentUsed { get; set; }
 
         public BSGAgentResult Clone()
         {
@@ -34,7 +29,7 @@ namespace AppDynamics.Dexter.ReportObjects
             return String.Format(
                 "BSGAgentResult: {0}/{1}({2}) {3}={4}",
                 this.Controller,
-                this.Application,
+                this.ApplicationName,
                 this.ApplicationID);
         }
     }

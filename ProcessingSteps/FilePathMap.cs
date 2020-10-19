@@ -446,6 +446,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.PLAT.results.csv";
 
         private const string CONVERT_BSG_AGENTS_RESULTS_FILE_NAME = "bsg.agents.APM.results.csv";
+        private const string CONVERT_BSG_BACKENDS_RESULTS_FILE_NAME = "bsg.backends.APM.results.csv";
         
         #endregion
 
@@ -4546,22 +4547,22 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ReportFolderName,
                 reportFileName);
         }
-        
-        public string BSGResultsExcelReportFilePath()
-        {
-            return Path.Combine(
-                this.ProgramOptions.OutputJobFolderPath,
-                this.ReportFolderName,
-                BSG_FOLDER_NAME,
-                CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
-        }
-        
+
         public string BSGReportFolderPath()
         {
             return Path.Combine(
                 this.ProgramOptions.OutputJobFolderPath,
                 this.ReportFolderName,
                 BSG_FOLDER_NAME);
+        }
+        
+        public string BSGAgentResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
         }
 
         public string BSGAgentResultsIndexFilePath(JobTarget jobTarget)
@@ -4573,6 +4574,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGBackendResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BACKENDS_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGBackendResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BACKENDS_RESULTS_FILE_NAME);
         }
 
         #endregion
