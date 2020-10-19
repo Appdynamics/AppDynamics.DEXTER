@@ -22,6 +22,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_AGENTS_LIST = "3.Agents";
         private const string SHEET_BACKENDS_LIST = "4.Backends";
         private const string SHEET_BACKEND_CUSTOMIZATION_LIST = "5.Backend Customization";
+        private const string SHEET_SERVICE_ENDPOINT_DETECTION_LIST = "5.Service Endpoints";
         // private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         // private const string SHEET_APPLICATIONS_ALL_LIST = "4.Applications.All";
         //
@@ -129,48 +130,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
                 
-                // // Entity sheets
-                // sheet = excelReport.Workbook.Worksheets.Add(SHEET_CONTROLLERS_LIST);
-                // sheet.Cells[1, 1].Value = "Table of Contents";
-                // sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                // sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                // sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-                //
-                // sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATIONS_ALL_LIST);
-                // sheet.Cells[1, 1].Value = "Table of Contents";
-                // sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                // sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                // sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-                //
-                // sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS);
-                // sheet.Cells[1, 1].Value = "Table of Contents";
-                // sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                // sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                // sheet.Cells[2, 1].Value = "See Rating";
-                // sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
-                // sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                // sheet.Cells[3, 1].Value = "See Summary";
-                // sheet.Cells[3, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
-                // sheet.Cells[3, 2].StyleName = "HyperLinkStyle";
-                // sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
-                //
-                // sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS_DESCRIPTION_PIVOT);
-                // sheet.Cells[1, 1].Value = "Table of Contents";
-                // sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                // sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                // sheet.Cells[2, 1].Value = "See Table";
-                // sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS);
-                // sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                // sheet.View.FreezePanes(PIVOT_SHEET_START_PIVOT_AT - 4 + 2, 1);
-                //
-                // sheet = excelReport.Workbook.Worksheets.Add(SHEET_HEALTH_CHECK_RULE_RESULTS_DISPLAY);
-                // sheet.Cells[1, 1].Value = "Table of Contents";
-                // sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
-                // sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
-                // sheet.Cells[2, 1].Value = "See Table";
-                // sheet.Cells[2, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_HEALTH_CHECK_RULE_RESULTS);
-                // sheet.Cells[2, 2].StyleName = "HyperLinkStyle";
-                // sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_SERVICE_ENDPOINT_DETECTION_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
                 
                 #endregion
                 
@@ -207,6 +171,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 
                 sheet = excelReport.Workbook.Worksheets[SHEET_BACKEND_CUSTOMIZATION_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGBackendCustomizationResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+                
+                #region SEPs
+                
+                loggerConsole.Info("List of SEP Discovery and Customization");
+                
+                sheet = excelReport.Workbook.Worksheets[SHEET_SERVICE_ENDPOINT_DETECTION_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGSepResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
                 

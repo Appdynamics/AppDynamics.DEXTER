@@ -129,6 +129,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
                         List<BackendDiscoveryRule> backendDiscoveryRulesList = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
                         List<CustomExitRule> customExitRulesList = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
+                        List<ServiceEndpointEntryRule> sepDiscoveryRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
+                        List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryDefaultRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointDiscoveryRule>(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget), new ServiceEndpointDiscoveryRuleReportMap());
                         
                         List<BusinessTransactionEntryScope> businessTransactionEntryScopeTemplateList = null;
                         List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRules20TemplateList = null;
@@ -147,6 +149,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<ConfigurationDifference> configurationDifferencesList = FileIOHelper.ReadListFromCSVFile<ConfigurationDifference>(FilePathMap.ConfigurationComparisonIndexFilePath(jobTarget), new ConfigurationDifferenceReportMap());
 
                         #endregion
+                        
+                        #region Agents
                         
                         foreach (var node in nodesMetricsList)
                         {
@@ -169,6 +173,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Sort them
                         bsgAgentResults = bsgAgentResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.TierName).ThenBy(h => h.NodeName).ToList();
 
+                        #endregion
+                        
+                        #region Backends
+                        
                         foreach (var backend in backendsMetricsList)
                         {
                             BSGBackendResult backendResult = new BSGBackendResult();
@@ -183,6 +191,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Sort them
                         bsgBackendResults = bsgBackendResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.BackendName).ToList();
                         
+                        #endregion
+                        
+                        #region Backend Customization
+                        
                         var backendCustomizationResult = new BSGBackendCustomizationResult();
                         backendCustomizationResult.Controller = jobTarget.Controller;
                         backendCustomizationResult.ApplicationName = jobTarget.Application;
@@ -192,13 +204,45 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         var bsgBackendCustomizationResults = new List<BSGBackendCustomizationResult>();
                         bsgBackendCustomizationResults.Add(backendCustomizationResult);
                         
+                        #endregion
+
+                        #region Service Endpoints
+
+                        var bsgSepResults = new List<BSGSepResult>();
+
                         
+                        BSGSepResult sepResult = new BSGSepResult();
+                        sepResult.Controller = jobTarget.Controller;
+                        sepResult.ApplicationName = jobTarget.Application;
+                        sepResult.NumServiceEndpoints = serviceEndpointsList.Count;
+                        sepResult.NumServiceEndpointsWithLoad =
+                            serviceEndpointsMetricsList.FindAll(e => e.HasActivity).Count;
+                        sepResult.NumServiceEndpointDetectionRules = sepDiscoveryRules.Count;
+                        sepResult.EjbAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("EJB")).IsEnabled;
+                        sepResult.JmsAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("JMS")).IsEnabled;
+                        sepResult.PojoAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("POJO")).IsEnabled;
+                        sepResult.ServletAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("SERVLET")).IsEnabled;
+                        sepResult.SpringBeanAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("SPRING_BEAN")).IsEnabled;
+                        sepResult.StrutsAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("STRUTS_ACTION")).IsEnabled;
+                        sepResult.WebServiceAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
+                            .Find(e => e.EntryPointType.Equals("WEB_SERVICE")).IsEnabled;
+                        bsgSepResults.Add(sepResult);
+
+                        #endregion
+
                         // Set version to each of the health check rule results
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgAgentResults, new BSGAgentResultMap(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendResults, new BSGBackendResultMap(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendCustomizationResults, new BSGBackendCustomizationResultMap(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgSepResults, new BSGSepResultMap(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -223,11 +267,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBackendResultsExcelReportFilePath(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
                         }
-                        
                         // Append all the individual report files into one
                         if (File.Exists(FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBackendCustomizationResultsExcelReportFilePath(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
+                        }
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGSepResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSepResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSepResultsExcelReportFilePath(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
