@@ -76,7 +76,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                             loggerConsole.Info("Application Configuration");
                             
-                            // this doesn't seem like a good feature... 
                             if (File.Exists(FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget)) == false)
                             {
                                 controllerApi.Timeout = 3;
