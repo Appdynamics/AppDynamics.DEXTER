@@ -2,17 +2,14 @@
 
 namespace AppDynamics.Dexter.ReportObjects
 {
-    public class BSGBackendResult
+    public class BSGBackendCustomizationResult
     {
         public string Controller { get; set; }
 
         public string ApplicationName { get; set; }
-        public long ApplicationID { get; set; }
 
-        public string BackendName { get; set; }
-        public string BackendType { get; set; }
-        public bool HasActivity { get; set; }
-
+        public int CustomDiscoveryRules { get; set; }
+        public int CustomExitPoints { get; set; }
 
         public BSGAgentResult Clone()
         {
@@ -22,11 +19,9 @@ namespace AppDynamics.Dexter.ReportObjects
         public override String ToString()
         {
             return String.Format(
-                "BSGResolvedBackend:  {0}/{1}({2})/{3}",
+                "BSGBackendCustomizationResult: {0}/{1}({2}) {3}={4}",
                 this.Controller,
-                this.ApplicationName,
-                this.ApplicationID,
-                this.BackendName);
+                this.ApplicationName);
         }
     }
 }

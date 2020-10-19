@@ -3,17 +3,16 @@ using CsvHelper.Configuration;
 
 namespace AppDynamics.Dexter.ReportObjectMaps
 {
-    public class BSGBackendResultMap : ClassMap<BSGBackendResult>
+    public class BSGBackendCustomizationResultMap : ClassMap<BSGBackendCustomizationResult>
     {
-        public BSGBackendResultMap()
+        public BSGBackendCustomizationResultMap()
         {
             int i = 0;
             Map(m => m.Controller).Index(i); i++;
             Map(m => m.ApplicationName).Index(i); i++;
             
-            Map(m => m.BackendName).Index(i); i++;
-            Map(m => m.BackendType).Index(i); i++;
-            Map(m => m.HasActivity).Index(i); i++;
+            Map(m => m.CustomDiscoveryRules).Index(i); i++;
+            Map(m => m.CustomExitPoints).Index(i); i++;
         }
     }
 }
