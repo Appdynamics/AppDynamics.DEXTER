@@ -72,6 +72,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Target step variables
 
                         List<BSGAgentResult> bsgAgentResults = new List<BSGAgentResult>();
+                        List<BSGBackendResult> bsgBackendResults = new List<BSGBackendResult>();
 
                         #endregion
 
@@ -128,7 +129,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
                         List<BackendDiscoveryRule> backendDiscoveryRulesList = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
                         List<CustomExitRule> customExitRulesList = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
-
+                        
                         List<BusinessTransactionEntryScope> businessTransactionEntryScopeTemplateList = null;
                         List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRules20TemplateList = null;
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20TemplateList = null;
@@ -146,35 +147,50 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<ConfigurationDifference> configurationDifferencesList = FileIOHelper.ReadListFromCSVFile<ConfigurationDifference>(FilePathMap.ConfigurationComparisonIndexFilePath(jobTarget), new ConfigurationDifferenceReportMap());
 
                         #endregion
-
-                        foreach (var node in nodesList)
+                        
+                        foreach (var node in nodesMetricsList)
                         {
+                            // nodesMetricsList does not have agent version info
+                            var apmNode = nodesList.Find(e => e.NodeID == node.NodeID);
                             BSGAgentResult agentResult = new BSGAgentResult();
                             agentResult.Controller = node.Controller;
                             agentResult.ApplicationID = node.ApplicationID;
-                            agentResult.Application = node.ApplicationName;
+                            agentResult.ApplicationName = node.ApplicationName;
                             agentResult.TierName = node.TierName;
                             agentResult.NodeName = node.NodeName;
-                            agentResult.AgentType = node.AgentType;
-                            agentResult.AgentPresent = node.AgentPresent;
-                            agentResult.AgentVersion = node.AgentVersion;
-                            agentResult.MachineAgentPresent = node.MachineAgentPresent;
-                            agentResult.MachineAgentVersion = node.MachineAgentVersion;
-                            agentResult.IsDisabled = node.IsDisabled;
-                            agentResult.IsMonitoringDisabled = node.IsMonitoringDisabled;
+                            agentResult.AgentVersion = apmNode.AgentVersion;
+                            agentResult.IsAPMAgentUsed = node.IsAPMAgentUsed;
+                            agentResult.IsMachineAgentUsed = node.IsMachineAgentUsed;
+                            agentResult.MachineAgentVersion = apmNode.MachineAgentVersion;
+
                             bsgAgentResults.Add(agentResult);
                         }
-
-                        
                         bsgAgentResults.RemoveAll(h => h == null);
-
                         // Sort them
-                        bsgAgentResults = bsgAgentResults.OrderBy(h => h.Controller).ThenBy(h => h.Application).ThenBy(h => h.TierName).ThenBy(h => h.NodeName).ToList();
+                        bsgAgentResults = bsgAgentResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.TierName).ThenBy(h => h.NodeName).ToList();
 
+                        foreach (var backend in backendsList)
+                        {
+                            BSGBackendResult backendResult = new BSGBackendResult();
+                            backendResult.Controller = backend.Controller;
+                            backendResult.ApplicationName = backend.ApplicationName;
+                            backendResult.ApplicationID = backend.ApplicationID;
+                            backendResult.BackendName = backend.BackendName;
+                            backendResult.BackendType = backend.BackendType;
+                            bsgBackendResults.Add(backendResult);
+                        }
+                        bsgBackendResults.RemoveAll(h => h == null);
+                        // Sort them
+                        bsgBackendResults = bsgBackendResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.BackendName).ToList();
+                        
+                        
+                        
+                        
                         // Set version to each of the health check rule results
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgAgentResults, new BSGAgentResultMap(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgBackendResults, new BSGBackendResultMap(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -192,7 +208,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         // Append all the individual report files into one
                         if (File.Exists(FilePathMap.BSGAgentResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGAgentResultsIndexFilePath(jobTarget)).Length > 0)
                         {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGResultsExcelReportFilePath(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGAgentResultsExcelReportFilePath(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
