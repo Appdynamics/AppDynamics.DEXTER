@@ -110,7 +110,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<APMResolvedBackend> resolvedBackendsList = FileIOHelper.ReadListFromCSVFile<APMResolvedBackend>(FilePathMap.APMMappedBackendsIndexFilePath(jobTarget), new APMResolvedBackendReportMap());
 
                         //List<Event> eventsAllList = FileIOHelper.ReadListFromCSVFile<Event>(FilePathMap.ApplicationEventsIndexFilePath(jobTarget), new EventReportMap());
-                        //List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile<HealthRuleViolationEvent>(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
+                        List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile<HealthRuleViolationEvent>(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
+                        List<ApplicationConfigurationPolicy> applicationConfigurationsListReference = FileIOHelper.ReadListFromCSVFile<ApplicationConfigurationPolicy>(FilePathMap.ApplicationConfigurationHealthRulesIndexFilePath(jobTarget), new ApplicationConfigurationPolicyReportMap());
+                        List<HealthRule> healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceAPM), new HealthRuleReportMap());
+                        List<HealthRule> healthRulesListDifference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
                         //List<Snapshot> snapshotsAllList = FileIOHelper.ReadListFromCSVFile<Snapshot>(FilePathMap.SnapshotsIndexFilePath(jobTarget), new SnapshotReportMap());
                         //List<Segment> segmentsAllList = FileIOHelper.ReadListFromCSVFile<Segment>(FilePathMap.SnapshotsSegmentsIndexFilePath(jobTarget), new SegmentReportMap());
                         //List<ExitCall> exitCallsAllList = FileIOHelper.ReadListFromCSVFile<ExitCall>(FilePathMap.SnapshotsExitCallsIndexFilePath(jobTarget), new ExitCallReportMap());
@@ -236,6 +239,47 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        #region Health Rules
+
+                        BSGHealthRuleResult healthRuleResult = new BSGHealthRuleResult();
+                        healthRuleResult.Controller = jobTarget.Controller;
+                        healthRuleResult.ApplicationName = jobTarget.Application;
+                        healthRuleResult.WarningViolations = healthRuleViolationEventsAllList
+                            .FindAll(e => e.Severity.Equals("WARNING")).Count;
+                        healthRuleResult.CriticalViolations = healthRuleViolationEventsAllList
+                            .FindAll(e => e.Severity.Equals("CRITICAL")).Count;
+                        healthRuleResult.LinkedActions = applicationConfigurationsListReference.First().NumActions;
+                        healthRuleResult.LinkedPolicies = applicationConfigurationsListReference.First().NumPolicies;
+
+                        var defaultsModified = 0;
+                        foreach (var referenceHealthRule in healthRulesListReference)
+                        {
+                            var configuredHealthRule =
+                                healthRulesListDifference.Find(e => e.RuleName.Equals(referenceHealthRule.RuleName));
+                            if (configuredHealthRule != null)
+                            {
+                                if (!configuredHealthRule.Equals(referenceHealthRule))
+                                {
+                                    defaultsModified++;
+                                }
+                            }
+                            else // default deleted
+                            {
+                                defaultsModified++;
+                            }
+                        }
+                        healthRuleResult.DefaultHealthRulesModified = defaultsModified;
+
+                        var configuredHealthRuleNames = healthRulesListDifference.ConvertAll(e => e.RuleName).ToHashSet();
+                        var defaultHealthRuleNames = healthRulesListReference.ConvertAll(e => e.RuleName).ToHashSet();
+                        var intersect = configuredHealthRuleNames.Intersect(defaultHealthRuleNames).ToList();
+                        healthRuleResult.CustomHealthRules = configuredHealthRuleNames.Count - intersect.Count;
+                        
+                        var bsgHealthRuleResults = new List<BSGHealthRuleResult>();
+                        bsgHealthRuleResults.Add(healthRuleResult);
+                        
+                        #endregion
+
                         // Set version to each of the health check rule results
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
@@ -243,6 +287,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(bsgBackendResults, new BSGBackendResultMap(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendCustomizationResults, new BSGBackendCustomizationResultMap(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgSepResults, new BSGSepResultMap(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgHealthRuleResults, new BSGHealthRuleResultMap(), FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -276,6 +321,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BSGSepResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSepResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSepResultsExcelReportFilePath(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
+                        }
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGHealthRuleResultsExcelReportFilePath(), FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
