@@ -254,19 +254,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         healthRuleResult.LinkedActions = applicationConfigurationsListReference.First().NumActions;
                         healthRuleResult.LinkedPolicies = applicationConfigurationsListReference.First().NumPolicies;
 
-
                         var configuredHealthRuleNames = healthRulesListDifference.ConvertAll(e => e.RuleName).ToHashSet();
                         var defaultHealthRuleNames = healthRulesListReference.ConvertAll(e => e.RuleName).ToHashSet();
+                        
                         var intersect = configuredHealthRuleNames.Intersect(defaultHealthRuleNames).ToList();
                         healthRuleResult.CustomHealthRules = configuredHealthRuleNames.Count - intersect.Count;
 
-                        var cpm = compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceAPM,
+                        var allHealthRuleModifications = compareListOfEntities(jobConfiguration.Input.ConfigurationComparisonReferenceAPM,
                             jobTarget, healthRulesListReference, healthRulesListDifference);
-                        // we have to re-read this in again because the previous method has side effects..........
-                        healthRulesListReference = FileIOHelper.ReadListFromCSVFile<HealthRule>(FilePathMap.ApplicationHealthRulesIndexFilePath(jobConfiguration.Input.ConfigurationComparisonReferenceAPM), new HealthRuleReportMap());
-                        healthRuleResult.DefaultHealthRulesModified = 
-                            cpm.ConvertAll(e => e.EntityName).ToHashSet()
-                                .Intersect(healthRulesListReference.ConvertAll(e => e.RuleName).ToHashSet()).ToList().Count;
+                        var modifiedHealthRuleNames = allHealthRuleModifications.ConvertAll(e => e.EntityName).ToHashSet();
+                        healthRuleResult.DefaultHealthRulesModified = modifiedHealthRuleNames.Intersect(defaultHealthRuleNames).ToList().Count;
+                        
                         var bsgHealthRuleResults = new List<BSGHealthRuleResult>();
                         bsgHealthRuleResults.Add(healthRuleResult);
                         
