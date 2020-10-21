@@ -449,6 +449,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_BSG_BACKENDS_RESULTS_FILE_NAME = "bsg.backends.APM.results.csv";
         private const string CONVERT_BSG_BACKEND_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.backend.customization.APM.results.csv";
         private const string CONVERT_BSG_SEP_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.sep.customization.APM.results.csv";
+        private const string CONVERT_BSG_HEALTH_RULE_RESULTS_FILE_NAME = "bsg.healthrule.APM.results.csv";
         
         #endregion
 
@@ -4636,6 +4637,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_SEP_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGHealthRuleResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_HEALTH_RULE_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGHealthRuleResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_HEALTH_RULE_RESULTS_FILE_NAME);
         }
 
         #endregion

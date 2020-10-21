@@ -14,15 +14,15 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool HasActivity { get; set; }
 
 
-        public BSGAgentResult Clone()
+        public BSGBackendResult Clone()
         {
-            return (BSGAgentResult) this.MemberwiseClone();
+            return (BSGBackendResult) this.MemberwiseClone();
         }
 
         public override String ToString()
         {
             return String.Format(
-                "BSGResolvedBackend:  {0}/{1}({2})/{3}",
+                "BSGBackendResult:  {0}/{1}({2})/{3}",
                 this.Controller,
                 this.ApplicationName,
                 this.ApplicationID,
