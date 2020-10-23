@@ -446,10 +446,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_CONTROLLER_HEALTH_CHECK_RULE_RESULTS_FILE_NAME = "healthcheck.PLAT.results.csv";
 
         private const string CONVERT_BSG_AGENTS_RESULTS_FILE_NAME = "bsg.agents.APM.results.csv";
+        private const string CONVERT_BSG_BT_RESULTS_FILE_NAME = "bsg.businesstransaction.APM.results.csv";
         private const string CONVERT_BSG_BACKENDS_RESULTS_FILE_NAME = "bsg.backends.APM.results.csv";
         private const string CONVERT_BSG_BACKEND_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.backend.customization.APM.results.csv";
         private const string CONVERT_BSG_SEP_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.sep.customization.APM.results.csv";
-        
+        private const string CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.overhead.APM.results.csv";
+
         #endregion
 
         #region Constants for the folder and file names of data reports
@@ -4577,7 +4579,27 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_AGENTS_RESULTS_FILE_NAME);
         }
-        
+
+        public string BSGBusinessTransactionExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BT_RESULTS_FILE_NAME);
+        }
+
+        public string BSGBusinessTransactionResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BT_RESULTS_FILE_NAME);
+        }
+
         public string BSGBackendResultsExcelReportFilePath()
         {
             return Path.Combine(
@@ -4636,6 +4658,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_SEP_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGOverheadResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGOverheadResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME);
         }
 
         #endregion

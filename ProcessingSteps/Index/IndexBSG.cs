@@ -1,5 +1,6 @@
 ﻿using AppDynamics.Dexter.ReportObjectMaps;
 using AppDynamics.Dexter.ReportObjects;
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -73,6 +74,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<BSGAgentResult> bsgAgentResults = new List<BSGAgentResult>();
                         List<BSGBackendResult> bsgBackendResults = new List<BSGBackendResult>();
+                        List<BSGBusinessTransactionResult> bsgBTResults = new List<BSGBusinessTransactionResult>();
+                        List<BSGOverheadResult> bsgOverheadResults = new List<BSGOverheadResult>();
+
 
                         #endregion
 
@@ -94,6 +98,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<APMBusinessTransaction> businessTransactionsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMBusinessTransactionsIndexFilePath(jobTarget), new APMBusinessTransactionReportMap());
                         List<APMBusinessTransaction> businessTransactionsMetricsList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER), new BusinessTransactionMetricReportMap());
+                        List<APMBusinessTransaction> businessTransactionsOverflowList = FileIOHelper.ReadListFromCSVFile<APMBusinessTransaction>(FilePathMap.APMOverflowBusinessTransactionsIndexFilePath(jobTarget), new APMOverflowBusinessTransactionReportMap());
 
                         List<APMBackend> backendsList = FileIOHelper.ReadListFromCSVFile<APMBackend>(FilePathMap.APMBackendsIndexFilePath(jobTarget), new APMBackendReportMap());
                         List<APMBackend> backendsMetricsList = FileIOHelper.ReadListFromCSVFile<APMBackend>(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER), new BackendMetricReportMap());
@@ -123,9 +128,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         loggerConsole.Info("Configuration Rules Data Preloading");
 
                         List<APMApplicationConfiguration> applicationConfigurationsList = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobTarget), new APMApplicationConfigurationReportMap());
-                        
+                        List<AgentCallGraphSetting> agentCallGraphSettings = FileIOHelper.ReadListFromCSVFile<AgentCallGraphSetting>(FilePathMap.APMAgentCallGraphSettingsIndexFilePath(jobTarget), new AgentCallGraphSettingReportMap());
+
                         List<BusinessTransactionEntryScope> businessTransactionEntryScopesList = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryScope>(FilePathMap.APMBusinessTransactionEntryScopesIndexFilePath(jobTarget), new BusinessTransactionEntryScopeReportMap());
                         List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRules20List = FileIOHelper.ReadListFromCSVFile<BusinessTransactionDiscoveryRule20>(FilePathMap.APMBusinessTransactionDiscoveryRules20IndexFilePath(jobTarget), new BusinessTransactionDiscoveryRule20ReportMap());
+                        List<BusinessTransactionEntryRule> businessTransactionEntryRulesList = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule>(FilePathMap.APMBusinessTransactionEntryRulesIndexFilePath(jobTarget), new BusinessTransactionEntryRuleReportMap());
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20List = FileIOHelper.ReadListFromCSVFile<BusinessTransactionEntryRule20>(FilePathMap.APMBusinessTransactionEntryRules20IndexFilePath(jobTarget), new BusinessTransactionEntryRule20ReportMap());
                         List<BackendDiscoveryRule> backendDiscoveryRulesList = FileIOHelper.ReadListFromCSVFile<BackendDiscoveryRule>(FilePathMap.APMBackendDiscoveryRulesIndexFilePath(jobTarget), new BackendDiscoveryRuleReportMap());
                         List<CustomExitRule> customExitRulesList = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
@@ -174,9 +181,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         bsgAgentResults = bsgAgentResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ThenBy(h => h.TierName).ThenBy(h => h.NodeName).ToList();
 
                         #endregion
-                        
+
+                        #region BusinessTransactions
+                        foreach(var applicationConfiguration in applicationConfigurationsList)
+                        {
+                            BSGBusinessTransactionResult businessTransactionResult = new BSGBusinessTransactionResult();
+                            businessTransactionResult.Controller = applicationConfiguration.Controller;
+                            businessTransactionResult.BTLockdownEnabled = applicationConfiguration.IsBTLockdownEnabled;
+                            businessTransactionResult.BTCleanupEnabled = applicationConfiguration.IsBTCleanupEnabled;
+                            businessTransactionResult.NumBTs = applicationConfiguration.NumBTs;
+
+                            businessTransactionResult.NumBTsWithLoad =
+                                businessTransactionsMetricsList.FindAll(b => b.HasActivity == true).Count;
+                            businessTransactionResult.NumBTsOverflow = businessTransactionsOverflowList.Count;
+
+                            if (businessTransactionsOverflowList.Count > 0)
+                                businessTransactionResult.BTLimitExceeded = true;
+
+                            businessTransactionResult.NumBTEntryRules = applicationConfiguration.NumBTEntryRules;
+                            businessTransactionResult.NumBTExcludeRules = applicationConfiguration.NumBTExcludeRules;
+                            businessTransactionResult.NumBTCustomEntryRules =
+                                        businessTransactionEntryRulesList.FindAll(e => e.IsBuiltIn == false).Count;
+                            businessTransactionResult.NumBTCustomExcludeRules =
+                                        businessTransactionEntryRulesList.FindAll(e => e.IsBuiltIn == false && e.IsExclusion == true).Count;
+                            businessTransactionResult.NumBTDiscoveryRules = applicationConfiguration.NumBTDiscoveryRules;
+                            
+
+                            businessTransactionResult.NumBT20EntryRules = applicationConfiguration.NumBT20EntryRules;
+                            businessTransactionResult.NumBT20ExcludeRules = applicationConfiguration.NumBT20ExcludeRules;
+                            businessTransactionResult.NumBT20CustomEntryRules =
+                                        businessTransactionEntryRules20List.FindAll(e => e.IsBuiltIn == false).Count;
+                            businessTransactionResult.NumBT20CustomExcludeRules =
+                                        businessTransactionEntryRules20List.FindAll(e => e.IsBuiltIn == false && e.IsExclusion == true).Count;
+                            businessTransactionResult.NumBT20DiscoveryRules = applicationConfiguration.NumBT20DiscoveryRules;
+                            businessTransactionResult.NumBT20Scopes = applicationConfiguration.NumBT20Scopes;
+
+                            bsgBTResults.Add(businessTransactionResult);
+                        } 
+                        bsgBTResults.RemoveAll(h => h == null);
+                        bsgBTResults = bsgBTResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ToList();
+                        #endregion
+
                         #region Backends
-                        
+
                         foreach (var backend in backendsMetricsList)
                         {
                             BSGBackendResult backendResult = new BSGBackendResult();
@@ -233,6 +280,32 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         sepResult.WebServiceAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
                             .Find(e => e.EntryPointType.Equals("WEB_SERVICE")).IsEnabled;
                         bsgSepResults.Add(sepResult);
+                        #endregion
+
+                        #region Overhead
+
+                        foreach (var applicationConfiguration in applicationConfigurationsList)
+                        {
+                            BSGOverheadResult bsgOverhead = new BSGOverheadResult();
+                            bsgOverhead.Controller = applicationConfiguration.Controller;
+                            bsgOverhead.ApplicationName = applicationConfiguration.ApplicationName;
+                            bsgOverhead.ApplicationID = applicationConfiguration.ApplicationID;
+                            bsgOverhead.DeveloperModeEnabled = applicationConfiguration.IsDeveloperModeEnabled;
+                            bsgOverhead.FindEntryPointsEnabled =
+                                agentPropertiesList
+                                    .FindAll(n => n.ApplicationID.Equals(applicationConfiguration.ApplicationID))
+                                    .Where(n => n.PropertyName == "find-entry-points" && n.BooleanValue == true)
+                                    .Count() > 0;
+                            bsgOverhead.SlowSnapshotCollectionEnabled =
+                                agentCallGraphSettings
+                                    .FindAll(c => c.IsHotSpotEnabled == true)
+                                    .Count() > 0;
+
+                            bsgOverheadResults.Add(bsgOverhead);
+                        }
+                        bsgOverheadResults.RemoveAll(h => h == null);
+                        // Sort them
+                        bsgOverheadResults = bsgOverheadResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ToList();
 
                         #endregion
 
@@ -240,9 +313,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgAgentResults, new BSGAgentResultMap(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgBTResults, new BSGBusinessTransactionResultMap(), FilePathMap.BSGBusinessTransactionResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendResults, new BSGBackendResultMap(), FilePathMap.BSGBackendResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgBackendCustomizationResults, new BSGBackendCustomizationResultMap(), FilePathMap.BSGBackendCustomizationResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgSepResults, new BSGSepResultMap(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgOverheadResults, new BSGOverheadResultMap(), FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -262,6 +337,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGAgentResultsExcelReportFilePath(), FilePathMap.BSGAgentResultsIndexFilePath(jobTarget));
                         }
+
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGBusinessTransactionResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBusinessTransactionResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBusinessTransactionExcelReportFilePath(), FilePathMap.BSGBusinessTransactionResultsIndexFilePath(jobTarget));
+                        }
+
                         // Append all the individual report files into one
                         if (File.Exists(FilePathMap.BSGBackendResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBackendResultsIndexFilePath(jobTarget)).Length > 0)
                         {
@@ -278,6 +360,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSepResultsExcelReportFilePath(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
                         }
 
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGOverheadResultsExcelReportFilePath(), FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget));
+                        }
                         #endregion
                     }
                     catch (Exception ex)
