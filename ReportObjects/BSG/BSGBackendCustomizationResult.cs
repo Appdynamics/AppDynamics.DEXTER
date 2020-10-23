@@ -11,9 +11,9 @@ namespace AppDynamics.Dexter.ReportObjects
         public int CustomDiscoveryRules { get; set; }
         public int CustomExitPoints { get; set; }
 
-        public BSGAgentResult Clone()
+        public BSGBackendCustomizationResult Clone()
         {
-            return (BSGAgentResult) this.MemberwiseClone();
+            return (BSGBackendCustomizationResult) this.MemberwiseClone();
         }
 
         public override String ToString()
