@@ -1,8 +1,8 @@
-<health-rules controller-version="020-008-001-000">
+﻿<health-rules controller-version="004-005-009-002">
     <health-rule>
-        <name>Business Transaction Health</name>
+        <name>Business Transaction response time is much higher than normal</name>
         <type>BUSINESS_TRANSACTION</type>
-        <description/>
+        <description>Average Response Time (ms) is &gt; 2 : 3 standard deviation of the default baseline and Calls per Minute is &gt; 50 per minute for the last 30 minutes</description>
         <enabled>true</enabled>
         <is-default>true</is-default>
         <always-enabled>true</always-enabled>
@@ -14,82 +14,186 @@
             </affected-bt-match-criteria>
         </affected-entities-match-criteria>
         <critical-execution-criteria>
-            <condition-aggregation-type>CUSTOM</condition-aggregation-type>
-            <condition-expression>(A AND B) OR (C AND D AND E)</condition-expression>
             <entity-aggregation-scope>
                 <type>AGGREGATE</type>
                 <value>0</value>
             </entity-aggregation-scope>
             <policy-condition>
                 <type>boolean</type>
-                <operator>OR</operator>
+                <operator>AND</operator>
                 <condition1>
-                    <type>boolean</type>
-                    <operator>AND</operator>
-                    <condition1>
+                    <type>leaf</type>
+                    <display-name>Average Response Time (ms) Baseline Condition</display-name>
+                    <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
+                    <condition-value>3.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>true</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
                         <type>leaf</type>
-                        <display-name>Average Response Time (ms) Baseline Condition</display-name>
-                        <short-name>A</short-name>
-                        <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
-                        <condition-value>3.0</condition-value>
-                        <operator>GREATER_THAN</operator>
-                        <condition-expression/>
-                        <use-active-baseline>true</use-active-baseline>
-                        <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
-                        <metric-expression>
-                            <type>leaf</type>
-                            <function-type>VALUE</function-type>
-                            <value>0</value>
-                            <is-literal-expression>false</is-literal-expression>
-                            <display-name>null</display-name>
-                            <metric-definition>
-                                <type>LOGICAL_METRIC</type>
-                                <logical-metric-name>Average Response Time (ms)</logical-metric-name>
-                            </metric-definition>
-                        </metric-expression>
-                    </condition1>
-                    <condition2>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Average Response Time (ms)</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
+                </condition1>
+                <condition2>
+                    <type>leaf</type>
+                    <display-name>Calls per Minute Condition</display-name>
+                    <condition-value-type>ABSOLUTE</condition-value-type>
+                    <condition-value>50.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>false</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
                         <type>leaf</type>
-                        <display-name>Calls per Minute Condition</display-name>
-                        <short-name>B</short-name>
-                        <condition-value-type>ABSOLUTE</condition-value-type>
-                        <condition-value>50.0</condition-value>
-                        <operator>GREATER_THAN</operator>
-                        <condition-expression/>
-                        <use-active-baseline>false</use-active-baseline>
-                        <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
-                        <metric-expression>
-                            <type>leaf</type>
-                            <function-type>VALUE</function-type>
-                            <value>0</value>
-                            <is-literal-expression>false</is-literal-expression>
-                            <display-name>null</display-name>
-                            <metric-definition>
-                                <type>LOGICAL_METRIC</type>
-                                <logical-metric-name>Calls per Minute</logical-metric-name>
-                            </metric-definition>
-                        </metric-expression>
-                    </condition2>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Calls per Minute</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
+                </condition2>
+            </policy-condition>
+        </critical-execution-criteria>
+        <warning-execution-criteria>
+            <entity-aggregation-scope>
+                <type>AGGREGATE</type>
+                <value>0</value>
+            </entity-aggregation-scope>
+            <policy-condition>
+                <type>boolean</type>
+                <operator>AND</operator>
+                <condition1>
+                    <type>leaf</type>
+                    <display-name>Average Response Time (ms) Baseline Condition</display-name>
+                    <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
+                    <condition-value>2.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>true</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
+                        <type>leaf</type>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Average Response Time (ms)</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
+                </condition1>
+                <condition2>
+                    <type>leaf</type>
+                    <display-name>Calls per Minute Condition</display-name>
+                    <condition-value-type>ABSOLUTE</condition-value-type>
+                    <condition-value>100.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>false</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
+                        <type>leaf</type>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Calls per Minute</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
+                </condition2>
+            </policy-condition>
+        </warning-execution-criteria>
+    </health-rule>
+    <health-rule>
+        <name>Business Transaction error rate is much higher than normal</name>
+        <type>BUSINESS_TRANSACTION</type>
+        <description>Errors per Minute is &gt; 2 : 3 standard deviation of the default baseline and Errors per Minute is &gt; 10 per minute and Calls per Minute is &gt; 50 per minute for the last 30 minutes</description>
+        <enabled>true</enabled>
+        <is-default>true</is-default>
+        <always-enabled>true</always-enabled>
+        <duration-min>30</duration-min>
+        <wait-time-min>30</wait-time-min>
+        <affected-entities-match-criteria>
+            <affected-bt-match-criteria>
+                <type>ALL</type>
+            </affected-bt-match-criteria>
+        </affected-entities-match-criteria>
+        <critical-execution-criteria>
+            <entity-aggregation-scope>
+                <type>AGGREGATE</type>
+                <value>0</value>
+            </entity-aggregation-scope>
+            <policy-condition>
+                <type>boolean</type>
+                <operator>AND</operator>
+                <condition1>
+                    <type>leaf</type>
+                    <display-name>Errors per Minute Baseline Condition</display-name>
+                    <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
+                    <condition-value>3.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>true</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
+                        <type>leaf</type>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Errors per Minute</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
                 </condition1>
                 <condition2>
                     <type>boolean</type>
                     <operator>AND</operator>
                     <condition1>
                         <type>leaf</type>
+                        <display-name>Errors per Minute Condition</display-name>
+                        <condition-value-type>ABSOLUTE</condition-value-type>
+                        <condition-value>10.0</condition-value>
+                        <operator>GREATER_THAN</operator>
+                        <condition-expression/>
+                        <use-active-baseline>false</use-active-baseline>
+                        <trigger-on-no-data>false</trigger-on-no-data>
+                        <metric-expression>
+                            <type>leaf</type>
+                            <function-type>SUM</function-type>
+                            <value>0</value>
+                            <is-literal-expression>false</is-literal-expression>
+                            <display-name>null</display-name>
+                            <metric-definition>
+                                <type>LOGICAL_METRIC</type>
+                                <logical-metric-name>Errors per Minute</logical-metric-name>
+                            </metric-definition>
+                        </metric-expression>
+                    </condition1>
+                    <condition2>
+                        <type>leaf</type>
                         <display-name>Calls per Minute Condition</display-name>
-                        <short-name>E</short-name>
                         <condition-value-type>ABSOLUTE</condition-value-type>
                         <condition-value>50.0</condition-value>
                         <operator>GREATER_THAN</operator>
                         <condition-expression/>
                         <use-active-baseline>false</use-active-baseline>
                         <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
                         <metric-expression>
                             <type>leaf</type>
                             <function-type>VALUE</function-type>
@@ -101,139 +205,72 @@
                                 <logical-metric-name>Calls per Minute</logical-metric-name>
                             </metric-definition>
                         </metric-expression>
-                    </condition1>
-                    <condition2>
-                        <type>boolean</type>
-                        <operator>AND</operator>
-                        <condition1>
-                            <type>leaf</type>
-                            <display-name>Errors per Minute Condition</display-name>
-                            <short-name>D</short-name>
-                            <condition-value-type>ABSOLUTE</condition-value-type>
-                            <condition-value>10.0</condition-value>
-                            <operator>GREATER_THAN</operator>
-                            <condition-expression/>
-                            <use-active-baseline>false</use-active-baseline>
-                            <trigger-on-no-data>false</trigger-on-no-data>
-                            <enable-triggers>false</enable-triggers>
-                            <min-triggers>0</min-triggers>
-                            <metric-expression>
-                                <type>leaf</type>
-                                <function-type>SUM</function-type>
-                                <value>0</value>
-                                <is-literal-expression>false</is-literal-expression>
-                                <display-name>null</display-name>
-                                <metric-definition>
-                                    <type>LOGICAL_METRIC</type>
-                                    <logical-metric-name>Errors per Minute</logical-metric-name>
-                                </metric-definition>
-                            </metric-expression>
-                        </condition1>
-                        <condition2>
-                            <type>leaf</type>
-                            <display-name>Errors per Minute Baseline Condition</display-name>
-                            <short-name>C</short-name>
-                            <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
-                            <condition-value>3.0</condition-value>
-                            <operator>GREATER_THAN</operator>
-                            <condition-expression/>
-                            <use-active-baseline>true</use-active-baseline>
-                            <trigger-on-no-data>false</trigger-on-no-data>
-                            <enable-triggers>false</enable-triggers>
-                            <min-triggers>0</min-triggers>
-                            <metric-expression>
-                                <type>leaf</type>
-                                <function-type>VALUE</function-type>
-                                <value>0</value>
-                                <is-literal-expression>false</is-literal-expression>
-                                <display-name>null</display-name>
-                                <metric-definition>
-                                    <type>LOGICAL_METRIC</type>
-                                    <logical-metric-name>Errors per Minute</logical-metric-name>
-                                </metric-definition>
-                            </metric-expression>
-                        </condition2>
                     </condition2>
                 </condition2>
             </policy-condition>
         </critical-execution-criteria>
         <warning-execution-criteria>
-            <condition-aggregation-type>CUSTOM</condition-aggregation-type>
-            <condition-expression>(A AND B) OR (C AND D AND E)</condition-expression>
             <entity-aggregation-scope>
                 <type>AGGREGATE</type>
                 <value>0</value>
             </entity-aggregation-scope>
             <policy-condition>
                 <type>boolean</type>
-                <operator>OR</operator>
+                <operator>AND</operator>
                 <condition1>
-                    <type>boolean</type>
-                    <operator>AND</operator>
-                    <condition1>
+                    <type>leaf</type>
+                    <display-name>Errors per Minute Baseline Condition</display-name>
+                    <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
+                    <condition-value>2.0</condition-value>
+                    <operator>GREATER_THAN</operator>
+                    <condition-expression/>
+                    <use-active-baseline>true</use-active-baseline>
+                    <trigger-on-no-data>false</trigger-on-no-data>
+                    <metric-expression>
                         <type>leaf</type>
-                        <display-name>Average Response Time (ms) Baseline Condition</display-name>
-                        <short-name>A</short-name>
-                        <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
-                        <condition-value>2.0</condition-value>
-                        <operator>GREATER_THAN</operator>
-                        <condition-expression/>
-                        <use-active-baseline>true</use-active-baseline>
-                        <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
-                        <metric-expression>
-                            <type>leaf</type>
-                            <function-type>VALUE</function-type>
-                            <value>0</value>
-                            <is-literal-expression>false</is-literal-expression>
-                            <display-name>null</display-name>
-                            <metric-definition>
-                                <type>LOGICAL_METRIC</type>
-                                <logical-metric-name>Average Response Time (ms)</logical-metric-name>
-                            </metric-definition>
-                        </metric-expression>
-                    </condition1>
-                    <condition2>
-                        <type>leaf</type>
-                        <display-name>Calls per Minute Condition</display-name>
-                        <short-name>B</short-name>
-                        <condition-value-type>ABSOLUTE</condition-value-type>
-                        <condition-value>100.0</condition-value>
-                        <operator>GREATER_THAN</operator>
-                        <condition-expression/>
-                        <use-active-baseline>false</use-active-baseline>
-                        <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
-                        <metric-expression>
-                            <type>leaf</type>
-                            <function-type>VALUE</function-type>
-                            <value>0</value>
-                            <is-literal-expression>false</is-literal-expression>
-                            <display-name>null</display-name>
-                            <metric-definition>
-                                <type>LOGICAL_METRIC</type>
-                                <logical-metric-name>Calls per Minute</logical-metric-name>
-                            </metric-definition>
-                        </metric-expression>
-                    </condition2>
+                        <function-type>VALUE</function-type>
+                        <value>0</value>
+                        <is-literal-expression>false</is-literal-expression>
+                        <display-name>null</display-name>
+                        <metric-definition>
+                            <type>LOGICAL_METRIC</type>
+                            <logical-metric-name>Errors per Minute</logical-metric-name>
+                        </metric-definition>
+                    </metric-expression>
                 </condition1>
                 <condition2>
                     <type>boolean</type>
                     <operator>AND</operator>
                     <condition1>
                         <type>leaf</type>
+                        <display-name>Errors per Minute Condition</display-name>
+                        <condition-value-type>ABSOLUTE</condition-value-type>
+                        <condition-value>5.0</condition-value>
+                        <operator>GREATER_THAN</operator>
+                        <condition-expression/>
+                        <use-active-baseline>false</use-active-baseline>
+                        <trigger-on-no-data>false</trigger-on-no-data>
+                        <metric-expression>
+                            <type>leaf</type>
+                            <function-type>SUM</function-type>
+                            <value>0</value>
+                            <is-literal-expression>false</is-literal-expression>
+                            <display-name>null</display-name>
+                            <metric-definition>
+                                <type>LOGICAL_METRIC</type>
+                                <logical-metric-name>Errors per Minute</logical-metric-name>
+                            </metric-definition>
+                        </metric-expression>
+                    </condition1>
+                    <condition2>
+                        <type>leaf</type>
                         <display-name>Calls per Minute Condition</display-name>
-                        <short-name>E</short-name>
                         <condition-value-type>ABSOLUTE</condition-value-type>
                         <condition-value>50.0</condition-value>
                         <operator>GREATER_THAN</operator>
                         <condition-expression/>
                         <use-active-baseline>false</use-active-baseline>
                         <trigger-on-no-data>false</trigger-on-no-data>
-                        <enable-triggers>false</enable-triggers>
-                        <min-triggers>0</min-triggers>
                         <metric-expression>
                             <type>leaf</type>
                             <function-type>VALUE</function-type>
@@ -245,58 +282,6 @@
                                 <logical-metric-name>Calls per Minute</logical-metric-name>
                             </metric-definition>
                         </metric-expression>
-                    </condition1>
-                    <condition2>
-                        <type>boolean</type>
-                        <operator>AND</operator>
-                        <condition1>
-                            <type>leaf</type>
-                            <display-name>Errors per Minute Condition</display-name>
-                            <short-name>D</short-name>
-                            <condition-value-type>ABSOLUTE</condition-value-type>
-                            <condition-value>5.0</condition-value>
-                            <operator>GREATER_THAN</operator>
-                            <condition-expression/>
-                            <use-active-baseline>false</use-active-baseline>
-                            <trigger-on-no-data>false</trigger-on-no-data>
-                            <enable-triggers>false</enable-triggers>
-                            <min-triggers>0</min-triggers>
-                            <metric-expression>
-                                <type>leaf</type>
-                                <function-type>SUM</function-type>
-                                <value>0</value>
-                                <is-literal-expression>false</is-literal-expression>
-                                <display-name>null</display-name>
-                                <metric-definition>
-                                    <type>LOGICAL_METRIC</type>
-                                    <logical-metric-name>Errors per Minute</logical-metric-name>
-                                </metric-definition>
-                            </metric-expression>
-                        </condition1>
-                        <condition2>
-                            <type>leaf</type>
-                            <display-name>Errors per Minute Baseline Condition</display-name>
-                            <short-name>C</short-name>
-                            <condition-value-type>BASELINE_STANDARD_DEVIATION</condition-value-type>
-                            <condition-value>2.0</condition-value>
-                            <operator>GREATER_THAN</operator>
-                            <condition-expression/>
-                            <use-active-baseline>true</use-active-baseline>
-                            <trigger-on-no-data>false</trigger-on-no-data>
-                            <enable-triggers>false</enable-triggers>
-                            <min-triggers>0</min-triggers>
-                            <metric-expression>
-                                <type>leaf</type>
-                                <function-type>VALUE</function-type>
-                                <value>0</value>
-                                <is-literal-expression>false</is-literal-expression>
-                                <display-name>null</display-name>
-                                <metric-definition>
-                                    <type>LOGICAL_METRIC</type>
-                                    <logical-metric-name>Errors per Minute</logical-metric-name>
-                                </metric-definition>
-                            </metric-expression>
-                        </condition2>
                     </condition2>
                 </condition2>
             </policy-condition>
@@ -309,7 +294,7 @@
         <enabled>true</enabled>
         <is-default>true</is-default>
         <always-enabled>true</always-enabled>
-        <duration-min>20</duration-min>
+        <duration-min>30</duration-min>
         <wait-time-min>30</wait-time-min>
         <affected-entities-match-criteria>
             <affected-infra-match-criteria>
@@ -330,15 +315,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Hardware Resources|CPU|%Busy Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>90.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>true</enable-triggers>
-                <min-triggers>16</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -360,15 +342,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Hardware Resources|CPU|%Busy Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>75.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>true</enable-triggers>
-                <min-triggers>16</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -411,15 +390,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Hardware Resources|Memory|Used % Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>90.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -441,15 +417,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Hardware Resources|Memory|Used % Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>75.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -495,15 +468,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>JVM|Memory:Heap|Used % Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>90.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -525,15 +495,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>JVM|Memory:Heap|Used % Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>75.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -579,15 +546,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>JVM|Garbage Collection|GC Time Spent Per Min (ms) Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>45000.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -609,15 +573,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>JVM|Garbage Collection|GC Time Spent Per Min (ms) Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>30000.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -663,15 +624,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>CLR|Garbage Collection|GC Time Spent (%) Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>75.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -693,15 +651,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>CLR|Garbage Collection|GC Time Spent (%) Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>50.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression/>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>leaf</type>
                     <function-type>VALUE</function-type>
@@ -720,7 +675,7 @@
         <name>Network-Host : Packet drops too high</name>
         <type>NETVIZ</type>
         <description/>
-        <enabled>false</enabled>
+        <enabled>true</enabled>
         <is-default>true</is-default>
         <always-enabled>true</always-enabled>
         <duration-min>30</duration-min>
@@ -744,15 +699,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Packet Drop Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>5.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression>({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100</condition-expression>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>boolean</type>
                     <operator>MULTIPLY</operator>
@@ -798,15 +750,12 @@
             <policy-condition>
                 <type>leaf</type>
                 <display-name>Packet Drop Condition</display-name>
-                <short-name>A</short-name>
                 <condition-value-type>ABSOLUTE</condition-value-type>
                 <condition-value>3.0</condition-value>
                 <operator>GREATER_THAN</operator>
                 <condition-expression>({Packets Dropped Per Sec} / {Packets Received Per Sec}) * 100</condition-expression>
                 <use-active-baseline>false</use-active-baseline>
                 <trigger-on-no-data>false</trigger-on-no-data>
-                <enable-triggers>false</enable-triggers>
-                <min-triggers>0</min-triggers>
                 <metric-expression>
                     <type>boolean</type>
                     <operator>MULTIPLY</operator>

@@ -20,9 +20,9 @@ namespace AppDynamics.Dexter.ReportObjects
         public bool StrutsAutoDiscoveryEnabled { get; set; }
         public bool WebServiceAutoDiscoveryEnabled { get; set; }
 
-        public BSGAgentResult Clone()
+        public BSGSepResult Clone()
         {
-            return (BSGAgentResult) this.MemberwiseClone();
+            return (BSGSepResult) this.MemberwiseClone();
         }
 
         public override String ToString()
