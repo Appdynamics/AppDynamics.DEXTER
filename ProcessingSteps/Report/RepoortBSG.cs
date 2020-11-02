@@ -26,6 +26,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_SERVICE_ENDPOINT_DETECTION_LIST = "6.Service Endpoints";
         private const string SHEET_HEALTH_RULES_DETECTION_LIST = "6.Health Rules";
         private const string SHEET_APPLICATION_OVERHEAD_LIST = "7.Overhead";
+        private const string SHEET_APPLICATION_DATACOLLECTOR_LIST = "8.DataCollectors";
+        private const string SHEET_APPLICATION_DASHBOARD_LIST = "9.Dashboards";
         // private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         // private const string SHEET_APPLICATIONS_ALL_LIST = "4.Applications.All";
         //
@@ -157,7 +159,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
-                
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATION_DATACOLLECTOR_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATION_DASHBOARD_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+
                 #endregion
 
                 #region Report file variables
@@ -231,7 +245,25 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGOverheadResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
-                
+
+                #region DataCollectors
+
+                loggerConsole.Info("List of DataCollectors configurations");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_DATACOLLECTOR_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGDataCollectorResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Dashboards
+
+                loggerConsole.Info("List of Dashboards configurations");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_DASHBOARD_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGDashboardResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
                 #region TOC sheet
 
                 // TOC sheet again

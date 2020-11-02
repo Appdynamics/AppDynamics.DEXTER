@@ -371,9 +371,6 @@
     <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\devmode.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
