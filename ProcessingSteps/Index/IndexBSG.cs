@@ -79,7 +79,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<BSGBackendResult> bsgBackendResults = new List<BSGBackendResult>();
                         List<BSGBusinessTransactionResult> bsgBTResults = new List<BSGBusinessTransactionResult>();
                         List<BSGOverheadResult> bsgOverheadResults = new List<BSGOverheadResult>();
-
+                        List<BSGDataCollectorResult> bsgDataCollectorResults = new List<BSGDataCollectorResult>();
+                        List<BSGDashboardResult> bsgDashboardResults = new List<BSGDashboardResult>();
 
                         #endregion
 
@@ -131,6 +132,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<AgentConfigurationProperty> agentPropertiesList = FileIOHelper.ReadListFromCSVFile<AgentConfigurationProperty>(FilePathMap.APMAgentConfigurationPropertiesIndexFilePath(jobTarget), new AgentConfigurationPropertyReportMap());
 
+
                         loggerConsole.Info("Configuration Rules Data Preloading");
 
                         List<APMApplicationConfiguration> applicationConfigurationsList = FileIOHelper.ReadListFromCSVFile<APMApplicationConfiguration>(FilePathMap.APMApplicationConfigurationIndexFilePath(jobTarget), new APMApplicationConfigurationReportMap());
@@ -144,7 +146,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<CustomExitRule> customExitRulesList = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
                         List<ServiceEndpointEntryRule> sepDiscoveryRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
                         List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryDefaultRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointDiscoveryRule>(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget), new ServiceEndpointDiscoveryRuleReportMap());
-                        
+
+                        List<HTTPDataCollector> httpDataCollectors = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
+                        List<MethodInvocationDataCollector> midcDataCollectors = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
+
+                        List<Dashboard> dashboardsList = FileIOHelper.ReadListFromCSVFile<Dashboard>(FilePathMap.DashboardsIndexFilePath(jobTarget), new DashboardReportMap());
+
                         List<BusinessTransactionEntryScope> businessTransactionEntryScopeTemplateList = null;
                         List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRules20TemplateList = null;
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20TemplateList = null;
@@ -228,6 +235,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         bsgBTResults = bsgBTResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ToList();
                         #endregion
 
+                        #region DataCollectors
+
+                        foreach (var applicationConfiguration in applicationConfigurationsList)
+                        {
+                            BSGDataCollectorResult bsgDataCollector = new BSGDataCollectorResult();
+                            bsgDataCollector.Controller = applicationConfiguration.Controller;
+                            bsgDataCollector.ApplicationName = applicationConfiguration.ApplicationName;
+                            bsgDataCollector.ApplicationID = applicationConfiguration.ApplicationID;
+                            bsgDataCollector.NumHTTPDCs = applicationConfiguration.NumHTTPDCs;
+                            bsgDataCollector.NumHTTPDCVariablesCollected = applicationConfiguration.NumHTTPDCVariablesCollected;
+                            bsgDataCollector.NumHTTPDCs_BIQEnabled = httpDataCollectors.FindAll(m => m.IsAnalytics == true).Count();
+
+                            bsgDataCollector.NumMIDCs = applicationConfiguration.NumMIDCs;
+                            bsgDataCollector.NumMIDCVariablesCollected = applicationConfiguration.NumMIDCVariablesCollected;
+                            bsgDataCollector.NumMIDCs_BIQEnabled = midcDataCollectors.FindAll(m => m.IsAnalytics == true).Count();
+                            bsgDataCollectorResults.Add(bsgDataCollector);
+                        }
+                        bsgDataCollectorResults.RemoveAll(h => h == null);
+                        // Sort them
+                        bsgDataCollectorResults = bsgDataCollectorResults.OrderBy(h => h.Controller).ThenBy(h => h.ApplicationName).ToList();
+
+                        #endregion
+
                         #region Backends
 
                         foreach (var backend in backendsMetricsList)
@@ -286,6 +316,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         sepResult.WebServiceAutoDiscoveryEnabled = serviceEndpointDiscoveryDefaultRules
                             .Find(e => e.EntryPointType.Equals("WEB_SERVICE")).IsEnabled;
                         bsgSepResults.Add(sepResult);
+
                         #endregion
 
                         #region Overhead
@@ -340,7 +371,28 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         
                         var bsgHealthRuleResults = new List<BSGHealthRuleResult>();
                         bsgHealthRuleResults.Add(healthRuleResult);
-                        
+
+                        #endregion
+
+                        #region Dashboards
+                        foreach(var dashboard in dashboardsList)
+                        {
+                            BSGDashboardResult bsgDashboardResult = new BSGDashboardResult();
+                            bsgDashboardResult.Controller = jobTarget.Controller;
+                            bsgDashboardResult.DashboardName = dashboard.DashboardName;
+                            bsgDashboardResult.LastModifiedOn = dashboard.UpdatedOn;
+                            bsgDashboardResult.LastModifiedOnUtc = dashboard.UpdatedOnUtc;
+                            bsgDashboardResult.DaysSince_LastUpdate = (DateTime.Now.ToUniversalTime() - bsgDashboardResult.LastModifiedOnUtc).Days;
+                            bsgDashboardResult.HasAnalyticsWidgets = dashboard.NumAnalyticsWidgets > 0;
+                            bsgDashboardResult.NumWidgets = dashboard.NumWidgets;
+                            bsgDashboardResult.NumAnalyticsWidgets = dashboard.NumAnalyticsWidgets;
+                            bsgDashboardResults.Add(bsgDashboardResult);
+                            
+                        }
+                        bsgDashboardResults.RemoveAll(h => h == null);
+                        // Sort them
+                        bsgDashboardResults = bsgDashboardResults.OrderBy(h => h.Controller).ThenBy(h => h.DashboardName).ToList();
+
                         #endregion
 
                         // Set version to each of the health check rule results
@@ -353,6 +405,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(bsgSepResults, new BSGSepResultMap(), FilePathMap.BSGSepResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgOverheadResults, new BSGOverheadResultMap(), FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgHealthRuleResults, new BSGHealthRuleResultMap(), FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgDataCollectorResults, new BSGDataCollectorResultMap(), FilePathMap.BSGDataCollectorResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgDashboardResults, new BSGDashboardResultMap(), FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -404,6 +458,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGOverheadResultsExcelReportFilePath(), FilePathMap.BSGOverheadResultsIndexFilePath(jobTarget));
+                        }
+
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGDataCollectorResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGDataCollectorResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGDataCollectorResultsExcelReportFilePath(), FilePathMap.BSGDataCollectorResultsIndexFilePath(jobTarget));
+                        }
+
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGDashboardResultsExcelReportFilePath(), FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget));
                         }
                         #endregion
                     }

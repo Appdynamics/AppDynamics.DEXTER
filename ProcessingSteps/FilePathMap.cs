@@ -451,6 +451,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_BSG_BACKEND_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.backend.customization.APM.results.csv";
         private const string CONVERT_BSG_SEP_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.sep.customization.APM.results.csv";
         private const string CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.overhead.APM.results.csv";
+        private const string CONVERT_BSG_DATACOLLECTOR_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.datacollector.APM.results.csv";
+        private const string CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.dashboard.results.csv";
 
         private const string CONVERT_BSG_HEALTH_RULE_RESULTS_FILE_NAME = "bsg.healthrule.APM.results.csv";
         
@@ -4700,6 +4702,46 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGDataCollectorResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_DATACOLLECTOR_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGDataCollectorResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_DATACOLLECTOR_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGDashboardResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+
+        public string BSGDashboardResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME);
         }
 
         #endregion
