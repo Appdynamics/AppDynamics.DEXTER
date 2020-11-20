@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class IndexBSG_Database : JobStepIndexBase
+    public class IndexBSG_BIQ : JobStepIndexBase
     {
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -77,7 +77,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Target step variables
 
-                        List<BSGDatabaseResult> bsgDatabaseResults = new List<BSGDatabaseResult>();
+                        List<BSGBIQResult> bsgBIQResults = new List<BSGBIQResult>();
 
                         #endregion
 
@@ -86,12 +86,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         loggerConsole.Info("Entity Details Data Preloading");
 
 
-                        List<DBApplicationConfiguration> dbApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.DBApplicationConfigurationIndexFilePath(jobTarget), new DBApplicationConfigurationReportMap());
-                        List<WEBApplicationConfiguration> webApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget), new WEBApplicationConfigurationReportMap());
+                        List<BIQApplication> analyticsApplicationsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.BIQApplicationsIndexFilePath(jobTarget), new BIQApplicationReportMap());
                         List<HealthRule> healthRulesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
                         List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesIndexFilePath(jobTarget), new PolicyReportMap());
                         List<ReportObjects.Action> actionsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationActionsIndexFilePath(jobTarget), new ActionReportMap());
-                        List<WEBPage> webPageList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBPagesIndexFilePath(jobTarget), new WEBPageReportMap());
                         List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
 
                         loggerConsole.Info("Configuration Rules Data Preloading");
@@ -100,28 +98,30 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #region Synthetics
 
-                        foreach (var dbApplicationConfig in dbApplicationConfigurationList)
+                        foreach (BIQApplication analyticsApplication in analyticsApplicationsList)
                         {
-                            var dbApplication = dbApplicationConfigurationList.Find(w => w.ApplicationName == dbApplicationConfig.ApplicationName);
-                            BSGDatabaseResult bsgDatabaseResult = new BSGDatabaseResult();
-                            bsgDatabaseResult.ApplicationName = dbApplicationConfig.ApplicationName;
-                            bsgDatabaseResult.Controller = jobTarget.Controller;
-                            bsgDatabaseResult.NumDataCollectors= dbApplicationConfig.NumCollectorDefinitions;
-                            bsgDatabaseResult.NumCustomMetrics = dbApplicationConfig.NumCustomMetrics;
-                            var databaseHRs = healthRulesList;
-                            if (databaseHRs.Count() > 0)
+                            var dbApplication = analyticsApplicationsList.Find(w => w.ApplicationName == analyticsApplication.ApplicationName);
+                            BSGBIQResult bsgBIQResult = new BSGBIQResult();
+                            bsgBIQResult.ApplicationName = analyticsApplication.ApplicationName;
+                            bsgBIQResult.Controller = jobTarget.Controller;
+                            bsgBIQResult.NumAnalyticSearches= analyticsApplication.NumSearches;
+                            bsgBIQResult.NumAnalyticMetrics = analyticsApplication.NumSavedMetrics;
+                            bsgBIQResult.NumBusinessJourneys = analyticsApplication.NumBusinessJourneys;
+
+                            var analyticsHRs = healthRulesList;
+                            if (analyticsHRs.Count() > 0)
                             {
-                                bsgDatabaseResult.NumHRs = databaseHRs.Count();
+                                bsgBIQResult.NumHRs = analyticsHRs.Count();
                                 foreach (var policy in policiesList)
                                 {
-                                    foreach (var hr in databaseHRs)
+                                    foreach (var hr in analyticsHRs)
                                     {
                                         if (policy.HRIDs.Contains(hr.HealthRuleID.ToString()))
                                         {
-                                            bsgDatabaseResult.NumPoliciesForHRs++;
-                                            if (policy.NumActions > 0 && bsgDatabaseResult.NumActionsForPolicies <= actionsList.Count())
+                                            bsgBIQResult.NumPoliciesForHRs++;
+                                            if (policy.NumActions > 0 && bsgBIQResult.NumActionsForPolicies <= actionsList.Count())
                                             {
-                                                bsgDatabaseResult.NumActionsForPolicies += policy.NumActions;
+                                                bsgBIQResult.NumActionsForPolicies += policy.NumActions;
 
                                             }
                                             break;
@@ -129,23 +129,23 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                                     }
                                 }
-                                foreach (var hr in databaseHRs)
+                                foreach (var hr in analyticsHRs)
                                 {
-                                    bsgDatabaseResult.NumWarningHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "WARNING").Count();
-                                    bsgDatabaseResult.NumCriticalHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "CRITICAL").Count();
+                                    bsgBIQResult.NumWarningHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "WARNING").Count();
+                                    bsgBIQResult.NumCriticalHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "CRITICAL").Count();
                                 }
 
                             }
-                            bsgDatabaseResults.Add(bsgDatabaseResult);
+                            bsgBIQResults.Add(bsgBIQResult);
 
                         }
                         #endregion
 
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
-                        FileIOHelper.WriteListToCSVFile(bsgDatabaseResults, new BSGDatabaseResultMap(), FilePathMap.BSGDatabaseResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgBIQResults, new BSGBIQResultMap(), FilePathMap.BSGBIQResultsIndexFilePath(jobTarget));
 
-                        stepTimingTarget.NumEntities = bsgDatabaseResults.Count;
+                        stepTimingTarget.NumEntities = bsgBIQResults.Count;
 
                         #region Combine All for Report CSV
 
@@ -160,9 +160,9 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         // Append all the individual report files into one
 
-                        if (File.Exists(FilePathMap.BSGDatabaseResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGDatabaseResultsIndexFilePath(jobTarget)).Length > 0)
+                        if (File.Exists(FilePathMap.BSGBIQResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBIQResultsIndexFilePath(jobTarget)).Length > 0)
                         {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGDatabaseResultsExcelReportFilePath(), FilePathMap.BSGDatabaseResultsIndexFilePath(jobTarget));
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBIQResultsExcelReportFilePath(), FilePathMap.BSGBIQResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion

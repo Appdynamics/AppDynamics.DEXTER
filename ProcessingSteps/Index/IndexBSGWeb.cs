@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class IndexBSGWeb : JobStepIndexBase
+    public class IndexBSG_Web : JobStepIndexBase
     {
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {

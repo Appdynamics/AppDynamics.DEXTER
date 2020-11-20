@@ -93,9 +93,10 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexControllerHealthCheck,
                 JobStatus.IndexAPMHealthCheck,
                 
-                JobStatus.IndexBSGAPM,
-                JobStatus.IndexBSGWEB,
-                JobStatus.IndexBSGDatabase,
+                JobStatus.IndexBSG_APM,
+                JobStatus.IndexBSG_WEB,
+                JobStatus.IndexBSG_DATABASE,
+                JobStatus.IndexBSG_BIQ,
 
                 // Report data
                 JobStatus.ReportControllerAndApplicationConfiguration,
@@ -394,12 +395,12 @@ namespace AppDynamics.Dexter
                 case JobStatus.IndexAPMHealthCheck:
                     return new IndexAPMHealthCheck();
                 
-                case JobStatus.IndexBSGAPM:
-                    return new IndexBSG();
-                case JobStatus.IndexBSGWEB:
-                    return new IndexBSGWeb();
-                case JobStatus.IndexBSGDatabase:
-                    return new IndexBSGDatabase();
+                case JobStatus.IndexBSG_APM:
+                    return new IndexBSG_APM();
+                case JobStatus.IndexBSG_WEB:
+                    return new IndexBSG_Web();
+                case JobStatus.IndexBSG_DATABASE:
+                    return new IndexBSG_Database();
 
                 // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:

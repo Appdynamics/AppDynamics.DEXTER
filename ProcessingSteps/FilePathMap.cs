@@ -455,6 +455,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.dashboard.results.csv";
         private const string CONVERT_BSG_SYNTHETICS_RESULTS_FILE_NAME = "bsg.synthetics.WEB.results.csv";
         private const string CONVERT_BSG_DATABASE_RESULTS_FILE_NAME = "bsg.application.DB.results.csv";
+        private const string CONVERT_BSG_BIQ_RESULTS_FILE_NAME = "bsg.application.BIQ.results.csv";
 
         private const string CONVERT_BSG_HEALTH_RULE_RESULTS_FILE_NAME = "bsg.healthrule.APM.results.csv";
         
@@ -4781,8 +4782,29 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 this.ProgramOptions.OutputJobFolderPath,
                 INDEX_FOLDER_NAME,
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_DATABASE_RESULTS_FILE_NAME);
+        }
+
+        public string BSGBIQResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BIQ_RESULTS_FILE_NAME);
+        }
+
+        public string BSGBIQResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_BIQ_RESULTS_FILE_NAME);
         }
 
         #endregion
