@@ -28,6 +28,8 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APPLICATION_OVERHEAD_LIST = "7.Overhead";
         private const string SHEET_APPLICATION_DATACOLLECTOR_LIST = "8.DataCollectors";
         private const string SHEET_APPLICATION_DASHBOARD_LIST = "9.Dashboards";
+        private const string SHEET_APPLICATION_SYNTHETICS_LIST = "10.Synthetics";
+        private const string SHEET_APPLICATION_DATABASE_LIST = "11.Database";
         // private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         // private const string SHEET_APPLICATIONS_ALL_LIST = "4.Applications.All";
         //
@@ -171,6 +173,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
 
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATION_SYNTHETICS_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATION_DATABASE_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+
 
                 #endregion
 
@@ -261,6 +275,24 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_DASHBOARD_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGDashboardResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Synthetics
+
+                loggerConsole.Info("List of Synthetics configurations");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_SYNTHETICS_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGSyntheticsResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+
+                #region Database
+
+                loggerConsole.Info("List of Database configurations");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_DATABASE_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGDatabaseResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 
