@@ -395,6 +395,14 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
+                        if (jobTarget.Type == APPLICATION_TYPE_WEB)
+                        {
+                            foreach (var applicationConfiguration in applicationConfigurationsList)
+                            { 
+
+
+                            }
+                        }
                         // Set version to each of the health check rule results
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 

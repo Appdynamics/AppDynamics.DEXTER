@@ -81,8 +81,9 @@
         IndexControllerHealthCheck = 90,
         IndexAPMHealthCheck = 91,
         
-        IndexBSG = 92,
-
+        IndexBSGAPM = 92,
+        IndexBSGWEB = 93,
+        IndexBSGDatabase = 94,
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,
         ReportControllerUsersGroupsRolesAndPermissions = 101,
