@@ -479,6 +479,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGDashboardResultsExcelReportFilePath(), FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget));
                         }
+                        
+                        // // Append all the individual report files into one
+                        // if (File.Exists(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)).Length > 0)
+                        // {
+                        //     FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSimResultsExcelReportFilePath(), FilePathMap.BSGSimResultsIndexFilePath(jobTarget));
+                        // }
                         #endregion
                     }
                     catch (Exception ex)
