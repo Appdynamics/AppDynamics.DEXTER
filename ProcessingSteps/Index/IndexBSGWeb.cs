@@ -44,7 +44,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 {
                     logger.Warn("No {0} targets to process", APPLICATION_TYPE_WEB);
                     loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_WEB);
-
                     return true;
                 }
 
@@ -85,8 +84,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         List<ControllerSummary> controllerSummariesList = FileIOHelper.ReadListFromCSVFile<ControllerSummary>(FilePathMap.ControllerSummaryIndexFilePath(jobTarget), new ControllerSummaryReportMap());
                         List<ControllerSetting> controllerSettingsList = FileIOHelper.ReadListFromCSVFile<ControllerSetting>(FilePathMap.ControllerSettingsIndexFilePath(jobTarget), new ControllerSettingReportMap());
-
-
+                        
                         List<WEBApplication> webApplicationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationsIndexFilePath(jobTarget), new WEBApplicationReportMap());
                         List<WEBApplicationConfiguration> webApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget), new WEBApplicationConfigurationReportMap());
                         List<HealthRule> healthRulesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
@@ -145,9 +143,47 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
                         #endregion
 
+                        #region BRUM
+
+                        var bsgBrumResults = new List<BSGBrumResult>();
+                        foreach (var webApplication in webApplicationList)
+                        {
+                            BSGBrumResult bsgBrumResult = new BSGBrumResult();
+                            bsgBrumResult.Controller = webApplication.Controller;
+                            bsgBrumResult.ApplicationName = webApplication.ApplicationName;
+                            bsgBrumResult.ApplicationID = webApplication.ApplicationID;
+                            bsgBrumResult.DataReported = webApplication.NumActivity > 0;
+                            bsgBrumResult.NumPages = webApplication.NumPages;
+                            bsgBrumResult.NumAjax = webApplication.NumAJAXRequests;
+                            
+                            // following two are not available, need to call API
+                            // controller/restui/pageList/getEumPageListViewData
+                            // bsgBrumResult.PageLimitHit = false;
+                            // bsgBrumResult.AjaxLimitHit = false;
+
+                            var webApplicationConfiguration = webApplicationConfigurationList
+                                .First(it => it.ApplicationID == webApplication.ApplicationID);
+                            bsgBrumResult.NumCustomPageRules = webApplicationConfiguration.NumPageRulesInclude;
+                            bsgBrumResult.NumCustomAjaxRules = webApplicationConfiguration.NumAJAXRulesInclude;
+                            
+                            bsgBrumResult.BrumHealthRules = healthRulesList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
+                            bsgBrumResult.LinkedActions = actionsList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
+                            bsgBrumResult.LinkedPolicies = policiesList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
+                            
+                            bsgBrumResult.WarningViolations = healthRuleViolationEventsAllList
+                                .FindAll(e => e.Severity.Equals("WARNING") && e.ApplicationID == webApplication.ApplicationID).Count;
+                            bsgBrumResult.CriticalViolations = healthRuleViolationEventsAllList
+                                .FindAll(e => e.Severity.Equals("CRITICAL") && e.ApplicationID == webApplication.ApplicationID).Count;
+                            
+                            bsgBrumResults.Add(bsgBrumResult);
+                        }
+
+                        #endregion
+                        
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgSyntheticsResults, new BSGSyntheticsResultMap(), FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgBrumResults, new BSGBrumResultMap(), FilePathMap.BSGBrumResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgSyntheticsResults.Count;
 
@@ -167,6 +203,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSyntheticsResultsExcelReportFilePath(), FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget));
+                        }
+                        
+                        if (File.Exists(FilePathMap.BSGBrumResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBrumResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBrumResultsExcelReportFilePath(), FilePathMap.BSGBrumResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
