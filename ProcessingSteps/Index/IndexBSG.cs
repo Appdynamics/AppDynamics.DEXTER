@@ -156,7 +156,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<CustomExitRule> customExitRulesList = FileIOHelper.ReadListFromCSVFile<CustomExitRule>(FilePathMap.APMCustomExitRulesIndexFilePath(jobTarget), new CustomExitRuleReportMap());
                         List<ServiceEndpointEntryRule> sepDiscoveryRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointEntryRule>(FilePathMap.APMServiceEndpointEntryRulesIndexFilePath(jobTarget), new ServiceEndpointEntryRuleReportMap());
                         List<ServiceEndpointDiscoveryRule> serviceEndpointDiscoveryDefaultRules = FileIOHelper.ReadListFromCSVFile<ServiceEndpointDiscoveryRule>(FilePathMap.APMServiceEndpointDiscoveryRulesIndexFilePath(jobTarget), new ServiceEndpointDiscoveryRuleReportMap());
-
+                        
                         List<HTTPDataCollector> httpDataCollectors = FileIOHelper.ReadListFromCSVFile<HTTPDataCollector>(FilePathMap.APMHttpDataCollectorsIndexFilePath(jobTarget), new HTTPDataCollectorReportMap());
                         List<MethodInvocationDataCollector> midcDataCollectors = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
 

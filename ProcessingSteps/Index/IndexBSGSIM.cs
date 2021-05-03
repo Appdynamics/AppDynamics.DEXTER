@@ -76,6 +76,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         #region Target step variables
 
                         var bsgSimResults = new List<BSGSimResult>();
+                        var bsgContainerResults = new List<BSGContainersResult>();
 
                         #endregion
 
@@ -85,20 +86,18 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         
                         List<SIMNode> simNodes = FileIOHelper.ReadListFromCSVFile(FilePathMap.SIMNodesIndexFilePath(jobTarget), new SIMNodeReportMap());
-                        // List<WEBApplication> webApplicationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationsIndexFilePath(jobTarget), new WEBApplicationReportMap());
-                        // List<WEBApplicationConfiguration> webApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget), new WEBApplicationConfigurationReportMap());
+                        
                         List<HealthRule> healthRulesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
                         List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesIndexFilePath(jobTarget), new PolicyReportMap());
                         List<ReportObjects.Action> actionsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationActionsIndexFilePath(jobTarget), new ActionReportMap());
-                        // List<WEBPage> webPageList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBPagesIndexFilePath(jobTarget), new WEBPageReportMap());
                         List<HealthRuleViolationEvent> healthRuleViolationEventsAllList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRuleViolationsIndexFilePath(jobTarget), new HealthRuleViolationEventReportMap());
-
+                        List<SIMMachineContainer> machineContainersList = FileIOHelper.ReadListFromCSVFile<SIMMachineContainer>(FilePathMap.SIMMachineContainersIndexFilePath(jobTarget), new SIMMachineContainerReportMap());
+                        
                         loggerConsole.Info("Configuration Rules Data Preloading");
 
                         #endregion
 
                         #region SIM
-
                         
                         BSGSimResult bsgSimResult = new BSGSimResult();
                         
@@ -118,9 +117,31 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         
                         #endregion
 
+                        #region Containers
+
+                        BSGContainersResult bsgContainersResult = new BSGContainersResult();
+                        bsgContainersResult.Controller = jobTarget.Controller;
+                        bsgContainersResult.ApplicationName = jobTarget.Application;
+                        bsgContainersResult.ApplicationID = jobTarget.ApplicationID;
+                        bsgContainersResult.NumContainersMonitored = machineContainersList.Count;
+                        
+                        bsgContainersResult.NumHRs = healthRulesList.Count;
+                        bsgContainersResult.NumActions = actionsList.Count;
+                        bsgContainersResult.NumPolicies = policiesList.Count;
+
+                        bsgContainersResult.NumWarningViolations = healthRuleViolationEventsAllList
+                            .FindAll(e => e.Severity.Equals("WARNING")).Count;
+                        bsgContainersResult.NumCriticalViolations = healthRuleViolationEventsAllList
+                            .FindAll(e => e.Severity.Equals("CRITICAL")).Count;
+                        
+                        bsgContainerResults.Add(bsgContainersResult);
+
+                        #endregion
+
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgSimResults, new BSGSimResultMap(), FilePathMap.BSGSimResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgContainerResults, new BSGContainersResultMap(), FilePathMap.BSGContainersResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgSimResults.Count;
 
@@ -140,6 +161,11 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         if (File.Exists(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)).Length > 0)
                         {
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSimResultsExcelReportFilePath(), FilePathMap.BSGSimResultsIndexFilePath(jobTarget));
+                        }
+                        
+                        if (File.Exists(FilePathMap.BSGContainersResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGContainersResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGContainersResultsExcelReportFilePath(), FilePathMap.BSGContainersResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
