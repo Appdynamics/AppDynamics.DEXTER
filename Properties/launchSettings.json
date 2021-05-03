@@ -2,7 +2,7 @@
   "profiles": {
     "AppDynamics.Dexter.Core": {
       "commandName": "Project",
-      "commandLineArgs": "-j \"D:\\Developer\\Dexter\\jobFiles\\sabre.json\" -o \"D:\\AppD.Dexter.Out\\sabre-web\" -v -s -n sabre-web"
+      "commandLineArgs": "-j \"D:\\Developer\\Dexter\\jobFiles\\demo1.json\" -o \"D:\\AppD.Dexter.Out\\demo1\" -v -s -n demo1"
     }
   }
 }

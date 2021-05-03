@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AppDynamics.Dexter.Helpers;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -87,7 +88,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 List<SIMMachine> machinesList = FileIOHelper.ReadListFromCSVFile<SIMMachine>(FilePathMap.SIMMachinesIndexFilePath(jobTarget), new SIMMachineReportMap());
                                 if (machinesList != null)
                                 {
-                                    Dictionary<string, SIMEntityBase> entitiesDictionaryByName = machinesList.ToDictionary(e => e.MachineName, e => (SIMEntityBase)e);
+                                    Dictionary<string, SIMEntityBase> entitiesDictionaryByName = machinesList.ToSafeDictionary(e => e.MachineName, e => (SIMEntityBase)e);
 
                                     Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
@@ -122,7 +123,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 List<SIMMachine> machinesList = FileIOHelper.ReadListFromCSVFile<SIMMachine>(FilePathMap.SIMMachinesIndexFilePath(jobTarget), new SIMMachineReportMap());
                                 if (machinesList != null)
                                 {
-                                    Dictionary<string, SIMEntityBase> entitiesDictionaryByName = machinesList.ToDictionary(e => e.MachineName, e => (SIMEntityBase)e);
+                                    Dictionary<string, SIMEntityBase> entitiesDictionaryByName = machinesList.ToSafeDictionary(e => e.MachineName, e => (SIMEntityBase)e);
 
                                     Dictionary<string, List<MetricValue>> metricValuesDictionary = new Dictionary<string, List<MetricValue>>();
 
