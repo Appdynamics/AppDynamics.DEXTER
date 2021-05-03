@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using AppDynamics.Dexter.Helpers;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
@@ -94,7 +95,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMApplication.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = applicationsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE);
 
@@ -126,7 +127,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = applicationsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = applicationsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMApplication.ENTITY_FOLDER, APMApplication.ENTITY_TYPE, metricValuesDictionary);
 
@@ -192,7 +193,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMTier.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = tiersList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = tiersList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
                                         Dictionary<string, APMEntityBase> entitiesFullDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesFullDictionary.Count);
                                         foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesFullDictionary)
                                         {
@@ -229,7 +230,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = tiersList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = tiersList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
                                             Dictionary<string, APMEntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesHourlyDictionary.Count);
                                             foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesHourlyDictionary)
                                             {
@@ -300,7 +301,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMNode.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = nodesList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = nodesList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
                                         Dictionary<string, APMEntityBase> entitiesFullDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesFullDictionary.Count);
                                         foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesFullDictionary)
                                         {
@@ -341,7 +342,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = nodesList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = nodesList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
                                             Dictionary<string, APMEntityBase> entitiesHourlyDictionaryByName = new Dictionary<string, APMEntityBase>(entitiesHourlyDictionary.Count);
                                             foreach (KeyValuePair<long, APMEntityBase> kvp in entitiesHourlyDictionary)
                                             {
@@ -416,7 +417,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBackend.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = backendsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = backendsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE);
 
@@ -448,7 +449,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = backendsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = backendsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMBackend.ENTITY_FOLDER, APMBackend.ENTITY_TYPE, metricValuesDictionary);
 
@@ -514,7 +515,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMBusinessTransaction.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = businessTransactionsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE);
 
@@ -546,7 +547,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = businessTransactionsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = businessTransactionsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMBusinessTransaction.ENTITY_FOLDER, APMBusinessTransaction.ENTITY_TYPE, metricValuesDictionary);
 
@@ -612,7 +613,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMServiceEndpoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE);
 
@@ -644,7 +645,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = serviceEndpointsList.Where(e => e.SEPID >= 0).ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMServiceEndpoint.ENTITY_FOLDER, APMServiceEndpoint.ENTITY_TYPE, metricValuesDictionary);
 
@@ -710,7 +711,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMError.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = errorsList.Where(e => e.ErrorID >= 0).ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE);
 
@@ -742,7 +743,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = errorsList.Where(e => e.ErrorID >= 0).ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = errorsList.Where(e => e.ErrorID >= 0).ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMError.ENTITY_FOLDER, APMError.ENTITY_TYPE, metricValuesDictionary);
 
@@ -808,7 +809,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                     if (File.Exists(FilePathMap.APMEntitiesFullIndexFilePath(jobTarget, APMInformationPoint.ENTITY_FOLDER)) == false)
                                     {
                                         // Prepare copies of entities indexed for fast access by their entity ID
-                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                        Dictionary<long, APMEntityBase> entitiesFullDictionary = informationPointsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                         readRolledUpRangeOfMetricsIntoEntities(entitiesFullDictionary, null, jobConfiguration.Input.TimeRange, jobTarget, entityMetricExtractMappingList, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE);
 
@@ -840,7 +841,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                             JobTimeRange jobTimeRange = jobConfiguration.Input.HourlyTimeRanges[j];
 
                                             // Prepare copies of entities indexed for fast access by their entity ID
-                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = informationPointsList.ToDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
+                                            Dictionary<long, APMEntityBase> entitiesHourlyDictionary = informationPointsList.ToSafeDictionary(e => e.EntityID, e => (APMEntityBase)(e.Clone()));
 
                                             readGranularRangeOfMetricsIntoEntities(entitiesHourlyDictionary, null, jobTimeRange, jobTarget, entityMetricExtractMappingList, APMInformationPoint.ENTITY_FOLDER, APMInformationPoint.ENTITY_TYPE, metricValuesDictionary);
 

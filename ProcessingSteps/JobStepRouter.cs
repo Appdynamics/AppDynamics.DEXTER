@@ -98,6 +98,7 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexBSG_DATABASE,
                 JobStatus.IndexBSG_BIQ,
                 JobStatus.IndexBSG_SIM,
+                JobStatus.IndexBSG_MOBILE,
 
                 // Report data
                 JobStatus.ReportControllerAndApplicationConfiguration,
@@ -404,6 +405,9 @@ namespace AppDynamics.Dexter
                     return new IndexBSG_Database();
                 case JobStatus.IndexBSG_SIM:
                     return new IndexBSG_SIM();
+                case JobStatus.IndexBSG_MOBILE:
+                    return new IndexBSG_Mobile();
+                
 
                 // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:

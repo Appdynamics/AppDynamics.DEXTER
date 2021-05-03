@@ -15,7 +15,7 @@ using Newtonsoft.Json.Linq;
 
 namespace AppDynamics.Dexter.ProcessingSteps
 {
-    public class IndexBSG_Web : JobStepIndexBase
+    public class IndexBSG_Mobile : JobStepIndexBase
     {
         public override bool Execute(ProgramOptions programOptions, JobConfiguration jobConfiguration)
         {
@@ -40,10 +40,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
-                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_WEB) == 0)
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_MOBILE) == 0)
                 {
-                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_WEB);
-                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_WEB);
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_MOBILE);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_MOBILE);
                     return true;
                 }
 
@@ -57,7 +57,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = jobConfiguration.Target[i];
 
-                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_WEB) continue;
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_MOBILE) continue;
 
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;
@@ -71,12 +71,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
-
-                        #region Target step variables
-
-                        List<BSGSyntheticsResult> bsgSyntheticsResults = new List<BSGSyntheticsResult>();
-
-                        #endregion
 
                         #region Preload all the reports that will be filtered by the subsequent entities
 
@@ -101,106 +95,49 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                         #endregion
 
-                        #region Synthetics
+                        #region MRUM
 
-                        foreach (var webApplicationConfig in webApplicationConfigurationList)
+                        var bsgMrumResults = new List<BSGMrumResult>();
+                        foreach (var mobileApplication in mobileApplicationList)
                         {
-                            var webApplication = webApplicationList.Find(w => w.ApplicationName == webApplicationConfig.ApplicationName);
-                            BSGSyntheticsResult bsgSyntheticsResult = new BSGSyntheticsResult();
-                            bsgSyntheticsResult.ApplicationName = webApplicationConfig.ApplicationName;
-                            bsgSyntheticsResult.Controller = jobTarget.Controller;
-                            bsgSyntheticsResult.NumSyntheticJobs = webApplicationConfig.NumSyntheticJobs;
-                            bsgSyntheticsResult.NumSyntheticJobsWithData = webPageList.FindAll(w => w.IsSynthetic == true).Count();
-                            var syntheticHRs = healthRulesList.FindAll(h => h.HRRuleType == "EUMPAGES" && (h.Warn1MetricName.ToLower().Contains("Synthetic") || h.Warn2MetricName.ToLower().Contains("Synthetic") ||
-                                h.Warn3MetricName.ToLower().Contains("Synthetic") || h.Warn4MetricName.ToLower().Contains("Synthetic") ||
-                                h.Warn5MetricName.ToLower().Contains("Synthetic") || h.WarningConditionRawValue.ToLower().Contains("Synthetic") ||
-                                h.Crit1MetricName.ToLower().Contains("Synthetic") || h.Crit2MetricName.ToLower().Contains("Synthetic") ||
-                                h.Crit3MetricName.ToLower().Contains("Synthetic") || h.Crit4MetricName.ToLower().Contains("Synthetic") || h.Crit5MetricName.ToLower().Contains("Synthetic") || h.CriticalConditionRawValue.ToLower().Contains("Synthetic")));
-                            if (syntheticHRs.Count() > 0)
-                            {
-                                bsgSyntheticsResult.NumHRsWithSynthetics = syntheticHRs.Count();
-                                foreach (var policy in policiesList)
-                                {
-                                    foreach (var hr in syntheticHRs)
-                                    {
-                                        if (policy.HRIDs.Contains(hr.HealthRuleID.ToString()))
-                                        {
-                                            bsgSyntheticsResult.NumPoliciesForHRs++;
-                                            if (policy.NumActions > 0)
-                                            {
-                                                bsgSyntheticsResult.NumActionsForPolicies += policy.NumActions;
+                            BSGMrumResult bsgMrumResult = new BSGMrumResult();
+                            bsgMrumResult.Controller = mobileApplication.Controller;
+                            bsgMrumResult.ApplicationName = mobileApplication.ApplicationName;
+                            bsgMrumResult.ApplicationID = mobileApplication.ApplicationID;
 
-                                            }
-                                            break;
-                                        }
+                            bsgMrumResult.NumNetworkrequests = mobileApplication.NumNetworkRequests;
 
-                                    }
-                                }
-                                foreach (var hr in syntheticHRs)
-                                {
-                                    bsgSyntheticsResult.NumWarningHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "WARNING").Count();
-                                    bsgSyntheticsResult.NumCriticalHRViolations += healthRuleViolationEventsAllList.FindAll(hv => hv.HealthRuleID == hr.HealthRuleID && hv.Severity == "CRITICAL").Count();
-                                }
+                            var mobileApplicationConfiguration = mobileApplicationConfigurationList
+                                .First(it => it.ApplicationID == mobileApplication.ApplicationID);
 
-                            }
-
+                            bsgMrumResult.NumCustomNetworkRequestRules =
+                                mobileApplicationConfiguration.NumNetworkRulesInclude;
+                            
+                            bsgMrumResult.MrumHealthRules = healthRulesList.FindAll(e => e.ApplicationID == mobileApplication.ApplicationID).Count;
+                            bsgMrumResult.LinkedActions = actionsList.FindAll(e => e.ApplicationID == mobileApplication.ApplicationID).Count;
+                            bsgMrumResult.LinkedPolicies = policiesList.FindAll(e => e.ApplicationID == mobileApplication.ApplicationID).Count;
+                            
+                            bsgMrumResult.WarningViolations = healthRuleViolationEventsAllList
+                                .FindAll(e => e.Severity.Equals("WARNING") && e.ApplicationID == mobileApplication.ApplicationID).Count;
+                            bsgMrumResult.CriticalViolations = healthRuleViolationEventsAllList
+                                .FindAll(e => e.Severity.Equals("CRITICAL") && e.ApplicationID == mobileApplication.ApplicationID).Count;
+                            
+                            bsgMrumResults.Add(bsgMrumResult);
                         }
+                        
                         #endregion
-
-                        #region BRUM
-
-                        var bsgBrumResults = new List<BSGBrumResult>();
-                        foreach (var webApplication in webApplicationList)
-                        {
-                            BSGBrumResult bsgBrumResult = new BSGBrumResult();
-                            bsgBrumResult.Controller = webApplication.Controller;
-                            bsgBrumResult.ApplicationName = webApplication.ApplicationName;
-                            bsgBrumResult.ApplicationID = webApplication.ApplicationID;
-                            bsgBrumResult.DataReported = webApplication.NumActivity > 0;
-                            bsgBrumResult.NumPages = webApplication.NumPages;
-                            bsgBrumResult.NumAjax = webApplication.NumAJAXRequests;
-                            
-                            // following two are not available, need to call API
-                            // controller/restui/pageList/getEumPageListViewData
-                            // bsgBrumResult.PageLimitHit = false;
-                            // bsgBrumResult.AjaxLimitHit = false;
-
-                            var webApplicationConfiguration = webApplicationConfigurationList
-                                .First(it => it.ApplicationID == webApplication.ApplicationID);
-                            bsgBrumResult.NumCustomPageRules = webApplicationConfiguration.NumPageRulesInclude;
-                            bsgBrumResult.NumCustomAjaxRules = webApplicationConfiguration.NumAJAXRulesInclude;
-                            
-                            bsgBrumResult.BrumHealthRules = healthRulesList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
-                            bsgBrumResult.LinkedActions = actionsList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
-                            bsgBrumResult.LinkedPolicies = policiesList.FindAll(e => e.ApplicationID == webApplication.ApplicationID).Count;
-                            
-                            bsgBrumResult.WarningViolations = healthRuleViolationEventsAllList
-                                .FindAll(e => e.Severity.Equals("WARNING") && e.ApplicationID == webApplication.ApplicationID).Count;
-                            bsgBrumResult.CriticalViolations = healthRuleViolationEventsAllList
-                                .FindAll(e => e.Severity.Equals("CRITICAL") && e.ApplicationID == webApplication.ApplicationID).Count;
-                            
-                            bsgBrumResults.Add(bsgBrumResult);
-                        }
-
-                        #endregion
-
+                        
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
-                        FileIOHelper.WriteListToCSVFile(bsgSyntheticsResults, new BSGSyntheticsResultMap(), FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget));
-                        FileIOHelper.WriteListToCSVFile(bsgBrumResults, new BSGBrumResultMap(), FilePathMap.BSGBrumResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgMrumResults, new BSGMrumResultMap(), FilePathMap.BSGMrumResultsIndexFilePath(jobTarget));
 
-                        stepTimingTarget.NumEntities = bsgSyntheticsResults.Count;
+                        stepTimingTarget.NumEntities = bsgMrumResults.Count;
 
                         #region Combine All for Report CSV
 
-                        if (File.Exists(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)).Length > 0)
+                        if (File.Exists(FilePathMap.BSGMrumResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGMrumResultsIndexFilePath(jobTarget)).Length > 0)
                         {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSyntheticsResultsExcelReportFilePath(), FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget));
-                        }
-                        
-                        if (File.Exists(FilePathMap.BSGBrumResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGBrumResultsIndexFilePath(jobTarget)).Length > 0)
-                        {
-                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGBrumResultsExcelReportFilePath(), FilePathMap.BSGBrumResultsIndexFilePath(jobTarget));
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGMrumResultsExcelReportFilePath(), FilePathMap.BSGMrumResultsIndexFilePath(jobTarget));
                         }
 
                         #endregion
