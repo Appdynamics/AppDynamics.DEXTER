@@ -560,7 +560,7 @@ namespace AppDynamics.Dexter
                 logger.Error(ex);
             }
 
-            return null;
+            return new List<T>();
         }
 
         public static List<T> ReadListFromCSVFileForSnapshotsWithRequestIDs<T>(string csvFilePath, ClassMap<T> classMap, List<string> requestIDs)

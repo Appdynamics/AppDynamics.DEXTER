@@ -72,6 +72,16 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     try
                     {
                         this.DisplayJobTargetStartingStatus(jobConfiguration, jobTarget, i + 1);
+                        
+                        XmlDocument configXml = FileIOHelper.LoadXmlDocumentFromFile(FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                        if (configXml == null)
+                        {
+                            logger.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                            loggerConsole.Warn("No application configuration in {0} file", FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                            logger.Warn(("Skipping BSG report for application {0}", jobTarget.Application));
+                            loggerConsole.Warn(("Skipping BSG report for application {0}", jobTarget.Application));
+                            continue;
+                        }
 
                         #region Target step variables
 
@@ -200,6 +210,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         {
                             BSGBusinessTransactionResult businessTransactionResult = new BSGBusinessTransactionResult();
                             businessTransactionResult.Controller = applicationConfiguration.Controller;
+                            businessTransactionResult.ApplicationName = applicationConfiguration.ApplicationName;
                             businessTransactionResult.BTLockdownEnabled = applicationConfiguration.IsBTLockdownEnabled;
                             businessTransactionResult.BTCleanupEnabled = applicationConfiguration.IsBTCleanupEnabled;
                             businessTransactionResult.NumBTs = applicationConfiguration.NumBTs;

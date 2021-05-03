@@ -87,6 +87,10 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         
                         List<WEBApplication> webApplicationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationsIndexFilePath(jobTarget), new WEBApplicationReportMap());
                         List<WEBApplicationConfiguration> webApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile(FilePathMap.WEBApplicationConfigurationIndexFilePath(jobTarget), new WEBApplicationConfigurationReportMap());
+                        
+                        List<MOBILEApplication> mobileApplicationList = FileIOHelper.ReadListFromCSVFile<MOBILEApplication>(FilePathMap.MOBILEApplicationsIndexFilePath(jobTarget), new MOBILEApplicationReportMap());
+                        List<MOBILEApplicationConfiguration> mobileApplicationConfigurationList = FileIOHelper.ReadListFromCSVFile<MOBILEApplicationConfiguration>(FilePathMap.MOBILEApplicationConfigurationIndexFilePath(jobTarget), new MOBILEApplicationConfigurationReportMap());
+                        
                         List<HealthRule> healthRulesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationHealthRulesIndexFilePath(jobTarget), new HealthRuleReportMap());
                         List<Policy> policiesList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationPoliciesIndexFilePath(jobTarget), new PolicyReportMap());
                         List<ReportObjects.Action> actionsList = FileIOHelper.ReadListFromCSVFile(FilePathMap.ApplicationActionsIndexFilePath(jobTarget), new ActionReportMap());
@@ -179,7 +183,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         }
 
                         #endregion
-                        
+
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
                         FileIOHelper.WriteListToCSVFile(bsgSyntheticsResults, new BSGSyntheticsResultMap(), FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget));
@@ -188,17 +192,6 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         stepTimingTarget.NumEntities = bsgSyntheticsResults.Count;
 
                         #region Combine All for Report CSV
-
-                        // If it is the first one, clear out the combined folder
-                        //if (reportFolderCleaned == false)
-                        //{
-                        //    FileIOHelper.DeleteFolder(FilePathMap.BSGReportFolderPath());
-                        //    Thread.Sleep(1000);
-                        //    FileIOHelper.CreateFolder(FilePathMap.BSGReportFolderPath());
-                        //    reportFolderCleaned = true;
-                        //}
-
-                        // Append all the individual report files into one
 
                         if (File.Exists(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSyntheticsResultsIndexFilePath(jobTarget)).Length > 0)
                         {

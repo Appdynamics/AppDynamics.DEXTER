@@ -86,6 +86,7 @@
         IndexBSG_DATABASE = 94,
         IndexBSG_BIQ = 95,
         IndexBSG_SIM = 96,
+        IndexBSG_MOBILE = 97,
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,
         ReportControllerUsersGroupsRolesAndPermissions = 101,
