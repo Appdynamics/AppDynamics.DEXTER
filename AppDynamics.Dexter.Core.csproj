@@ -38,7 +38,10 @@
     <None Remove="LicenseSign\**" />
     <None Remove="obj_netfx\**" />
     <None Remove="packages_private\**" />
-    <None Update="EntityMetricsExtractMapping-default.csv">
+    <None Update="EntityMetricsExtractMapping.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EntityMetricsExtractMappingBSG.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -497,7 +500,7 @@
     <None Update="DefaultJob.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EntityMetricsExtractMapping.csv">
+    <None Update="EntityMetricsExtractMappingBSG.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FlameGraphTemplate.svg">

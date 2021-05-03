@@ -1,0 +1,26 @@
+EntityType,MetricPath,MetricName,FolderName,RangeRollupType,Graph,Axis,LineColor,MetricSet
+Node,Overall Application Performance|*|Individual Nodes|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionNode
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|App|Availability,App|Availability,AVAILAGENT,SUM,AgentStatistics,PRIMARY,108000,AgentStats
+Node,Application Infrastructure Performance|*|Individual Nodes|*|Agent|Machine|Availability,Machine|Availability,AVAILMACHINE,SUM,AgentStatistics,PRIMARY,0000FF,AgentStats
+Backend,Backends|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionBackend
+Business Transaction,Business Transaction Performance|Business Transactions|*|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionBT
+Service Endpoint,Service Endpoints|*|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionSEP
+Information Point,Information Points|*|Calls per Minute,Calls per Minute,CPM,SUM,CallsAndResponse,PRIMARY,0000FF,TransactionIP
+SavedSearch,Analytics|*,DOESNOTMATTER,BIQMETRALL,SUM,,,,BIQMetric
+BizJourney,Analytics|Business Journeys|*|Calls per minute,Calls per minute,BIZJOURCPM,SUM,,,,BIQBizJourney
+BizJourney,Analytics|Business Journeys|*|*|Calls per minute,Calls per minute,BIZJOURSTEPCPM,SUM,,,,BIQBizJourney
+Database,KPI|Calls per Minute,KPI|Calls per Minute,DBCPM,SUM,,,,DBKPI
+Database,KPI|DB Availability,KPI|DB Availability,DBAVAIL,SUM,,,,DBKPI
+WEBApplication,End User Experience|App|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|Page Requests per Minute,Page Requests per Minute,CPMPAGE,SUM,,,,WEBTransactionApplication
+WEBApplication,End User Experience|App|AJAX Requests per Minute,AJAX Requests per Minute,CPMAJAX,SUM,,,,WEBTransactionApplication
+WEBPage,End User Experience|Base Pages|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|Page Requests per Minute,Page Requests per Minute,CPMPAGE,SUM,,,,WEBTransactionPage
+WEBPage,End User Experience|Base Pages|*|AJAX Requests per Minute,AJAX Requests per Minute,CPMAJAX,SUM,,,,WEBTransactionPage
+WEBVirtualPage,End User Experience|Virtual Pages|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,WEBTransactionVirtualPage
+MOBILEApplication,Mobile|{0}|App Starts,App Starts,APPSTART,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|App Starts per Minute,App Starts per Minute,APPSTARTPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Application Server Calls per Minute,Application Server Calls per Minute,APPCPM,SUM,,,,MOBILETransactionApplication
+MOBILEApplication,Mobile|{0}|Requests per Minute,Requests per Minute,CPM,SUM,,,,MOBILETransactionApplication
+MOBILENetworkRequest,Mobile|{0}|Application Server Calls per Minute,Application Server Calls per Minute,APPCPM,SUM,,,,MOBILETransactionNetworkRequest
+MOBILENetworkRequest,Mobile|{0}|Apps|{1}|Requests|*|Requests per Minute,Requests per Minute,CPM,SUM,,,,MOBILETransactionNetworkRequest

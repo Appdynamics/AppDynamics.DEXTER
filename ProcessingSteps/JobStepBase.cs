@@ -364,8 +364,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
         internal List<MetricExtractMapping> getMetricsExtractMappingList(JobConfiguration jobConfiguration)
         {
 
-            List<MetricExtractMapping> entityMetricExtractMappingList = FileIOHelper.ReadListFromCSVFile<MetricExtractMapping>(FilePathMap.EntityMetricExtractMappingFilePath(), new MetricExtractMappingReportMap());
-
+            List<MetricExtractMapping> entityMetricExtractMappingList = new List<MetricExtractMapping>();
+            if (jobConfiguration.Output.BSG)
+            {
+                entityMetricExtractMappingList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntityMetricExtractMappingFilePathBSG(), new MetricExtractMappingReportMap());
+                loggerConsole.Info("Loaded BSG Metric Set");
+                logger.Info("Loaded BSG Metric Set");
+            }
+            else
+            {
+                entityMetricExtractMappingList = FileIOHelper.ReadListFromCSVFile(FilePathMap.EntityMetricExtractMappingFilePath(), new MetricExtractMappingReportMap());
+                loggerConsole.Info("Loaded Default Metric Set");
+                logger.Info("Loaded Default Metric Set");
+            }
+            
             List<MetricExtractMapping> entityMetricExtractMappingListFiltered = new List<MetricExtractMapping>(entityMetricExtractMappingList.Count);
             foreach (string metricSet in jobConfiguration.Input.MetricsSelectionCriteria.MetricSets)
             {

@@ -531,6 +531,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
         // Settings for the metric extracts
         private const string ENTITY_METRICS_EXTRACT_MAPPING_FILE_NAME = "EntityMetricsExtractMapping.csv";
+        private const string ENTITY_METRICS_EXTRACT_MAPPING_FILE_NAME_BSG = "EntityMetricsExtractMappingBSG.csv";
 
         // Settings for the metric extracts
         private const string HEALTH_CHECK_SETTING_MAPPING_FILE_NAME = "HealthCheckSettingMapping.csv";
@@ -5185,6 +5186,13 @@ namespace AppDynamics.Dexter.ProcessingSteps
             return Path.Combine(
                 this.ProgramOptions.ProgramLocationFolderPath,
                 ENTITY_METRICS_EXTRACT_MAPPING_FILE_NAME);
+        }
+        
+        public string EntityMetricExtractMappingFilePathBSG()
+        {
+            return Path.Combine(
+                this.ProgramOptions.ProgramLocationFolderPath,
+                ENTITY_METRICS_EXTRACT_MAPPING_FILE_NAME_BSG);
         }
 
         public string MetricFullRangeDataFilePath(JobTarget jobTarget, string entityFolderName, string metricEntitySubFolderName, JobTimeRange jobTimeRange)
