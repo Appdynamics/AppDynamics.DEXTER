@@ -35,6 +35,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string SHEET_APPLICATION_SIM_LIST = "14.SIM";
         private const string SHEET_APPLICATION_MRUM_LIST = "14.MRUM";
         private const string SHEET_APPLICATION_CONTAINERS_LIST = "15.CONTAINERS";
+        private const string SHEET_APPLICATION_ERRORS_LIST = "16.ERRORS";
 
         // private const string SHEET_CONTROLLERS_LIST = "3.Controllers";
         // private const string SHEET_APPLICATIONS_ALL_LIST = "4.Applications.All";
@@ -221,6 +222,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
                 sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
                 
+                sheet = excelReport.Workbook.Worksheets.Add(SHEET_APPLICATION_ERRORS_LIST);
+                sheet.Cells[1, 1].Value = "Table of Contents";
+                sheet.Cells[1, 2].Formula = String.Format(@"=HYPERLINK(""#'{0}'!A1"", ""<Go>"")", SHEET_TOC);
+                sheet.Cells[1, 2].StyleName = "HyperLinkStyle";
+                sheet.View.FreezePanes(LIST_SHEET_START_TABLE_AT + 1, 1);
+                
                 #endregion
 
                 #region Report file variables
@@ -372,6 +379,15 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                 sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_CONTAINERS_LIST];
                 EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGContainersResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
+
+                #endregion
+                
+                #region ERRORS
+
+                loggerConsole.Info("List of Error configurations");
+
+                sheet = excelReport.Workbook.Worksheets[SHEET_APPLICATION_ERRORS_LIST];
+                EPPlusCSVHelper.ReadCSVFileIntoExcelRange(FilePathMap.BSGErrorsResultsExcelReportFilePath(), 0, typeof(ControllerSummary), sheet, LIST_SHEET_START_TABLE_AT, 1);
 
                 #endregion
 

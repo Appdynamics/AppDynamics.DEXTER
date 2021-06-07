@@ -453,6 +453,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
         private const string CONVERT_BSG_OVERHEAD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.overhead.APM.results.csv";
         private const string CONVERT_BSG_DATACOLLECTOR_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.datacollector.APM.results.csv";
         private const string CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.dashboard.results.csv";
+        private const string CONVERT_BSG_ERRORS_CUSTOMIZATION_RESULTS_FILE_NAME = "bsg.errors.results.csv";
         private const string CONVERT_BSG_SYNTHETICS_RESULTS_FILE_NAME = "bsg.synthetics.WEB.results.csv";
         private const string CONVERT_BSG_BRUM_RESULTS_FILE_NAME = "bsg.brum.WEB.results.csv";
         private const string CONVERT_BSG_MRUM_RESULTS_FILE_NAME = "bsg.mrum.WEB.results.csv";
@@ -4749,6 +4750,26 @@ namespace AppDynamics.Dexter.ProcessingSteps
                 getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
                 BSG_FOLDER_NAME,
                 CONVERT_BSG_DASHBOARD_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGErrorsResultsExcelReportFilePath()
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                this.ReportFolderName,
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_ERRORS_CUSTOMIZATION_RESULTS_FILE_NAME);
+        }
+        
+        public string BSGErrorsResultsIndexFilePath(JobTarget jobTarget)
+        {
+            return Path.Combine(
+                this.ProgramOptions.OutputJobFolderPath,
+                INDEX_FOLDER_NAME,
+                getFileSystemSafeString(getControllerNameForFileSystem(jobTarget.Controller)),
+                getShortenedEntityNameForFileSystem(jobTarget.Application, jobTarget.ApplicationID),
+                BSG_FOLDER_NAME,
+                CONVERT_BSG_ERRORS_CUSTOMIZATION_RESULTS_FILE_NAME);
         }
 
         public string BSGSyntheticsResultsExcelReportFilePath()

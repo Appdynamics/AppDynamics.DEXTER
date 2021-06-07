@@ -403,6 +403,8 @@ namespace AppDynamics.Dexter
                     return new IndexBSG_Web();
                 case JobStatus.IndexBSG_DATABASE:
                     return new IndexBSG_Database();
+                case JobStatus.IndexBSG_BIQ:
+                    return new IndexBSG_BIQ();
                 case JobStatus.IndexBSG_SIM:
                     return new IndexBSG_SIM();
                 case JobStatus.IndexBSG_MOBILE:

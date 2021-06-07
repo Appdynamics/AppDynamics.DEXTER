@@ -91,6 +91,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<BSGOverheadResult> bsgOverheadResults = new List<BSGOverheadResult>();
                         List<BSGDataCollectorResult> bsgDataCollectorResults = new List<BSGDataCollectorResult>();
                         List<BSGDashboardResult> bsgDashboardResults = new List<BSGDashboardResult>();
+                        List<BSGErrorsResult> bsgErrorsResults = new List<BSGErrorsResult>();
 
                         #endregion
 
@@ -161,10 +162,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         List<MethodInvocationDataCollector> midcDataCollectors = FileIOHelper.ReadListFromCSVFile<MethodInvocationDataCollector>(FilePathMap.APMMethodInvocationDataCollectorsIndexFilePath(jobTarget), new MethodInvocationDataCollectorReportMap());
 
                         List<Dashboard> dashboardsList = FileIOHelper.ReadListFromCSVFile<Dashboard>(FilePathMap.DashboardsIndexFilePath(jobTarget), new DashboardReportMap());
-
+                        
                         List<BusinessTransactionEntryScope> businessTransactionEntryScopeTemplateList = null;
                         List<BusinessTransactionDiscoveryRule20> businessTransactionDiscoveryRules20TemplateList = null;
                         List<BusinessTransactionEntryRule20> businessTransactionEntryRules20TemplateList = null;
+                        
+                        List<ErrorDetectionRule> errorDetectionRulesList = FileIOHelper.ReadListFromCSVFile<ErrorDetectionRule>(FilePathMap.APMErrorDetectionRulesIndexFilePath(jobTarget), new ErrorDetectionRuleReportMap());
                         
                         // Load the template configuration of the APM rules to compare
                         // Focus is on the blank template comparing from the defaults, so the configuration comparison to some real app should be off
@@ -405,15 +408,19 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         bsgDashboardResults = bsgDashboardResults.OrderBy(h => h.Controller).ThenBy(h => h.DashboardName).ToList();
 
                         #endregion
+                        
+                        #region Errors
 
-                        if (jobTarget.Type == APPLICATION_TYPE_WEB)
-                        {
-                            foreach (var applicationConfiguration in applicationConfigurationsList)
-                            { 
+                        BSGErrorsResult bsgErrorsResult = new BSGErrorsResult();
+                        bsgErrorsResult.Controller = jobTarget.Controller;
+                        bsgErrorsResult.ApplicationName = jobTarget.Application;
+                        bsgErrorsResult.ApplicationID = jobTarget.ApplicationID;
+                        bsgErrorsResult.MaxErrorRate = errorsList.Count;
+                        bsgErrorsResult.NumDetectionRules = errorDetectionRulesList.Count;
+                        bsgErrorsResults.Add(bsgErrorsResult);
+                        
+                        #endregion
 
-
-                            }
-                        }
                         // Set version to each of the health check rule results
                         string versionOfDEXTER = Assembly.GetEntryAssembly().GetName().Version.ToString();
 
@@ -426,6 +433,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                         FileIOHelper.WriteListToCSVFile(bsgHealthRuleResults, new BSGHealthRuleResultMap(), FilePathMap.BSGHealthRuleResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgDataCollectorResults, new BSGDataCollectorResultMap(), FilePathMap.BSGDataCollectorResultsIndexFilePath(jobTarget));
                         FileIOHelper.WriteListToCSVFile(bsgDashboardResults, new BSGDashboardResultMap(), FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget));
+                        FileIOHelper.WriteListToCSVFile(bsgErrorsResults, new BSGErrorsResultMap(), FilePathMap.BSGErrorsResultsIndexFilePath(jobTarget));
 
                         stepTimingTarget.NumEntities = bsgAgentResults.Count;
 
@@ -491,11 +499,12 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGDashboardResultsExcelReportFilePath(), FilePathMap.BSGDashboardResultsIndexFilePath(jobTarget));
                         }
                         
-                        // // Append all the individual report files into one
-                        // if (File.Exists(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGSimResultsIndexFilePath(jobTarget)).Length > 0)
-                        // {
-                        //     FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGSimResultsExcelReportFilePath(), FilePathMap.BSGSimResultsIndexFilePath(jobTarget));
-                        // }
+                        // Append all the individual report files into one
+                        if (File.Exists(FilePathMap.BSGErrorsResultsIndexFilePath(jobTarget)) == true && new FileInfo(FilePathMap.BSGErrorsResultsIndexFilePath(jobTarget)).Length > 0)
+                        {
+                            FileIOHelper.AppendTwoCSVFiles(FilePathMap.BSGErrorsResultsExcelReportFilePath(), FilePathMap.BSGErrorsResultsIndexFilePath(jobTarget));
+                        }
+                        
                         #endregion
                     }
                     catch (Exception ex)
@@ -4239,3 +4248,4 @@ namespace AppDynamics.Dexter.ProcessingSteps
     }
     
 }
+
