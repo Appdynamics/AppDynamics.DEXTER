@@ -40,17 +40,17 @@ namespace AppDynamics.Dexter.ProcessingSteps
                     return true;
                 }
 
-                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_DB) == 0)
+                if (jobConfiguration.Target.Count(t => t.Type == APPLICATION_TYPE_BIQ) == 0)
                 {
-                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
-                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_DB);
+                    logger.Warn("No {0} targets to process", APPLICATION_TYPE_BIQ);
+                    loggerConsole.Warn("No {0} targets to process", APPLICATION_TYPE_BIQ);
 
                     return true;
                 }
 
                 //bool reportFolderCleaned = false;
                 int i = 0;
-                var controllers = jobConfiguration.Target.Where(t => t.Type == APPLICATION_TYPE_DB).ToList().GroupBy(t => t.Controller);
+                var controllers = jobConfiguration.Target.Where(t => t.Type == APPLICATION_TYPE_BIQ).ToList().GroupBy(t => t.Controller);
 
                 // Process each target
                 foreach (var controllerGroup in controllers)
@@ -60,7 +60,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
 
                     JobTarget jobTarget = controllerGroup.ToList()[0];
 
-                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_DB) continue;
+                    if (jobTarget.Type != null && jobTarget.Type.Length > 0 && jobTarget.Type != APPLICATION_TYPE_BIQ) continue;
 
                     StepTiming stepTimingTarget = new StepTiming();
                     stepTimingTarget.Controller = jobTarget.Controller;

@@ -8,9 +8,7 @@ namespace AppDynamics.Dexter.ReportObjects
         public string ApplicationName { get; set; }
         public long ApplicationID { get; set; }
         public int MaxErrorRate { get; set; }
-        public int NumDetextionRUles { get; set; }
-        
-        
+        public int NumDetectionRules { get; set; }
 
         public BSGErrorsResult Clone()
         {

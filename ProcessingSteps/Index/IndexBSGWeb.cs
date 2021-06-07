@@ -143,7 +143,7 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                 }
 
                             }
-
+                            bsgSyntheticsResults.Add(bsgSyntheticsResult);
                         }
                         #endregion
 
