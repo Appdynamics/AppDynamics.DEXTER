@@ -92,6 +92,13 @@ namespace AppDynamics.Dexter
 
                 JobStatus.IndexControllerHealthCheck,
                 JobStatus.IndexAPMHealthCheck,
+                
+                JobStatus.IndexBSG_APM,
+                JobStatus.IndexBSG_WEB,
+                JobStatus.IndexBSG_DATABASE,
+                JobStatus.IndexBSG_BIQ,
+                JobStatus.IndexBSG_SIM,
+                JobStatus.IndexBSG_MOBILE,
 
                 // Report data
                 JobStatus.ReportControllerAndApplicationConfiguration,
@@ -128,6 +135,8 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportAPMEntityDashboardScreenshots,
 
                 JobStatus.ReportAPMIndividualSnapshots,
+                
+                JobStatus.ReportBSG,
 
                 // Done 
                 JobStatus.Done,
@@ -387,6 +396,20 @@ namespace AppDynamics.Dexter
                     return new IndexControllerHealthCheck();
                 case JobStatus.IndexAPMHealthCheck:
                     return new IndexAPMHealthCheck();
+                
+                case JobStatus.IndexBSG_APM:
+                    return new IndexBSG_APM();
+                case JobStatus.IndexBSG_WEB:
+                    return new IndexBSG_Web();
+                case JobStatus.IndexBSG_DATABASE:
+                    return new IndexBSG_Database();
+                case JobStatus.IndexBSG_BIQ:
+                    return new IndexBSG_BIQ();
+                case JobStatus.IndexBSG_SIM:
+                    return new IndexBSG_SIM();
+                case JobStatus.IndexBSG_MOBILE:
+                    return new IndexBSG_Mobile();
+                
 
                 // Report data
                 case JobStatus.ReportControllerAndApplicationConfiguration:
@@ -445,6 +468,9 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportAPMEntityDashboardScreenshots:
                     return new ReportAPMEntityDashboardScreenshots();
+                
+                case JobStatus.ReportBSG:
+                    return new ReportBSG();
 
                 default:
                     break;

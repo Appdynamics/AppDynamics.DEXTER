@@ -841,27 +841,34 @@ namespace AppDynamics.Dexter.ProcessingSteps
                                         //                                                                                                                                                                             ^^^^^
                                         // Business Transaction name is in seventh segment
                                         APMBusinessTransaction businessTransaction = null;
-                                        if (businessTransactionsDictionary.TryGetValue(String.Format(@"{0}\{1}", metric.TierName, metric.Segment7), out businessTransaction) == true)
+                                        try
                                         {
-                                            // BT Originated in this tier
-                                            metric.BTName = businessTransaction.BTName;
-                                            metric.BTID = businessTransaction.BTID;
-                                            metric.BTType = businessTransaction.BTType;
+                                            if (businessTransactionsDictionary.TryGetValue(String.Format(@"{0}\{1}", metric.TierName, metric.Segment7), out businessTransaction) == true)
+                                            {
+                                                // BT Originated in this tier
+                                                metric.BTName = businessTransaction.BTName;
+                                                metric.BTID = businessTransaction.BTID;
+                                                metric.BTType = businessTransaction.BTType;
 
-                                            metric.EntityName = metric.BTName;
-                                            metric.EntityID = metric.BTID;
-                                            metric.EntityType = metric.BTType;
+                                                metric.EntityName = metric.BTName;
+                                                metric.EntityID = metric.BTID;
+                                                metric.EntityType = metric.BTType;
+                                            }
+                                            else if (businessTransactionsDictionary.TryGetValue(businessTransactionsDictionary.Keys.Where(k => k.EndsWith(String.Format(@"\{0}", metric.Segment7))).FirstOrDefault(), out businessTransaction) == true)
+                                            {
+                                                // BT is originated from another tier
+                                                metric.BTName = businessTransaction.BTName;
+                                                metric.BTID = businessTransaction.BTID;
+                                                metric.BTType = businessTransaction.BTType;
+
+                                                metric.EntityName = metric.BTName;
+                                                metric.EntityID = metric.BTID;
+                                                metric.EntityType = metric.BTType;
+                                            }
                                         }
-                                        else if (businessTransactionsDictionary.TryGetValue(businessTransactionsDictionary.Keys.Where(k => k.EndsWith(String.Format(@"\{0}", metric.Segment7))).FirstOrDefault(), out businessTransaction) == true)
+                                        catch (ArgumentNullException e)
                                         {
-                                            // BT is originated from another tier
-                                            metric.BTName = businessTransaction.BTName;
-                                            metric.BTID = businessTransaction.BTID;
-                                            metric.BTType = businessTransaction.BTType;
-
-                                            metric.EntityName = metric.BTName;
-                                            metric.EntityID = metric.BTID;
-                                            metric.EntityType = metric.BTType;
+                                            loggerConsole.Warn("Unable to find matching BT for " + metric.TierName + "|" + metric.Segment7);
                                         }
                                     }
                                 }

@@ -75,12 +75,20 @@ namespace AppDynamics.Dexter.ProcessingSteps
                             #region Application
 
                             loggerConsole.Info("Application Configuration");
-
+                            
                             if (File.Exists(FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget)) == false)
                             {
                                 controllerApi.Timeout = 3;
                                 string applicationConfigXml = controllerApi.GetAPMConfigurationExportXML(jobTarget.ApplicationID);
-                                if (applicationConfigXml != String.Empty) FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                                if (applicationConfigXml != String.Empty)
+                                {
+                                    FileIOHelper.SaveFileToPath(applicationConfigXml, FilePathMap.APMApplicationConfigurationXMLDataFilePath(jobTarget));
+                                }
+                                else
+                                {
+                                    logger.Warn("Failed to get configuration.xml for " + jobTarget.Application + ".");
+                                    loggerConsole.Warn("Failed to get configuration.xml for " + jobTarget.Application + ".");
+                                }
                             }
 
                             controllerApi.PrivateApiLogin();

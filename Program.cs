@@ -1381,6 +1381,10 @@ namespace AppDynamics.Dexter
                                             }
                                             else
                                             {
+                                                foreach (JObject obj in applicationsInTarget)
+                                                {
+                                                    loggerConsole.Info(JobStepBase.getStringValueFromJToken(obj, "name"));
+                                                }
                                                 applicationsMatchingCriteria = applicationsInTarget.Where(
                                                     app => String.Compare(JobStepBase.getStringValueFromJToken(app, "name"), jobTarget.Application, true) == 0);
                                             }
@@ -1941,6 +1945,8 @@ from {2} containing
             licensedReports.FlameGraphs = true;
             // Health check is not free
             licensedReports.HealthCheck = false;
+            // BSG is not free
+            licensedReports.BSG = false;
             // Licenses are not free
             licensedReports.Licenses = false;
             licensedReports.Snapshots = true;
@@ -1972,6 +1978,7 @@ from {2} containing
                     licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
                     licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
                     licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
+                    licensedReports.BSG = JobStepBase.getBoolValueFromJToken(licensedFeatures, "BSG");
                 }
                 else
                 {

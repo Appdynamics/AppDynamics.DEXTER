@@ -80,7 +80,13 @@
 
         IndexControllerHealthCheck = 90,
         IndexAPMHealthCheck = 91,
-
+        
+        IndexBSG_APM = 92,
+        IndexBSG_WEB = 93,
+        IndexBSG_DATABASE = 94,
+        IndexBSG_BIQ = 95,
+        IndexBSG_SIM = 96,
+        IndexBSG_MOBILE = 97,
         // Report steps
         ReportControllerAndApplicationConfiguration = 100,
         ReportControllerUsersGroupsRolesAndPermissions = 101,
@@ -116,6 +122,8 @@
         ReportAPMEntityDashboardScreenshots = 150,
 
         ReportAPMIndividualSnapshots = 160,
+        
+        ReportBSG = 170,
 
         // The rest
         Done = 500,
