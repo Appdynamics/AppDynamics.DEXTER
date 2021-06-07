@@ -122,6 +122,7 @@
         "IndividualSnapshots": false,
         "FlameGraphs": true,
         "HealthCheck": false,
-        "ApplicationSummary": false
+        "ApplicationSummary": false,
+        "BSG": false
     }
 }

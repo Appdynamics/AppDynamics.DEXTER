@@ -2,7 +2,7 @@
   "profiles": {
     "LicenseSign": {
       "commandName": "Project",
-      "commandLineArgs": "\"path_to_license_file\" \"certificate_name_in_local_store\" "
+      "commandLineArgs": "\"C:\\Users\\bhjel\\RiderProjects\\AppDynamics.DEXTER\\LicensedFeatures.json\" \"D:\\Developer\\Dexter\\AppDynamics.DEXTER.private.pfx\" \"I hope DEXTER is very successful\" "
     }
   }
 }

@@ -38,6 +38,12 @@
     <None Remove="LicenseSign\**" />
     <None Remove="obj_netfx\**" />
     <None Remove="packages_private\**" />
+    <None Update="EntityMetricsExtractMapping.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="EntityMetricsExtractMappingBSG.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -371,9 +377,6 @@
     <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\devmode.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="EmptyConfig\reference.controller\EmptyAPM.0\CFG\healthrules.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -497,7 +500,7 @@
     <None Update="DefaultJob.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="EntityMetricsExtractMapping.csv">
+    <None Update="EntityMetricsExtractMappingBSG.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="FlameGraphTemplate.svg">
