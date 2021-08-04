@@ -62,7 +62,6 @@
         },
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": false,
         "Events": true,
         "EventsSelectionCriteria": [ "All" ],
         "Configuration": true,
@@ -108,7 +107,6 @@
     "Output": {
         "UsersGroupsRolesPermissions": true,
         "Dashboards": true,
-        "Licenses": false,
         "Events": true,
         "Configuration": true,
         "DetectedEntities": true,

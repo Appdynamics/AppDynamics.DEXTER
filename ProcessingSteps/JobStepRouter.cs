@@ -19,7 +19,6 @@ namespace AppDynamics.Dexter
                 JobStatus.ExtractControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.ExtractDashboards,
-                JobStatus.ExtractLicenses,
 
                 JobStatus.ExtractControllerAuditEventsAndNotifications,
                 JobStatus.ExtractApplicationEventsAndHealthRuleViolations,
@@ -57,7 +56,6 @@ namespace AppDynamics.Dexter
                 JobStatus.IndexControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.IndexDashboards,
-                JobStatus.IndexLicenses,
 
                 JobStatus.IndexControllerAuditEventsAndNotifications,
                 JobStatus.IndexApplicationEventsAndHealthRuleViolations,
@@ -105,7 +103,6 @@ namespace AppDynamics.Dexter
                 JobStatus.ReportControllerUsersGroupsRolesAndPermissions,
 
                 JobStatus.ReportDashboards,
-                JobStatus.ReportLicenses,
 
                 JobStatus.ReportApplicationEventsAndHealthRuleViolations,
 
@@ -167,7 +164,6 @@ namespace AppDynamics.Dexter
             logger.Info("Metrics='{0}'", jobConfiguration.Input.Metrics);
             logger.Info("Snapshots='{0}'", jobConfiguration.Input.Snapshots);
             logger.Info("Events='{0}'", jobConfiguration.Input.Events);
-            logger.Info("Licenses='{0}''", jobConfiguration.Input.Licenses);
             logger.Info("Configuration='{0}'", jobConfiguration.Input.Configuration);
             logger.Info("UsersGroupsRolesPermissions='{0}'", jobConfiguration.Input.UsersGroupsRolesPermissions);
             logger.Info("EntityDashboards='{0}'", jobConfiguration.Input.EntityDashboards);
@@ -212,7 +208,6 @@ namespace AppDynamics.Dexter
             logger.Info("EntityMetricsGraphs='{0}'", jobConfiguration.Output.EntityMetricGraphs);
             logger.Info("Snapshots='{0}'", jobConfiguration.Output.Snapshots);
             logger.Info("Events='{0}'", jobConfiguration.Output.Events);
-            logger.Info("Licenses='{0}''", jobConfiguration.Output.Licenses);
             logger.Info("Configuration='{0}'", jobConfiguration.Output.Configuration);
             logger.Info("UsersGroupsRolesPermissions='{0}'", jobConfiguration.Output.UsersGroupsRolesPermissions);
             logger.Info("EntityDashboards='{0}'", jobConfiguration.Output.EntityDashboards);
@@ -266,8 +261,6 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ExtractDashboards:
                     return new ExtractDashboards();
-                case JobStatus.ExtractLicenses:
-                    return new ExtractLicenses();
 
                 case JobStatus.ExtractControllerAuditEventsAndNotifications:
                     return new ExtractControllerAuditEventsAndNotifications();
@@ -334,8 +327,6 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.IndexDashboards:
                     return new IndexDashboards();
-                case JobStatus.IndexLicenses:
-                    return new IndexLicenses();
 
                 case JobStatus.IndexControllerAuditEventsAndNotifications:
                     return new IndexControllerAuditEventsAndNotifications();
@@ -419,8 +410,6 @@ namespace AppDynamics.Dexter
 
                 case JobStatus.ReportDashboards:
                     return new ReportDashboards();
-                case JobStatus.ReportLicenses:
-                    return new ReportLicenses();
 
                 case JobStatus.ReportApplicationEventsAndHealthRuleViolations:
                     return new ReportApplicationEventsAndHealthRuleViolations();

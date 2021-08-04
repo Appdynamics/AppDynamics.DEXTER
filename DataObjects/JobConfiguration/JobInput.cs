@@ -22,7 +22,6 @@ namespace AppDynamics.Dexter
         public string[] EventsSelectionCriteria { get; set; }
         public bool UsersGroupsRolesPermissions { get; set; }
         public bool Dashboards { get; set; }
-        public bool Licenses { get; set; }
         public bool EntityDashboards { get; set; }
         public JobEntityDashboardSelectionCriteria EntityDashboardSelectionCriteria { get; set; }
         public bool MetricsList { get; set; }

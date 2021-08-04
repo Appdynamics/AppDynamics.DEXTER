@@ -1900,38 +1900,8 @@ namespace AppDynamics.Dexter
 
         public static bool LoadAndValidateLicense(ProgramOptions programOptions)
         {
-            string programLicensePath = Path.Combine(
-                programOptions.ProgramLocationFolderPath,
-                "LicensedFeatures.json");
-
-            JObject licenseFile = FileIOHelper.LoadJObjectFromFile(programLicensePath);
-            JObject licensedFeatures = (JObject)licenseFile["LicensedFeatures"];
-
-            string dataSigned = licensedFeatures.ToString(Newtonsoft.Json.Formatting.None);
-            var bytesSigned = Encoding.UTF8.GetBytes(dataSigned);
-
-            string dataSignature = licenseFile["Signature"].ToString();
-            byte[] bytesSignature = Convert.FromBase64String(dataSignature);
-
-            string licenseCertificatePath = Path.Combine(
-                programOptions.ProgramLocationFolderPath,
-                "AppDynamics.DEXTER.public.cer");
-
-            X509Certificate2 publicCert = new X509Certificate2(licenseCertificatePath);
-
-            var rsaPublicKey = publicCert.GetRSAPublicKey();
-
-            bool licenseValidationResult = rsaPublicKey.VerifyData(bytesSigned, bytesSignature, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-
-            logger.Info(
-@"Validating license
-{0}
-with signature {1}
-from {2} containing
-{3} returned {4}",
-                dataSigned, dataSignature, licenseCertificatePath, publicCert, licenseValidationResult);
-
             JobOutput licensedReports = new JobOutput();
+
             licensedReports.ApplicationSummary = true;
             licensedReports.Configuration = true;
             licensedReports.Dashboards = true;
@@ -1943,59 +1913,11 @@ from {2} containing
             licensedReports.MetricsList = true;
             licensedReports.Events = true;
             licensedReports.FlameGraphs = true;
-            // Health check is not free
-            licensedReports.HealthCheck = false;
-            // BSG is not free
-            licensedReports.BSG = false;
-            // Licenses are not free
-            licensedReports.Licenses = false;
+            licensedReports.HealthCheck = true;
             licensedReports.Snapshots = true;
             licensedReports.UsersGroupsRolesPermissions = true;
-
-            if (licenseValidationResult == true)
-            {
-                logger.Info("License validation signature check succeeded");
-                loggerConsole.Info("License validation signature check succeeded");
-
-                DateTime dateTimeLicenseExpiration = (DateTime)licensedFeatures["ExpirationDateTime"];
-                if (dateTimeLicenseExpiration >= DateTime.Now)
-                {
-                    logger.Trace("License expires on {0:o}, valid", dateTimeLicenseExpiration);
-                    loggerConsole.Info("License expires on {0:o}, valid", dateTimeLicenseExpiration);
-
-                    licensedReports.ApplicationSummary = JobStepBase.getBoolValueFromJToken(licensedFeatures, "ApplicationSummary");
-                    licensedReports.Configuration = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Configuration");
-                    licensedReports.Dashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Dashboards");
-                    licensedReports.DetectedEntities = JobStepBase.getBoolValueFromJToken(licensedFeatures, "DetectedEntities");
-                    licensedReports.EntityDashboards = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDashboards");
-                    licensedReports.EntityDetails = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityDetails");
-                    licensedReports.EntityMetricGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetricGraphs");
-                    licensedReports.EntityMetrics = JobStepBase.getBoolValueFromJToken(licensedFeatures, "EntityMetrics");
-                    licensedReports.MetricsList = JobStepBase.getBoolValueFromJToken(licensedFeatures, "MetricsList");
-                    licensedReports.Events = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Events");
-                    licensedReports.FlameGraphs = JobStepBase.getBoolValueFromJToken(licensedFeatures, "FlameGraphs");
-                    licensedReports.HealthCheck = JobStepBase.getBoolValueFromJToken(licensedFeatures, "HealthCheck");
-                    licensedReports.Licenses = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Licenses");
-                    licensedReports.Snapshots = JobStepBase.getBoolValueFromJToken(licensedFeatures, "Snapshots");
-                    licensedReports.UsersGroupsRolesPermissions = JobStepBase.getBoolValueFromJToken(licensedFeatures, "UsersGroupsRolesPermissions");
-                    licensedReports.BSG = JobStepBase.getBoolValueFromJToken(licensedFeatures, "BSG");
-                }
-                else
-                {
-                    logger.Trace("License expires on {0:o}, expired", dateTimeLicenseExpiration);
-                    loggerConsole.Info("License expires on {0:o}, expired", dateTimeLicenseExpiration);
-
-                    return false;
-                }
-            }
-            else
-            {
-                logger.Warn("License validation signature check failed");
-                loggerConsole.Warn("License validation signature check failed");
-
-                return false;
-            }
-
+            licensedReports.BSG = true;
+            
             programOptions.LicensedReports = licensedReports;
 
             return true;
