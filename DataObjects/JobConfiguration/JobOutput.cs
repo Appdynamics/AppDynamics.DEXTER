@@ -15,7 +15,6 @@
         public bool Events { get; set; }
         public bool UsersGroupsRolesPermissions { get; set; }
         public bool Dashboards { get; set; }
-        public bool Licenses { get; set; }
         public bool HealthCheck { get; set; }
         public bool BSG { get; set; }
         public bool ApplicationSummary { get; set; }

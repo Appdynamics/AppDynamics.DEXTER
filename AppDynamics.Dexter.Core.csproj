@@ -122,9 +122,6 @@
     <None Update="HealthCheckSettingMapping.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="LicensedFeatures.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="License\AppDynamics.DEXTER.public.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

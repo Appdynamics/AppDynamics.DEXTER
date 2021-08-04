@@ -7,7 +7,6 @@
         ExtractControllerConfiguration = 2,
         ExtractControllerUsersGroupsRolesAndPermissions = 3,
         ExtractDashboards = 4,
-        ExtractLicenses = 5,
 
         ExtractControllerAuditEventsAndNotifications = 6,
         ExtractApplicationEventsAndHealthRuleViolations = 7,
@@ -45,7 +44,6 @@
         IndexControllerUsersGroupsRolesAndPermissions = 52,
 
         IndexDashboards = 53,
-        IndexLicenses = 54,
 
         IndexControllerAuditEventsAndNotifications = 55,
         IndexApplicationEventsAndHealthRuleViolations = 56,
@@ -92,7 +90,6 @@
         ReportControllerUsersGroupsRolesAndPermissions = 101,
 
         ReportDashboards = 102,
-        ReportLicenses = 103,
 
         ReportApplicationEventsAndHealthRuleViolations = 104,
 
